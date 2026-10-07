@@ -13,6 +13,8 @@ catalog:
   globals: 17.13.0
   '@types/node': 24.19.1
   next: 16.4.0
+  zod: 4.6.5
+  vitest: 5.0.3
 
 # eslint-config-next bundles eslint-plugin-react, -import and -jsx-a11y. Their
 # published peer ranges stop at ESLint 9, but ESLint 9 reached end of life on

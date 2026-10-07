@@ -5,9 +5,7 @@
   "tasks": {
     "lint": {},
     "typecheck": {},
-    "test": {
-      "outputs": ["coverage/**"]
-    },
+    "test": {},
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]

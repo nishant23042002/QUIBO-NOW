@@ -5,11 +5,14 @@
   "type": "module",
   "description": "Shared tsconfig, eslint config and env validation",
   "exports": {
+    ".": "./src/index.ts",
     "./tsconfig/*": "./tsconfig/*",
     "./eslint": "./eslint/index.mjs"
   },
   "scripts": {
-    "lint": "eslint --max-warnings 0 ."
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@eslint/js": "catalog:",
@@ -18,11 +21,15 @@
     "eslint-plugin-jsx-a11y": "6.10.2",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "catalog:",
-    "typescript-eslint": "catalog:"
+    "typescript-eslint": "catalog:",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "eslint": "catalog:",
-    "next": "catalog:"
+    "next": "catalog:",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "eslint": ">=10.12.0 <11",
