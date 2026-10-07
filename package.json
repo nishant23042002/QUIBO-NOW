@@ -1,0 +1,27 @@
+{
+  "name": "quibo-now",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Hyperlocal grocery delivery for tier 3 and 4 Indian towns",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24.21.0 <25",
+    "pnpm": ">=10.34.5 <11"
+  },
+  "scripts": {
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "build": "turbo run build",
+    "e2e": "turbo run e2e",
+    "a11y": "turbo run a11y",
+    "storybook": "turbo run storybook",
+    "build-storybook": "turbo run build-storybook"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "turbo": "2.11.7",
+    "typescript": "catalog:"
+  }
+}

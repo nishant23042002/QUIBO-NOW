@@ -1,0 +1,10 @@
+{
+  "name": "@quibo/config",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Shared tsconfig, eslint config and env validation",
+  "exports": {
+    "./tsconfig/*": "./tsconfig/*"
+  }
+}

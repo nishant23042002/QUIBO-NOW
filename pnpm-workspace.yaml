@@ -1,0 +1,10 @@
+packages:
+  - apps/*
+  - packages/*
+
+# One place for versions shared by several workspaces. Exact versions, no ranges.
+catalog:
+  # TypeScript stays below 6.1: typescript-eslint 8.x declares "typescript <6.1.0".
+  # See docs/decisions/0003-toolchain-version-pins.md.
+  typescript: 6.0.3
+  "@types/node": 24.19.1
