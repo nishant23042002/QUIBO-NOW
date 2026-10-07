@@ -1,0 +1,10 @@
+# Store and check out LF everywhere, whatever core.autocrlf says on the machine.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
