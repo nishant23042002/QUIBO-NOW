@@ -1,0 +1,118 @@
+/*
+ * Design tokens as plain CSS variables (prefix --qb-). Colours are a placeholder palette:
+ * the brand is not decided yet (PLAN section 1), so changing the look is a change to this
+ * file only. Every text and component pairing was checked against WCAG AA (4.5:1 for text,
+ * 3:1 for borders and focus rings); Storybook runs axe on every state to keep it that way.
+ */
+:root {
+  color-scheme: light;
+
+  /* Colour: surfaces and text */
+  --qb-color-canvas: #faf9f5;
+  --qb-color-surface: #ffffff;
+  --qb-color-surface-muted: #f0eee7;
+  --qb-color-ink: #1c1b18;
+  --qb-color-ink-muted: #57554d;
+  /* Decorative borders (cards, dividers). Not for form controls: use line-strong. */
+  --qb-color-line: #d9d6cc;
+  /* Borders of controls such as inputs: 4:1 on white, above the 3:1 WCAG asks for. */
+  --qb-color-line-strong: #7d7a6f;
+  --qb-color-scrim: rgb(28 27 24 / 0.55);
+
+  /* Colour: brand and focus */
+  --qb-color-brand: #1b6b3a;
+  --qb-color-brand-hover: #14552d;
+  --qb-color-on-brand: #ffffff;
+  --qb-color-brand-subtle: #e4f2e8;
+  --qb-color-focus: #1a5fb4;
+
+  /* Colour: status. Each strong colour is text on its own subtle background. */
+  --qb-color-success: #176534;
+  --qb-color-success-subtle: #e3f3e8;
+  --qb-color-warning: #7a4b00;
+  --qb-color-warning-subtle: #fff1d0;
+  --qb-color-danger: #b3261e;
+  --qb-color-danger-subtle: #fde9e7;
+  --qb-color-info: #1a5fb4;
+  --qb-color-info-subtle: #e5eefa;
+
+  --qb-color-disabled-bg: #e6e4dc;
+  --qb-color-disabled-text: #6b6960;
+
+  /*
+   * Type. System fonts only, so nothing is downloaded on a weak network; Android and Windows
+   * ship Devanagari fonts. Sizes are rem, so they follow the user's text size setting and
+   * stay usable at 200%. The body size is 18px at the default setting and nothing is below
+   * 14px: this audience includes elders and low-end screens.
+   */
+  --qb-font-sans:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Noto Sans', 'Noto Sans Devanagari', 'Nirmala UI',
+    sans-serif;
+  --qb-text-xs: 0.875rem;
+  --qb-text-sm: 1rem;
+  --qb-text-base: 1.125rem;
+  --qb-text-lg: 1.25rem;
+  --qb-text-xl: 1.5rem;
+  --qb-text-2xl: 1.875rem;
+  --qb-text-3xl: 2.25rem;
+  --qb-text-4xl: 3rem;
+  --qb-leading-tight: 1.25;
+  --qb-leading-normal: 1.5;
+  --qb-leading-relaxed: 1.65;
+  --qb-tracking-normal: normal;
+
+  /* Spacing: 4px grid, as rem. */
+  --qb-space-1: 0.25rem;
+  --qb-space-2: 0.5rem;
+  --qb-space-3: 0.75rem;
+  --qb-space-4: 1rem;
+  --qb-space-5: 1.25rem;
+  --qb-space-6: 1.5rem;
+  --qb-space-8: 2rem;
+  --qb-space-10: 2.5rem;
+  --qb-space-12: 3rem;
+  --qb-space-16: 4rem;
+
+  /* Smallest thing a thumb has to hit: 48px at the default text size. */
+  --qb-tap-min: 3rem;
+
+  --qb-radius-sm: 0.375rem;
+  --qb-radius-md: 0.75rem;
+  --qb-radius-lg: 1rem;
+  --qb-radius-xl: 1.5rem;
+  --qb-radius-full: 9999px;
+
+  --qb-shadow-1: 0 1px 2px rgb(28 27 24 / 0.12);
+  --qb-shadow-2: 0 -8px 24px rgb(28 27 24 / 0.2);
+
+  --qb-focus-width: 3px;
+  --qb-focus-offset: 2px;
+
+  /* Motion */
+  --qb-duration-fast: 120ms;
+  --qb-duration-normal: 200ms;
+  --qb-duration-slow: 320ms;
+  --qb-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --qb-ease-emphasized: cubic-bezier(0.3, 0, 0, 1.1);
+}
+
+/*
+ * Devanagari stacks vowel signs above and below the line, so it needs more line height than
+ * Latin text, and letter-spacing must never be applied to it. Placed after :root on purpose
+ * (equal specificity, later wins).
+ */
+:lang(hi),
+:lang(mr) {
+  --qb-leading-tight: 1.45;
+  --qb-leading-normal: 1.7;
+  --qb-leading-relaxed: 1.85;
+  --qb-tracking-normal: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --qb-duration-fast: 0.01ms;
+    --qb-duration-normal: 0.01ms;
+    --qb-duration-slow: 0.01ms;
+  }
+}

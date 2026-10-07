@@ -1,0 +1,113 @@
+/*
+ * The Tailwind preset. Tailwind v4 has no JavaScript presets: the theme is CSS. Import after
+ * tokens.css, in the app's global stylesheet:
+ *
+ *   @import 'tailwindcss';
+ *   @import '@quibo/ui/tokens.css';
+ *   @import '@quibo/ui/theme.css';
+ *   @source '<path to packages/ui/src>';   (so Tailwind sees the classes used by the primitives)
+ *
+ * `inline` makes utilities read the --qb-* variables directly, so a token change applies
+ * everywhere without rebuilding.
+ */
+@theme inline {
+  /* Only the project's colours exist: bg-red-500 and friends are deliberately unavailable. */
+  --color-*: initial;
+  --color-canvas: var(--qb-color-canvas);
+  --color-surface: var(--qb-color-surface);
+  --color-surface-muted: var(--qb-color-surface-muted);
+  --color-ink: var(--qb-color-ink);
+  --color-ink-muted: var(--qb-color-ink-muted);
+  --color-line: var(--qb-color-line);
+  --color-line-strong: var(--qb-color-line-strong);
+  --color-scrim: var(--qb-color-scrim);
+  --color-brand: var(--qb-color-brand);
+  --color-brand-hover: var(--qb-color-brand-hover);
+  --color-on-brand: var(--qb-color-on-brand);
+  --color-brand-subtle: var(--qb-color-brand-subtle);
+  --color-focus: var(--qb-color-focus);
+  --color-success: var(--qb-color-success);
+  --color-success-subtle: var(--qb-color-success-subtle);
+  --color-warning: var(--qb-color-warning);
+  --color-warning-subtle: var(--qb-color-warning-subtle);
+  --color-danger: var(--qb-color-danger);
+  --color-danger-subtle: var(--qb-color-danger-subtle);
+  --color-info: var(--qb-color-info);
+  --color-info-subtle: var(--qb-color-info-subtle);
+  --color-disabled-bg: var(--qb-color-disabled-bg);
+  --color-disabled-text: var(--qb-color-disabled-text);
+  --color-transparent: transparent;
+  --color-current: currentColor;
+
+  --font-sans: var(--qb-font-sans);
+
+  --text-xs: var(--qb-text-xs);
+  --text-xs--line-height: var(--qb-leading-normal);
+  --text-sm: var(--qb-text-sm);
+  --text-sm--line-height: var(--qb-leading-normal);
+  --text-base: var(--qb-text-base);
+  --text-base--line-height: var(--qb-leading-normal);
+  --text-lg: var(--qb-text-lg);
+  --text-lg--line-height: var(--qb-leading-normal);
+  --text-xl: var(--qb-text-xl);
+  --text-xl--line-height: var(--qb-leading-tight);
+  --text-2xl: var(--qb-text-2xl);
+  --text-2xl--line-height: var(--qb-leading-tight);
+  --text-3xl: var(--qb-text-3xl);
+  --text-3xl--line-height: var(--qb-leading-tight);
+  --text-4xl: var(--qb-text-4xl);
+  --text-4xl--line-height: var(--qb-leading-tight);
+
+  --radius-sm: var(--qb-radius-sm);
+  --radius-md: var(--qb-radius-md);
+  --radius-lg: var(--qb-radius-lg);
+  --radius-xl: var(--qb-radius-xl);
+  --radius-full: var(--qb-radius-full);
+
+  --shadow-sm: var(--qb-shadow-1);
+  --shadow-sheet: var(--qb-shadow-2);
+
+  --ease-standard: var(--qb-ease-standard);
+  --ease-emphasized: var(--qb-ease-emphasized);
+}
+
+@theme {
+  --animate-sheet-in: qb-sheet-in var(--qb-duration-normal) var(--qb-ease-standard) both;
+
+  @keyframes qb-sheet-in {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+}
+
+/* The smallest thumb target: 48px at the default text size. */
+@utility tap-target {
+  min-height: var(--qb-tap-min);
+  min-width: var(--qb-tap-min);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: var(--qb-color-canvas);
+    color: var(--qb-color-ink);
+    font-family: var(--qb-font-sans);
+    font-size: var(--qb-text-base);
+    line-height: var(--qb-leading-normal);
+    letter-spacing: var(--qb-tracking-normal);
+  }
+
+  /* The ring is offset from the control, so its contrast is measured against the page. */
+  :focus-visible {
+    outline: var(--qb-focus-width) solid var(--qb-color-focus);
+    outline-offset: var(--qb-focus-offset);
+  }
+}

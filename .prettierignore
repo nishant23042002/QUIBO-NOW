@@ -12,3 +12,6 @@ pnpm-lock.yaml
 # Owned by the human, never reformatted by tooling.
 CLAUDE.md
 docs/PLAN.md
+
+# Local app/agent settings, not part of the project.
+.claude
