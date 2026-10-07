@@ -5,10 +5,11 @@
   "type": "module",
   "description": "Customer PWA. Phase 0 is only the shell: manifest, placeholder home and language switcher.",
   "scripts": {
+    "prepare": "next typegen",
     "dev": "next dev --port 3000",
     "build": "next build",
     "start": "next start --port 3000",
-    "lint": "eslint --max-warnings 0 .",
+    "lint": "next typegen && eslint --max-warnings 0 .",
     "typecheck": "next typegen && tsc --noEmit",
     "e2e": "playwright test"
   },
