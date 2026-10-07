@@ -10,42 +10,44 @@ only for what was checked by command; the last section is for the human to verif
 
 ## A. Workspace and tooling
 
-- [ ] pnpm workspaces and Turborepo; Node pinned in `.nvmrc` and `engines`; `packageManager` set
-- [ ] TypeScript strict everywhere (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) from a shared base in `packages/config`
-- [ ] ESLint (flat config), Prettier, EditorConfig, Husky with lint-staged, commitlint
-- [ ] Vitest for unit tests, Playwright for end-to-end tests, Storybook for `packages/ui` with the accessibility add-on
-- [ ] GitHub Actions: frozen-lockfile install, lint, typecheck, test, build, Playwright smoke test; pnpm and Turborepo caches
-- [ ] `.env.example` and a Zod-validated env loader in `packages/config`; no secrets in the repository
+- [x] pnpm workspaces and Turborepo; Node pinned in `.nvmrc` and `engines`; `packageManager` set
+- [x] TypeScript strict everywhere (`strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`) from a shared base in `packages/config`
+- [x] ESLint (flat config), Prettier, EditorConfig, Husky with lint-staged, commitlint
+- [x] Vitest for unit tests, Playwright for end-to-end tests, Storybook for `packages/ui` with the accessibility add-on
+- [x] GitHub Actions: frozen-lockfile install, lint, typecheck, test, build, Playwright smoke test; pnpm and Turborepo caches
+- [x] `.env.example` and a Zod-validated env loader in `packages/config`; no secrets in the repository
 
 ## B. Folder structure
 
-- [ ] `apps/customer-web`: runnable Next.js app (App Router, TypeScript, Tailwind), PWA manifest, placeholder home, en/hi/mr language switcher, nothing more
-- [ ] `apps/admin`, `apps/driver`, `apps/api`, `apps/worker`: placeholder workspaces that pass lint and typecheck, each with a README naming its phase
-- [ ] `packages/contracts`: Money (integer paise, branded, add, subtract, multiply by quantity, rupee formatting, tests), TownId, FulfilmentMode, StockMode, StoreType, OrderStatus with the allowed-transitions table (stub), one index export
-- [ ] `packages/mocks`: MSW with a single `/health` handler and two fixtures typed by the contracts (a town in partner mode, a town in dark-store mode)
-- [ ] `packages/ui`: design tokens as CSS variables, a Tailwind theme, `Button`, `Input`, `Card`, `Badge`, `Sheet`, each with Default, Disabled, Loading and Error stories; tap targets at least 48px
-- [ ] `packages/i18n`: en, hi, mr message files and a test that fails if any key is missing in any language
-- [ ] `packages/config`: tsconfig, eslint, env validation
-- [ ] `infra/docker-compose.yml` (PostgreSQL + PostGIS, Redis) and a README
-- [ ] `docs/decisions/0001` and `0002`, this file, and `PHASE-TEMPLATE.md`; `PLAN.md` and `CLAUDE.md` untouched
+- [x] `apps/customer-web`: runnable Next.js app (App Router, TypeScript, Tailwind), PWA manifest, placeholder home, en/hi/mr language switcher, nothing more
+- [x] `apps/admin`, `apps/driver`, `apps/api`, `apps/worker`: placeholder workspaces that pass lint and typecheck, each with a README naming its phase
+- [x] `packages/contracts`: Money (integer paise, branded, add, subtract, multiply by quantity, rupee formatting, tests), TownId, FulfilmentMode, StockMode, StoreType, OrderStatus with the allowed-transitions table (stub), one index export
+- [x] `packages/mocks`: MSW with a single `/health` handler and two fixtures typed by the contracts (a town in partner mode, a town in dark-store mode)
+- [x] `packages/ui`: design tokens as CSS variables, a Tailwind theme, `Button`, `Input`, `Card`, `Badge`, `Sheet`, each with Default, Disabled, Loading and Error stories; tap targets at least 48px
+- [x] `packages/i18n`: en, hi, mr message files and a test that fails if any key is missing in any language
+- [x] `packages/config`: tsconfig, eslint, env validation
+- [x] `infra/docker-compose.yml` (PostgreSQL + PostGIS, Redis) and a README
+- [x] `docs/decisions/0001` and `0002`, this file, and `PHASE-TEMPLATE.md`; `PLAN.md` and `CLAUDE.md` untouched
 
 ## C. Guardrails
 
-- [ ] Root README with setup steps, commands and the phase workflow
-- [ ] Versions looked up at install time; dependencies not named in the prompt were approved in the plan
-- [ ] No business logic, no extra screens, no API endpoints, no database schema
+- [x] Root README with setup steps, commands and the phase workflow
+- [x] Versions looked up at install time; dependencies not named in the prompt were approved in the plan
+- [x] No business logic, no extra screens, no API endpoints, no database schema
 
 ## Verification
 
-1. [ ] Fresh clone: remove `node_modules`, run `pnpm install --frozen-lockfile`
-2. [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`
-3. [ ] `pnpm dev` serves customer-web on port 3000; the home page loads; the switcher changes visible text for en, hi and mr
-4. [ ] `pnpm build-storybook` builds; axe reports no violations on the primitives (`pnpm a11y`)
-5. [ ] `pnpm e2e` smoke test passes (home loads, language switch works)
-6. [ ] Lighthouse mobile run on the home page: scores and first-load JavaScript size
-7. [ ] The CI workflow file is valid and its steps match the commands above
-8. [ ] Money tests cover rounding, addition, negative values and rupee formatting
-9. [ ] Contract tests show `FulfilmentMode`, `StockMode` and `StoreType` accept valid values and reject invalid ones
+Ticked means checked by command; results and evidence are in the report. Item 6 carries the budget finding (see Budgets), and item 7 was a structural check of the workflow: it has not run on GitHub and `actionlint` was not run.
+
+1. [x] Fresh clone: remove `node_modules`, run `pnpm install --frozen-lockfile`
+2. [x] `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build`
+3. [x] `pnpm dev` serves customer-web on port 3000; the home page loads; the switcher changes visible text for en, hi and mr
+4. [x] `pnpm build-storybook` builds; axe reports no violations on the primitives (`pnpm a11y`)
+5. [x] `pnpm e2e` smoke test passes (home loads, language switch works)
+6. [x] Lighthouse mobile run on the home page: scores and first-load JavaScript size
+7. [x] The CI workflow file is valid and its steps match the commands above
+8. [x] Money tests cover rounding, addition, negative values and rupee formatting
+9. [x] Contract tests show `FulfilmentMode`, `StockMode` and `StoreType` accept valid values and reject invalid ones
 
 ## Budgets (working targets, set here as PLAN section 16 asks)
 
