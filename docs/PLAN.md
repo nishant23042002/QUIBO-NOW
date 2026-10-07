@@ -4,14 +4,16 @@ Oct 8, 2026 · @workspace.nishant
 
 ## 1. Read this first
 
-Build a kirana-powered delivery network for towns where dark stores cannot pay for themselves, not a smaller copy of Blinkit. Writing the app is only part of the job; winning shops, riders and trust in one town is the rest.
+Build one delivery product that runs in two switchable modes per town: partner stores first, and a single small dark store of your own when the numbers justify it; either way it is not a smaller copy of Blinkit. Writing the app is only part of the job; winning shops, riders and trust in one town is the rest.
 
 | Your brief | What this plan does instead | Why |
 | --- | --- | --- |
 | Giants have not reached these towns yet | Target towns where their dark-store model does not pay, not towns they have merely not reached | Flipkart Minutes and Amazon Now are already pushing into tier 2 and 3; the break-even maths is in section 2 |
-| Dark stores and 10-minute delivery | Partner stores, a 30 to 45 minute promise and scheduled slots | No rent, stock or picker payroll to carry; reliability matters more than raw speed in small towns |
+| Dark stores and 10-minute delivery | Partner stores by default and one company dark store per town as a switchable option; a 30 to 45 minute promise and scheduled slots | Partner mode carries no rent, stock or picker payroll; dark-store mode trades that for control of stock and margin; reliability matters more than raw speed in small towns |
 | UI and screens first: customer app, then admin panel, then driver app | Same order, but each surface runs as a mock-data UI phase, then a live phase, with a tested gate between phases | A tested screen is cheap to change; a backend built against a signed-off screen and contract is not rebuilt |
 | Build everything, then launch | Run a manual WhatsApp version in one town while you build | Two to three weeks of manual orders show what to build and what to skip |
+
+**Two modes, one product.** Fulfilment mode (partner stores, one dark store, or both) is a per-town setting, so you can start in either mode and switch at any point in the build. The customer app, order flow, payments, riders and ledger are identical in both modes; only the supply side differs (stock counts, receiving and picking instead of shop toggles). Section 7 gives the switch triggers and procedure, and section 14 shows what a dark store costs. Also decide the starting mode per town.
 
 PWA = progressive web app: a website that installs like an app, works on weak networks and needs no Play Store approval.
 
@@ -47,7 +49,7 @@ What this means for the plan:
 
 - **The window is real and closing.** Flipkart is already opening in district towns such as Darbhanga, Purnia, Jorhat and Tenali. Treat 12 to 24 months of head start as a working guess, shorter in bigger towns.
 - **Your real competitor is the kirana's own phone and WhatsApp delivery.** Kiko Live, a kirana software firm, claimed in March 2024 that call and WhatsApp home delivery is already over 10% of kirana business, an $80 billion plus market by its estimate ([Retail4Growth](https://retail4growth.com/news/will-ondc-and-its-enablers-drive-growth-of-kirana-e-commerce-6676)). It is a company claim, so treat it as indicative.
-- **Win where a dark store loses.** Wide catchments, small baskets, credit, trust, local language and cash payment are cheap for a partner-store model and expensive for a dark-store model; section 4 turns each into a feature.
+- **Win where a dark store loses.** Wide catchments, small baskets, credit, trust, local language and cash payment are cheap for a partner-store model and expensive for a dark-store model; section 4 turns each into a feature. A single small dark store stays available as a switchable fallback (section 7).
 - **Do not promise 10 minutes.** The giants dropped the claim under regulatory pressure, and small-town customers do not reward it; promise a window you can keep.
 
 ## 3. Target towns, users and personas
@@ -64,6 +66,7 @@ Pick one town of roughly 30,000 to 1,50,000 people that no giant serves yet, win
 | UPI and smartphone habit | Decides how much of your volume is prepaid | Count shops showing a UPI QR; ask 20 households which phone and data plan they use |
 | Someone you trust on the ground daily | The pilot is operations-heavy, not code-heavy | A family or partner contact in the town |
 | A wholesale source within about 30 km | Restocking staples and fresh produce for partner shops | Locate the nearest mandi or distributor |
+| A shop-sized unit available near the centre | Needed only if you switch the town to a dark store | Ask three brokers for 600 to 1,000 sq ft rentals within 2 km of the main market and note the rent |
 
 **Personas**
 
@@ -107,6 +110,8 @@ Two more patterns shape operations rather than screens. Festivals, wedding seaso
 
 The same table is the answer to "why not just clone Blinkit": a dark-store app assumes dense demand, owned stock and a 10-minute promise; none of the three holds in these towns.
 
+**Switchable by design.** Rows 1 and 10 change shape in dark-store mode (one branded store, weighing done in-house); rows 2 to 9 hold in both modes, which is why the customer app is built once and tested in both (section 12).
+
 ## 5. Product scope by phase
 
 The MVP is one town, three apps (customer, admin with a store portal, driver) on one backend, and a manual fallback for anything not built yet; everything in V2 and V3 is earned by pilot data, not guessed.
@@ -120,10 +125,11 @@ The MVP is one town, three apps (customer, admin with a store portal, driver) on
 | Payments | COD, UPI through a gateway, refunds | Prepaid offer, doorstep UPI QR, reconciliation | Wallet or credits, ONDC settlement |
 | Messaging | WhatsApp utility templates, SMS or WhatsApp OTP, web push | Rider and store push, ops alerts to a WhatsApp group | Smart nudges, reorder reminders |
 | Trust | FSSAI number shown per shop, order OTP at delivery, bill photo | Ratings, complaint tracking, store quality score | Verified-shop badges |
+| Fulfilment modes | Partner mode live in the pilot town; dark-store mode designed in contracts, data model and admin screens and switched off by a per-town setting | Dark-store mode live in the pilot town if the switch triggers in section 7 are met; goods receipt, stock counts and pick lists in daily use | Hybrid towns, expiry and wastage analytics, reorder suggestions, supplier price tracking |
 
 **Deliberately not built yet**
 
-- **Dark store or owned stock.** The model rests on partner stock; revisit only if a town proves 800+ orders a day.
+- **More than one dark store per town, forecasting and auto-purchasing.** One dark store per town is supported by design and switchable by setting; more than one waits for proof that a single store runs above its break-even volume.
 - **Native iOS app.** Android dominates in these towns by assumption; the PWA covers iPhones.
 - **Wallet, coins, referral engine.** Discount machinery hides whether the product itself works; run one simple first-order offer.
 - **Live ML delivery estimates.** Use fixed windows per zone until you have data.
@@ -133,6 +139,8 @@ The MVP is one town, three apps (customer, admin with a store portal, driver) on
 ## 6. The apps: customer, store, rider, admin
 
 Build in this order: customer web app, then the admin panel (which includes the store portal), then the driver app; each starts as a mock-data UI phase and goes live in a second phase against the shared API. Orders stay single-shop in the MVP, so every order has exactly one store and one delivery.
+
+**Two modes, one UI.** Screens read the town's fulfilment mode: in partner mode Home lists shops, in dark-store mode Home opens straight into the one branded store; item availability is a toggle in one mode and a stock count in the other. Build each screen once and design both states in Phase 1.
 
 ### Customer web app (Next.js PWA)
 
@@ -185,8 +193,8 @@ Every screen below is designed and built on mock data first, then wired to the l
 
 | Surface and phases | Screens, in build order | Every screen must also have |
 | --- | --- | --- |
-| Customer app, phases 1 and 2 | 1 language and phone OTP; 2 home with Your shops, categories and reorder strip; 3 shop page; 4 search results; 5 item sheet (pack size, loose weight, substitution choice); 6 cart; 7 address and map pin; 8 checkout (slot, COD or UPI); 9 order tracking; 10 order history and reorder; 11 help; 12 profile and saved addresses | Loading, empty, error and offline states; Hindi and Marathi text, which often runs longer than English; 200% text size; the main action within thumb reach |
-| Admin panel and store portal, phases 3 and 4 | Admin: login; order board; order detail; Assisted order form; stores list and onboarding; catalogue editor; zone editor; customers and support; finance (payouts, cash close); content; staff and roles. Store portal: new-order alert; pack screen; availability and prices; today and payouts; shop profile | The same four states; keyboard use; search and filters on every list; an audit trail on every change |
+| Customer app, phases 1 and 2 | 1 language and phone OTP; 2 home with Your shops, categories and reorder strip; 3 shop page; 4 search results; 5 item sheet (pack size, loose weight, substitution choice); 6 cart; 7 address and map pin; 8 checkout (slot, COD or UPI); 9 order tracking; 10 order history and reorder; 11 help; 12 profile and saved addresses | Loading, empty, error and offline states; Hindi and Marathi text, which often runs longer than English; 200% text size; the main action within thumb reach; every screen shown in both fulfilment modes |
+| Admin panel and store portal, phases 3 and 4 | Admin: login; order board; order detail; Assisted order form; stores list and onboarding; catalogue editor; zone editor; customers and support; finance (payouts, cash close); content; staff and roles. Store portal: new-order alert; pack screen; availability and prices; today and payouts; shop profile. Dark-store console (enabled per town): goods receipt, stock list and counts, expiry and wastage, pick list, pack and handover, reorder list | The same four states; keyboard use; search and filters on every list; an audit trail on every change |
 | Driver app, phases 5 and 6 | 1 login and duty switch; 2 offer card; 3 pickup with code; 4 navigation hand-off; 5 drop with OTP and COD amount; 6 UPI QR; 7 cash ledger and deposit; 8 earnings; 9 support and SOS | Large buttons usable on a bike stand; works on poor signal; no timers or penalties |
 
 ## 7. Operations model
@@ -212,6 +220,45 @@ The three dashed exits are the cases ops handles by phone in the MVP; the app on
 
 Every number in this table is a working default to tune with pilot data.
 
+### Dark-store mode: one store per town
+
+Switching a town to dark-store mode adds one company-owned store with counted stock; the customer app, riders, payments and order flow do not change.
+
+| Area | Dark-store rule (working default) | Why |
+| --- | --- | --- |
+| Premises | One 600 to 1,000 sq ft unit within 2 km of the main market, ground floor, easy loading; rent budget about Rs 25,000 a month | Close to demand keeps delivery inside the window; small keeps fixed cost low |
+| Assortment | The 300 fastest items plus daily milk, vegetables and bakery; widen only on request data | A few items drive most orders; slow items become dead stock |
+| Sourcing | Packaged goods weekly from a wholesaler or cash-and-carry; milk and vegetables daily; cap stock cover at about 7 days | Limits cash tied up and expiry |
+| Receiving | Every delivery logged as a goods receipt with batch and expiry; first-expiry-first-out; cold storage for milk and curd | Traceability for FSSAI and fewer expired items |
+| Picking and packing | One pick list per order sorted by shelf; aim for 8 minutes from accept to ready; substitutions need consent exactly as in partner mode | Speed without dark-store scale |
+| Stock control | Daily count of the 30 fastest items and a weekly full count; adjust only through logged movements | Keeps the on-hand number trustworthy |
+| Wastage | Under 3% of sales; mark down short-dated items before they expire | Fresh categories decide margin |
+| Pricing | At or below MRP; weekly check against three nearby shops | Same fair-price promise as partner mode |
+| Staffing | A manager, 3 pickers and packers, 2 or 3 riders; shop-and-establishment rules apply | Roughly Rs 64,000 a month of staff cost in the section 14 sketch |
+| Cash | Pay suppliers weekly; hold no more than about Rs 6 lakh of stock; COD handled as before | Working capital is the new risk |
+
+**When to switch (working triggers)**
+
+| Signal | Threshold | Why it matters |
+| --- | --- | --- |
+| Shops accepting within 90 seconds | Below 60% for 4 weeks despite coaching | Partner supply cannot keep the promise |
+| Fill rate | Below 85% for 4 weeks | Stock-outs at partner shops hurt reorders |
+| Demand density | 100+ orders a day for 2 weeks, still growing, inside one 3 km radius | Within reach of the dark-store break-even in section 14 |
+| Order concentration | The top 300 items make up roughly 70% of orders | A small assortment can serve most demand |
+| Cash available | About Rs 9.6 lakh: three months of fixed cost plus a stock float, per the section 14 sketch | A dark store burns cash before it breaks even |
+| Premises and licences | Unit identified and FSSAI route clear (section 11) | A switch cannot wait on paperwork |
+
+**How to switch**
+
+1. Freeze new shop onboarding and tell partner shops the date.
+2. In admin, create one store of type dark, owned by the company, with counted stock and auto-accept on; load opening stock as goods receipts.
+3. Run both modes for two weeks and compare fill rate, on-time rate and contribution per order.
+4. Set the town's fulfilment mode to dark; partner shops are hidden but their data is kept.
+5. Orders in flight finish under the store they were placed with.
+6. To go back, reverse steps 2 to 4 and sell the remaining stock down first.
+
+You may switch earlier for strategic reasons; the plan supports it, and section 14 shows what it costs.
+
 ## 8. System architecture
 
 Three apps share one API and one database; payments, messaging and maps are rented, and the only custom infrastructure is a worker for timers and sends.
@@ -231,6 +278,8 @@ Dashed boxes are rented services; swapping any one of them should touch one modu
 - **Config lives in the database.** Zones, fee bands, slots, minimums and COD limits sit in tables with admin screens, not in code.
 - **Multi-town from day one.** A `town_id` on every business table is cheap now and painful to retrofit.
 - **Security basics.** OTP rate limits, role-based access, signed upload URLs, an audit log of admin actions and minimal personal data (section 11).
+
+**Fulfilment mode is configuration.** `town.fulfilment_mode` (partner, dark or hybrid) and `store.stock_mode` (toggle or counted) decide supply behaviour. Order, payment, dispatch and ledger code never branch on them; one small `FulfilmentStrategy` per module covers the differences in availability, accept, pick and settle.
 
 ## 9. Tech stack
 
@@ -278,18 +327,18 @@ Use TypeScript end to end on a PostgreSQL-backed modular monolith, with web apps
 
 ## 10. Core data model
 
-The model is about 18 tables; the hard parts are the order snapshot, weighed items, the zone check and the ledger, not the table count. Every business table carries `town_id`, and all money is stored as integer paise.
+The model is about 23 tables, five of them used only in dark-store mode; the hard parts are the order snapshot, weighed items, the zone check and the ledger, not the table count. Every business table carries `town_id`, and all money is stored as integer paise.
 
 | Entity | Key fields | Notes |
 | --- | --- | --- |
-| `town` | name, state, status, settings | The tenant; one row per launched town |
+| `town` | name, state, status, fulfilment\_mode (partner, dark, hybrid), settings | The tenant; one row per launched town |
 | `zone` | town\_id, polygon, fee bands, minimum order, slots | PostGIS polygon; drives serviceability and fees |
 | `user` | phone (unique), name, role, language | One table for customers, store owners, riders and staff |
 | `address` | user\_id, zone\_id, lat, lng, landmark, ward, alt\_phone | Zone is computed when saved |
-| `store` | owner, name, FSSAI number, GST number, location, hours, status, commission, self\_delivery | Status: onboarding, active, paused |
+| `store` | type (partner or dark), stock\_mode (toggle or counted), owner, name, FSSAI number, GST number, location, hours, status, commission, auto\_accept, self\_delivery | Status: onboarding, active, paused |
 | `master_item` | names in en, hi, mr; brand; unit type; pack size; MRP; category | The shared catalogue |
 | `item_alias` | item\_id, alias, language | Powers "dudh" finding milk |
-| `store_item` | store\_id, master\_item\_id, price, available, max\_qty, sold\_by\_weight, tolerance | Availability toggle, not a stock count |
+| `store_item` | store\_id, master\_item\_id, price, available, max\_qty, sold\_by\_weight, tolerance | Availability toggle in partner mode; in dark-store mode the count is derived from stock movements |
 | `order` | customer, store, address snapshot, status, payment method and status, totals, promised\_by | One store per order in the MVP |
 | `order_item` | name and price snapshot, ordered qty, final qty, final price, substitute\_of | Final values come from weighing and packing |
 | `order_event` | order\_id, from and to status, actor, reason, time | Append-only; the audit trail |
@@ -300,17 +349,24 @@ The model is about 18 tables; the hard parts are the order snapshot, weighed ite
 | `payout` | party (store or rider), period, amount, status, bank reference | Created by a settlement run |
 | `refund` | order\_id, amount, reason code, fault (shop, rider, platform, customer) | Fault decides who bears the cost |
 | `ticket`, `audit_log`, `notification_log` | order link, actor, before and after, provider message id | Support and traceability |
+| supplier | name, contact, GSTIN, payment terms | Dark-store mode only |
+| goods\_receipt | store\_id, supplier\_id, invoice number, lines (item, qty, cost, expiry), received\_by | One receipt creates stock batches and movements |
+| stock\_batch | store\_id, item\_id, qty\_on\_hand, cost, expiry, received\_at | Picked first-expiry-first-out |
+| stock\_movement | store\_id, item\_id, batch\_id, type (receipt, reserve, release, pick, wastage, adjustment, return), qty, reference | Append-only; on-hand is derived from it |
+| pick\_task | order\_id, picker\_id, status, picked and short lines, started and finished at | One per order in dark-store mode |
 
 **The hard parts**
 
 1. **Snapshots.** Copy item names, prices and the address into the order at placement so later edits never rewrite history.
 2. **Weighed items.** Store the ordered quantity and the final quantity. For prepaid orders in the MVP, take payment only after the final bill, or limit prepaid to fixed-price items.
-3. **Availability, not stock.** A toggle plus `max_qty` and a daily cutoff prevents most overselling without inventory sync.
+3. **Availability or counted stock.** A toggle plus `max_qty` and a daily cutoff prevents most overselling in partner mode; in dark-store mode available stock is on hand minus reserved, derived from stock movements, with a reservation at checkout that is released on cancel or timeout.
 4. **Zone check.** Point-in-polygon on the saved pin decides serviceability, fee band and slots; block checkout outside every zone.
 5. **One state machine.** All transitions go through a single function with a table of allowed moves per actor; nothing updates `status` directly.
 6. **Ledger accounts.** Use accounts such as customer receivable, rider cash, store payable, platform revenue and gateway clearing; every order creates balanced entries, and a COD rupee stays on the rider's account until the nightly deposit clears it.
 7. **Idempotency.** Unique keys on order creation and payment attempts, and the provider's event id on webhooks, so retries never double-charge or double-credit.
 8. **Personal data.** Keep Aadhaar-linked rider documents and consent records in a separate access-controlled table with retention rules (section 11).
+
+**Switching modes is data, not code.** To start a dark store, create one store row of type dark with counted stock, load opening stock as goods receipts and set the town's fulfilment mode; to go back, reverse it. Orders in flight keep the store they were placed with.
 
 ## 11. Compliance and money
 
@@ -326,6 +382,7 @@ Three rules change the build: a food-ordering platform needs its own FSSAI licen
 | Tax at source | From general knowledge: e-commerce operators have GST TCS and income-tax TDS duties on sales they facilitate, plus GST on commission and delivery fees | Record every order with GSTIN, HSN and tax split; ask a CA for rates and filing dates |
 | Consumer rules | From general knowledge: the Consumer Protection (E-Commerce) Rules, 2020 require a grievance officer, seller and price disclosure and a stated refund policy; Legal Metrology rules govern MRP and weighing scales | Footer with grievance contact, refund policy page, MRP and net quantity on listings, shops use verified scales |
 | Messaging | SMS needs DLT registration of sender and templates (from general knowledge); WhatsApp needs a verified business and approved templates; Meta's October 2026 reports put utility messages near Rs 0.115 and marketing near Rs 0.86 each before GST ([TelecomTalk](https://telecomtalk.info/whatsappbusiness-price-reveal-telegram-arattai-may-benefit/1012403/)) | Send order updates as utility templates, keep promotions opt-in and rare |
+| Dark-store mode | From general knowledge and FSSAI direction excerpts: an inventory-based e-commerce operator owns the stock it sells, unlike a marketplace; the premises need their own licence or registration and cold-chain hygiene; you become the seller, so you issue GST invoices and claim input credit on purchases, and the marketplace payment-aggregator and TDS questions mostly fall away for your own sales; shop-and-establishment registration, fire safety and labour rules apply to the unit | Number invoices per order, keep batch, expiry and supplier records, feed goods receipts to GST input claims, and add a licence-expiry reminder per store in admin; confirm every point with a CA before switching |
 
 **Before the pilot launches**
 
@@ -343,11 +400,11 @@ Build UI first, one surface at a time: customer app, then admin panel with the s
 | Phase (weeks) | Build | On the ground | Gate to pass before the next phase (working targets) |
 | --- | --- | --- | --- |
 | Manual pilot (1 to 3, in parallel) | One-page site with a WhatsApp order button, a sheet for orders, a UPI QR | Sign 8 to 10 shops, take real orders, deliver with 2 or 3 riders | 100+ orders, shops accept 90%+, 25%+ of customers reorder, 85%+ delivered in the promised window, customers accept the delivery fee |
-| 0. Foundation (1 to 2) | Monorepo, tooling, design tokens and UI kit, contracts package, mock API, CI (the Phase 0 prompt in section 16) | Collect shop photos and real item names for fixtures | Install, lint, typecheck, test, build, Storybook and the smoke e2e all pass on a clean clone; CI green; no open defects |
-| 1. Customer UI on mock data (3 to 5) | Every customer screen and state from section 6, Hindi and Marathi, PWA shell, mock API, Playwright flows | Show the clickable build to 5 households and 3 shop owners | 5 of 5 testers place a mock order unaided; axe shows no serious issues; Lighthouse mobile 90+ on key screens; usable on a 2 GB Android phone with throttled network; zero open blocker or major defects |
-| 2. Customer live (6 to 8) | NestJS API, PostgreSQL schema, OTP auth, catalogue, cart, order state machine, COD and UPI in test mode, ops inbox and WhatsApp alerts; mocks swapped for the API | Pilot-town customers start ordering in the app; ops handles each order from the ops inbox | Contract tests pass; real orders complete end to end; payment and refund reconcile to zero; no double charge on retry |
-| 3. Admin UI on mock data (9 to 10) | Every admin and store-portal screen and state, role-based layout, mock data | One operator and 3 shop owners try the screens | Operator and shop owners finish their tasks unaided; same accessibility and performance bars; zero open blocker or major defects |
-| 4. Admin live (11 to 13) | Assisted order, order board, store onboarding, catalogue, zones, finance basics, store alerts with the 90-second timeout | Move every pilot order and shop onto admin and retire the sheet | All pilot orders run in admin; 80%+ accepted inside 90 seconds; every admin change appears in the audit log |
+| 0. Foundation (1 to 2) | Monorepo, tooling, design tokens and UI kit, contracts package (with the fulfilment-mode types), mock API, CI (the Phase 0 prompt in section 16) | Collect shop photos and real item names for fixtures | Install, lint, typecheck, test, build, Storybook and the smoke e2e all pass on a clean clone; CI green; no open defects |
+| 1. Customer UI on mock data (3 to 5) | Every customer screen and state from section 6, Hindi and Marathi, both fulfilment modes, PWA shell, mock API, Playwright flows | Show the clickable build to 5 households and 3 shop owners | 5 of 5 testers place a mock order unaided in both fulfilment modes; axe shows no serious issues; Lighthouse mobile 90+ on key screens; usable on a 2 GB Android phone with throttled network; zero open blocker or major defects |
+| 2. Customer live (6 to 8) | NestJS API, PostgreSQL schema (including the stock tables), OTP auth, catalogue, cart, order state machine, COD and UPI in test mode, ops inbox and WhatsApp alerts; mocks swapped for the API | Pilot-town customers start ordering in the app; ops handles each order from the ops inbox | Contract tests pass; real orders complete end to end; payment and refund reconcile to zero; no double charge on retry |
+| 3. Admin UI on mock data (9 to 10) | Every admin, store-portal and dark-store-console screen and state, role-based layout, mock data | One operator and 3 shop owners try the screens | Operator and shop owners finish their tasks unaided; same accessibility and performance bars; zero open blocker or major defects |
+| 4. Admin live (11 to 13) | Assisted order, order board, store onboarding, catalogue, zones, finance basics, store alerts with the 90-second timeout; dark-store console (receiving, stock counts, pick lists) behind a per-town switch | Move every pilot order and shop onto admin and retire the sheet | All pilot orders run in admin; 80%+ accepted inside 90 seconds; every admin change appears in the audit log; a test town switches from partner to dark-store mode and back with no code change |
 | 5. Driver UI on mock data (14 to 15) | Every driver screen and state in Expo on mock data | 3 riders walk through a mock delivery | 3 of 3 riders complete a mock delivery unaided; usable one-handed on a bike stand; zero open blocker or major defects |
 | 6. Driver live (16 to 18) | Offers, batching, location, drop OTP, UPI QR, cash ledger, earnings | Move riders onto the app; nightly cash close | Cash reconciles to zero daily for a week; 90%+ delivered inside the window |
 | 7. Harden and replicate (19 to 21) | Monitoring, backups, load test, runbooks, town setup by configuration | Pick town two using the section 3 filters | Backup restore tested; load test passes; town two launches with under a week of engineering |
@@ -360,6 +417,8 @@ Why this order:
 - **Driver last.** One or two riders can be run by phone and WhatsApp until volume justifies the app; admin marks Picked up and Delivered for them.
 - **Gates are hard.** A failed gate stops the next phase: fix, retest on a clean install, tag the release, then continue.
 - **The cost of this order.** No real order flows end to end before phase 2, and none runs without a spreadsheet before phase 4; the manual pilot and the ops inbox cover that gap.
+
+**Switching to a dark store mid-build.** Because fulfilment mode is a per-town setting, you can switch between any two phases once the section 7 triggers are met; phases 3 and 4 build the dark-store console, so the switch needs configuration and opening stock, not new code.
 
 Timing note: Diwali falls around 8 November 2026 (check your local calendar). Shops are busiest and festival items spike demand, so read pilot retention numbers from that week with care.
 
@@ -407,6 +466,34 @@ At base assumptions one order earns about Rs 2 and a town needs roughly 870 orde
 
 Commission, batching and basket size move the result most; test them in that order.
 
+**Same basket, dark-store mode (illustrative)**
+
+| Line | Partner stores, with levers (Rs per order) | One dark store (Rs per order) | Assumption |
+| --- | --- | --- | --- |
+| Basket value | 450 | 450 | Same basket in both modes |
+| Commission or margin | 40.5 | 49.5 | 9% commission against an 11% gross margin on items bought from a wholesaler |
+| Delivery and small-basket fees | 25.0 | 25.0 | Same |
+| **Revenue** | **65.5** | **74.5** | Sum of the three lines above |
+| Rider cost after batching | 20.0 | 20.0 | Same |
+| Payment gateway | 6.7 | 6.7 | Same |
+| Messaging and OTP | 1.0 | 1.0 | Same |
+| Wastage and shrink | in refunds line | 13.5 | 3% of basket; milk, vegetables and bakery drive it |
+| Refunds | 6.8 | 6.8 | 1.5% of basket; includes shrink in partner mode |
+| Support | 3.0 | 3.0 | The manager absorbs more of this in a dark store |
+| **Contribution per order** | **28.0** | **23.5** | Revenue minus the costs above |
+| Fixed cost per month (Rs) | 60,000 | 119,000 | Dark store: manager 22,000, three pickers 42,000, rent 25,000, utilities and tools 12,000, stock financing 6,000, local marketing 12,000 |
+| **Break-even orders per day** | **about 71** | **about 169** | Fixed cost divided by contribution times 30 days |
+
+In this sketch a dark store roughly doubles fixed cost and needs about 2.4 times the daily orders to break even, and it ties up about Rs 6 lakh of stock (roughly a week of sales) that the table does not show. It buys control of availability and fill rate, the retail margin instead of a commission, and no commission dispute with shops. The sketch is far smaller than the giants' stores, whose tier 2 break-even is about 800 orders a day (section 2) because their stores are larger and discount-heavy.
+
+**Dark-store metrics to add (working targets)**
+
+- Stock accuracy of 98% or better on the weekly full count
+- Wastage under 3% of sales
+- Under 8 minutes from accept to ready
+- 97% or better shelf availability on the top 100 items
+- Stock cover of about 7 days or less
+
 **Metrics to watch (working targets, tune with pilot data)**
 
 | Metric | Aim for | Why it matters |
@@ -439,6 +526,9 @@ The biggest risk is not technical: it is that unit economics, shop adoption or a
 | UI-first leaves no real order flow until phase 2 and no spreadsheet-free operations until phase 4 | Run the manual pilot in parallel; phase 2 includes an ops inbox and WhatsApp alerts; hold each phase to its window | Orders sit unanswered in the ops inbox |
 | Mock data drifts from the real API | One contracts package feeds both the mock API and the real API; contract tests run in CI; screens never import fixtures directly | A bug in a live phase that the mock phase never showed |
 | Gates drag on or get waved through | Time-box each gate to its phase window; only blocker and major defects stop a gate; log minor ones and fix them in the next phase's first week | A phase runs two weeks over, or a gate passes with known defects |
+| Switching to a dark store before volume, burning cash on rent, staff and stock | Switch only on the section 7 triggers; cap stock at about 7 days; start with 300 items; run both modes for two weeks; keep the reverse path rehearsed | Wastage above 3% of sales or stock-outs on top items |
+| Mode-specific logic leaks into shared code | A FulfilmentStrategy boundary per module; CI runs the whole order flow in both modes | A branch on fulfilment mode appears in order, payment, dispatch or ledger code |
+| Dark-store stock counts drift from reality | Daily counts of fast items, a weekly full count, every adjustment logged with a reason | Variance above 2% on a weekly count |
 
 **Things the brief did not mention but the build needs**
 
@@ -465,6 +555,8 @@ The biggest risk is not technical: it is that unit economics, shop adoption or a
 
 * [ ] Confirm the store portal lives inside the admin app (the default in this plan) or becomes its own app
 
+- [ ] Confirm the switch triggers in section 7 and who decides, and whether the pilot town starts in partner mode or dark-store mode
+
 ## 16. Handoff to Claude Code
 
 Export this doc to Markdown as `docs/PLAN.md` in a new empty repository, add the `CLAUDE.md` below at the root, then run one phase per Claude Code session: plan, build, test, review, gate, tag. Run only the Phase 0 prompt first; each later prompt is written at the start of its phase from the results of the one before.
@@ -475,7 +567,7 @@ Export this doc to Markdown as `docs/PLAN.md` in a new empty repository, add the
 # Project: hyperlocal grocery delivery for tier 3 and 4 Indian towns
 
 ## What we are building
-A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. No dark stores, no owned stock. We promise a delivery window, never minutes. One pilot town first; multi-town ready through town_id.
+A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. Partner stores by default; a single company dark store per town is an allowed alternative. We promise a delivery window, never minutes. One pilot town first; multi-town ready through town_id. Each town runs in a fulfilment mode (partner, dark or hybrid) that can be switched by configuration at any time.
 Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 
 ## How we work: UI first, phase-gated
@@ -488,7 +580,7 @@ Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 
 ## Surfaces
 - apps/customer-web: Next.js PWA (phases 1 and 2)
-- apps/admin: Next.js ops panel with the store portal as a route group (phases 3 and 4)
+- apps/admin: Next.js ops panel with the store portal and the dark-store console as route groups (phases 3 and 4)
 - apps/driver: Expo React Native app (phases 5 and 6)
 - apps/api: NestJS modular monolith, REST + OpenAPI (from phase 2)
 - apps/worker: BullMQ jobs (from phase 2)
@@ -499,6 +591,7 @@ Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 - Money is integer paise. Never floats. Ledger entries are append-only.
 - Order status changes only through OrderStateMachine.transition(); every change writes an order_events row.
 - Payment and webhook handlers are idempotent.
+- Fulfilment mode is town configuration. Order, payment, dispatch and ledger code never branch on it; differences live behind the FulfilmentStrategy interface (availability, accept, pick, settle).
 - Every business table has town_id. Zones, fees, slots and limits live in the database, not in code.
 - No hard-coded UI strings: use message keys for en, hi, mr.
 - Collect minimal personal data, log consent, never log Aadhaar numbers or OTPs.
@@ -521,7 +614,7 @@ Small commits with conventional messages. Ask before adding a dependency. Record
 hyperlocal/
   apps/
     customer-web/   Next.js PWA (phases 1 and 2)
-    admin/          Next.js ops panel, store portal as a route group (phases 3 and 4)
+    admin/          Next.js ops panel, store portal and dark-store console as route groups (phases 3 and 4)
     driver/         Expo React Native app (phases 5 and 6)
     api/            NestJS modular monolith (from phase 2)
     worker/         BullMQ processors (from phase 2)
@@ -543,7 +636,7 @@ hyperlocal/
 
 - [ ] Plan approved before coding; nothing outside the phase was built
 - [ ] lint, typecheck, test and build pass on a clean install, with no unexplained warnings
-- [ ] Playwright flows for the phase pass locally and in CI
+- [ ] Playwright flows for the phase pass locally and in CI, in both fulfilment modes
 - [ ] axe shows no serious accessibility issues; screens stay usable at 200% text size
 - [ ] Lighthouse mobile performance 90 or higher on the phase's key screens, and first-load JavaScript inside the budget set in PHASE-N.md (working targets)
 - [ ] Tested by hand on a real low-end Android phone with throttled network
@@ -556,14 +649,14 @@ hyperlocal/
 You are working in an EMPTY repository. This is PHASE 0 (Foundation) of a phase-gated build. Do not start Phase 1.
 
 CONTEXT
-We are building a hyperlocal grocery delivery product for tier 3 and 4 Indian towns: partner kirana stores, paid riders, delivery windows instead of 10-minute promises, no dark stores. The working rules are in CLAUDE.md and the full plan is in docs/PLAN.md. If either file is missing, stop and ask me to add it; do not invent them.
-Approach: UI first and contract first. Surface order: customer app, then admin panel (with a store portal), then driver app. Each surface gets a mock-data UI phase, then a live phase. Phase 0 only creates the foundation those phases stand on.
+We are building a hyperlocal grocery delivery product for tier 3 and 4 Indian towns: partner kirana stores by default (with an option to switch a town to one company dark store), paid riders, and delivery windows instead of 10-minute promises. The working rules are in CLAUDE.md and the full plan is in docs/PLAN.md. If either file is missing, stop and ask me to add it; do not invent them.
+Approach: UI first and contract first. Surface order: customer app, then admin panel (with a store portal), then driver app. Each surface gets a mock-data UI phase, then a live phase. Fulfilment is switchable per town between partner stores and one dark store, so nothing may hard-code either. Phase 0 only creates the foundation those phases stand on.
 
 GOAL
 Create the monorepo skeleton, tooling, design-system foundation, shared contracts package, mock-API package, i18n scaffold and CI, so that Phase 1 (customer UI on mock data) can start with zero setup work.
 
 WORKFLOW (follow exactly)
-1. Read CLAUDE.md and docs/PLAN.md (sections 4, 6, 8, 9, 10, 12 and 16).
+1. Read CLAUDE.md and docs/PLAN.md (sections 4, 6, 7, 8, 9, 10, 12 and 16).
 2. Enter plan mode and write a plan: file tree, dependency list with a reason for each, commands you will run, risks, and anything in this prompt you would change. Wait for my approval. Write no code before approval.
 3. After approval, work in small steps with one conventional commit per step. Run the relevant checks after each step and fix failures before moving on.
 4. When everything is built, run the full verification list below, write docs/phases/PHASE-0-report.md with the results, show me a summary, and STOP. Do not begin Phase 1.
@@ -581,13 +674,13 @@ A. Workspace and tooling
 B. Folder structure (create exactly what CLAUDE.md lists)
 - apps/customer-web: a runnable Next.js app (App Router, TypeScript, Tailwind) with a PWA shell: web app manifest, placeholder home screen, and a language switcher for en, hi and mr. Nothing more.
 - apps/admin, apps/driver, apps/api, apps/worker: placeholder workspaces only. Each has a package.json that passes lint and typecheck and a README.md saying which phase builds it. No framework code yet.
-- packages/contracts: Zod schemas and types for Money (integer paise, branded type, helpers for add, subtract, multiply by quantity and rupee formatting, with unit tests), TownId, and an OrderStatus enum with the allowed-transitions table stubbed from section 7 of the plan. One index export.
-- packages/mocks: MSW configured with a single /health handler and one tiny fixture typed by the contracts.
+- packages/contracts: Zod schemas and types for Money (integer paise, branded type, helpers for add, subtract, multiply by quantity and rupee formatting, with unit tests), TownId, FulfilmentMode (partner, dark, hybrid), StockMode (toggle, counted), StoreType (partner, dark), and an OrderStatus enum with the allowed-transitions table stubbed from section 7 of the plan. One index export.
+- packages/mocks: MSW configured with a single /health handler and two tiny fixtures typed by the contracts: one town in partner mode and one in dark-store mode.
 - packages/ui: design tokens as CSS variables (colour, type scale with large sizes, spacing, radius, motion) plus a Tailwind preset; primitives Button, Input, Card, Badge and Sheet, each with a Storybook story covering default, disabled, loading and error states; tap targets at least 48 px.
 - packages/i18n: en, hi and mr message files with a few shared keys and a test that fails if any key is missing in any language.
 - packages/config: tsconfig, eslint, env validation.
 - infra/docker-compose.yml with PostgreSQL + PostGIS and Redis (unused until Phase 2) and a README.
-- docs/: docs/decisions/0001-ui-first-contract-first.md; docs/phases/PHASE-0.md (this checklist); docs/phases/PHASE-TEMPLATE.md for later phases. Do not overwrite PLAN.md or CLAUDE.md.
+- docs/: docs/decisions/0001-ui-first-contract-first.md; docs/decisions/0002-fulfilment-mode-is-configuration.md; docs/phases/PHASE-0.md (this checklist); docs/phases/PHASE-TEMPLATE.md for later phases. Do not overwrite PLAN.md or CLAUDE.md.
 
 C. Guardrails
 - Write a root README with setup steps, commands and the phase workflow.
@@ -603,6 +696,7 @@ VERIFICATION (all must pass; show a summary of each result)
 6. Lighthouse mobile run on the home page: report scores and first-load JavaScript size.
 7. The CI workflow file is valid and its steps match the commands above.
 8. Money unit tests cover rounding, addition, negative values and rupee formatting.
+9. Contract tests show FulfilmentMode, StockMode and StoreType accept valid values and reject invalid ones.
 
 RULES
 - Stay inside Phase 0. Write anything useful for later into docs/phases/PHASE-1-notes.md instead of building it.
@@ -613,10 +707,10 @@ RULES
 
 **Prompts that follow (each written after the previous gate passes)**
 
-1. **Phase 1, customer UI on mock data.** Every customer screen and state from section 6, Hindi and Marathi, PWA shell, mock API, Playwright flows.
-2. **Phase 2, customer live.** API, database, OTP auth, catalogue, cart, order state machine, payments in test mode, ops inbox, WhatsApp alerts.
-3. **Phase 3, admin UI on mock data.** Every admin and store-portal screen and state.
-4. **Phase 4, admin live.** Assisted order, order board, onboarding, catalogue, zones, finance basics, store alerts and timeouts.
+1. **Phase 1, customer UI on mock data.** Every customer screen and state from section 6, Hindi and Marathi, both fulfilment modes, PWA shell, mock API, Playwright flows.
+2. **Phase 2, customer live.** API, database (with the stock tables), OTP auth, catalogue, cart, order state machine, payments in test mode, ops inbox, WhatsApp alerts.
+3. **Phase 3, admin UI on mock data.** Every admin, store-portal and dark-store-console screen and state.
+4. **Phase 4, admin live.** Assisted order, order board, onboarding, catalogue, zones, finance basics, store alerts and timeouts, and the dark-store console behind a per-town switch.
 5. **Phase 5, driver UI on mock data.** Every driver screen and state in Expo.
 6. **Phase 6, driver live.** Offers, location, batching, OTPs, UPI QR, cash ledger.
 7. **Phase 7, harden and replicate.** Monitoring, backups, load test, runbooks, town two by configuration.

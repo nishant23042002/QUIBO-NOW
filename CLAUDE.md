@@ -1,7 +1,7 @@
 # Project: hyperlocal grocery delivery for tier 3 and 4 Indian towns
 
 ## What we are building
-A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. No dark stores, no owned stock. We promise a delivery window, never minutes. One pilot town first; multi-town ready through town_id.
+A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. Partner stores by default; a single company dark store per town is an allowed alternative. We promise a delivery window, never minutes. One pilot town first; multi-town ready through town_id. Each town runs in a fulfilment mode (partner, dark or hybrid) that can be switched by configuration at any time.
 Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 
 ## How we work: UI first, phase-gated
@@ -14,7 +14,7 @@ Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 
 ## Surfaces
 - apps/customer-web: Next.js PWA (phases 1 and 2)
-- apps/admin: Next.js ops panel with the store portal as a route group (phases 3 and 4)
+- apps/admin: Next.js ops panel with the store portal and the dark-store console as route groups (phases 3 and 4)
 - apps/driver: Expo React Native app (phases 5 and 6)
 - apps/api: NestJS modular monolith, REST + OpenAPI (from phase 2)
 - apps/worker: BullMQ jobs (from phase 2)
@@ -25,6 +25,7 @@ Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 - Money is integer paise. Never floats. Ledger entries are append-only.
 - Order status changes only through OrderStateMachine.transition(); every change writes an order_events row.
 - Payment and webhook handlers are idempotent.
+- Fulfilment mode is town configuration. Order, payment, dispatch and ledger code never branch on it; differences live behind the FulfilmentStrategy interface (availability, accept, pick, settle).
 - Every business table has town_id. Zones, fees, slots and limits live in the database, not in code.
 - No hard-coded UI strings: use message keys for en, hi, mr.
 - Collect minimal personal data, log consent, never log Aadhaar numbers or OTPs.
