@@ -27,10 +27,14 @@ Phase 1 prompt. Phase 1 is **customer UI on mock data** (PLAN sections 6 and 12)
 
 ## Known gaps in what exists
 
-- **The language switcher always links to `/`.** It should keep the current path (`usePathname` from
-  `@/i18n/navigation`, which makes it a client component) once there is more than one page.
-- **`NextIntlClientProvider` passes all messages to the client.** Fine for a few keys; pass only what each
-  client component needs before the files grow, or the page weight budget will pay for it.
+- **The language switcher always links to each language's home (`/en`, `/hi`, `/mr`).** It should keep the
+  current path once there is more than one page. A server component can build the target from the
+  request path; avoid making it a client component with `usePathname` unless the weight is accepted.
+- **There is deliberately no `NextIntlClientProvider` and no `src/i18n/navigation.ts`.** Merely importing
+  the navigation module (it calls `createNavigation()`) puts next-intl's client runtime on the page: 13.3 kB
+  gzip, measured (ADR 0006). When the first client component needs translations, add the provider with
+  only the messages that component uses, re-measure first-load JavaScript, and decide the budget with
+  that number in hand.
 - **The unknown-language 404 is not localised.** `/fr` goes to `/en/fr` and shows Next's default 404.
   Use `global-not-found`.
 - **`<title>` is the brand name on every page.** Each screen needs its own title in all three languages.
@@ -66,9 +70,12 @@ text, check contrast with the helper there too.
 
 ## Performance
 
-- The Phase 0 budget is first-load JavaScript of 130 kB gzip or less on the home route. Set a budget per key
-  screen in `PHASE-1.md`. Next 16 does not print "First Load JS" in `next build`; measure it from the
-  network trace.
+- **The framework floor is 133.9 kB gzip** (a bare Next 16.4.0 + React 19.3.0 page: React DOM 72 kB, Next's
+  client runtime 50 kB, the rest small). The Phase 0 home page is 134.8 kB. The 130 kB budget proposed in
+  the plan cannot be met by any Next 16.4 page; the human decides the replacement at sign-off (140 kB
+  recommended). Set a budget per key screen in `PHASE-1.md` as "floor plus what the screen needs", and
+  re-measure after each new client component. Next 16 does not print "First Load JS" in `next build`;
+  measure it from the network trace.
 - Lighthouse runs by hand in Phase 0 (`pnpm dlx lighthouse@13.5.0`, not in the lockfile). Adding it to CI
   (for example Lighthouse CI) would make the gate automatic.
 - Add a throttled-network Playwright project to approximate a weak connection, and keep the real low-end

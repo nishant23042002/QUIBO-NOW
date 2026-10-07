@@ -49,9 +49,14 @@ only for what was checked by command; the last section is for the human to verif
 
 ## Budgets (working targets, set here as PLAN section 16 asks)
 
-- **First-load JavaScript on the home route: 130 kB gzip or less.** Next 16 no longer prints this in
-  `next build`, so it is measured from the browser's network trace and Lighthouse.
-- **Lighthouse mobile performance: 90 or higher** on the home page.
+- **First-load JavaScript on the home route: 130 kB gzip or less (proposed in the plan). NOT MET, and
+  not reachable:** a bare Next 16.4.0 + React 19.3.0 app with a single heading already ships 133.9 kB.
+  The Phase 0 home page ships 134.8 kB, 0.9 kB above that floor. **Decision for the human at sign-off:**
+  the plan said to report the number and ask before changing the budget, so the 130 kB figure is left as
+  written. Recommended replacement: **140 kB gzip** (the framework floor plus about 5%). See the report.
+  Next 16 no longer prints this in `next build`, so it is measured from the browser's network trace and
+  Lighthouse.
+- **Lighthouse mobile performance: 90 or higher** on the home page. Met: 99 to 100.
 
 ## Gate checklist for the human (PLAN section 16)
 

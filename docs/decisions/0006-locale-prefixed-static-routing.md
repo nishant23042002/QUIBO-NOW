@@ -15,9 +15,9 @@ per request) or in the URL.
 - **The language is in the URL:** `/en`, `/hi`, `/mr` (`next-intl`, `localePrefix: 'always'`). Every page
   is generated at build time, so a page is a static file with no server work per visit.
 - **`/` redirects** to the visitor's language using `Accept-Language`, falling back to English.
-- **The language switcher is a list of plain links**, so it works with JavaScript off and each language has
-  its own shareable URL. Each link is written in its own language (हिन्दी, मराठी, English) and carries
-  `lang` and `hreflang`.
+- **The language switcher is a list of plain server-rendered `<a>` links** (`/en`, `/hi`, `/mr`), so it
+  works with JavaScript off and each language has its own shareable URL. Each link is written in its own
+  language (हिन्दी, मराठी, English) and carries `lang` and `hreflang`.
 - **Messages are typed.** `src/global.d.ts` types `t('...')` keys and locales from `packages/i18n`, and the
   lint rule `react/jsx-no-literals` rejects text typed straight into JSX in the customer app.
 - **`proxy.ts` skips any path with a file extension** (`manifest.webmanifest`, `/pwa-icons/*.png`).
@@ -27,5 +27,11 @@ per request) or in the URL.
 
 - An unknown language such as `/fr` redirects to `/en/fr` and shows a 404.
 - The web app manifest is one file for the whole site, so it uses the default language.
-- `NextIntlClientProvider` currently passes all messages to client components. Phase 1 should pass only
-  what each client component needs (see `docs/phases/PHASE-1-notes.md`).
+- **There is no `NextIntlClientProvider` and no `src/i18n/navigation.ts` yet, on purpose.** Importing the
+  navigation module (which calls `createNavigation()`) registers next-intl's client `Link`, and Next then
+  ships next-intl's client runtime with the page even if nothing renders it. Measured in Phase 0, that
+  was 13.3 kB gzip of JavaScript on the home page (148.1 kB with it, 134.8 kB without). Add the provider
+  and the navigation module only where a client component needs them, and give the provider only the
+  messages that component uses (see `docs/phases/PHASE-1-notes.md`).
+- Because the hrefs are written as `/${locale}`, a change to `localePrefix` must update the switcher; the
+  e2e smoke test asserts every link's href.

@@ -1,4 +1,4 @@
-import { hasLocale, NextIntlClientProvider } from 'next-intl';
+import { hasLocale } from 'next-intl';
 import { getTranslations } from 'next-intl/server';
 import type { Metadata, Viewport } from 'next';
 import { notFound } from 'next/navigation';
@@ -45,11 +45,14 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) notFound();
 
+  // No NextIntlClientProvider yet: every component here is a server component, so next-intl's
+  // client side would only add weight. Measured in Phase 0: the home page's JavaScript fell from
+  // 148.1 kB to 134.8 kB gzip once nothing client-side from next-intl was imported. Add the
+  // provider when the first client component needs translations, passing it only the messages
+  // that component uses (docs/phases/PHASE-1-notes.md).
   return (
     <html lang={locale}>
-      <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

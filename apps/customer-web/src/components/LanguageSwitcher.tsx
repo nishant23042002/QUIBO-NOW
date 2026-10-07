@@ -1,12 +1,20 @@
 import type { Locale } from '@quibo/i18n';
 import { cx } from '@quibo/ui';
 import { getTranslations } from 'next-intl/server';
-import { Link } from '@/i18n/navigation';
 import { routing } from '@/i18n/routing';
 
 /**
- * Plain links, one per language, so switching works without JavaScript and each language has
- * its own shareable URL. Each name is written in its own language and tagged with it.
+ * Plain server-rendered links, one per language. They need no JavaScript to work or to render,
+ * and each language has its own shareable URL. Each name is written in its own language and
+ * tagged with it.
+ *
+ * Two things are deliberate:
+ * - Not next-intl's <Link>, and not importing src/i18n/navigation.ts: creating that module
+ *   registers a client component, and Next then ships next-intl's client runtime (about
+ *   13 kB gzip, measured in Phase 0) with the page even if nothing renders it. Add the
+ *   navigation module only where a client component needs it.
+ * - The href is `/${locale}` because routing uses localePrefix 'always'. The e2e smoke test
+ *   asserts every link's href, so a change to the routing config cannot slip through.
  */
 export async function LanguageSwitcher({ locale: current }: { locale: Locale }) {
   const t = await getTranslations({ locale: current, namespace: 'language' });
@@ -16,9 +24,8 @@ export async function LanguageSwitcher({ locale: current }: { locale: Locale }) 
       <ul className="flex flex-wrap gap-2">
         {routing.locales.map((locale) => (
           <li key={locale}>
-            <Link
-              href="/"
-              locale={locale}
+            <a
+              href={`/${locale}`}
               lang={locale}
               hrefLang={locale}
               aria-current={locale === current ? 'true' : undefined}
@@ -30,7 +37,7 @@ export async function LanguageSwitcher({ locale: current }: { locale: Locale }) 
               )}
             >
               {t(locale)}
-            </Link>
+            </a>
           </li>
         ))}
       </ul>
