@@ -27,6 +27,11 @@ export async function generateMetadata({
     title: t('name'),
     description: t('description'),
     applicationName: t('name'),
+    // Declared so browsers do not ask for /favicon.ico, which would be a 404.
+    icons: {
+      icon: [{ url: '/pwa-icons/192.png', sizes: '192x192', type: 'image/png' }],
+      apple: [{ url: '/pwa-icons/192.png', sizes: '192x192', type: 'image/png' }],
+    },
   };
 }
 
