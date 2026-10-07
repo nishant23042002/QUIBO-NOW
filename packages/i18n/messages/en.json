@@ -1,0 +1,25 @@
+{
+  "app": {
+    "name": "Quibo Now",
+    "description": "Order groceries from the shops in your own town."
+  },
+  "home": {
+    "title": "Groceries from your town's own shops",
+    "subtitle": "Order from the kirana, dairy and vegetable shops you already trust. We bring it to your door.",
+    "windowNote": "You always get a delivery window, so you know when to expect us."
+  },
+  "language": {
+    "label": "Language",
+    "en": "English",
+    "hi": "हिन्दी",
+    "mr": "मराठी"
+  },
+  "common": {
+    "loading": "Loading…",
+    "empty": "Nothing here yet.",
+    "error": "Something went wrong.",
+    "offline": "You are offline. Check your connection.",
+    "retry": "Try again",
+    "close": "Close"
+  }
+}
