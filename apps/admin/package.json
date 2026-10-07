@@ -1,0 +1,16 @@
+{
+  "name": "@quibo/admin",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Placeholder workspace. Next.js ops panel. Built in phases 3 (UI on mock data) and 4 (live).",
+  "scripts": {
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@quibo/config": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}

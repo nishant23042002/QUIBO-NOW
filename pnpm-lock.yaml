@@ -63,6 +63,60 @@ importers:
         specifier: 'catalog:'
         version: 6.0.3
 
+  apps/admin:
+    devDependencies:
+      '@quibo/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.6.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  apps/api:
+    devDependencies:
+      '@quibo/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.1
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.6.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  apps/driver:
+    devDependencies:
+      '@quibo/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.6.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
+  apps/worker:
+    devDependencies:
+      '@quibo/config':
+        specifier: workspace:*
+        version: link:../../packages/config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.19.1
+      eslint:
+        specifier: 'catalog:'
+        version: 10.12.0(jiti@2.6.1)
+      typescript:
+        specifier: 'catalog:'
+        version: 6.0.3
+
   packages/config:
     dependencies:
       '@eslint/js':

@@ -1,0 +1,4 @@
+{
+  "extends": "@quibo/config/tsconfig/base.json",
+  "include": ["src"]
+}

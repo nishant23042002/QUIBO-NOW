@@ -1,0 +1,17 @@
+{
+  "name": "@quibo/worker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Placeholder workspace. BullMQ jobs. Built in phase 2.",
+  "scripts": {
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@quibo/config": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:",
+    "@types/node": "catalog:"
+  }
+}

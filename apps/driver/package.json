@@ -1,0 +1,16 @@
+{
+  "name": "@quibo/driver",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Placeholder workspace. Expo React Native app. Built in phases 5 (UI on mock data) and 6 (live).",
+  "scripts": {
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@quibo/config": "workspace:*",
+    "eslint": "catalog:",
+    "typescript": "catalog:"
+  }
+}
