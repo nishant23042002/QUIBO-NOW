@@ -1,0 +1,14 @@
+node_modules
+.next
+.turbo
+dist
+coverage
+storybook-static
+playwright-report
+test-results
+pnpm-lock.yaml
+.husky/_
+
+# Owned by the human, never reformatted by tooling.
+CLAUDE.md
+docs/PLAN.md

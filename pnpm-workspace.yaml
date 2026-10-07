@@ -7,4 +7,25 @@ catalog:
   # TypeScript stays below 6.1: typescript-eslint 8.x declares "typescript <6.1.0".
   # See docs/decisions/0003-toolchain-version-pins.md.
   typescript: 6.0.3
-  "@types/node": 24.19.1
+  eslint: 10.12.0
+  '@eslint/js': 10.0.1
+  typescript-eslint: 8.71.1
+  globals: 17.13.0
+  '@types/node': 24.19.1
+  next: 16.4.0
+
+# eslint-config-next bundles eslint-plugin-react, -import and -jsx-a11y. Their
+# published peer ranges stop at ESLint 9, but ESLint 9 reached end of life on
+# 2026-08-06 and the rules were checked to run correctly on ESLint 10. Only these
+# three plugins are allowed, so any other peer problem still prints.
+peerDependencyRules:
+  allowedVersions:
+    eslint-plugin-react>eslint: '10'
+    eslint-plugin-import>eslint: '10'
+    eslint-plugin-jsx-a11y>eslint: '10'
+
+# pnpm 10 skips dependency install scripts unless listed. unrs-resolver (pulled in
+# by eslint-config-next) only runs a postinstall that checks its native binding,
+# which already arrives as an optional platform package and loads without it.
+ignoredBuiltDependencies:
+  - unrs-resolver

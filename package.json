@@ -9,8 +9,12 @@
     "pnpm": ">=10.34.5 <11"
   },
   "scripts": {
+    "prepare": "husky",
     "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "lint": "turbo run lint && pnpm lint:root && pnpm format:check",
+    "lint:root": "eslint --max-warnings 0 *.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
     "build": "turbo run build",
@@ -20,7 +24,14 @@
     "build-storybook": "turbo run build-storybook"
   },
   "devDependencies": {
+    "@commitlint/cli": "21.2.3",
+    "@commitlint/config-conventional": "21.2.3",
+    "@quibo/config": "workspace:*",
     "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "husky": "9.1.7",
+    "lint-staged": "17.6.0",
+    "prettier": "3.9.9",
     "turbo": "2.11.7",
     "typescript": "catalog:"
   }

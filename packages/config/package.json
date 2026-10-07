@@ -5,6 +5,27 @@
   "type": "module",
   "description": "Shared tsconfig, eslint config and env validation",
   "exports": {
-    "./tsconfig/*": "./tsconfig/*"
+    "./tsconfig/*": "./tsconfig/*",
+    "./eslint": "./eslint/index.mjs"
+  },
+  "scripts": {
+    "lint": "eslint --max-warnings 0 ."
+  },
+  "dependencies": {
+    "@eslint/js": "catalog:",
+    "eslint-config-next": "16.4.0",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "catalog:",
+    "typescript-eslint": "catalog:"
+  },
+  "devDependencies": {
+    "eslint": "catalog:",
+    "next": "catalog:"
+  },
+  "peerDependencies": {
+    "eslint": ">=10.12.0 <11",
+    "next": ">=16.4.0 <17"
   }
 }
