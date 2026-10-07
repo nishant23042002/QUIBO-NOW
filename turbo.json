@@ -6,7 +6,9 @@
   "tasks": {
     "lint": {},
     "typecheck": {},
-    "test": {},
+    "test": {
+      "inputs": ["$TURBO_DEFAULT$", "$TURBO_ROOT$/.env.example"]
+    },
     "build": {
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]
