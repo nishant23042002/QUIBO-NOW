@@ -1,0 +1,35 @@
+{
+  "name": "@quibo/customer-web",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Customer PWA. Phase 0 is only the shell: manifest, placeholder home and language switcher.",
+  "scripts": {
+    "dev": "next dev --port 3000",
+    "build": "next build",
+    "start": "next start --port 3000",
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "next typegen && tsc --noEmit",
+    "e2e": "playwright test"
+  },
+  "dependencies": {
+    "@quibo/config": "workspace:*",
+    "@quibo/i18n": "workspace:*",
+    "@quibo/ui": "workspace:*",
+    "next": "catalog:",
+    "next-intl": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "catalog:",
+    "@playwright/test": "catalog:",
+    "@tailwindcss/postcss": "catalog:",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "eslint": "catalog:",
+    "tailwindcss": "catalog:",
+    "typescript": "catalog:"
+  }
+}

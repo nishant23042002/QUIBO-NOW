@@ -24,6 +24,10 @@ catalog:
   playwright: 1.64.0
   vite: 8.3.3
   tailwindcss: 4.3.3
+  next-intl: 4.14.9
+  '@tailwindcss/postcss': 4.3.3
+  '@playwright/test': 1.64.0
+  '@axe-core/playwright': 4.13.0
 
 # eslint-config-next bundles eslint-plugin-react, -import and -jsx-a11y. Their
 # published peer ranges stop at ESLint 9, but ESLint 9 reached end of life on
@@ -48,3 +52,8 @@ ignoredBuiltDependencies:
   # esbuild (pulled in by Storybook) only runs a postinstall that checks its platform binary,
   # which arrives as an optional platform package and works without it.
   - esbuild
+  # next-intl pulls in @parcel/watcher and @swc/core for its optional message extractor, which
+  # this project does not use. Both ship prebuilt binaries as optional packages; the dev server
+  # and the production build were run without their install scripts.
+  - '@parcel/watcher'
+  - '@swc/core'
