@@ -15,16 +15,22 @@ catalog:
   next: 16.4.0
   zod: 4.6.5
   vitest: 5.0.3
+  msw: 3.0.2
 
 # eslint-config-next bundles eslint-plugin-react, -import and -jsx-a11y. Their
 # published peer ranges stop at ESLint 9, but ESLint 9 reached end of life on
 # 2026-08-06 and the rules were checked to run correctly on ESLint 10. Only these
-# three plugins are allowed, so any other peer problem still prints.
+# plugins are allowed, so any other peer problem still prints.
+#
+# Vitest 5 lists msw ^2 as an optional peer of its module mocker, which only uses it for
+# vi.mock in Vitest browser mode. packages/mocks runs Vitest in Node mode and uses msw 3
+# directly, so that peer is not exercised.
 peerDependencyRules:
   allowedVersions:
     eslint-plugin-react>eslint: '10'
     eslint-plugin-import>eslint: '10'
     eslint-plugin-jsx-a11y>eslint: '10'
+    '@vitest/mocker>msw': '3'
 
 # pnpm 10 skips dependency install scripts unless listed. unrs-resolver (pulled in
 # by eslint-config-next) only runs a postinstall that checks its native binding,
