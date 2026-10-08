@@ -36,6 +36,15 @@ const SHAPES = {
   plus: [path('M12 5v14M5 12h14')],
   minus: [path('M5 12h14')],
   bag: [path('M5 8h14l-1 12H6L5 8z'), path('M9 8V6.5a3 3 0 0 1 6 0V8')],
+  home: [path('M4 11l8-7 8 7'), path('M6.5 9.5V20h11V9.5')],
+  repeat: [
+    path('M17 3l3 3-3 3'),
+    path('M20 6H9a5 5 0 0 0-5 5'),
+    path('M7 21l-3-3 3-3'),
+    path('M4 18h11a5 5 0 0 0 5-5'),
+  ],
+  grid: [path('M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM13.5 13.5h6v6h-6z')],
+  receipt: [path('M6 3h12v18l-3-2-3 2-3-2-3 2z'), path('M9.5 8h5M9.5 12h5')],
   user: [ring(12, 8, 3.8), path('M4.5 20.5c0-4 3.4-6.6 7.5-6.6s7.5 2.6 7.5 6.6')],
   wifiOff: [
     path('M3 9a14 14 0 0 1 18 0M6 12.5a9.5 9.5 0 0 1 12 0M9 16a5 5 0 0 1 6 0'),

@@ -1,6 +1,7 @@
-import { formatRupees, money } from '@quibo/contracts';
+import { formatRupees } from '@quibo/contracts';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import type { PromoSlide } from '@/ui';
+import { FREE_DELIVERY_FROM } from './delivery';
 
 /**
  * Sample offers for the home header until the mock API and the admin Content module supply them (Phase 1b
@@ -19,7 +20,7 @@ export function useHomeOffers(): readonly PromoSlide[] {
     },
     {
       id: 'delivery',
-      title: t('home.offers.deliveryTitle', { amount: formatRupees(money(29_900)) }),
+      title: t('home.offers.deliveryTitle', { amount: formatRupees(FREE_DELIVERY_FROM) }),
       body: t('home.offers.deliveryBody'),
       emoji: '\u{1F6F5}',
       tone: 'pistachio',

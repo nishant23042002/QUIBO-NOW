@@ -54,6 +54,7 @@ const REQUIRED: readonly Pair[] = [
   ['control border on the page', 'ctl', 'bg', 3],
   ['outlined button on cards', 'action', 'surface', 3],
   ['accent shapes on the header and cart bar', 'accent', 'chrome', 3],
+  ['accent text on the header and cart bar', 'accent', 'chrome', 4.5],
   ['success text', 'success', 'successBg', 4.5],
   ['success text on cards', 'success', 'surface', 4.5],
   ['warning text', 'warning', 'warningBg', 4.5],

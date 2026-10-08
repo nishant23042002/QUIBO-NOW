@@ -16,9 +16,11 @@ interface VariantStyle {
 const variants = {
   title: { fontSize: fontSize['3xl'], fontWeight: '700', leading: 'tight' },
   heading: { fontSize: fontSize.xl, fontWeight: '700', leading: 'tight' },
+  subheading: { fontSize: fontSize.lg, fontWeight: '700', leading: 'tight' },
   lead: { fontSize: fontSize.lg, fontWeight: '400', leading: 'relaxed' },
   body: { fontSize: fontSize.base, fontWeight: '400', leading: 'normal' },
   label: { fontSize: fontSize.base, fontWeight: '600', leading: 'normal' },
+  caption: { fontSize: fontSize.xs, fontWeight: '600', leading: 'normal' },
   small: { fontSize: fontSize.sm, fontWeight: '400', leading: 'normal' },
   strong: { fontSize: fontSize.sm, fontWeight: '600', leading: 'normal' },
 } as const satisfies Record<string, VariantStyle>;
@@ -39,6 +41,7 @@ export type TextColor = Extract<
   | 'onAction'
   | 'action'
   | 'accentInk'
+  | 'accent'
   | 'tagFg'
   | 'success'
   | 'warning'

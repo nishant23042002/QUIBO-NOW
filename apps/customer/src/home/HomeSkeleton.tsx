@@ -11,6 +11,13 @@ const styles = StyleSheet.create({
   title: { paddingHorizontal: space[4] },
   row: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
   card: { gap: space[2] },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: space[3],
+    paddingHorizontal: space[4],
+    paddingVertical: space[5],
+  },
   priceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
 });
 
@@ -26,10 +33,10 @@ function ShopCardSkeleton() {
 }
 
 /** An item card while items load: the picture, a name, a pack size and the price with its button. */
-function ItemCardSkeleton() {
+function ItemCardSkeleton({ width = ITEM_CARD }: { width?: number | `${number}%` }) {
   return (
-    <View style={[styles.card, { width: ITEM_CARD }]}>
-      <Skeleton height={ITEM_CARD} rounded={radius.lg} />
+    <View style={[styles.card, { width }]}>
+      <Skeleton height={width === ITEM_CARD ? ITEM_CARD : 150} rounded={radius.lg} />
       <Skeleton width="85%" height={16} />
       <Skeleton width="40%" height={14} />
       <View style={styles.priceRow}>
@@ -57,7 +64,19 @@ function Rail({ title, children }: { title: number; children: ReactNode }) {
  * What Home shows while its shops and items load: a row of shop cards and three rows of item cards,
  * as grey blocks in the same shapes the real cards will have. Replaced by the real rails in Phase 1b.
  */
-export function HomeSkeleton({ label }: { label: string }) {
+export function HomeSkeleton({ label, grid = false }: { label: string; grid?: boolean }) {
+  if (grid) {
+    return (
+      <SkeletonScope label={label}>
+        <View style={styles.grid}>
+          {[0, 1, 2, 3].map((key) => (
+            <ItemCardSkeleton key={key} width="47%" />
+          ))}
+        </View>
+      </SkeletonScope>
+    );
+  }
+
   return (
     <SkeletonScope label={label}>
       <View style={styles.page}>

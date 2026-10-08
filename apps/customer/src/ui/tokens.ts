@@ -23,6 +23,12 @@ export const TAP_MIN = 48;
 /** The height of the app header below the status bar, in dp. The status bar's own height is added on top. */
 export const HEADER_HEIGHT = 56;
 
+/**
+ * The height of the bottom navigation bar, not counting the phone's own bottom inset. The docked cart bar and
+ * the room kept under every page both follow this number, so everything lines up on top of the bar.
+ */
+export const BOTTOM_BAR_HEIGHT = 64;
+
 export const radius = { sm: 6, md: 12, lg: 16, xl: 24, full: 9999 } as const;
 
 /**

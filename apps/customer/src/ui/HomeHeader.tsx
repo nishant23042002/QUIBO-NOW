@@ -4,6 +4,7 @@ import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
+import { HomeScrollContext } from './HomeScroll';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import { PromoCarousel, type PromoSlide } from './PromoCarousel';
@@ -19,6 +20,12 @@ import { useReduceMotion } from './useReduceMotion';
 const BUTTON_INSET = (TAP_MIN - 38) / 2;
 /** The heading's first line is 30 dp tall (24 dp text); lifting the button by this much centres it on that line. */
 const BUTTON_LIFT = (TAP_MIN - 30) / 2;
+/**
+ * Layers that meet are laid over each other by this much, so a rounding difference of a fraction of a pixel
+ * can never leave a hairline of the page showing between them.
+ */
+const SEAM = 1;
+const BLEED = 600;
 
 export interface HomeHeaderProps {
   /** The delivery promise as a clock window, already worded, for example "Delivery today, 4–6 PM". Never minutes. */
@@ -52,6 +59,8 @@ export interface HomeHeaderProps {
   onSearchPress: () => void;
   onAddressPress: () => void;
   onProfilePress: () => void;
+  /** Extra room under the page's last row, for something floating over it such as the cart bar. */
+  bottomSpace?: number;
   /** The page under the header. It scrolls, and the header folds as it does. */
   children: ReactNode;
 }
@@ -77,15 +86,18 @@ const makeStyles = (c: ThemeColors) =>
     button: { marginTop: -BUTTON_LIFT },
     chip: { alignItems: 'flex-start' },
     // The lower part, which stays at the top of the screen: the search bar and the tabs.
-    search: { paddingTop: space[2] },
+    // One dp more than it looks, because the lower part overlaps the upper by 1 dp (see SEAM).
+    search: { paddingTop: space[2] + SEAM },
     tabs: { marginTop: space[2] },
     // The offers sit in the page, under the tabs, in the same colour, and scroll away with it.
     offers: {
-      paddingTop: space[3],
+      paddingTop: space[3] + SEAM,
       paddingBottom: space[4],
       borderBottomLeftRadius: radius.lg,
       borderBottomRightRadius: radius.lg,
     },
+    // Above the offers, in the same colour, so pulling the page down past the top shows the tint and not the page.
+    bleed: { position: 'absolute', top: -BLEED, left: 0, right: 0, height: BLEED },
     pressed: { opacity: 0.7 },
   });
 
@@ -121,6 +133,7 @@ export function HomeHeader({
   onSearchPress,
   onAddressPress,
   onProfilePress,
+  bottomSpace = 0,
   children,
 }: HomeHeaderProps) {
   const insets = useSafeAreaInsets();
@@ -137,6 +150,7 @@ export function HomeHeader({
   // How tall the two pieces are, measured, so the page can start below them and the upper part knows how far to travel.
   const [topHeight, setTopHeight] = useState(0);
   const [lowerHeight, setLowerHeight] = useState(0);
+  const [offersHeight, setOffersHeight] = useState(0);
   // The shops row: how tall it is (measured once), and how open it is (0 to 1, driven natively).
   const [panelHeight, setPanelHeight] = useState(0);
   const [panelAt] = useState(() => new Animated.Value(0));
@@ -186,15 +200,23 @@ export function HomeHeader({
         })
       : (categories[0]?.tint ?? colors.headerBg);
 
+  // The scroll position never goes below 0, so pulling the page down past the top (some phones let it
+  // bounce) cannot drag the search bar and tabs away from the upper part.
+  const scroll = scrollY.interpolate({
+    inputRange: [0, 1],
+    outputRange: [0, 1],
+    extrapolateLeft: 'clamp',
+  });
+
   // The upper part travels right off the top of the screen: its own height plus the status bar's, so it is
   // never cut at the status bar. It fades as it goes, slowly at first and gone by the time it leaves.
   const exit = Math.max(topHeight + insets.top, 1);
-  const slideTop = scrollY.interpolate({
+  const slideTop = scroll.interpolate({
     inputRange: [0, exit],
     outputRange: [0, -exit],
     extrapolate: 'clamp',
   });
-  const fadeOut = scrollY.interpolate({
+  const fadeOut = scroll.interpolate({
     inputRange: [0, exit * 0.25, exit * 0.85],
     outputRange: [1, 0.85, 0],
     extrapolate: 'clamp',
@@ -204,11 +226,20 @@ export function HomeHeader({
   const stick = Math.max(topHeight, 1);
   const rowHeight = Math.max(panelHeight, 1);
   const push = panelAt.interpolate({ inputRange: [0, 1], outputRange: [0, rowHeight] });
-  const slideLower = Animated.subtract(scrollY, push).interpolate({
+  const slideLower = Animated.subtract(scroll, push).interpolate({
     inputRange: [-rowHeight, stick],
     outputRange: [rowHeight, -stick],
     extrapolate: 'clamp',
   });
+
+  // Where the lower part (search bar and tabs) starts when the page is at the top, and where the page's own
+  // content starts under the offers.
+  const lowerTop = insets.top + topHeight - SEAM;
+  const scrollInfo = {
+    scroll,
+    childrenTop: lowerTop + lowerHeight - SEAM + offersHeight,
+    pin: insets.top + lowerHeight - SEAM,
+  };
 
   const gutter = {
     paddingLeft: insets.left + space[4],
@@ -220,28 +251,39 @@ export function HomeHeader({
       <StatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}
+        overScrollMode="never"
         scrollEventThrottle={16}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
           useNativeDriver: true,
         })}
         // The page starts below the header as it is when fully open.
         contentContainerStyle={{
-          paddingTop: insets.top + topHeight + lowerHeight,
-          paddingBottom: shopsOpen ? panelHeight : 0,
+          paddingTop: lowerTop + lowerHeight - SEAM,
+          // Room under the last row for the phone's own navigation buttons (or the gesture bar), plus a little more.
+          paddingBottom: (shopsOpen ? panelHeight : 0) + insets.bottom + space[4] + bottomSpace,
         }}
       >
         <Animated.View style={{ transform: [{ translateY: push }] }}>
-          <Animated.View style={[styles.offers, { backgroundColor: background }]}>
+          <Animated.View
+            style={[styles.offers, { backgroundColor: background }]}
+            onLayout={(event) => {
+              setOffersHeight(Math.round(event.nativeEvent.layout.height));
+            }}
+          >
+            <Animated.View
+              pointerEvents="none"
+              style={[styles.bleed, { backgroundColor: background }]}
+            />
             <PromoCarousel slides={offers} label={offersLabel} onPress={onOfferPress} />
           </Animated.View>
-          {children}
+          <HomeScrollContext value={scrollInfo}>{children}</HomeScrollContext>
         </Animated.View>
       </Animated.ScrollView>
 
       {/* The tint behind the status bar. It stays put, and the part that slides away passes over it. */}
       <Animated.View
         pointerEvents="none"
-        style={[styles.overlay, { top: 0, height: insets.top, backgroundColor: background }]}
+        style={[styles.overlay, { top: 0, height: insets.top + SEAM, backgroundColor: background }]}
       />
 
       {/* The upper part: it moves with the page and leaves through the very top of the screen. */}
@@ -333,10 +375,7 @@ export function HomeHeader({
       {/* The search bar and the tabs: they rise with the page until they meet the status bar, then stay. */}
       <Animated.View
         pointerEvents="box-none"
-        style={[
-          styles.overlay,
-          { top: insets.top + topHeight, transform: [{ translateY: slideLower }] },
-        ]}
+        style={[styles.overlay, { top: lowerTop, transform: [{ translateY: slideLower }] }]}
       >
         <Animated.View
           style={{ backgroundColor: background }}

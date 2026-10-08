@@ -58,6 +58,9 @@ export interface ThemeColors {
   /** Accent-coloured text (links, prices) that is readable on `surface` and `bg`. */
   accentInk: string;
 
+  /** The deeper olive of the price badge's edge and the divider's mark: a decorative shape, not text. */
+  accentEdge: string;
+
   /** Offer tags. */
   tagBg: string;
   tagFg: string;
@@ -105,6 +108,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     accentPressed: '#9FD24E',
     accentSubtle: '#EAF8CF',
     accentInk: '#4C7A12',
+    accentEdge: '#5E8F17',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',
     success: '#176534',
@@ -145,6 +149,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     accentPressed: '#9FD24E',
     accentSubtle: '#33481A',
     accentInk: '#B8E86B',
+    accentEdge: '#7BA531',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',
     success: '#93E8AC',

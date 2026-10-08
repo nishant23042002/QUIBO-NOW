@@ -8,13 +8,16 @@ export {
   type BillSummaryProps,
   type FreeDeliveryHint,
 } from './BillSummary';
+export { BottomBar, type BottomBarProps, type BottomBarTab } from './BottomBar';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { CartBar, type CartBarProps } from './CartBar';
 export { CategoryTabs, type CategoryTab, type CategoryTabsProps } from './CategoryTabs';
 export { CategoryTile, type CategoryTileProps } from './CategoryTile';
+export { ComingSoon } from './ComingSoon';
 export { Chip, type ChipProps } from './Chip';
 export { HomeHeader, type HomeHeaderProps } from './HomeHeader';
+export { HomeScrollContext, useHomeScroll, type HomeScrollValue } from './HomeScroll';
 export { Icon, type IconName } from './Icon';
 export { IconButton, type IconButtonProps } from './IconButton';
 export { Input, type InputProps } from './Input';
@@ -30,9 +33,17 @@ export {
   type PromoSlide,
   type PromoTone,
 } from './PromoCarousel';
+export { CartFloat, type CartFloatProps, type CartThumb } from './CartFloat';
+export { DietMark, type DietMarkProps } from './DietMark';
+export { DiscountRibbon, type DiscountRibbonProps } from './DiscountRibbon';
 export { Price, type PriceProps } from './Price';
+export { PriceBadge, type PriceBadgeProps } from './PriceBadge';
+export { ProductCard, type ProductCardProps } from './ProductCard';
+export { ProductRail, type ProductRailProps } from './ProductRail';
 export { ProductImage, type ProductImageProps } from './ProductImage';
+export { Toast, type ToastProps } from './Toast';
 export { Skeleton, SkeletonScope, type SkeletonProps, type SkeletonScopeProps } from './Skeleton';
+export { SectionDivider } from './SectionDivider';
 export { Screen } from './Screen';
 export { SearchBar, type SearchBarProps, type SearchHint } from './SearchBar';
 export { ShopInfoCard, type ShopInfoCardProps } from './ShopInfoCard';
@@ -43,4 +54,4 @@ export { ShopCard, type ShopCardProps } from './ShopCard';
 export { Stepper, type StepperProps } from './Stepper';
 export { Text, type TextColor, type TextProps, type TextVariant } from './Text';
 export { WindowPicker, type DeliveryWindowOption, type WindowPickerProps } from './WindowPicker';
-export { radius, space, TAP_MIN } from './tokens';
+export { BOTTOM_BAR_HEIGHT, radius, space, TAP_MIN } from './tokens';

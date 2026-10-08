@@ -62,6 +62,72 @@
       "milkBody": "Order tonight for the 7–9 AM window",
       "shopsTitle": "Shop from your own kirana",
       "shopsBody": "Packed by a shop in your town"
+    },
+    "items": {
+      "milk": "Toned milk",
+      "curd": "Fresh curd",
+      "paneer": "Paneer",
+      "eggs": "Farm eggs",
+      "tomato": "Tomato",
+      "potato": "Potato",
+      "carrot": "Carrot",
+      "brinjal": "Brinjal",
+      "banana": "Banana",
+      "apple": "Apple",
+      "orange": "Orange",
+      "grapes": "Grapes",
+      "atta": "Wheat atta",
+      "rice": "Rice",
+      "oil": "Sunflower oil",
+      "sugar": "Sugar",
+      "biscuits": "Tea biscuits",
+      "chips": "Potato chips",
+      "popcorn": "Popcorn",
+      "chocolate": "Chocolate"
+    },
+    "units": {
+      "ml": "{n} ml",
+      "l": "{n} L",
+      "g": "{n} g",
+      "kg": "{n} kg",
+      "pcs": "{n} pcs",
+      "dozen": "{n} dozen",
+      "pack": "{n} pack"
+    },
+    "rails": {
+      "dairy": "Milk, curd and eggs",
+      "vegetables": "Fresh vegetables",
+      "fruits": "Fruits",
+      "staples": "Atta, rice and oil",
+      "snacks": "Snacks and biscuits",
+      "seeAll": "See all",
+      "add": "ADD",
+      "removeOne": "Remove one",
+      "addOne": "Add one",
+      "off": "OFF",
+      "today": "Today {window}",
+      "outOfStock": "Out of stock",
+      "onlyLeft": "Only {count} left",
+      "veg": "Vegetarian",
+      "nonVeg": "Non-vegetarian"
+    },
+    "cart": {
+      "itemsOne": "{count} item",
+      "itemsMany": "{count} items",
+      "view": "View cart",
+      "freeNeed": "Add {amount} for free delivery",
+      "freeReached": "You get free delivery",
+      "saved": "You saved {amount}",
+      "removed": "{name} removed",
+      "undo": "Undo",
+      "shopsMany": "{count} shops",
+      "title": "Your cart",
+      "total": "total",
+      "separate": "From {count} shops, so it arrives as {count} separate orders. Free delivery counts the whole cart."
+    },
+    "detail": {
+      "soldBy": "Sold by {shop}",
+      "about": "Picked and packed by a shop in your own town."
     }
   },
   "language": {
@@ -136,5 +202,12 @@
   "profile": {
     "title": "Profile",
     "appearance": "Appearance"
+  },
+  "nav": {
+    "home": "Home",
+    "again": "Order again",
+    "categories": "Categories",
+    "orders": "Orders",
+    "soon": "This screen is built in a later section of the customer app."
   }
 }
