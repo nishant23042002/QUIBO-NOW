@@ -226,15 +226,9 @@ export function ProductView({
 
   // The picture's insight card: only the facts that apply to this product and size.
   const { glance } = details;
-  // Three pages, in the order a shopper needs them: what to check when it arrives, what is in it, and a tip (with
-  // what it is good for, and what it costs per unit when there are sizes to compare).
+  // The pages, in this order: what a helping holds, a tip (with what it is good for), what to check when it arrives,
+  // and what it costs per unit (only when there are sizes to compare).
   const insightPages: InsightPage[] = [
-    {
-      kind: 'check',
-      tab: t('product.insight.tabCheck'),
-      title: t('product.insight.labelCheck'),
-      body: glance.check,
-    },
     ...(glance.nutrition !== undefined
       ? [
           {
@@ -260,6 +254,12 @@ export function ProductView({
           },
         ]
       : []),
+    {
+      kind: 'check',
+      tab: t('product.insight.tabCheck'),
+      title: t('product.insight.labelCheck'),
+      body: glance.check,
+    },
     // Only when there are several sizes to compare.
     ...(pack.unitPriceLabel !== undefined
       ? [

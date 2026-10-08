@@ -97,20 +97,23 @@ const makeStyles = (c: ThemeColors) =>
       left: INSET,
       right: INSET + BUTTON + space[2],
       bottom: INSET,
-      gap: space[3],
-      padding: space[4],
+      gap: space[2],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3] + 2,
       borderRadius: radius.xl,
       backgroundColor: c.overlay,
       overflow: 'hidden',
       // It grows out of the button's corner.
       transformOrigin: 'bottom right',
     },
+    // The room for the pages: whatever is left of the card under the tabs.
+    pager: { flex: 1 },
     tabs: { flexDirection: 'row', gap: space[4] },
-    tab: { paddingBottom: space[1], borderBottomWidth: 2, borderBottomColor: 'transparent' },
+    tab: { paddingBottom: 2, borderBottomWidth: 2, borderBottomColor: 'transparent' },
     tabOn: { borderBottomColor: c.accent },
     // A fine line under the tabs, then the page.
     rule: { height: 1, backgroundColor: c.onOverlay, opacity: 0.16 },
-    page: { gap: space[2] },
+    page: { gap: space[1] + 2 },
     badge: {
       width: 36,
       height: 36,
@@ -130,7 +133,7 @@ const makeStyles = (c: ThemeColors) =>
       opacity: 0.16,
     },
     energy: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
-    macro: { gap: space[1] },
+    macro: { gap: 2 },
     macroHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
     track: { height: BAR, borderRadius: radius.full, backgroundColor: c.onOverlay, opacity: 0.18 },
     fillWrap: { position: 'absolute', left: 0, top: 0, bottom: 0 },
@@ -254,42 +257,21 @@ function InsightCard({
   title,
   pages,
   progress,
-  maxHeight,
+  height,
 }: {
   title: string;
   pages: readonly InsightPage[];
   progress: Animated.Value;
-  maxHeight: number;
+  /** How tall the card is: the same for every page and every product. */
+  height: number;
 }) {
   const styles = useStyles(makeStyles);
   const reduceMotion = useReduceMotion();
   const scroller = useRef<ScrollView>(null);
-  const [width, setWidth] = useState(0);
   const [index, setIndex] = useState(0);
-  // How tall each page is, so the card is only as tall as the page showing and glides to the next one's height.
-  const [heights, setHeights] = useState<readonly number[]>([]);
-  const [height] = useState(() => new Animated.Value(0));
-  const known = heights[index];
-  const settled = useRef(false);
-
-  useEffect(() => {
-    if (known === undefined) return undefined;
-    if (!settled.current || reduceMotion) {
-      settled.current = true;
-      height.setValue(known);
-      return undefined;
-    }
-    const glide = Animated.timing(height, {
-      toValue: known,
-      duration: 180,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    });
-    glide.start();
-    return () => {
-      glide.stop();
-    };
-  }, [known, reduceMotion, height]);
+  // The pages' own size, measured once: every page gets exactly this room, so nothing moves when the page changes.
+  const [pager, setPager] = useState({ width: 0, height: 0 });
+  const { width } = pager;
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     if (width === 0) return;
@@ -305,7 +287,7 @@ function InsightCard({
       style={[
         styles.card,
         {
-          maxHeight,
+          height,
           opacity: progress,
           transform: [
             { scale: progress.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) },
@@ -340,16 +322,16 @@ function InsightCard({
         </View>
       ) : null}
       <View style={styles.rule} aria-hidden />
-      <Animated.View
-        style={known === undefined ? undefined : { height, overflow: 'hidden' }}
+      <View
+        style={styles.pager}
         onLayout={(event) => {
-          setWidth(Math.round(event.nativeEvent.layout.width));
+          const { width: w, height: h } = event.nativeEvent.layout;
+          setPager({ width: Math.round(w), height: Math.round(h) });
         }}
       >
         {width > 0 ? (
           <ScrollView
             ref={scroller}
-            contentContainerStyle={{ alignItems: 'flex-start' }}
             horizontal
             pagingEnabled
             snapToInterval={width}
@@ -360,26 +342,19 @@ function InsightCard({
             scrollEventThrottle={16}
             onScroll={onScroll}
           >
-            {pages.map((page, position) => (
-              <View
+            {pages.map((page) => (
+              <ScrollView
                 key={page.kind}
-                style={{ width }}
-                onLayout={(event) => {
-                  const next = Math.round(event.nativeEvent.layout.height);
-                  setHeights((current) => {
-                    if (current[position] === next) return current;
-                    const copy = [...current];
-                    copy[position] = next;
-                    return copy;
-                  });
-                }}
+                style={{ width, height: pager.height }}
+                nestedScrollEnabled
+                showsVerticalScrollIndicator={false}
               >
                 <PageBody page={page} />
-              </View>
+              </ScrollView>
             ))}
           </ScrollView>
         ) : null}
-      </Animated.View>
+      </View>
     </Animated.View>
   );
 }
@@ -448,7 +423,7 @@ export function ProductInsight({
           title={title}
           pages={pages}
           progress={progress}
-          maxHeight={Math.max(0, room - INSET * 2)}
+          height={Math.max(0, room - INSET * 2)}
         />
       ) : null}
       <Pressable
