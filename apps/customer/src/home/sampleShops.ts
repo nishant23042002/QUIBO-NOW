@@ -40,7 +40,19 @@ export function useSampleShops(): readonly SampleShop[] {
 export interface ShopDetails extends SampleShop {
   /** When the shop is open, for example "Hours 7 AM – 9 PM". */
   hoursLabel: string;
+  /** The shop's food-safety licence number. A sample, marked as one, until the shop's real number is on file (Phase 2). */
+  licence: string;
+  /** Where to write about an order. A sample address on a reserved domain, until the real one is set up. */
+  care: string;
 }
+
+const SAMPLE_LICENCE: Readonly<Record<string, string>> = {
+  one: 'SAMPLE-FSSAI-0001',
+  two: 'SAMPLE-FSSAI-0002',
+  three: 'SAMPLE-FSSAI-0003',
+  four: 'SAMPLE-FSSAI-0004',
+};
+const SAMPLE_CARE = 'care@quibo.example';
 
 /** One shop by its id, with what its own page shows besides the card, or undefined when there is no such shop. */
 export function useShop(id: string | undefined): ShopDetails | undefined {
@@ -48,5 +60,10 @@ export function useShop(id: string | undefined): ShopDetails | undefined {
   const shops = useSampleShops();
   const shop = shops.find((candidate) => candidate.id === id);
   if (shop === undefined) return undefined;
-  return { ...shop, hoursLabel: t('shop.hours', { hours: t('shop.sampleHours') }) };
+  return {
+    ...shop,
+    hoursLabel: t('shop.hours', { hours: t('shop.sampleHours') }),
+    licence: SAMPLE_LICENCE[shop.id] ?? '',
+    care: SAMPLE_CARE,
+  };
 }

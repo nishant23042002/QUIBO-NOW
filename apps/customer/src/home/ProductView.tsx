@@ -8,8 +8,10 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
   Button,
+  CardTitle,
   DietMark,
   DiscountRibbon,
+  FactTable,
   Icon,
   PackPicker,
   PriceBadge,
@@ -19,6 +21,7 @@ import {
   SkeletonScope,
   Stepper,
   Text,
+  TrustTiles,
   radius,
   space,
 } from '@/ui';
@@ -27,7 +30,9 @@ import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { useHomeItems, type HomeItem } from './items';
-import { otherItemsInShop } from './product';
+import { moreFromShop, similarItems } from './product';
+import { useProductDetails } from './productDetails';
+import { useShop } from './sampleShops';
 
 /** How long the loading skeleton shows when the page opens, as real data would take to arrive. */
 const LOAD_MS = 400;
@@ -80,7 +85,21 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     add: { minWidth: 140 },
-    more: { paddingBottom: space[2] },
+    rail: { paddingBottom: space[2] },
+    section: { gap: space[3] },
+    more: {
+      minHeight: 40,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[1],
+      alignSelf: 'center',
+      paddingHorizontal: space[4],
+      borderRadius: radius.full,
+      backgroundColor: c.accentSubtle,
+    },
+    flipped: { transform: [{ rotate: '180deg' }] },
+    shopName: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
   });
 
 /** The page while the item loads: a picture block and a few cards, in the shapes of the real page. */
@@ -121,6 +140,14 @@ export function ProductView({ item }: { item: HomeItem }) {
   const items = useHomeItems();
   const { width } = useWindowDimensions();
   const [loaded, setLoaded] = useState(false);
+  const [expanded, setExpanded] = useState(false);
+  const shop = useShop(item.shop);
+  const details = useProductDetails(item, {
+    id: item.shop,
+    name: item.shopName,
+    licence: shop?.licence ?? '',
+    care: shop?.care ?? '',
+  });
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -137,7 +164,8 @@ export function ProductView({ item }: { item: HomeItem }) {
   if (pack === undefined) return null;
   const quantity = cart.quantities[pack.id] ?? 0;
   const out = pack.stock?.kind === 'out';
-  const more = otherItemsInShop(items, item);
+  const more = moreFromShop(items, item);
+  const similar = similarItems(items, item);
   const saved =
     pack.mrp !== undefined && pack.mrp > pack.price ? subtract(pack.mrp, pack.price) : undefined;
   const dock = insets.bottom + BOTTOM_BAR_HEIGHT;
@@ -235,9 +263,73 @@ export function ProductView({ item }: { item: HomeItem }) {
             </View>
           ) : null}
           <View style={styles.gutter}>
+            <View style={styles.card}>
+              <TrustTiles
+                tiles={[
+                  {
+                    key: 'verified',
+                    icon: 'shield',
+                    title: t('product.trust.verified.title'),
+                    body: t('product.trust.verified.body'),
+                  },
+                  {
+                    key: 'packed',
+                    icon: 'store',
+                    title: t('product.trust.packed.title'),
+                    body: t('product.trust.packed.body', { shop: item.shopName }),
+                  },
+                  {
+                    key: 'window',
+                    icon: 'clock',
+                    title: t('product.trust.window.title'),
+                    body: t('product.trust.window.body'),
+                  },
+                  {
+                    key: 'replace',
+                    icon: 'repeat',
+                    title: t('product.trust.replace.title'),
+                    body: t('product.trust.replace.body'),
+                  },
+                ]}
+              />
+            </View>
+          </View>
+          <View style={styles.gutter}>
+            <View style={[styles.card, styles.section]}>
+              <CardTitle>{t('product.highlights')}</CardTitle>
+              <FactTable
+                rows={
+                  expanded ? [...details.highlights, ...details.moreHighlights] : details.highlights
+                }
+              />
+              <Pressable
+                role="button"
+                aria-expanded={expanded}
+                aria-label={expanded ? t('product.viewLess') : t('product.viewMore')}
+                onPress={() => {
+                  setExpanded((current) => !current);
+                }}
+                style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+              >
+                <Text variant="strong" color="accentInk">
+                  {expanded ? t('product.viewLess') : t('product.viewMore')}
+                </Text>
+                <View style={expanded ? styles.flipped : undefined}>
+                  <Icon name="chevron" color={colors.accentInk} size={16} />
+                </View>
+              </Pressable>
+            </View>
+          </View>
+          <View style={styles.gutter}>
+            <View style={[styles.card, styles.section]}>
+              <CardTitle>{t('product.information')}</CardTitle>
+              <FactTable rows={[...details.information, ...details.seller]} />
+            </View>
+          </View>
+          <View style={styles.gutter}>
             <Pressable
               role="button"
-              aria-label={t('product.soldBy', { shop: item.shopName })}
+              aria-label={`${t('product.soldBy', { shop: item.shopName })}. ${t('product.openShop')}`}
               onPress={openShop}
               style={({ pressed }) => [styles.card, styles.shop, pressed && styles.pressed]}
             >
@@ -245,24 +337,40 @@ export function ProductView({ item }: { item: HomeItem }) {
                 <Icon name="store" color={colors.accentInk} size={20} />
               </View>
               <View style={styles.shopText}>
-                <Text variant="strong" numberOfLines={1}>
-                  {t('product.soldBy', { shop: item.shopName })}
-                </Text>
+                <View style={styles.shopName}>
+                  <Text variant="strong" numberOfLines={1}>
+                    {t('product.soldBy', { shop: item.shopName })}
+                  </Text>
+                  <Icon name="shield" color={colors.accentInk} size={16} />
+                </View>
                 <Text variant="small" color="inkMuted" numberOfLines={2}>
-                  {t('product.about')}
+                  {[shop?.statusLabel, shop?.sinceLabel]
+                    .filter((part) => part !== undefined)
+                    .join(' \u00B7 ')}
                 </Text>
               </View>
-              <Icon name="chevronRight" color={colors.inkMuted} size={18} />
+              <Icon name="chevronRight" color={colors.accentInk} size={18} />
             </Pressable>
           </View>
           {more.length > 0 ? (
-            <View style={styles.more}>
+            <View style={styles.rail}>
               <ProductRail
                 title={t('product.moreFrom', { shop: item.shopName })}
                 seeAllLabel={t('home.rails.seeAll')}
                 onSeeAll={openShop}
               >
                 {more.map((other) => (
+                  <ItemTile key={other.id} item={other} width={RAIL_CARD_WIDTH} />
+                ))}
+              </ProductRail>
+            </View>
+          ) : null}
+          {similar.length > 0 ? (
+            <View style={styles.rail}>
+              <ProductRail
+                title={t('product.popularIn', { category: t(`home.categories.${item.category}`) })}
+              >
+                {similar.map((other) => (
                   <ItemTile key={other.id} item={other} width={RAIL_CARD_WIDTH} />
                 ))}
               </ProductRail>

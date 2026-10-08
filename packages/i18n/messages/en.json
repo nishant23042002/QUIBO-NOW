@@ -259,6 +259,171 @@
       "front": "Front",
       "pack": "Inside the pack",
       "close": "Close up"
+    },
+    "details": {
+      "milk": {
+        "about": "Fresh toned milk from local dairies, pasteurised and packed the same morning.",
+        "ingredients": "Toned milk (3% fat, 8.5% SNF)",
+        "goodFor": "Tea, coffee, curd and daily drinking"
+      },
+      "curd": {
+        "about": "Thick, creamy curd set fresh every day.",
+        "ingredients": "Pasteurised toned milk, live curd culture",
+        "goodFor": "Raita, lassi, buttermilk and with meals"
+      },
+      "paneer": {
+        "about": "Soft paneer made from fresh milk, cut and packed by the dairy.",
+        "ingredients": "Milk solids, food-grade acid (citric acid)",
+        "goodFor": "Curries, tikka, bhurji and snacks"
+      },
+      "eggs": {
+        "about": "Farm eggs, sorted by size and checked for cracks.",
+        "ingredients": "Hen eggs",
+        "goodFor": "Boiled eggs, omelettes, curries and baking"
+      },
+      "tomato": {
+        "about": "Ripe red tomatoes from farms around Roha, sorted by hand.",
+        "ingredients": "Fresh tomatoes",
+        "goodFor": "Curries, chutneys, salads and soups"
+      },
+      "potato": {
+        "about": "Firm, clean potatoes, good for everyday cooking.",
+        "ingredients": "Fresh potatoes",
+        "goodFor": "Sabzi, fries, parathas and snacks"
+      },
+      "carrot": {
+        "about": "Crisp, sweet carrots, washed and sorted.",
+        "ingredients": "Fresh carrots",
+        "goodFor": "Salads, halwa, juice and sabzi"
+      },
+      "brinjal": {
+        "about": "Tender brinjals with smooth skin, picked fresh.",
+        "ingredients": "Fresh brinjals",
+        "goodFor": "Bharta, curries and fry"
+      },
+      "banana": {
+        "about": "Ripe yellow bananas, sold by the dozen.",
+        "ingredients": "Fresh bananas",
+        "goodFor": "Snacks, shakes, puja and fasting"
+      },
+      "apple": {
+        "about": "Crisp, juicy apples, sold in a pack of four.",
+        "ingredients": "Fresh apples",
+        "goodFor": "Eating fresh, salads and juice"
+      },
+      "orange": {
+        "about": "Sweet, juicy oranges with thin skin.",
+        "ingredients": "Fresh oranges",
+        "goodFor": "Eating fresh and juice"
+      },
+      "grapes": {
+        "about": "Seedless green grapes, washed and packed.",
+        "ingredients": "Fresh grapes",
+        "goodFor": "Snacking, fruit salad and juice"
+      },
+      "atta": {
+        "about": "Whole wheat atta, stone-ground for soft rotis.",
+        "ingredients": "Whole wheat (100%)",
+        "goodFor": "Rotis, parathas and puris"
+      },
+      "rice": {
+        "about": "Long-grain rice that cooks up fluffy.",
+        "ingredients": "Rice (100%)",
+        "goodFor": "Daily meals, pulao and biryani"
+      },
+      "oil": {
+        "about": "Refined sunflower oil, light on the stomach.",
+        "ingredients": "Refined sunflower oil",
+        "goodFor": "Everyday cooking and frying"
+      },
+      "sugar": {
+        "about": "Fine white sugar, clean and free-flowing.",
+        "ingredients": "Sugar (100%)",
+        "goodFor": "Tea, sweets and baking"
+      },
+      "biscuits": {
+        "about": "Crisp tea biscuits, a daily favourite.",
+        "ingredients": "Wheat flour, sugar, edible vegetable oil, milk solids, salt",
+        "goodFor": "With tea or milk"
+      },
+      "chips": {
+        "about": "Crunchy potato chips, lightly salted.",
+        "ingredients": "Potatoes, edible vegetable oil, salt",
+        "goodFor": "Snacking and parties"
+      },
+      "popcorn": {
+        "about": "Ready-to-eat popcorn with a buttery taste.",
+        "ingredients": "Corn, edible vegetable oil, salt, butter flavour",
+        "goodFor": "Movie nights and snacking"
+      },
+      "chocolate": {
+        "about": "Smooth milk chocolate bar.",
+        "ingredients": "Sugar, cocoa butter, milk solids, cocoa mass",
+        "goodFor": "A sweet treat and gifting"
+      }
+    },
+    "highlights": "Highlights",
+    "information": "Information",
+    "viewMore": "View more",
+    "viewLess": "View less",
+    "popularIn": "Popular in {category}",
+    "openShop": "View shop",
+    "rows": {
+      "type": "Product type",
+      "diet": "Dietary preference",
+      "goodFor": "Good for",
+      "shelfLife": "Shelf life",
+      "storage": "How to store",
+      "origin": "Country of origin",
+      "packedBy": "Packed by",
+      "description": "Description",
+      "ingredients": "Ingredients",
+      "disclaimer": "Disclaimer",
+      "seller": "Seller name",
+      "address": "Seller address",
+      "licence": "Licence number",
+      "care": "Customer care"
+    },
+    "shelf": {
+      "days": "{n} days",
+      "months": "{n} months"
+    },
+    "origin": {
+      "india": "India",
+      "maharashtra": "Maharashtra, India",
+      "local": "Roha, Maharashtra"
+    },
+    "storage": {
+      "dairy": "Keep refrigerated at 2‑4 °C",
+      "vegetables": "Store in a cool, dry place",
+      "fruits": "Store in a cool place; refrigerate once ripe",
+      "staples": "Store in an airtight container, away from moisture",
+      "snacks": "Keep in a cool, dry place; close the pack after opening"
+    },
+    "disclaimer": "Images are for representation only. Please read the label before use. Packaging and size may differ slightly.",
+    "sellers": {
+      "one": "Station Road, Roha, Raigad, Maharashtra",
+      "two": "Market Road, Roha, Raigad, Maharashtra",
+      "three": "Mandi Lane, Roha, Raigad, Maharashtra",
+      "four": "Bazaar Peth, Roha, Raigad, Maharashtra"
+    },
+    "trust": {
+      "verified": {
+        "title": "Verified shop",
+        "body": "Checked by Quibo"
+      },
+      "packed": {
+        "title": "Packed in your town",
+        "body": "Picked by {shop}"
+      },
+      "window": {
+        "title": "Delivered in your window",
+        "body": "Your order comes in a clear time window"
+      },
+      "replace": {
+        "title": "Replace or refund",
+        "body": "Not right? Tell us at the door"
+      }
     }
   }
 }

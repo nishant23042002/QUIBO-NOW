@@ -8,9 +8,9 @@ import { space } from './tokens';
 
 export interface ProductRailProps {
   title: string;
-  /** The text of the link at the right, for example "See all". */
-  seeAllLabel: string;
-  onSeeAll: () => void;
+  /** The text of the link at the right, for example "See all". Leave it and `onSeeAll` out for a row with nowhere to go. */
+  seeAllLabel?: string;
+  onSeeAll?: () => void;
   /** The cards. They sit in one row that swipes sideways. */
   children: ReactNode;
 }
@@ -81,18 +81,20 @@ export function ProductRail({ title, seeAllLabel, onSeeAll, children }: ProductR
             {title}
           </Text>
         </View>
-        <Pressable
-          role="button"
-          aria-label={`${seeAllLabel}: ${title}`}
-          onPress={onSeeAll}
-          hitSlop={6}
-          style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-        >
-          <Text variant="strong" color="accentInk">
-            {seeAllLabel}
-          </Text>
-          <Icon name="chevronRight" color={colors.accentInk} size={14} />
-        </Pressable>
+        {seeAllLabel !== undefined && onSeeAll !== undefined ? (
+          <Pressable
+            role="button"
+            aria-label={`${seeAllLabel}: ${title}`}
+            onPress={onSeeAll}
+            hitSlop={6}
+            style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+          >
+            <Text variant="strong" color="accentInk">
+              {seeAllLabel}
+            </Text>
+            <Icon name="chevronRight" color={colors.accentInk} size={14} />
+          </Pressable>
+        ) : null}
       </Animated.View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.row}>{children}</View>

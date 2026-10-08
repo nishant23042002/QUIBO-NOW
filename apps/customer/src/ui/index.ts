@@ -39,6 +39,8 @@ export { DietMark, type DietMarkProps } from './DietMark';
 export { DiscountRibbon, type DiscountRibbonProps } from './DiscountRibbon';
 export { Price, type PriceProps } from './Price';
 export { ProductGallery, type GalleryImage, type ProductGalleryProps } from './ProductGallery';
+export { CardTitle, FactTable, type FactRow } from './FactTable';
+export { TrustTiles, type TrustTile } from './TrustTiles';
 export { PackPicker, type PackOption, type PackPickerProps } from './PackPicker';
 export { PriceBadge, type PriceBadgeProps } from './PriceBadge';
 export { ProductCard, type ProductCardProps } from './ProductCard';
