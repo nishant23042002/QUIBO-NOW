@@ -2,7 +2,7 @@ import { Tabs } from 'expo-router';
 import type { ComponentProps } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { BottomBar } from '@/ui';
+import { BottomBar, useKeyboardVisible } from '@/ui';
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
@@ -16,9 +16,13 @@ const TABS = [
 
 function Bar({ state, navigation }: TabBarProps) {
   const { t } = useLanguage();
+  const keyboard = useKeyboardVisible();
   const current = state.routes[state.index]?.name ?? 'index';
   // A shop page is reached from Home and has no tab of its own, so Home stays the lit one while it shows.
   const active = TABS.some((tab) => tab.name === current) ? current : 'index';
+
+  // While the keyboard is up the bar would only ride on top of it, so it steps aside.
+  if (keyboard) return null;
 
   return (
     <BottomBar
@@ -52,6 +56,8 @@ export default function TabsLayout() {
       ))}
       {/* A shop's page lives in the tab group so the bottom bar stays, but it is not a tab: href null hides it from the bar. */}
       <Tabs.Screen name="shop/[id]" options={{ href: null }} />
+      {/* The search screen is the same: reached from the search bar on Home, with the bottom bar kept. */}
+      <Tabs.Screen name="search" options={{ href: null }} />
     </Tabs>
   );
 }

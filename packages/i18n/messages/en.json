@@ -224,5 +224,18 @@
       "body": "It may have closed or moved. Go back and pick another shop.",
       "back": "Back to Home"
     }
+  },
+  "search": {
+    "recent": "Recent searches",
+    "clear": "Clear",
+    "clearRecent": "Clear recent searches",
+    "clearField": "Clear search",
+    "try": "Try searching for",
+    "shops": "Shops",
+    "items": "Items",
+    "noResults": {
+      "title": "No results for “{query}”",
+      "body": "Check the spelling or try another word, for example milk, atta or vegetables."
+    }
   }
 }

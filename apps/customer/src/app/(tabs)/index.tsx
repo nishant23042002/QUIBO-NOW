@@ -15,7 +15,7 @@ import { BOTTOM_BAR_HEIGHT, HomeHeader } from '@/ui';
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
 
-/** The words the search bar types out in turn. They are examples, and the search itself arrives in Phase 1c. */
+/** The words the search bar types out in turn. They are examples, and the search screen opens from the bar. */
 const SEARCH_ITEMS = [
   'home.search.itemMilk',
   'home.search.itemAtta',
@@ -58,7 +58,9 @@ export default function HomeScreen() {
         offersLabel={t('home.offers.label')}
         onOfferPress={() => undefined}
         profileLabel={t('home.header.profile')}
-        onSearchPress={() => undefined}
+        onSearchPress={() => {
+          router.push({ pathname: '/search', params: { fresh: String(Date.now()) } });
+        }}
         onAddressPress={() => undefined}
         onShopPress={(id) => {
           router.push({ pathname: '/shop/[id]', params: { id } });
