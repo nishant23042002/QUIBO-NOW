@@ -36,6 +36,15 @@ export interface ThemeColors {
   headerBg: string;
   onHeader: string;
   onHeaderMuted: string;
+  /**
+   * What the home header turns into when a category tab is chosen ("All" keeps `headerBg`). Each is checked
+   * with `onHeader` and `onHeaderMuted`, so the heading, address and tabs read on every one.
+   */
+  tintDairy: string;
+  tintVegetables: string;
+  tintFruits: string;
+  tintStaples: string;
+  tintSnacks: string;
   /** The round buttons on the header (profile, theme), and the icon on them. */
   headerControl: string;
   onHeaderControl: string;
@@ -86,6 +95,11 @@ export const palettes: Record<Scheme, ThemeColors> = {
     onHeaderMuted: '#563E60',
     headerControl: '#FFFFFF',
     onHeaderControl: '#2A1033',
+    tintDairy: '#DCE8F5',
+    tintVegetables: '#DDEBCF',
+    tintFruits: '#F6DDD5',
+    tintStaples: '#F3E6C4',
+    tintSnacks: '#F2D9E6',
     accent: '#B8E86B',
     onAccent: '#2A1033',
     accentPressed: '#9FD24E',
@@ -121,6 +135,11 @@ export const palettes: Record<Scheme, ThemeColors> = {
     onHeaderMuted: '#DCCBE4',
     headerControl: '#F6EEF8',
     onHeaderControl: '#2A1033',
+    tintDairy: '#1F3350',
+    tintVegetables: '#1F4030',
+    tintFruits: '#4D2A24',
+    tintStaples: '#463A1A',
+    tintSnacks: '#4A2440',
     accent: '#B8E86B',
     onAccent: '#2A1033',
     accentPressed: '#9FD24E',

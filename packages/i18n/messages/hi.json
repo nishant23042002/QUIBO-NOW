@@ -42,6 +42,15 @@
       "itemVegetables": "सब्ज़ी",
       "itemBread": "ब्रेड",
       "hintLabel": "खोजें"
+    },
+    "categories": {
+      "label": "श्रेणियाँ",
+      "all": "सभी",
+      "dairy": "डेयरी",
+      "vegetables": "सब्ज़ियाँ",
+      "fruits": "फल",
+      "staples": "राशन",
+      "snacks": "नाश्ता"
     }
   },
   "language": {

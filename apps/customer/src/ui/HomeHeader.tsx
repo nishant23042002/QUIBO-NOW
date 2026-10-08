@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { useState } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { CategoryTabs, type CategoryTab } from './CategoryTabs';
 import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import type { ShopInfoCardProps } from './ShopInfoCard';
@@ -11,6 +12,7 @@ import { SearchBar, type SearchHint } from './SearchBar';
 import { ShopsPanel } from './ShopsPanel';
 import { Text } from './Text';
 import { TAP_MIN, space } from './tokens';
+import { useReduceMotion } from './useReduceMotion';
 
 /** The profile button's round fill is 38 dp inside a 48 dp touch target, so 5 dp of the target is empty on each side. */
 const BUTTON_INSET = (TAP_MIN - 38) / 2;
@@ -34,16 +36,23 @@ export interface HomeHeaderProps {
   searchLabel: string;
   /** The search bar's hint: a fixed part ("Search") and example words that type themselves in. */
   searchHint: SearchHint;
+  /** The category tabs. Each carries the colour the header turns into while it is chosen. */
+  categories: readonly (CategoryTab & { tint: string })[];
+  selectedCategory: string;
+  /** Names the row of tabs for a screen reader, for example "Categories". */
+  categoriesLabel: string;
+  onCategoryChange: (key: string) => void;
   profileLabel: string;
   onSearchPress: () => void;
   onAddressPress: () => void;
   onProfilePress: () => void;
 }
 
-const makeStyles = (c: ThemeColors) =>
+const makeStyles = (_c: ThemeColors) =>
   StyleSheet.create({
     // The tint is painted behind the status bar too, so the top of the screen is part of the header.
-    bar: { backgroundColor: c.headerBg, paddingBottom: space[4] },
+    // The colour itself is animated (see below). The tabs end the block, so nothing is padded under them.
+    bar: { paddingBottom: 0 },
     row: { flexDirection: 'row', alignItems: 'flex-start', gap: space[2] },
     text: { flex: 1, minWidth: 0 },
     address: {
@@ -59,17 +68,18 @@ const makeStyles = (c: ThemeColors) =>
     // The bar's right padding leaves room for the profile button's empty edge; the chip keeps the full 16 dp gutter.
     chip: { marginRight: BUTTON_INSET, alignItems: 'flex-start' },
     search: { marginTop: space[3] },
+    tabs: { marginTop: space[2] },
     pressed: { opacity: 0.7 },
   });
 
 /**
  * The top block of Home: the delivery window, the address, the shops chip (which opens a row of shop cards
- * under it), the search bar, and the profile button.
+ * under it), the search bar, the category tabs, and the profile button. The block takes the chosen category's tint.
  * It fills the status bar area with its own colour, and the status bar text follows the tint:
  * dark on the light theme's soft tint, light on the dark theme's deep one.
  *
  * Spacing: a 16 dp gutter on both sides (the profile circle, not its touch target, sits on the right
- * gutter), 12 dp below the status bar, the address under the heading, the shops chip 4 dp under the address, the search bar 12 dp under the chip (or under the shops row when it is open), 16 dp below the block.
+ * gutter), 12 dp below the status bar, the address under the heading, the shops chip 4 dp under the address, the search bar 12 dp under the chip (or under the shops row when it is open), then the category tabs, which end the block.
  */
 export function HomeHeader({
   deliveryLine,
@@ -80,6 +90,10 @@ export function HomeHeader({
   shopsTitle,
   searchLabel,
   searchHint,
+  categories,
+  selectedCategory,
+  categoriesLabel,
+  onCategoryChange,
   profileLabel,
   onSearchPress,
   onAddressPress,
@@ -89,9 +103,44 @@ export function HomeHeader({
   const { colors, scheme } = useTheme();
   const styles = useStyles(makeStyles);
   const [shopsOpen, setShopsOpen] = useState(false);
+  const reduceMotion = useReduceMotion();
+  const selectedIndex = Math.max(
+    0,
+    categories.findIndex((category) => category.key === selectedCategory),
+  );
+  const [tintAt] = useState(() => new Animated.Value(selectedIndex));
+
+  // The whole block, status bar area included, fades to the chosen category's colour.
+  useEffect(() => {
+    if (reduceMotion) {
+      tintAt.setValue(selectedIndex);
+      return undefined;
+    }
+    const fade = Animated.timing(tintAt, {
+      toValue: selectedIndex,
+      duration: 320,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    });
+    fade.start();
+    return () => {
+      fade.stop();
+    };
+  }, [selectedIndex, reduceMotion, tintAt]);
+
+  const background =
+    categories.length > 1
+      ? tintAt.interpolate({
+          inputRange: categories.map((_, index) => index),
+          outputRange: categories.map((category) => category.tint),
+        })
+      : (categories[0]?.tint ?? colors.headerBg);
 
   return (
-    <View role="banner" style={[styles.bar, { paddingTop: insets.top + space[3] }]}>
+    <Animated.View
+      role="banner"
+      style={[styles.bar, { backgroundColor: background, paddingTop: insets.top + space[3] }]}
+    >
       <StatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <View
         style={{
@@ -150,6 +199,14 @@ export function HomeHeader({
       >
         <SearchBar placeholder={searchLabel} hint={searchHint} onPress={onSearchPress} />
       </View>
-    </View>
+      <View style={styles.tabs}>
+        <CategoryTabs
+          tabs={categories}
+          selectedKey={selectedCategory}
+          onSelect={onCategoryChange}
+          label={categoriesLabel}
+        />
+      </View>
+    </Animated.View>
   );
 }

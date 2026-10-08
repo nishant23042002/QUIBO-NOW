@@ -11,6 +11,7 @@ export {
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { CartBar, type CartBarProps } from './CartBar';
+export { CategoryTabs, type CategoryTab, type CategoryTabsProps } from './CategoryTabs';
 export { CategoryTile, type CategoryTileProps } from './CategoryTile';
 export { Chip, type ChipProps } from './Chip';
 export { HomeHeader, type HomeHeaderProps } from './HomeHeader';

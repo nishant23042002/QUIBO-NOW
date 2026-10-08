@@ -42,6 +42,15 @@
       "itemVegetables": "vegetables",
       "itemBread": "bread",
       "hintLabel": "Search"
+    },
+    "categories": {
+      "label": "Categories",
+      "all": "All",
+      "dairy": "Dairy",
+      "vegetables": "Vegetables",
+      "fruits": "Fruits",
+      "staples": "Staples",
+      "snacks": "Snacks"
     }
   },
   "language": {

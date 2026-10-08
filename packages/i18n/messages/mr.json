@@ -42,6 +42,15 @@
       "itemVegetables": "भाजी",
       "itemBread": "ब्रेड",
       "hintLabel": "शोधा"
+    },
+    "categories": {
+      "label": "श्रेणी",
+      "all": "सर्व",
+      "dairy": "डेअरी",
+      "vegetables": "भाज्या",
+      "fruits": "फळे",
+      "staples": "किराणा",
+      "snacks": "नाश्ता"
     }
   },
   "language": {

@@ -1,5 +1,7 @@
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
+import { useHomeCategories } from '@/home/categories';
 import { useSampleShops } from '@/home/sampleShops';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
@@ -16,12 +18,14 @@ const SEARCH_ITEMS = [
   'home.search.itemBread',
 ] as const;
 
-// Phase 1a is built one section at a time. So far: the header (with the shops row it opens) and the search bar.
+// Phase 1a is built one section at a time. So far: the header (with the shops row it opens), the search bar and the category tabs.
 export default function HomeScreen() {
   const { t } = useLanguage();
   const router = useRouter();
   const styles = useStyles(makeStyles);
   const shops = useSampleShops();
+  const categories = useHomeCategories();
+  const [category, setCategory] = useState('all');
   const openCount = shops.filter((shop) => shop.open).length;
 
   return (
@@ -38,6 +42,10 @@ export default function HomeScreen() {
           label: t('home.search.hintLabel'),
           words: SEARCH_ITEMS.map((item) => t(item)),
         }}
+        categories={categories}
+        selectedCategory={category}
+        categoriesLabel={t('home.categories.label')}
+        onCategoryChange={setCategory}
         profileLabel={t('home.header.profile')}
         onSearchPress={() => undefined}
         onAddressPress={() => undefined}
