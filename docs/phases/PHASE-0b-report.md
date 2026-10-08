@@ -1,6 +1,6 @@
 # Phase 0b report: React Native customer app and cleanup
 
-- **Branch:** `phase-0/foundation` (10 commits on top of the Phase 0 report `c4ac9ce`). Not pushed, not merged, not
+- **Branch:** `phase-0/foundation` (10 build commits on top of the Phase 0 report `c4ac9ce`, plus this report). Not pushed, not merged, not
   tagged.
 - **Status:** every automated check passes in a fresh clone of the final commit. **Nothing has run on a phone
   or an emulator yet.** That is yours to do (README, "Run the customer app on your phone"), and it is the
