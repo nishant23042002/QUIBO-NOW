@@ -101,7 +101,8 @@ export function ProductSkeleton({
     </View>
   );
 
-  const picture = Math.round((width - space[3] * 2) / GALLERY_RATIO);
+  // The picture is as wide as the gallery card's inside: the screen less the gutters and the card's two border lines.
+  const picture = Math.round((width - space[3] * 2 - 2) / GALLERY_RATIO);
   const optionHeight = space[3] + space[2] + 3 + small * 2 + body + 4;
   const tileRows = [
     { title: 2, body: 2 },

@@ -48,6 +48,8 @@ export interface ProductGalleryProps {
 /** Width over height of the big picture. The page's loading skeleton uses the same number. */
 export const GALLERY_RATIO = 1.1;
 const THUMB = 52;
+/** The card's border on each side. */
+const BORDER = 1;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -105,7 +107,8 @@ export function ProductGallery({
   const { colors } = useTheme();
   const reduceMotion = useReduceMotion();
   const scroller = useRef<ScrollView>(null);
-  const [width, setWidth] = useState(initialWidth);
+  // `initialWidth` is the card's outer width; the swiping area is inside its border.
+  const [width, setWidth] = useState(Math.max(0, initialWidth - BORDER * 2));
   const [index, setIndex] = useState(0);
   const height = Math.round(width / GALLERY_RATIO);
   const many = images.length > 1;
@@ -119,60 +122,69 @@ export function ProductGallery({
   const background = (image: GalleryImage) => (image.alt ? colors.muted : tint);
 
   return (
-    <View
-      style={styles.card}
-      onLayout={(event) => {
-        setWidth(Math.round(event.nativeEvent.layout.width));
-      }}
-    >
-      {width > 0 ? (
-        <View>
-          <ScrollView
-            ref={scroller}
-            horizontal
-            pagingEnabled
-            showsHorizontalScrollIndicator={false}
-            scrollEventThrottle={16}
-            onScroll={onScroll}
-          >
-            {images.map((image, position) => (
-              <View
-                key={image.key}
-                accessible
-                role="img"
-                aria-label={`${photoLabel(position + 1, images.length)}. ${image.label}`}
-                style={[styles.slide, { width, height, backgroundColor: background(image) }]}
-              >
-                {image.uri !== undefined ? (
-                  <Image source={{ uri: image.uri }} style={styles.photo} resizeMode="cover" />
-                ) : (
-                  <NativeText
-                    allowFontScaling={false}
-                    aria-hidden
-                    style={{
-                      fontSize: width * image.scale,
-                      lineHeight: width * image.scale * 1.25,
-                      opacity: faded ? 0.35 : 1,
-                    }}
-                  >
-                    {image.emoji}
-                  </NativeText>
-                )}
+    <View style={styles.card}>
+      {/* The width that counts is the room inside the card's border: that is the width of the swiping area, so a
+          picture is exactly one page wide and a swipe settles with it in the middle. */}
+      <View
+        onLayout={(event) => {
+          setWidth(Math.round(event.nativeEvent.layout.width));
+        }}
+      >
+        {width > 0 ? (
+          <>
+            <ScrollView
+              ref={scroller}
+              horizontal
+              pagingEnabled
+              snapToInterval={width}
+              snapToAlignment="start"
+              decelerationRate="fast"
+              disableIntervalMomentum
+              showsHorizontalScrollIndicator={false}
+              scrollEventThrottle={16}
+              onScroll={onScroll}
+            >
+              {images.map((image, position) => (
+                <View
+                  key={image.key}
+                  accessible
+                  role="img"
+                  aria-label={`${photoLabel(position + 1, images.length)}. ${image.label}`}
+                  style={[styles.slide, { width, height, backgroundColor: background(image) }]}
+                >
+                  {image.uri !== undefined ? (
+                    <Image source={{ uri: image.uri }} style={styles.photo} resizeMode="cover" />
+                  ) : (
+                    <NativeText
+                      allowFontScaling={false}
+                      aria-hidden
+                      style={{
+                        fontSize: width * image.scale,
+                        lineHeight: width * image.scale * 1.25,
+                        opacity: faded ? 0.35 : 1,
+                      }}
+                    >
+                      {image.emoji}
+                    </NativeText>
+                  )}
+                </View>
+              ))}
+            </ScrollView>
+            {overlay !== undefined ? (
+              <View style={styles.over} pointerEvents="box-none">
+                {overlay}
               </View>
-            ))}
-          </ScrollView>
-          {overlay !== undefined ? (
-            <View style={styles.over} pointerEvents="box-none">
-              {overlay}
-            </View>
-          ) : null}
-          {many ? (
-            <View style={styles.count} aria-hidden>
-              <Text variant="caption">{`${index + 1}/${images.length}`}</Text>
-            </View>
-          ) : null}
-        </View>
-      ) : null}
+            ) : null}
+            {many ? (
+              <View style={styles.count} aria-hidden>
+                <Text variant="caption">{`${index + 1}/${images.length}`}</Text>
+              </View>
+            ) : null}
+          </>
+        ) : (
+          <View style={{ height: Math.round(initialWidth / GALLERY_RATIO) }} />
+        )}
+      </View>
       {many ? (
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.thumbs}>
