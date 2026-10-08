@@ -3,7 +3,8 @@
 > **Update (Phase 0b, 2026-10-08):** the customer web app, `packages/ui`, Storybook, Playwright and MSW described
 > below were replaced by an Expo (React Native) customer app (see [`PHASE-0b.md`](./PHASE-0b.md)). This file
 > records what Phase 0 delivered, up to commit `c4ac9ce`. Its human gate checklist is superseded by the one in
-> `PHASE-0b.md`.
+> `PHASE-0b.md`, and then by the one in [`PHASE-0c.md`](./PHASE-0c.md), which closes Phase 0, 0b and 0c
+> together. The three web-only items below are struck through.
 
 **Goal.** Create the monorepo skeleton, tooling, design-system foundation, shared contracts package,
 mock-API package, i18n scaffold and CI, so that Phase 1 (customer UI on mock data) starts with zero setup
@@ -70,10 +71,14 @@ Ticked means checked by command; results and evidence are in the report. Item 6 
 - [ ] Plan approved before coding; nothing outside the phase was built
 - [ ] Node 24.21.0 is active (`node -v`); a fresh clone installs with `pnpm install --frozen-lockfile`
 - [ ] `lint`, `typecheck`, `test` and `build` pass on a clean install with no warnings
-- [ ] Playwright flows pass locally and in CI (the Phase 0 flows cover the language switcher; the two
-      fulfilment modes appear in fixtures only, because there are no mode-dependent screens yet)
-- [ ] axe finds no violations; the home page stays usable at 200% text size
-- [ ] Lighthouse mobile performance 90 or higher, and first-load JavaScript inside the budget above
+- ~~Playwright flows pass locally and in CI (the Phase 0 flows cover the language switcher; the two
+  fulfilment modes appear in fixtures only, because there are no mode-dependent screens yet)~~ _Obsolete:
+  web-only, removed in Phase 0b (ADR 0007). Maestro flows arrive with Phase 1._
+- ~~axe finds no violations; the home page stays usable at 200% text size~~ _Obsolete: web-only, removed in
+  Phase 0b. Colour contrast is now checked by `palette.test.ts`; large text is checked by hand on a phone._
+- ~~Lighthouse mobile performance 90 or higher, and first-load JavaScript inside the budget above~~ _Obsolete:
+  web-only, removed in Phase 0b. The customer app has no Lighthouse score; its bundle size is recorded in
+  each phase report._
 - [ ] Tested by hand on a real low-end Android phone with a throttled network
 - [ ] **The OrderStatus table matches the lifecycle diagram in PLAN section 7** (it is a reconstructed
       stub; see `packages/contracts/src/order-status.ts`)
