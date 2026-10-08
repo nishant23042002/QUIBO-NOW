@@ -38,7 +38,7 @@ import {
   countRule,
   radius,
   space,
-  type InsightRow,
+  type InsightPage,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -226,33 +226,56 @@ export function ProductView({
 
   // The picture's insight card: only the facts that apply to this product and size.
   const { glance } = details;
-  // In the order a shopper needs them: what to check when it arrives, what is in it, a tip, what it is good for,
-  // and what it costs per unit (only when there are several sizes to compare).
-  const insightRows: InsightRow[] = [
-    { key: 'check', label: t('product.insight.labelCheck'), value: glance.check },
+  // Three pages, in the order a shopper needs them: what to check when it arrives, what is in it, and a tip (with
+  // what it is good for, and what it costs per unit when there are sizes to compare).
+  const insightPages: InsightPage[] = [
+    {
+      kind: 'check',
+      tab: t('product.insight.tabCheck'),
+      title: t('product.insight.labelCheck'),
+      body: glance.check,
+    },
     ...(glance.nutrition !== undefined
       ? [
           {
-            key: 'nutrition',
-            label: t('product.insight.labelNutrition', { serving: glance.nutrition.serving }),
-            stats: glance.nutrition.stats,
+            kind: 'nutrition' as const,
+            tab: t('product.insight.tabNutrition'),
+            caption: t('product.insight.labelNutrition', { serving: glance.nutrition.serving }),
+            energy: glance.nutrition.energy,
+            macros: glance.nutrition.macros,
           },
         ]
       : []),
     ...(glance.tip !== undefined
-      ? [{ key: 'tip', label: t('product.insight.labelTip'), value: glance.tip }]
+      ? [
+          {
+            kind: 'tip' as const,
+            tab: t('product.insight.tabTip'),
+            title: t('product.insight.labelTip'),
+            text: glance.tip,
+            extras:
+              glance.goodFor !== undefined
+                ? [{ label: t('product.insight.labelGood'), value: glance.goodFor }]
+                : [],
+          },
+        ]
       : []),
-    ...(glance.goodFor !== undefined
-      ? [{ key: 'good', label: t('product.insight.labelGood'), value: glance.goodFor }]
-      : []),
+    // Only when there are several sizes to compare.
     ...(pack.unitPriceLabel !== undefined
       ? [
           {
-            key: 'value',
-            label: t('product.insight.labelValue'),
-            value: pack.bestValue
-              ? t('product.insight.valueBest', { unit: pack.unitPriceLabel })
-              : pack.unitPriceLabel,
+            kind: 'value' as const,
+            tab: t('product.insight.tabValue'),
+            caption: t('product.insight.labelValue'),
+            unit: pack.unitPriceLabel,
+            sizes: item.packs
+              .filter((option) => option.unitPriceLabel !== undefined)
+              .map((option) => ({
+                label: option.label,
+                value: option.unitPriceLabel ?? '',
+                current: option.id === pack.id,
+                ...(option.bestValue ? { tag: t('product.bestValue') } : {}),
+              })),
           },
         ]
       : []),
@@ -358,7 +381,7 @@ export function ProductView({
                       ) : null}
                       <ProductInsight
                         title={t('product.insight.title')}
-                        rows={insightRows}
+                        pages={insightPages}
                         openLabel={t('product.insight.open')}
                         closeLabel={t('product.insight.close')}
                         onOpenChange={setInsightOpen}

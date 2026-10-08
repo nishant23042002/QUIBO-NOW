@@ -48,7 +48,7 @@ export { CardTitle, FactTable, type FactRow } from './FactTable';
 export { TrustTiles, type TrustTile } from './TrustTiles';
 export { StatePanel, type StatePanelProps } from './StatePanel';
 export { ScreenStatusBar } from './ScreenStatusBar';
-export { ProductInsight, type InsightRow, type ProductInsightProps } from './ProductInsight';
+export { ProductInsight, type InsightPage, type ProductInsightProps } from './ProductInsight';
 export { PackPicker, type PackOption, type PackPickerProps } from './PackPicker';
 export { PriceBadge, type PriceBadgeProps } from './PriceBadge';
 export { ProductCard, useProductCardMetrics, type ProductCardProps } from './ProductCard';

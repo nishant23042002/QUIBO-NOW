@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { NUTRITION, formatNutrient, perServing } from './nutrition';
+import { NUTRITION, formatNutrient, macroShares, perServing } from './nutrition';
 
 describe('perServing', () => {
   it('scales the per-100 figures to the helping, kilocalories whole and the rest to one decimal', () => {
@@ -69,5 +69,25 @@ describe('the sample figures', () => {
       // Fibre, water and rounding make food tables differ a little from the sum.
       expect(Math.abs(kcal - worked) / kcal, id).toBeLessThan(0.25);
     }
+  });
+});
+
+describe('macroShares', () => {
+  it('fills the bar of the biggest figure and scales the others to it', () => {
+    expect(macroShares({ protein: 4, carbs: 8, fat: 2 })).toEqual({
+      protein: 0.5,
+      carbs: 1,
+      fat: 0.25,
+    });
+  });
+
+  it('keeps a small figure visible, and gives a zero none', () => {
+    const shares = macroShares({ protein: 0.1, carbs: 100, fat: 0 });
+    expect(shares.protein).toBeGreaterThan(0.05);
+    expect(shares.fat).toBe(0);
+  });
+
+  it('is all empty when everything is zero', () => {
+    expect(macroShares({ protein: 0, carbs: 0, fat: 0 })).toEqual({ protein: 0, carbs: 0, fat: 0 });
   });
 });

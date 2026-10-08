@@ -122,6 +122,21 @@ export function perServing(per100: Nutrients, amount: number): Nutrients {
   };
 }
 
+/**
+ * How long each of the three bars is, from 0 to 1: the biggest of the three fills its bar, the others are in proportion.
+ * A figure above zero never gets a bar too short to see, and a figure of zero gets none.
+ */
+export function macroShares(helping: Pick<Nutrients, 'protein' | 'carbs' | 'fat'>): {
+  protein: number;
+  carbs: number;
+  fat: number;
+} {
+  const biggest = Math.max(helping.protein, helping.carbs, helping.fat);
+  const share = (value: number) =>
+    value <= 0 || biggest <= 0 ? 0 : Math.max(value / biggest, 0.06);
+  return { protein: share(helping.protein), carbs: share(helping.carbs), fat: share(helping.fat) };
+}
+
 /** A figure for display with Latin digits and no trailing ".0": 8, 0.4, 7.5. */
 export function formatNutrient(value: number): string {
   return String(tenth(value));

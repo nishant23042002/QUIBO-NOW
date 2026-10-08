@@ -2,7 +2,7 @@ import { messages } from '@quibo/i18n';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import type { FactRow } from '@/ui';
 import { addDays, addMonths, formatDay } from './dates';
-import { NUTRITION, formatNutrient, perServing } from './nutrition';
+import { NUTRITION, formatNutrient, macroShares, perServing } from './nutrition';
 import type { HomeItem, ItemCategory } from './items';
 
 type Entry = { about: string; ingredients: string; goodFor: string; tip: string };
@@ -114,7 +114,11 @@ export interface ProductDetails {
     /** What to look at when it arrives, said for this kind of product. */
     check: string;
     /** What a normal helping holds (approximately), with the helping named: absent when there are no figures. */
-    nutrition?: { serving: string; stats: readonly { label: string; value: string }[] };
+    nutrition?: {
+      serving: string;
+      energy: { value: string; unit: string };
+      macros: readonly { label: string; value: string; share: number }[];
+    };
     /** A short, practical food tip for this product. */
     tip?: string;
     goodFor?: string;
@@ -159,16 +163,18 @@ export function useProductDetails(
         ? t(`product.servings.${facts.serving.name}`)
         : t(`home.units.${facts.serving.unit}`, { n: facts.serving.amount });
     const grams = (value: number) => t('product.insight.grams', { n: formatNutrient(value) });
+    const shares = macroShares(helping);
     return {
       serving,
-      stats: [
+      energy: { value: String(helping.kcal), unit: t('product.insight.kcalUnit') },
+      macros: [
         {
-          label: t('product.insight.statEnergy'),
-          value: t('product.insight.kcal', { n: String(helping.kcal) }),
+          label: t('product.insight.statProtein'),
+          value: grams(helping.protein),
+          share: shares.protein,
         },
-        { label: t('product.insight.statProtein'), value: grams(helping.protein) },
-        { label: t('product.insight.statCarbs'), value: grams(helping.carbs) },
-        { label: t('product.insight.statFat'), value: grams(helping.fat) },
+        { label: t('product.insight.statCarbs'), value: grams(helping.carbs), share: shares.carbs },
+        { label: t('product.insight.statFat'), value: grams(helping.fat), share: shares.fat },
       ],
     };
   })();
