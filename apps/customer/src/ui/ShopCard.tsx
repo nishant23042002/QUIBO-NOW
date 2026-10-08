@@ -18,14 +18,13 @@ export interface ShopCardProps {
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     card: {
-      width: 156,
+      width: 176,
       overflow: 'hidden',
       borderRadius: radius.lg,
       borderWidth: 1,
       borderColor: c.line,
       backgroundColor: c.surface,
     },
-    closed: { opacity: 0.7 },
     top: { height: 56, alignItems: 'center', justifyContent: 'center', backgroundColor: c.muted },
     body: { padding: space[3], gap: space[1], alignItems: 'flex-start' },
     pill: {
@@ -51,7 +50,7 @@ export function ShopCard({ name, type, statusLabel, open, onPress }: ShopCardPro
       role="button"
       aria-label={`${name}. ${statusLabel}`}
       onPress={onPress}
-      style={({ pressed }) => [styles.card, !open && styles.closed, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
       <View style={styles.top}>
         <Text variant="heading" color="inkMuted">

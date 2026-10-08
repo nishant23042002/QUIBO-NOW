@@ -54,6 +54,7 @@ const makeStyles = (c: ThemeColors) =>
     },
     footer: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: space[2],
@@ -91,7 +92,7 @@ export function ItemCard({
         {name}
       </Text>
       <Text variant="small" color="inkMuted" numberOfLines={1}>
-        {otherName !== undefined ? `${otherName} · ${pack}` : pack}
+        {otherName !== undefined ? `${pack} · ${otherName}` : pack}
       </Text>
       <View style={styles.footer}>
         <Price amount={price} {...(mrp !== undefined ? { mrp } : {})} />
