@@ -1,77 +1,81 @@
-import type { ReactNode } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
-import { Skeleton, SkeletonScope, radius, space } from '@/ui';
+import { Fragment } from 'react';
+import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { useLanguage } from '@/i18n/LanguageProvider';
+import {
+  ProductCardSkeleton,
+  SectionDivider,
+  Skeleton,
+  SkeletonScope,
+  fontSize,
+  leading,
+  space,
+} from '@/ui';
+import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 
-const SHOP_CARD = 168;
-const ITEM_CARD = 144;
+/** The widths of the five rails' titles, so they do not all look alike. */
+const RAIL_TITLES = [150, 130, 70, 160, 110] as const;
+/** How many cards of a rail show before the edge of the screen, and how many a grid shows. */
+const RAIL_CARDS = 3;
+const GRID_CARDS = 4;
+/** The rail's title row is as tall as its "See all" button. */
+const HEAD_HEIGHT = space[10];
 
+// These mirror `HomeFeed` and `ProductRail`: the same gaps, gutters and row heights, so nothing jumps when
+// the real cards replace the grey ones.
 const styles = StyleSheet.create({
-  page: { gap: space[6], paddingVertical: space[5] },
-  section: { gap: space[3] },
-  title: { paddingHorizontal: space[4] },
-  row: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
-  card: { gap: space[2] },
-  grid: {
+  feed: { gap: space[5], paddingVertical: space[5] },
+  rail: { gap: space[3] },
+  head: {
+    height: HEAD_HEIGHT,
     flexDirection: 'row',
-    flexWrap: 'wrap',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     gap: space[3],
     paddingHorizontal: space[4],
-    paddingVertical: space[5],
   },
-  priceRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  row: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
+  sectionTitle: { justifyContent: 'center', paddingHorizontal: space[4] },
 });
 
-/** A shop card while shops load: the picture, then a name and a line of detail. */
-function ShopCardSkeleton() {
-  return (
-    <View style={[styles.card, { width: SHOP_CARD }]}>
-      <Skeleton height={106} rounded={radius.lg} />
-      <Skeleton width="70%" height={16} />
-      <Skeleton width="45%" height={14} />
-    </View>
-  );
-}
-
-/** An item card while items load: the picture, a name, a pack size and the price with its button. */
-function ItemCardSkeleton({ width = ITEM_CARD }: { width?: number | `${number}%` }) {
-  return (
-    <View style={[styles.card, { width }]}>
-      <Skeleton height={width === ITEM_CARD ? ITEM_CARD : 150} rounded={radius.lg} />
-      <Skeleton width="85%" height={16} />
-      <Skeleton width="40%" height={14} />
-      <View style={styles.priceRow}>
-        <Skeleton width={52} height={20} />
-        <Skeleton width={56} height={32} rounded={radius.full} />
-      </View>
-    </View>
-  );
-}
-
-function Rail({ title, children }: { title: number; children: ReactNode }) {
-  return (
-    <View style={styles.section}>
-      <View style={styles.title}>
-        <Skeleton width={title} height={20} />
-      </View>
-      <ScrollView horizontal scrollEnabled={false} showsHorizontalScrollIndicator={false}>
-        <View style={styles.row}>{children}</View>
-      </ScrollView>
-    </View>
-  );
-}
-
 /**
- * What Home shows while its shops and items load: a row of shop cards and three rows of item cards,
- * as grey blocks in the same shapes the real cards will have. Replaced by the real rails in Phase 1b.
+ * What Home shows while items load. With "All" chosen it is a row of cards under each category's title, as the
+ * feed has them; with one category chosen (or on a shop page, with `titled`) it is the two-column grid. The cards
+ * are `ProductCardSkeleton`, drawn from the same measurements as the real cards.
  */
-export function HomeSkeleton({ label, grid = false }: { label: string; grid?: boolean }) {
+export function HomeSkeleton({
+  label,
+  grid = false,
+  titled = false,
+}: {
+  label: string;
+  /** The two-column grid instead of the category rows. */
+  grid?: boolean;
+  /** With the grid: a section title above it, as a shop page has. */
+  titled?: boolean;
+}) {
+  const { width: screen } = useWindowDimensions();
+  const { locale } = useLanguage();
+  // As tall as the section title it stands in for (the `subheading` text style), so the cards start at the same place.
+  const titleLine = Math.round(
+    fontSize.lg * leading[locale === 'en' ? 'latin' : 'devanagari'].tight,
+  );
+
   if (grid) {
+    const width = gridCardWidth(screen);
     return (
       <SkeletonScope label={label}>
-        <View style={styles.grid}>
-          {[0, 1, 2, 3].map((key) => (
-            <ItemCardSkeleton key={key} width="47%" />
-          ))}
+        <View style={titled ? { gap: space[3] } : styles.feed}>
+          {titled ? (
+            <View style={[styles.sectionTitle, { height: titleLine }]}>
+              <Skeleton width={150} height={20} />
+            </View>
+          ) : null}
+          <View style={styles.grid}>
+            {Array.from({ length: GRID_CARDS }, (_, index) => (
+              <ProductCardSkeleton key={index} width={width} />
+            ))}
+          </View>
         </View>
       </SkeletonScope>
     );
@@ -79,18 +83,24 @@ export function HomeSkeleton({ label, grid = false }: { label: string; grid?: bo
 
   return (
     <SkeletonScope label={label}>
-      <View style={styles.page}>
-        <Rail title={120}>
-          <ShopCardSkeleton />
-          <ShopCardSkeleton />
-          <ShopCardSkeleton />
-        </Rail>
-        {[160, 140, 180].map((title) => (
-          <Rail key={title} title={title}>
-            <ItemCardSkeleton />
-            <ItemCardSkeleton />
-            <ItemCardSkeleton />
-          </Rail>
+      <View style={styles.feed}>
+        {RAIL_TITLES.map((title, index) => (
+          <Fragment key={title}>
+            {index > 0 ? <SectionDivider /> : null}
+            <View style={styles.rail}>
+              <View style={styles.head}>
+                <Skeleton width={title} height={20} />
+                <Skeleton width={56} height={16} />
+              </View>
+              <ScrollView horizontal scrollEnabled={false} showsHorizontalScrollIndicator={false}>
+                <View style={styles.row}>
+                  {Array.from({ length: RAIL_CARDS }, (_, card) => (
+                    <ProductCardSkeleton key={card} width={RAIL_CARD_WIDTH} />
+                  ))}
+                </View>
+              </ScrollView>
+            </View>
+          </Fragment>
         ))}
       </View>
     </SkeletonScope>

@@ -3,10 +3,9 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductRail, SectionDivider, space } from '@/ui';
 import { HomeSkeleton } from './HomeSkeleton';
-import { ItemDetailHost, ItemTile, gridCardWidth } from './ItemTile';
+import { ItemDetailHost, ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
-const RAIL_CARD = 148;
 /** How long the loading skeleton shows after a category is chosen. */
 const LOAD_MS = 600;
 
@@ -87,7 +86,9 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
               onSeeAll(key);
             }}
           >
-            {items.filter((item) => item.category === key).map((item) => tile(item, RAIL_CARD))}
+            {items
+              .filter((item) => item.category === key)
+              .map((item) => tile(item, RAIL_CARD_WIDTH))}
           </ProductRail>
         </Fragment>
       ))}

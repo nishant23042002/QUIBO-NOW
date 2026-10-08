@@ -125,7 +125,7 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
           </View>
         </View>
         {!loaded ? (
-          <HomeSkeleton label={t('common.loading')} grid />
+          <HomeSkeleton label={t('common.loading')} grid titled />
         ) : sections.length === 0 ? (
           <View style={[styles.empty, styles.gutter]}>
             <Icon name="store" color={colors.inkMuted} size={40} />

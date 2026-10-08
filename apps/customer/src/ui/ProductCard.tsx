@@ -43,6 +43,24 @@ export interface ProductCardProps {
 
 const NAME_LINES = 2;
 
+/**
+ * The measurements of a card's text block, shared with the loading skeleton so the two always line up: the height
+ * of one small line, of the price badge's row, and of the whole block. The block keeps room for the price badge,
+ * a two-line name, the pack and the last line, so every card is the same height and each line sits straight under
+ * the one before, whatever the name's length.
+ */
+export function useProductCardMetrics(): {
+  line: number;
+  priceHeight: number;
+  textHeight: number;
+} {
+  const { locale } = useLanguage();
+  const rhythm = leading[locale === 'en' ? 'latin' : 'devanagari'].normal;
+  const line = Math.round(fontSize.sm * rhythm);
+  const priceHeight = Math.round(fontSize.base * rhythm) + 8;
+  return { line, priceHeight, textHeight: priceHeight + line * (NAME_LINES + 2) + space[1] * 3 };
+}
+
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     card: { gap: space[2] },
@@ -114,13 +132,7 @@ export function ProductCard({
 }: ProductCardProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
-  const { locale } = useLanguage();
-  const rhythm = leading[locale === 'en' ? 'latin' : 'devanagari'].normal;
-  const line = Math.round(fontSize.sm * rhythm);
-  // Room for the price badge, a two-line name, the pack and the last line, so every card is the same
-  // height and each line sits straight under the one before, whatever the name's length.
-  const textHeight =
-    Math.round(fontSize.base * rhythm) + 8 + line * (NAME_LINES + 2) + space[1] * 3;
+  const { textHeight } = useProductCardMetrics();
   const out = stock?.kind === 'out';
 
   return (

@@ -5,6 +5,9 @@ import { useTintOf } from './categories';
 import { ProductDetail } from './ProductDetail';
 import { useHomeItems, type HomeItem } from './items';
 
+/** How wide a card is in a swipeable row. */
+export const RAIL_CARD_WIDTH = 148;
+
 /** One item as a card, wired to the cart: ADD and the stepper write to it, a tap opens the item detail. */
 export function ItemTile({
   item,
