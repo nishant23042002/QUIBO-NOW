@@ -139,5 +139,6 @@ shared code never branches on it (ADR 0002).
 - Decisions: [`docs/decisions/`](docs/decisions/) (UI first, fulfilment mode, version pins, packages as
   source, money, the old web routing, and the switch to Expo apps)
 - Phase 0: [`checklist`](docs/phases/PHASE-0.md) and [`report`](docs/phases/PHASE-0-report.md). Phase 0b
-  (the React Native switch): [`checklist`](docs/phases/PHASE-0b.md). [`Notes for Phase 1`](docs/phases/PHASE-1-notes.md)
+  (the React Native switch): [`checklist`](docs/phases/PHASE-0b.md) and
+  [`report`](docs/phases/PHASE-0b-report.md). [`Notes for Phase 1`](docs/phases/PHASE-1-notes.md)
 - Local infrastructure: [`infra/README.md`](infra/README.md)
