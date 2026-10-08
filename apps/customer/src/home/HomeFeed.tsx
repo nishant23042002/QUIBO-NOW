@@ -1,15 +1,12 @@
 import { Fragment, useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { ProductCard, ProductRail, SectionDivider, space } from '@/ui';
-import { useHomeCategories } from './categories';
+import { ProductRail, SectionDivider, space } from '@/ui';
 import { HomeSkeleton } from './HomeSkeleton';
-import { ProductDetail } from './ProductDetail';
-import type { DraftCart } from './cart';
+import { ItemDetailHost, ItemTile, gridCardWidth } from './ItemTile';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
 const RAIL_CARD = 148;
-const COLUMNS = 2;
 /** How long the loading skeleton shows after a category is chosen. */
 const LOAD_MS = 600;
 
@@ -22,8 +19,6 @@ const styles = StyleSheet.create({
 });
 
 interface HomeFeedProps {
-  /** The cart being filled. ADD and the stepper on every card write to it. */
-  cart: DraftCart;
   /** The chosen category tab. "all" shows a row per category; any other shows that category's items in a grid. */
   category: string;
   onSeeAll: (category: ItemCategory) => void;
@@ -32,13 +27,12 @@ interface HomeFeedProps {
 /**
  * The items on Home. With "All" chosen: a swipeable row for each category, each with a "See all" link.
  * With one category chosen: that category's items in a two-column grid. ADD turns into a stepper in place.
- * The quantities live in the draft cart, which the floating cart bar reads.
+ * The quantities live in the cart, which the floating cart bar reads.
  */
-export function HomeFeed({ cart, category, onSeeAll }: HomeFeedProps) {
+export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
   const { t } = useLanguage();
   const { width: screen } = useWindowDimensions();
   const items = useHomeItems();
-  const categories = useHomeCategories();
   const [detailId, setDetailId] = useState<string | null>(null);
   // Choosing another category shows the loading skeleton for a moment first, as real data would arrive.
   const [shown, setShown] = useState(category);
@@ -53,47 +47,12 @@ export function HomeFeed({ cart, category, onSeeAll }: HomeFeedProps) {
   }, [category, shown]);
   const loading = shown !== category;
 
-  const tintOf = (key: ItemCategory): string =>
-    categories.find((candidate) => candidate.key === key)?.tint ?? '';
-
-  const card = (item: HomeItem, width: number) => (
-    <ProductCard
-      key={item.id}
-      name={item.name}
-      pack={item.pack}
-      price={item.price}
-      {...(item.mrp !== undefined ? { mrp: item.mrp } : {})}
-      {...(item.ribbon !== undefined ? { ribbon: item.ribbon } : {})}
-      {...(item.quickLabel !== undefined ? { quickLabel: item.quickLabel } : {})}
-      diet={item.diet}
-      {...(item.stock !== undefined ? { stock: item.stock } : {})}
-      emoji={item.emoji}
-      tint={tintOf(item.category)}
-      width={width}
-      onPress={() => {
-        setDetailId(item.id);
-      }}
-      quantity={cart.quantities[item.id] ?? 0}
-      onQuantityChange={(next) => {
-        cart.setQuantity(item.id, next);
-      }}
-      stepper={{
-        addLabel: t('home.rails.add'),
-        decreaseLabel: t('home.rails.removeOne'),
-        increaseLabel: t('home.rails.addOne'),
-      }}
-    />
+  const tile = (item: HomeItem, width: number) => (
+    <ItemTile key={item.id} item={item} width={width} onOpen={setDetailId} />
   );
-
-  const detail = items.find((item) => item.id === detailId) ?? null;
   const sheet = (
-    <ProductDetail
-      item={detail}
-      tint={detail === null ? '' : tintOf(detail.category)}
-      quantity={detail === null ? 0 : (cart.quantities[detail.id] ?? 0)}
-      onQuantityChange={(next) => {
-        if (detail !== null) cart.setQuantity(detail.id, next);
-      }}
+    <ItemDetailHost
+      id={detailId}
       onClose={() => {
         setDetailId(null);
       }}
@@ -105,12 +64,11 @@ export function HomeFeed({ cart, category, onSeeAll }: HomeFeedProps) {
   }
 
   if (category !== 'all') {
-    // Rounded down, so two cards and the gap between them always fit in the row, whatever the phone's width.
-    const gridWidth = Math.floor((screen - space[4] * 2 - space[3] * (COLUMNS - 1)) / COLUMNS);
+    const gridWidth = gridCardWidth(screen);
     return (
       <View style={styles.feed}>
         <View style={styles.grid}>
-          {items.filter((item) => item.category === category).map((item) => card(item, gridWidth))}
+          {items.filter((item) => item.category === category).map((item) => tile(item, gridWidth))}
         </View>
         {sheet}
       </View>
@@ -129,7 +87,7 @@ export function HomeFeed({ cart, category, onSeeAll }: HomeFeedProps) {
               onSeeAll(key);
             }}
           >
-            {items.filter((item) => item.category === key).map((item) => card(item, RAIL_CARD))}
+            {items.filter((item) => item.category === key).map((item) => tile(item, RAIL_CARD))}
           </ProductRail>
         </Fragment>
       ))}

@@ -40,6 +40,8 @@ export interface HomeHeaderProps {
   shopsLabel: string;
   /** The title inside the panel, for example "Local shops in Roha". */
   shopsTitle: string;
+  /** A shop's card in the panel was tapped: open that shop. */
+  onShopPress: (id: string) => void;
   /** The search bar's name for a screen reader, for example "Search for items and shops". */
   searchLabel: string;
   /** The search bar's hint: a fixed part ("Search") and example words that type themselves in. */
@@ -120,6 +122,7 @@ export function HomeHeader({
   shops,
   shopsLabel,
   shopsTitle,
+  onShopPress,
   searchLabel,
   searchHint,
   categories,
@@ -369,6 +372,7 @@ export function HomeHeader({
           onHeight={setPanelHeight}
           title={shopsTitle}
           shops={shops}
+          onShopPress={onShopPress}
         />
       </Animated.View>
 

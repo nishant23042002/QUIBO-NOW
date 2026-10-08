@@ -54,13 +54,21 @@ export interface TextProps extends Omit<NativeTextProps, 'style'> {
   color?: TextColor;
   /** A line through the text, for a printed price that has been beaten. */
   strike?: boolean;
+  /** Where the lines sit when the text wraps. Centred text is for empty and error states. */
+  align?: 'left' | 'center';
 }
 
 /**
  * The only way text reaches a screen. It uses system fonts, follows the phone's text-size
  * setting up to 200%, and gives Hindi and Marathi the extra line height they need.
  */
-export function Text({ variant = 'body', color = 'ink', strike = false, ...rest }: TextProps) {
+export function Text({
+  variant = 'body',
+  color = 'ink',
+  strike = false,
+  align = 'left',
+  ...rest
+}: TextProps) {
   const { locale } = useLanguage();
   const { colors } = useTheme();
   const { fontSize: size, fontWeight, leading: spacing } = variants[variant];
@@ -78,6 +86,7 @@ export function Text({ variant = 'body', color = 'ink', strike = false, ...rest 
         fontWeight,
         lineHeight,
         textDecorationLine: strike ? 'line-through' : 'none',
+        textAlign: align,
       }}
     />
   );

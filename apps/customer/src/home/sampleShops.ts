@@ -36,3 +36,17 @@ export function useSampleShops(): readonly SampleShop[] {
     sinceLabel: t('home.shopsSheet.since', { year: since }),
   }));
 }
+
+export interface ShopDetails extends SampleShop {
+  /** When the shop is open, for example "Hours 7 AM – 9 PM". */
+  hoursLabel: string;
+}
+
+/** One shop by its id, with what its own page shows besides the card, or undefined when there is no such shop. */
+export function useShop(id: string | undefined): ShopDetails | undefined {
+  const { t } = useLanguage();
+  const shops = useSampleShops();
+  const shop = shops.find((candidate) => candidate.id === id);
+  if (shop === undefined) return undefined;
+  return { ...shop, hoursLabel: t('shop.hours', { hours: t('shop.sampleHours') }) };
+}

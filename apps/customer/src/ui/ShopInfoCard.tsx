@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
@@ -21,6 +21,8 @@ export interface ShopInfoCardProps {
   sinceLabel: string;
   /** A photo of the shop. Until one is chosen, the placeholder shows. */
   photoUri?: string;
+  /** Tapping the card opens the shop. */
+  onPress?: () => void;
 }
 
 /** Every card is the same width and height, so a row of them lines up and the next one peeks in. */
@@ -42,6 +44,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.line,
       backgroundColor: c.surface,
     },
+    pressed: { opacity: 0.8 },
     photo: { width: '100%' },
     // The tag sits in the picture's corner, so it never covers the middle of it.
     // Open or closed: pistachio for open, a plain outlined pill for closed. Both have a solid
@@ -82,6 +85,7 @@ export function ShopInfoCard({
   verifiedLabel,
   sinceLabel,
   photoUri,
+  onPress,
 }: ShopInfoCardProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
@@ -91,10 +95,12 @@ export function ShopInfoCard({
   const status = statusDetail === undefined ? statusLabel : `${statusLabel}. ${statusDetail}`;
 
   return (
-    <View
+    <Pressable
       accessible
+      role="button"
       aria-label={`${name}. ${status}. ${type}. ${verifiedLabel}. ${sinceLabel}`}
-      style={styles.card}
+      onPress={onPress}
+      style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
       <View style={styles.photo}>
         <ProductImage
@@ -123,6 +129,6 @@ export function ShopInfoCard({
           </Text>
         </View>
       </View>
-    </View>
+    </Pressable>
   );
 }

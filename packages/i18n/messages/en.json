@@ -209,5 +209,20 @@
     "categories": "Categories",
     "orders": "Orders",
     "soon": "This screen is built in a later section of the customer app."
+  },
+  "shop": {
+    "hours": "Hours {hours}",
+    "sampleHours": "7 AM – 9 PM",
+    "closedNote": "Closed right now. It opens at {time}.",
+    "freeDelivery": "Free delivery on {amount} or more, counted across all your shops",
+    "empty": {
+      "title": "Nothing listed yet",
+      "body": "This shop has not added its items yet. Please check back soon."
+    },
+    "notFound": {
+      "title": "We could not find this shop",
+      "body": "It may have closed or moved. Go back and pick another shop.",
+      "back": "Back to Home"
+    }
   }
 }

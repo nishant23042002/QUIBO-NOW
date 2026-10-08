@@ -24,6 +24,7 @@ export { Input, type InputProps } from './Input';
 export { ItemCard, type ItemCardProps } from './ItemCard';
 export { HeaderLogo } from './brand/HeaderLogo';
 export { LogoStacked, QMark, type LogoGround } from './brand/Logo';
+export { gridCardWidth } from './logic/grid';
 export { COUNT_RULE, WEIGHT_RULE, type QuantityRule } from './logic/quantity';
 export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
 export { Notice, type NoticeProps } from './Notice';
@@ -46,6 +47,7 @@ export { Skeleton, SkeletonScope, type SkeletonProps, type SkeletonScopeProps } 
 export { SectionDivider } from './SectionDivider';
 export { Screen } from './Screen';
 export { SearchBar, type SearchBarProps, type SearchHint } from './SearchBar';
+export { ShopHero, type ShopHeroProps } from './ShopHero';
 export { ShopInfoCard, type ShopInfoCardProps } from './ShopInfoCard';
 export { ShopsPanel, type ShopsPanelProps } from './ShopsPanel';
 export { ShopsChip, type ShopsChipProps } from './ShopsChip';

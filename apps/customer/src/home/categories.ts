@@ -54,3 +54,9 @@ export function useHomeCategories(): readonly HomeCategory[] {
     },
   ];
 }
+
+/** The colour behind an item picture for its category: the same on a card, in the detail and in the cart. */
+export function useTintOf(): (category: string) => string {
+  const categories = useHomeCategories();
+  return (category) => categories.find((candidate) => candidate.key === category)?.tint ?? '';
+}

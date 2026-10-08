@@ -1,5 +1,6 @@
 import { money } from '@quibo/contracts';
 import { describe, expect, it } from 'vitest';
+import { gridCardWidth } from './grid';
 import { initialOf } from './initial';
 import { freeDeliveryProgress, savings } from './money';
 import { COUNT_RULE, WEIGHT_RULE, formatQuantity, stepQuantity } from './quantity';
@@ -115,5 +116,19 @@ describe('splash timing', () => {
     expect(splashMinimumMs(true)).toBeLessThan(splashMinimumMs(false));
     expect(splashMinimumMs(false)).toBeGreaterThanOrEqual(1000);
     expect(SPLASH_FADE_MS).toBeLessThanOrEqual(500);
+  });
+});
+
+describe('gridCardWidth', () => {
+  const two = { columns: 2, gutter: 16, gap: 12 };
+
+  it('shares the room between the columns, less the gutters and the gap', () => {
+    expect(gridCardWidth(360, two)).toBe(158);
+  });
+
+  it('rounds down, so two cards and the gap never overflow the row', () => {
+    const width = gridCardWidth(361, two);
+    expect(width).toBe(158);
+    expect(width * 2 + two.gap + two.gutter * 2).toBeLessThanOrEqual(361);
   });
 });

@@ -15,6 +15,7 @@ export interface ShopsPanelProps {
   /** Says once that every shop is verified, for example "Verified local shops in Roha". */
   title: string;
   shops: readonly (ShopInfoCardProps & { id: string })[];
+  onShopPress: (id: string) => void;
 }
 
 /** How far each card's entrance is delayed after the one before it, and how long one card's entrance takes, as a share of the whole. */
@@ -47,6 +48,7 @@ export function ShopsPanel({
   onHeight,
   title,
   shops,
+  onShopPress,
 }: ShopsPanelProps) {
   return (
     <View style={[styles.clip, height > 0 ? { height } : styles.measuring]} aria-hidden={!open}>
@@ -102,7 +104,12 @@ export function ShopsPanel({
                       ],
                     }}
                   >
-                    <ShopInfoCard {...shop} />
+                    <ShopInfoCard
+                      {...shop}
+                      onPress={() => {
+                        onShopPress(id);
+                      }}
+                    />
                   </Animated.View>
                 );
               })}
