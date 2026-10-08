@@ -4,7 +4,16 @@ import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import { Icon, Notice, SectionDivider, ShopHero, Text, radius, space } from '@/ui';
+import {
+  BOTTOM_BAR_HEIGHT,
+  Icon,
+  Notice,
+  SectionDivider,
+  ShopHero,
+  Text,
+  radius,
+  space,
+} from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
 import { FREE_DELIVERY_FROM } from './delivery';
@@ -75,7 +84,10 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
       <ScrollView
         contentContainerStyle={[
           styles.content,
-          { paddingBottom: insets.bottom + space[6] + (cart.count > 0 ? CART_ROOM : 0) },
+          {
+            paddingBottom:
+              insets.bottom + BOTTOM_BAR_HEIGHT + space[6] + (cart.count > 0 ? CART_ROOM : 0),
+          },
         ]}
         showsVerticalScrollIndicator={false}
       >
@@ -140,7 +152,7 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
           ))
         )}
       </ScrollView>
-      <CartLayer bottom={insets.bottom} />
+      <CartLayer bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
       <ItemDetailHost
         id={detailId}
         onClose={() => {

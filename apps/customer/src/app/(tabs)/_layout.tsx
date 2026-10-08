@@ -16,7 +16,9 @@ const TABS = [
 
 function Bar({ state, navigation }: TabBarProps) {
   const { t } = useLanguage();
-  const active = state.routes[state.index]?.name ?? 'index';
+  const current = state.routes[state.index]?.name ?? 'index';
+  // A shop page is reached from Home and has no tab of its own, so Home stays the lit one while it shows.
+  const active = TABS.some((tab) => tab.name === current) ? current : 'index';
 
   return (
     <BottomBar
@@ -30,7 +32,7 @@ function Bar({ state, navigation }: TabBarProps) {
           target: route.key,
           canPreventDefault: true,
         });
-        if (key !== active && !event.defaultPrevented) navigation.navigate(route.name);
+        if (key !== current && !event.defaultPrevented) navigation.navigate(route.name);
       }}
     />
   );
@@ -42,11 +44,14 @@ export default function TabsLayout() {
   return (
     <Tabs
       tabBar={(props) => <Bar {...props} />}
+      backBehavior="history"
       screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.bg } }}
     >
       {TABS.map((tab) => (
         <Tabs.Screen key={tab.name} name={tab.name} />
       ))}
+      {/* A shop's page lives in the tab group so the bottom bar stays, but it is not a tab: href null hides it from the bar. */}
+      <Tabs.Screen name="shop/[id]" options={{ href: null }} />
     </Tabs>
   );
 }
