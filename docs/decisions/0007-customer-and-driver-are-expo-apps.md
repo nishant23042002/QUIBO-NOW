@@ -5,6 +5,9 @@
 - **Date:** 2026-10-08
 - **Source:** the human's instruction after Phase 0: both phone apps are React Native, keep the repo
   simple, sorted and focused, and add the security layer later.
+- **Updated in Phase 0c** ([0008](./0008-design-system-aubergine-and-pistachio.md)): colours moved from
+  `tokens.ts` to a themed `palette.ts` and their tests to `palette.test.ts`, and the chosen language is
+  now remembered. Those two places are marked below.
 
 ## Context
 
@@ -36,7 +39,8 @@ layout still fits, and what to leave for later.
    defined.
 7. **`formatRupees` uses no `Intl`** (ADR 0005), so a price is the same on every JavaScript engine.
 8. **Tests.** Vitest for logic, including `tokens.test.ts`, which keeps every text colour at 4.5:1 and every
-   control edge at 3:1. The Components screen shows every building block in every state. Maestro (simple
+   control edge at 3:1 (since Phase 0c that check is `palette.test.ts`, in both themes; `tokens.test.ts`
+   keeps only sizes). The Components screen shows every building block in every state. Maestro (simple
    YAML flows) arrives with Phase 1; Playwright returns with the admin panel in Phase 3.
 
 ## Deferred on purpose (the "later layer")
@@ -62,8 +66,8 @@ no secrets in git, never log OTPs or Aadhaar numbers.
   phone is checked by the "On this phone" section of the Components screen.
 - **Bundle size is a number to watch:** the Android Hermes bundle is 3.3 MB. Expo Router brings in a
   971 KB icon font the app does not use, and Zod about 0.7 MB. Both are tuning work for later.
-- **The language choice is held in memory only** and starts from the phone's language each launch.
-  Remembering it is Phase 1.
+- **The language choice was held in memory only** and started from the phone's language each launch.
+  Since Phase 0c it is remembered (ADR 0008).
 - **pnpm settings that Expo needs** (peers not auto-installed, two ignored optional peers, one allowed
   deprecation) are recorded in ADR 0003.
 

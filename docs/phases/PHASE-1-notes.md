@@ -1,8 +1,9 @@
 # Phase 1 notes
 
-Things found or deliberately left out during Phase 0 and Phase 0b. Nothing here is built. Read this before
-writing the Phase 1 prompt. Phase 1 is **customer UI on mock data** in the React Native app (PLAN sections 6
-and 12; ADR 0007).
+Things found or deliberately left out during Phase 0, Phase 0b and Phase 0c. Nothing here is built. Read
+this before writing the Phase 1 prompt. Phase 1 is **customer UI on mock data** in the React Native app
+(PLAN sections 6 and 12; ADR 0007). The look is locked in ADR 0008: build screens from the components in
+`apps/customer/src/ui` and the theme in `src/theme`, and do not add colours or one-off styles.
 
 ## First tasks, because Phase 0b stopped short of them
 
@@ -28,12 +29,13 @@ and 12; ADR 0007).
 5. **Maestro flows** (simple YAML) for the phase's flows, in both fulfilment modes. Maestro needs its CLI
    and an emulator or phone on the machine that runs it. Update the gate wording in `PHASE-TEMPLATE.md`
    accordingly (Phase 0b already changed it from Playwright to flow tests).
-6. **Remember the chosen language.** It is held in memory today and resets to the phone's language each
-   launch. Needs a storage package (ask first).
-7. **A title per screen in all three languages.** The header shows the app name on the home screen and
+6. **A title per screen in all three languages.** The header shows the logo on the home screen and
    "Components" on the gallery; every real screen needs its own key.
-8. **Keep the Components screen out of production builds.** Only the home screen's link to it is hidden
+7. **Keep the Components screen out of production builds.** Only the home screen's link to it is hidden
    (`__DEV__`); the route itself can still be opened with a link such as `quibo://components`.
+8. **Build the eight components Phase 0c left out, when a screen needs each:** `EmptyState`, `StatusTimeline`,
+   `Toast`, `ConfirmDialog`, `ItemRow` (a cart line), `Skeleton`, `DietMark` and `Divider`. Add each to the
+   Components screen in every state, and add any new colour pairing to `palette.test.ts`.
 
 ## Known gaps in what exists
 
@@ -48,23 +50,54 @@ and 12; ADR 0007).
   reader.
 - **Text size is capped at 200% for `Text` only** (`maxFontSizeMultiplier`). `TextInput` has no cap; check
   large text on every input.
-- **No icons.** The sheet's close icon is two bars. Add an icon approach when a screen needs one.
+- **Thirteen icons only** (`src/ui/Icon.tsx`, one stroke weight, drawn with `react-native-svg`). Add a shape
+  there when a screen needs one; move to an icon library only if the count grows a lot (ADR 0008).
 - **Cards are flat** (2 px border, no shadow) and the loading skeleton is static, both to stay cheap on
   low-end phones. A disabled card is dimmed with opacity, because React Native text does not inherit colour.
-- **No dark mode** (`userInterfaceStyle` is `light`) and system fonts only.
+- **System fonts only.** Poppins for text would cost about 500 KB and one package; decide it with the
+  bundle numbers below, and check Devanagari rendering on a real low-end phone first.
 - **Typed routes are off,** so `router.push('/components')` is not checked. To adopt `experiments.typedRoutes`,
   note that the Expo CLI then writes `expo-env.d.ts` and `.expo/types` when `expo start` runs, so a fresh
   clone has no types until it is run: the same trap `next typegen` was in Phase 0.
-- **Brand is a placeholder.** Name ("Quibo Now"), the palette in `src/ui/tokens.ts` (now the single
-  place), the URL scheme `quibo`, and no icon or splash image. The Android package name is not set and
-  cannot change after the first Play Store release.
-- **A new colour pairing is not checked automatically.** `tokens.test.ts` lists the pairs by hand; add
-  every new text-on-background or border-on-background pair to it.
+- **Still placeholders in the brand:** the URL scheme `quibo`, and there is no operating-system splash
+  image (the in-app boot screen covers loading). The Android package name is not set and cannot change
+  after the first Play Store release. The app icon files exist but only show in a built app, never in Expo
+  Go (ADR 0007).
+- **A new colour pairing is not checked automatically.** `src/theme/palette.test.ts` lists the pairs by
+  hand and checks each in both themes; add every new text-on-background or border-on-background pair.
+- **The Android navigation bar colour in the dark theme** has not been seen on a phone. The status bar
+  text is always light because the header is dark in both themes.
+- **The toggle never goes back to "follow the phone".** The first tap sets an explicit choice. If users
+  need the automatic mode back, it belongs on a settings screen (`ThemeProvider` already supports the
+  `system` mode).
+- **The boot screen waits for the saved theme and language.** If the first paint ever flickers on a slow
+  phone, draw with the phone's setting first and switch after (ADR 0008, Consequences).
+
+## Using the Phase 0c components
+
+- **Equal-height cards in a grid.** `ItemCard` and `ShopCard` do not stretch to their neighbour's height;
+  the Components screen lines them up from the top. Make the Phase 1 grid rows `alignItems: 'stretch'`.
+- **Weights and the cart contract.** `Stepper` counts in plain numbers (1, 0.5 kg, 2.25 kg) with
+  `COUNT_RULE` and `WEIGHT_RULE`. The cart schema will store quantities the way `multiplyByQuantity` in
+  `@quibo/contracts` expects (a fixed scale, ADR 0005): convert at the boundary, not inside the component.
+- **Text comes in as props.** `CartBar`, `BillSummary` and `ItemCard` take finished strings, so the screen
+  resolves plurals (there are no plurals in `translate()`; the Components screen uses two keys,
+  `itemCountOne` and `itemCountMany`) and the "add ₹X more" line.
+- **Delivery windows are clock ranges** ("4–6 PM"), never minutes. `WindowPicker` shows a full window
+  struck through and dimmed, and reads out "full" to a screen reader; a dimmed disabled control is exempt
+  from the contrast rule, while an open or closed shop is not dimmed at all, so its text stays readable.
+- **`SearchBar` is always a light field,** because it sits on the dark header. Check it on a phone in both
+  themes. Parts that live on the header (`AddressPill`, `IconButton`, `CartBar`) take a `ground` or are
+  always dark; keep them there.
+- **Real photos** replace the placeholder in one place: pass `photoUri` to `ItemCard` or `uri` to
+  `ProductImage`. Choose a loading and a failed-image state with the first real photos.
 
 ## Accessibility
 
-Automated checks cover colour pairs only (`tokens.test.ts`: text 4.5:1, control edges 3:1). Nothing
-automated checks screen-reader labels or large text. For every Phase 1 screen, by hand and in every
+Automated checks cover colour pairs only (`palette.test.ts`: text 4.5:1, control edges 3:1, in both
+themes) and sizes (`tokens.test.ts`). Nothing automated checks screen-reader labels or large text. In
+Phase 0c the web preview was also audited by script: every text node's contrast in six language and theme
+combinations, horizontal overflow and clipped text. Reuse that approach for new screens until Maestro runs. For every Phase 1 screen, by hand and in every
 language: a TalkBack pass, the phone's largest font size, and Devanagari rendering on a real low-end phone
 (system fonts; if the glyphs look poor, a subset font can be bundled at a cost in bytes).
 
@@ -77,8 +110,9 @@ language: a TalkBack pass, the phone's largest font size, and Devanagari renderi
 
 ## Performance
 
-- **The Android Hermes bundle is 3.3 MB** (2.6 MB before the building blocks, `contracts`, `mocks` and Zod
-  were added). Zod and the contracts are most of that increase; `zod/mini` is smaller, but moving to it is
+- **The Android Hermes bundle is 3.5 MB** at the end of Phase 0c (3.3 MB after Phase 0b, 2.6 MB before the
+  building blocks, `contracts`, `mocks` and Zod were added; Phase 0c added the two packages, the logo
+  paths and the 14 components). Zod and the contracts are most of that increase; `zod/mini` is smaller, but moving to it is
   a rewrite of every contract, so decide it with the numbers in hand. `pnpm build` prints the size; report
   it for every phase.
 - **Expo Router bundles a 971 KB icon font** (Material Symbols) that the app does not use. Find which

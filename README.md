@@ -37,9 +37,13 @@ cp .env.example .env                  # optional until Phase 2; .env is git-igno
 
 What you should see:
 
-- The home screen in your phone's language (English, Hindi or Marathi) with three language buttons. Tap
-  one and the whole screen changes.
-- A **Components** button. It opens every building block in every state.
+- The home screen in your phone's language (English, Hindi or Marathi) with the Quibo Now logo, the
+  tagline and three language buttons. Tap one and the whole screen changes.
+- A round **sun or moon button at the top right** of every screen. Tap it to switch between the light and
+  the dark theme. The first launch follows your phone's setting; after you tap, the app remembers your
+  choice. Close the app completely and open it again: the theme and the language should be as you left them.
+- A **Components** button. It opens every building block in every state; switch the theme and the language
+  there to check both looks.
 - At the bottom of that screen, **On this phone** shows `₹1,23,456.50` and `200 {"status":"ok"}`, each with
   a green `ok`. This is the check that money maths and the mock API work on your phone's own JavaScript
   engine. If either shows `wrong`, or the screen shows an error, that is a defect: tell the maintainer.
@@ -84,10 +88,13 @@ docs/
   PLAN.md         The plan (do not edit casually)
   decisions/      One short file per architecture decision
   phases/         PHASE-N.md, PHASE-N-report.md, PHASE-N-notes.md, PHASE-TEMPLATE.md
+  brand/          SVG masters of the app icon (ADR 0008)
 ```
 
 Inside the customer app: `src/app` holds the screens (one file per screen, Expo Router), `src/ui` the
-building blocks and design tokens, `src/i18n` the language switch.
+building blocks (`src/ui/brand` is the logo, `src/ui/logic` their testable logic), `src/theme` the colours
+and the light and dark theme (`palette.ts` is the only file allowed to contain a colour), `src/i18n` the
+language switch, and `assets/` the app icon files.
 
 `packages/db` does not exist yet; it arrives in Phase 2.
 
