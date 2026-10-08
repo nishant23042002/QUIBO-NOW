@@ -3,11 +3,9 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "MSW request handlers and typed fixtures. Screens run on these until the real API exists.",
+  "description": "Mock API answers and typed fixtures. Screens run on these until the real API exists.",
   "exports": {
-    ".": "./src/index.ts",
-    "./node": "./src/server.ts",
-    "./browser": "./src/browser.ts"
+    ".": "./src/index.ts"
   },
   "scripts": {
     "lint": "eslint --max-warnings 0 .",
@@ -15,12 +13,10 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@quibo/contracts": "workspace:*",
-    "msw": "catalog:"
+    "@quibo/contracts": "workspace:*"
   },
   "devDependencies": {
     "@quibo/config": "workspace:*",
-    "@types/node": "catalog:",
     "eslint": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
