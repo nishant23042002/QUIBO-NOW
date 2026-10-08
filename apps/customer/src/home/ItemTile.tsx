@@ -1,14 +1,17 @@
+import { useRouter } from 'expo-router';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductCard, gridCardWidth as gridWidth, space } from '@/ui';
 import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
-import { ProductDetail } from './ProductDetail';
-import { useHomeItems, type HomeItem } from './items';
+import type { HomeItem } from './items';
 
 /** How wide a card is in a swipeable row. */
 export const RAIL_CARD_WIDTH = 148;
 
-/** One item as a card, wired to the cart: ADD and the stepper write to it, a tap opens the item detail. */
+/**
+ * One item as a card, wired to the cart: ADD and the stepper write to it, and a tap on the picture or the text
+ * opens the item's own page. `onOpen` runs first, for a screen that wants to note the tap (search remembers its query).
+ */
 export function ItemTile({
   item,
   width,
@@ -16,9 +19,10 @@ export function ItemTile({
 }: {
   item: HomeItem;
   width: number;
-  onOpen: (id: string) => void;
+  onOpen?: (id: string) => void;
 }) {
   const { t } = useLanguage();
+  const router = useRouter();
   const cart = useCart();
   const tintOf = useTintOf();
 
@@ -36,7 +40,8 @@ export function ItemTile({
       tint={tintOf(item.category)}
       width={width}
       onPress={() => {
-        onOpen(item.id);
+        onOpen?.(item.id);
+        router.push({ pathname: '/product/[id]', params: { id: item.id } });
       }}
       quantity={cart.quantities[item.id] ?? 0}
       onQuantityChange={(next) => {
@@ -47,26 +52,6 @@ export function ItemTile({
         decreaseLabel: t('home.rails.removeOne'),
         increaseLabel: t('home.rails.addOne'),
       }}
-    />
-  );
-}
-
-/** The item sheet for whichever item is chosen (null keeps it shut), reading and writing the cart. */
-export function ItemDetailHost({ id, onClose }: { id: string | null; onClose: () => void }) {
-  const cart = useCart();
-  const items = useHomeItems();
-  const tintOf = useTintOf();
-  const item = items.find((candidate) => candidate.id === id) ?? null;
-
-  return (
-    <ProductDetail
-      item={item}
-      tint={item === null ? '' : tintOf(item.category)}
-      quantity={item === null ? 0 : (cart.quantities[item.id] ?? 0)}
-      onQuantityChange={(next) => {
-        if (item !== null) cart.setQuantity(item.id, next);
-      }}
-      onClose={onClose}
     />
   );
 }

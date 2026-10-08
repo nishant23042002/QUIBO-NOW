@@ -3,7 +3,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductRail, SectionDivider, space } from '@/ui';
 import { HomeSkeleton } from './HomeSkeleton';
-import { ItemDetailHost, ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
+import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
 /** How long the loading skeleton shows after a category is chosen. */
@@ -32,7 +32,6 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
   const { t } = useLanguage();
   const { width: screen } = useWindowDimensions();
   const items = useHomeItems();
-  const [detailId, setDetailId] = useState<string | null>(null);
   // Choosing another category shows the loading skeleton for a moment first, as real data would arrive.
   const [shown, setShown] = useState(category);
   useEffect(() => {
@@ -47,17 +46,8 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
   const loading = shown !== category;
 
   const tile = (item: HomeItem, width: number) => (
-    <ItemTile key={item.id} item={item} width={width} onOpen={setDetailId} />
+    <ItemTile key={item.id} item={item} width={width} />
   );
-  const sheet = (
-    <ItemDetailHost
-      id={detailId}
-      onClose={() => {
-        setDetailId(null);
-      }}
-    />
-  );
-
   if (loading) {
     return <HomeSkeleton label={t('common.loading')} grid={category !== 'all'} />;
   }
@@ -69,7 +59,6 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
         <View style={styles.grid}>
           {items.filter((item) => item.category === category).map((item) => tile(item, gridWidth))}
         </View>
-        {sheet}
       </View>
     );
   }
@@ -92,7 +81,6 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
           </ProductRail>
         </Fragment>
       ))}
-      {sheet}
     </View>
   );
 }

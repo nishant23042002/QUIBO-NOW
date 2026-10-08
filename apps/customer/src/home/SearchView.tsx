@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { useState, type Ref } from 'react';
+import type { Ref } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -25,7 +25,7 @@ import {
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
-import { ItemDetailHost, ItemTile, gridCardWidth } from './ItemTile';
+import { ItemTile, gridCardWidth } from './ItemTile';
 import { useHomeItems } from './items';
 import { useSampleShops } from './sampleShops';
 import { searchDocs } from './search';
@@ -101,7 +101,6 @@ export function SearchView({
   const allItems = useHomeItems();
   const allShops = useSampleShops();
   const { recent, remember, clear } = useRecentSearches();
-  const [detailId, setDetailId] = useState<string | null>(null);
 
   const typed = query.trim();
   const itemIds = searchDocs(typed, index.items);
@@ -238,9 +237,8 @@ export function SearchView({
                   key={item.id}
                   item={item}
                   width={width}
-                  onOpen={(id) => {
+                  onOpen={() => {
                     remember(typed);
-                    setDetailId(id);
                   }}
                 />
               ))}
@@ -280,12 +278,6 @@ export function SearchView({
         {content}
       </ScrollView>
       {keyboard ? null : <CartLayer bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />}
-      <ItemDetailHost
-        id={detailId}
-        onClose={() => {
-          setDetailId(null);
-        }}
-      />
     </View>
   );
 }

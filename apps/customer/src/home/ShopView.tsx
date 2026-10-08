@@ -18,7 +18,7 @@ import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
 import { FREE_DELIVERY_FROM } from './delivery';
 import { HomeSkeleton } from './HomeSkeleton';
-import { ItemDetailHost, ItemTile, gridCardWidth } from './ItemTile';
+import { ItemTile, gridCardWidth } from './ItemTile';
 import { useHomeItems, type ItemCategory } from './items';
 import type { ShopDetails } from './sampleShops';
 
@@ -62,7 +62,6 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
   const cart = useCart();
   const items = useHomeItems().filter((item) => item.shop === shop.id);
   const [loaded, setLoaded] = useState(false);
-  const [detailId, setDetailId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -145,7 +144,7 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
               </View>
               <View style={styles.grid}>
                 {section.items.map((item) => (
-                  <ItemTile key={item.id} item={item} width={width} onOpen={setDetailId} />
+                  <ItemTile key={item.id} item={item} width={width} />
                 ))}
               </View>
             </View>
@@ -153,12 +152,6 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
         )}
       </ScrollView>
       <CartLayer bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
-      <ItemDetailHost
-        id={detailId}
-        onClose={() => {
-          setDetailId(null);
-        }}
-      />
     </View>
   );
 }

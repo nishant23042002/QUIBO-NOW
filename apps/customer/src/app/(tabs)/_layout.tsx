@@ -56,6 +56,8 @@ export default function TabsLayout() {
       ))}
       {/* A shop's page lives in the tab group so the bottom bar stays, but it is not a tab: href null hides it from the bar. */}
       <Tabs.Screen name="shop/[id]" options={{ href: null }} />
+      {/* An item's page, the same: reached from a card, with the bottom bar kept. */}
+      <Tabs.Screen name="product/[id]" options={{ href: null }} />
       {/* The search screen is the same: reached from the search bar on Home, with the bottom bar kept. */}
       <Tabs.Screen name="search" options={{ href: null }} />
     </Tabs>

@@ -124,10 +124,6 @@
       "title": "Your cart",
       "total": "total",
       "separate": "From {count} shops. One rider collects it all and brings it together. Free delivery counts the whole cart."
-    },
-    "detail": {
-      "soldBy": "Sold by {shop}",
-      "about": "Picked and packed by a shop in your own town."
     }
   },
   "language": {
@@ -236,6 +232,17 @@
     "noResults": {
       "title": "No results for “{query}”",
       "body": "Check the spelling or try another word, for example milk, atta or vegetables."
+    }
+  },
+  "product": {
+    "soldBy": "Sold by {shop}",
+    "about": "Picked and packed by a shop in your own town.",
+    "save": "You save {amount}",
+    "moreFrom": "More from {shop}",
+    "notFound": {
+      "title": "We could not find this item",
+      "body": "It may no longer be available. Go back and pick something else.",
+      "back": "Back to Home"
     }
   }
 }
