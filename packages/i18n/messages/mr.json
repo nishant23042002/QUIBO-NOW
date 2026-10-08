@@ -441,11 +441,11 @@
       "title": "जाणून घ्या",
       "open": "उत्पादनाची माहिती दाखवा",
       "close": "उत्पादनाची माहिती लपवा",
-      "from": "{place} येथून",
-      "keeps": "{shelf} टिकते",
-      "goodFor": "यासाठी चांगले: {use}",
-      "bestValue": "{unit}, सर्वात किफायतशीर आकार",
-      "perUnit": "या आकारासाठी {unit}"
+      "labelFrom": "कुठून येते",
+      "labelKeeps": "किती टिकते",
+      "labelGood": "कशासाठी चांगले",
+      "labelValue": "प्रति एकक किंमत",
+      "valueBest": "{unit} · सर्वात किफायतशीर आकार"
     },
     "share": "शेअर करा",
     "shareMessage": "{shop} कडून {name} ({pack}) {price} ला, Quibo Now वर: {link}",

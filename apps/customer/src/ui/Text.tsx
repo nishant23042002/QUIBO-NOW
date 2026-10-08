@@ -38,6 +38,8 @@ export type TextColor = Extract<
   | 'onHeaderMuted'
   | 'onHeaderControl'
   | 'onAccent'
+  | 'onOverlay'
+  | 'onOverlayMuted'
   | 'onAction'
   | 'action'
   | 'accentInk'

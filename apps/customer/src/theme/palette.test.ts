@@ -16,7 +16,7 @@ function contrast(a: string, b: string): number {
   return ((light ?? 0) + 0.05) / ((dark ?? 0) + 0.05);
 }
 
-type Token = Exclude<keyof ThemeColors, 'scrim'>;
+type Token = Exclude<keyof ThemeColors, 'scrim' | 'overlay'>;
 type Pair = readonly [label: string, foreground: Token, background: Token, minimum: number];
 
 /** Every pairing a screen relies on. 4.5:1 for text, 3:1 for the edge of a control or a shape. */
@@ -94,9 +94,21 @@ describe('the two themes', () => {
   it('use only #rrggbb values, apart from the scrim', () => {
     for (const scheme of SCHEMES) {
       for (const [name, value] of Object.entries(palettes[scheme])) {
-        if (name === 'scrim') expect(value).toMatch(/^rgba\(/);
+        if (name === 'scrim' || name === 'overlay') expect(value).toMatch(/^rgba\(/);
         else expect(value, `${scheme}.${name}`).toMatch(/^#[0-9A-F]{6}$/);
       }
+    }
+  });
+
+  it('keep text on the picture overlay readable even over the lightest picture', () => {
+    for (const scheme of SCHEMES) {
+      const { overlay, onOverlay, onOverlayMuted } = palettes[scheme];
+      const alpha = Number(/rgba\(\d+, \d+, \d+, ([\d.]+)\)/.exec(overlay)?.[1]);
+      // The overlay is black, so over white it comes out as this grey: the lightest it can look.
+      const level = Math.round(255 * (1 - alpha));
+      const lightest = `#${level.toString(16).padStart(2, '0').repeat(3).toUpperCase()}`;
+      expect(contrast(onOverlay, lightest), `${scheme} text`).toBeGreaterThanOrEqual(4.5);
+      expect(contrast(onOverlayMuted, lightest), `${scheme} caption`).toBeGreaterThanOrEqual(4.5);
     }
   });
 

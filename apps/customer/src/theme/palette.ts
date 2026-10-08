@@ -79,6 +79,13 @@ export interface ThemeColors {
   onAction: string;
   /** The dimmed area behind a sheet. */
   scrim: string;
+  /**
+   * Dark glass laid over a picture (the insight card and its button). Black at about three quarters, so what is
+   * behind it shows faintly; text on it uses `onOverlay` and `onOverlayMuted`.
+   */
+  overlay: string;
+  onOverlay: string;
+  onOverlayMuted: string;
 }
 
 export const palettes: Record<Scheme, ThemeColors> = {
@@ -122,6 +129,9 @@ export const palettes: Record<Scheme, ThemeColors> = {
     action: '#2A1033',
     onAction: '#FFFFFF',
     scrim: 'rgba(42, 16, 51, 0.55)',
+    overlay: 'rgba(0, 0, 0, 0.8)',
+    onOverlay: '#FFFFFF',
+    onOverlayMuted: '#D9D9D9',
   },
   dark: {
     bg: '#0C0C0E',
@@ -163,5 +173,8 @@ export const palettes: Record<Scheme, ThemeColors> = {
     action: '#B8E86B',
     onAction: '#2A1033',
     scrim: 'rgba(0, 0, 0, 0.7)',
+    overlay: 'rgba(0, 0, 0, 0.8)',
+    onOverlay: '#FFFFFF',
+    onOverlayMuted: '#D9D9D9',
   },
 };

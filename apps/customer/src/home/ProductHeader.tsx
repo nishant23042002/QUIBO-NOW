@@ -28,6 +28,8 @@ export interface ProductHeaderProps {
 }
 
 const CHIP = 50;
+/** An icon button's circle is 38 dp inside a 48 dp touch area, so the circle sits this far in from the area's edge. */
+const CIRCLE_INSET = 5;
 /** How far the page scrolls while the plain name turns into the product card. */
 const FADE = 56;
 
@@ -63,8 +65,9 @@ const makeStyles = (c: ThemeColors) =>
     dot: { width: 3, height: 3, borderRadius: 2 },
     address: { flex: 1, minWidth: 0 },
     row: { height: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center' },
-    back: { marginLeft: -space[2] },
-    end: { marginRight: -space[2] },
+    // Pulled out by the circle's inset, so the circles' outer edges line up with the page's cards.
+    back: { marginLeft: -CIRCLE_INSET },
+    end: { marginRight: -CIRCLE_INSET },
     slot: { flex: 1, height: CHIP, justifyContent: 'center' },
     title: { position: 'absolute', left: space[2], right: 0 },
     chip: {
@@ -143,8 +146,8 @@ export function ProductHeader({
         {
           backgroundColor: tint,
           paddingTop: insets.top + space[1],
-          paddingLeft: insets.left + space[4],
-          paddingRight: insets.right + space[4],
+          paddingLeft: insets.left + space[3],
+          paddingRight: insets.right + space[3],
         },
       ]}
     >

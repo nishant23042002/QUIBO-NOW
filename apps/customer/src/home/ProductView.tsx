@@ -66,6 +66,7 @@ const makeStyles = (c: ThemeColors) =>
     // The skeleton, laid over the real page while it fades in.
     cover: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: c.bg },
     ribbon: { position: 'absolute', top: 0, left: space[4] },
+    hidden: { opacity: 0 },
     packRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     priceRow: {
       flexDirection: 'row',
@@ -94,7 +95,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: space[3],
-      paddingHorizontal: space[4],
+      paddingHorizontal: space[3],
       borderTopWidth: 1,
       borderTopColor: c.line,
       backgroundColor: c.surface,
@@ -154,6 +155,8 @@ export function ProductView({
   const [reveal] = useState(() => new Animated.Value(0));
   const [skeletonOn, setSkeletonOn] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  // The insight card covers most of the picture while it is open, so the saving ribbon steps aside.
+  const [insightOpen, setInsightOpen] = useState(false);
   const [scrollY] = useState(() => new Animated.Value(0));
   const shop = useShop(item.shop);
   const details = useProductDetails(item, {
@@ -224,34 +227,28 @@ export function ProductView({
   // The picture's insight card: only the facts that apply to this product and size.
   const { glance } = details;
   const insightRows: InsightRow[] = [
-    { key: 'from', icon: 'pin', text: t('product.insight.from', { place: glance.place }) },
+    { key: 'from', label: t('product.insight.labelFrom'), value: glance.place },
     ...(glance.shelfLabel !== undefined && glance.shelfDays !== undefined
       ? [
           {
             key: 'keeps',
-            icon: 'clock' as const,
-            text: t('product.insight.keeps', { shelf: glance.shelfLabel }),
+            label: t('product.insight.labelKeeps'),
+            value: glance.shelfLabel,
             days: glance.shelfDays,
           },
         ]
       : []),
     ...(glance.goodFor !== undefined
-      ? [
-          {
-            key: 'good',
-            icon: 'check' as const,
-            text: t('product.insight.goodFor', { use: glance.goodFor }),
-          },
-        ]
+      ? [{ key: 'good', label: t('product.insight.labelGood'), value: glance.goodFor }]
       : []),
     ...(pack.unitPriceLabel !== undefined
       ? [
           {
             key: 'value',
-            icon: 'bag' as const,
-            text: t(pack.bestValue ? 'product.insight.bestValue' : 'product.insight.perUnit', {
-              unit: pack.unitPriceLabel,
-            }),
+            label: t('product.insight.labelValue'),
+            value: pack.bestValue
+              ? t('product.insight.valueBest', { unit: pack.unitPriceLabel })
+              : pack.unitPriceLabel,
           },
         ]
       : []),
@@ -348,7 +345,7 @@ export function ProductView({
                   overlay={
                     <>
                       {pack.ribbon !== undefined && !out ? (
-                        <View style={styles.ribbon}>
+                        <View style={[styles.ribbon, insightOpen && styles.hidden]}>
                           <DiscountRibbon
                             amount={pack.ribbon.amount}
                             offLabel={pack.ribbon.offLabel}
@@ -360,6 +357,7 @@ export function ProductView({
                         rows={insightRows}
                         openLabel={t('product.insight.open')}
                         closeLabel={t('product.insight.close')}
+                        onOpenChange={setInsightOpen}
                       />
                     </>
                   }

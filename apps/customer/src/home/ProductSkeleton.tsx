@@ -38,7 +38,12 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     clip: { flex: 1, overflow: 'hidden' },
-    thumbs: { flexDirection: 'row', gap: space[2], padding: space[3] },
+    thumbs: {
+      flexDirection: 'row',
+      gap: space[2],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+    },
     row: { justifyContent: 'center' },
     pair: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3] },
     between: { alignItems: 'center', justifyContent: 'space-between' },

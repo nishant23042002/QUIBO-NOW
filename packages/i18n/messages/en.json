@@ -441,11 +441,11 @@
       "title": "Good to know",
       "open": "Show product insight",
       "close": "Hide product insight",
-      "from": "From {place}",
-      "keeps": "Keeps for {shelf}",
-      "goodFor": "Good for {use}",
-      "bestValue": "{unit}, the best value size",
-      "perUnit": "{unit} for this size"
+      "labelFrom": "Comes from",
+      "labelKeeps": "Keeps for",
+      "labelGood": "Good for",
+      "labelValue": "Price per unit",
+      "valueBest": "{unit} · best value size"
     },
     "share": "Share",
     "shareMessage": "{name} ({pack}) for {price} from {shop} on Quibo Now: {link}",

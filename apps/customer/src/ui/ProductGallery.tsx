@@ -66,15 +66,21 @@ const makeStyles = (c: ThemeColors) =>
     // "2/3" in the picture's corner, so the shopper knows there is more to swipe to.
     count: {
       position: 'absolute',
-      top: space[2],
-      right: space[2],
+      top: space[4],
+      right: space[4],
       paddingHorizontal: space[2],
       borderRadius: radius.full,
       borderWidth: 1,
       borderColor: c.line,
       backgroundColor: c.surface,
     },
-    thumbs: { flexDirection: 'row', gap: space[2], padding: space[3] },
+    // Level with the page's cards' own text: 16 in from the card's edge.
+    thumbs: {
+      flexDirection: 'row',
+      gap: space[2],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+    },
     thumb: {
       width: THUMB,
       height: THUMB,
