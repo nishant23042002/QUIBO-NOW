@@ -4,7 +4,17 @@ import { EnvValidationError, loadEnv, publicEnvSchema, serverEnvSchema } from '.
 describe('loadEnv', () => {
   it('applies defaults when nothing is set', () => {
     expect(loadEnv(serverEnvSchema, {})).toEqual({ NODE_ENV: 'development', APP_ENV: 'local' });
-    expect(loadEnv(publicEnvSchema, {})).toEqual({ NEXT_PUBLIC_APP_URL: 'http://localhost:3000' });
+    expect(loadEnv(publicEnvSchema, {})).toEqual({});
+  });
+
+  it('accepts an API URL for the apps and rejects one that is not a URL', () => {
+    const url = 'http://192.168.1.20:3001';
+    expect(loadEnv(publicEnvSchema, { EXPO_PUBLIC_API_URL: url })).toEqual({
+      EXPO_PUBLIC_API_URL: url,
+    });
+    expect(() => loadEnv(publicEnvSchema, { EXPO_PUBLIC_API_URL: 'not a url' })).toThrow(
+      EnvValidationError,
+    );
   });
 
   it('returns valid values as given', () => {

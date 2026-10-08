@@ -4,7 +4,7 @@ import en from '../messages/en.json';
 import hi from '../messages/hi.json';
 import mr from '../messages/mr.json';
 import { diffKeys, flattenMessages, placeholderNames } from './check';
-import { DEFAULT_LOCALE, LOCALES, isLocale, loadMessages, type Locale } from './index';
+import { DEFAULT_LOCALE, LOCALES, isLocale, messages, type Locale } from './index';
 
 const files = { en, hi, mr } satisfies Record<Locale, unknown>;
 const flat = {
@@ -36,10 +36,8 @@ describe('locales', () => {
     }
   });
 
-  it('load through loadMessages', async () => {
-    for (const locale of LOCALES) {
-      expect(await loadMessages(locale)).toEqual(files[locale]);
-    }
+  it('are each in messages under their own code', () => {
+    for (const locale of LOCALES) expect(messages[locale]).toEqual(files[locale]);
   });
 });
 

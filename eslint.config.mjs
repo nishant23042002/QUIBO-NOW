@@ -1,4 +1,4 @@
-import { base, ignores, next, react } from '@quibo/config/eslint';
+import { base, ignores, native, react } from '@quibo/config/eslint';
 import { defineConfig } from 'eslint/config';
 
 // One config for the whole repo. Every workspace's `lint` script runs `eslint .`
@@ -6,6 +6,6 @@ import { defineConfig } from 'eslint/config';
 export default defineConfig(
   ignores,
   base,
-  { files: ['apps/customer-web/**'], extends: [next] },
+  { files: ['apps/customer/**'], extends: [native] },
   { files: ['packages/ui/**'], extends: [react] },
 );

@@ -20,15 +20,3 @@ export type MessageShapeCheck = [
 
 /** All three languages, loaded together. They are a few kilobytes, so there is nothing to fetch later. */
 export const messages = { en, hi, mr } satisfies Record<Locale, Messages>;
-
-/** Load one language on demand. Used by the web app until it is removed in Phase 0b. */
-export async function loadMessages(locale: Locale): Promise<Messages> {
-  switch (locale) {
-    case 'en':
-      return (await import('../messages/en.json')).default;
-    case 'hi':
-      return (await import('../messages/hi.json')).default;
-    case 'mr':
-      return (await import('../messages/mr.json')).default;
-  }
-}

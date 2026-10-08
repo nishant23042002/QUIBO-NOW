@@ -10,7 +10,7 @@
   },
   "scripts": {
     "prepare": "husky",
-    "dev": "turbo run dev",
+    "dev": "pnpm --filter @quibo/customer dev",
     "lint": "turbo run lint && pnpm lint:root && pnpm format:check",
     "lint:root": "eslint --max-warnings 0 *.mjs",
     "format": "prettier --write .",

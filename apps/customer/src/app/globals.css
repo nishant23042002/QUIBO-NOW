@@ -1,6 +1,0 @@
-@import 'tailwindcss';
-@import '@quibo/ui/tokens.css';
-@import '@quibo/ui/theme.css';
-
-/* Tailwind does not look inside node_modules, so point it at the primitives' source. */
-@source '../../../../packages/ui/src';

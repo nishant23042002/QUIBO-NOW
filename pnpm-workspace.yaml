@@ -15,10 +15,11 @@ catalog:
   next: 16.4.0
   zod: 4.6.5
   vitest: 5.0.3
-  react: 19.3.0
-  react-dom: 19.3.0
-  '@types/react': 19.3.0
-  '@types/react-dom': 19.3.0
+  # React is pinned to what Expo SDK 57 ships (19.2.3): one React version in the whole repo.
+  react: 19.2.3
+  react-dom: 19.2.3
+  '@types/react': 19.2.18
+  '@types/react-dom': 19.2.7
   storybook: 10.6.1
   playwright: 1.64.0
   vite: 8.3.3
@@ -27,6 +28,10 @@ catalog:
   '@tailwindcss/postcss': 4.3.3
   '@playwright/test': 1.64.0
   '@axe-core/playwright': 4.13.0
+
+# A missing peer dependency is reported, never installed behind our back. Expo Go contains one
+# fixed version of each native module, and a peer installed at "latest" would not match it.
+autoInstallPeers: false
 
 # eslint-config-next bundles eslint-plugin-react, -import and -jsx-a11y. Their
 # published peer ranges stop at ESLint 9, but ESLint 9 reached end of life on
@@ -37,6 +42,16 @@ peerDependencyRules:
     eslint-plugin-react>eslint: '10'
     eslint-plugin-import>eslint: '10'
     eslint-plugin-jsx-a11y>eslint: '10'
+  # expo-router needs these two only for its Drawer and JS-stack layouts. This project uses the
+  # native stack, which loads neither, and keeping them out saves memory on 2 GB phones.
+  ignoreMissing:
+    - react-native-reanimated
+    - react-native-gesture-handler
+
+# Expo's config plugins pull in xcode, which uses uuid 7.0.3 (deprecated). It only runs in build
+# tooling and is never part of the app. Allowed by exact version, so any other deprecation prints.
+allowedDeprecatedVersions:
+  uuid: 7.0.3
 
 # pnpm 10 skips dependency install scripts unless listed. unrs-resolver (pulled in
 # by eslint-config-next) only runs a postinstall that checks its native binding,

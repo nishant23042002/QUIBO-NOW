@@ -48,9 +48,12 @@ export function loadEnv<S extends z.ZodType>(
   );
 }
 
-/** Variables the browser may see. Next.js only exposes names starting with NEXT_PUBLIC_. */
+/**
+ * Variables an app may see. Expo only exposes names starting with EXPO_PUBLIC_ and writes them
+ * into the app itself, where anyone can read them: never put a secret in one.
+ */
 export const publicEnvSchema = z.object({
-  NEXT_PUBLIC_APP_URL: z.url().default('http://localhost:3000'),
+  EXPO_PUBLIC_API_URL: z.url().optional(),
 });
 
 /** Variables that must stay on the server. DATABASE_URL and REDIS_URL are used from Phase 2. */

@@ -1,36 +1,34 @@
 {
-  "name": "@quibo/customer-web",
+  "name": "@quibo/customer",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
-  "description": "Customer PWA. Phase 0 is only the shell: manifest, placeholder home and language switcher.",
+  "description": "Customer app (Expo, React Native). Phase 0 is only the shell: placeholder home, language switch and a components screen.",
+  "main": "expo-router/entry",
   "scripts": {
-    "prepare": "next typegen",
-    "dev": "next dev --port 3000",
-    "build": "next build",
-    "start": "next start --port 3000",
-    "lint": "next typegen && eslint --max-warnings 0 .",
-    "typecheck": "next typegen && tsc --noEmit",
-    "e2e": "playwright test"
+    "dev": "expo start",
+    "build": "expo export --platform android",
+    "lint": "eslint --max-warnings 0 .",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@quibo/config": "workspace:*",
     "@quibo/i18n": "workspace:*",
-    "@quibo/ui": "workspace:*",
-    "next": "catalog:",
-    "next-intl": "catalog:",
+    "expo": "57.0.27",
+    "expo-constants": "57.0.21",
+    "expo-linking": "57.0.12",
+    "expo-localization": "57.0.2",
+    "expo-router": "57.0.25",
+    "expo-status-bar": "57.0.1",
     "react": "catalog:",
-    "react-dom": "catalog:"
+    "react-dom": "catalog:",
+    "react-native": "0.86.3",
+    "react-native-safe-area-context": "5.7.0",
+    "react-native-screens": "4.26.2",
+    "react-native-web": "0.21.3"
   },
   "devDependencies": {
-    "@axe-core/playwright": "catalog:",
-    "@playwright/test": "catalog:",
-    "@tailwindcss/postcss": "catalog:",
-    "@types/node": "catalog:",
+    "@quibo/config": "workspace:*",
     "@types/react": "catalog:",
-    "@types/react-dom": "catalog:",
     "eslint": "catalog:",
-    "tailwindcss": "catalog:",
     "typescript": "catalog:"
   }
 }
