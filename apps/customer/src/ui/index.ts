@@ -25,7 +25,7 @@ export { ItemCard, type ItemCardProps } from './ItemCard';
 export { HeaderLogo } from './brand/HeaderLogo';
 export { LogoStacked, QMark, type LogoGround } from './brand/Logo';
 export { gridCardWidth } from './logic/grid';
-export { COUNT_RULE, WEIGHT_RULE, type QuantityRule } from './logic/quantity';
+export { COUNT_RULE, WEIGHT_RULE, countRule, type QuantityRule } from './logic/quantity';
 export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
 export { Notice, type NoticeProps } from './Notice';
 export {

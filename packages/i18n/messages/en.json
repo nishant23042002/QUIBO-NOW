@@ -111,7 +111,8 @@
       "onlyLeft": "Only {count} left",
       "veg": "Vegetarian",
       "nonVeg": "Non-vegetarian",
-      "sizes": "{count} sizes"
+      "sizes": "{count} sizes",
+      "noMore": "No more available"
     },
     "cart": {
       "itemsOne": "{count} item",
@@ -462,7 +463,8 @@
       "nov": "Nov",
       "dec": "Dec"
     },
-    "inCart": "{count} in cart"
+    "inCart": "{count} in cart",
+    "allInCart": "All {count} we have are in your cart"
   },
   "state": {
     "offline": {

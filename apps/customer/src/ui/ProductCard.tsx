@@ -38,7 +38,7 @@ export interface ProductCardProps {
   onQuantityChange: (next: number) => void;
   /** Tapping the picture or the text opens the item's detail. ADD and the stepper do not. */
   onPress?: () => void;
-  stepper: Pick<StepperProps, 'addLabel' | 'decreaseLabel' | 'increaseLabel'>;
+  stepper: Pick<StepperProps, 'addLabel' | 'decreaseLabel' | 'increaseLabel' | 'maxLabel' | 'rule'>;
 }
 
 const NAME_LINES = 2;

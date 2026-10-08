@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { baseAmount, bestValueIndex, defaultPackIndex, unitPrice } from './packs';
+import { baseAmount, bestValueIndex, capQuantity, defaultPackIndex, unitPrice } from './packs';
 
 describe('baseAmount', () => {
   it('counts in millilitres, grams and pieces', () => {
@@ -80,5 +80,24 @@ describe('defaultPackIndex', () => {
 
   it('is the first pack when none can be bought', () => {
     expect(defaultPackIndex([{ available: false }, { available: false }])).toBe(0);
+  });
+});
+
+describe('capQuantity', () => {
+  it('lets a pack with no stock figure go up to the most one order may hold', () => {
+    expect(capQuantity(5, undefined, 20)).toBe(5);
+    expect(capQuantity(25, undefined, 20)).toBe(20);
+  });
+
+  it('never goes above the number in stock', () => {
+    expect(capQuantity(6, 3, 20)).toBe(3);
+    expect(capQuantity(2, 3, 20)).toBe(2);
+    expect(capQuantity(3, 3, 20)).toBe(3);
+  });
+
+  it('is cut by whichever limit is lower, and never goes below zero', () => {
+    expect(capQuantity(30, 50, 20)).toBe(20);
+    expect(capQuantity(-1, 3, 20)).toBe(0);
+    expect(capQuantity(1, 0, 20)).toBe(0);
   });
 });

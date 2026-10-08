@@ -13,6 +13,18 @@ export interface QuantityRule {
 export const COUNT_RULE: QuantityRule = { min: 1, step: 1, max: 20 };
 export const WEIGHT_RULE: QuantityRule = { min: 0.5, step: 0.5, max: 10 };
 
+/**
+ * The rule for something sold by the piece when only some are in stock: the same as `COUNT_RULE`, but never above the
+ * number in stock. With no stock figure it is `COUNT_RULE` itself.
+ */
+export function countRule(inStock?: number): QuantityRule {
+  if (inStock === undefined) return COUNT_RULE;
+  return {
+    ...COUNT_RULE,
+    max: Math.max(COUNT_RULE.min, Math.min(Math.floor(inStock), COUNT_RULE.max)),
+  };
+}
+
 const SCALE = 1000;
 const thousandths = (n: number) => Math.round(n * SCALE);
 

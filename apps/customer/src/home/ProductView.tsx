@@ -35,6 +35,7 @@ import {
   Stepper,
   Text,
   TrustTiles,
+  countRule,
   radius,
   space,
   type InsightRow,
@@ -216,6 +217,8 @@ export function ProductView({
     addLabel: t('home.rails.add'),
     decreaseLabel: t('home.rails.removeOne'),
     increaseLabel: t('home.rails.addOne'),
+    maxLabel: t('home.rails.noMore'),
+    rule: countRule(pack.maxQuantity),
   };
 
   // The picture's insight card: only the facts that apply to this product and size.
@@ -401,7 +404,9 @@ export function ProductView({
                   </Text>
                   {pack.stock?.kind === 'low' ? (
                     <Text variant="strong" color="warning">
-                      {pack.stock.label}
+                      {pack.maxQuantity !== undefined && quantity >= pack.maxQuantity
+                        ? t('product.allInCart', { count: pack.maxQuantity })
+                        : pack.stock.label}
                     </Text>
                   ) : null}
                   {pack.quickLabel !== undefined && !out ? (

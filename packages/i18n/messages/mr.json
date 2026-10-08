@@ -111,7 +111,8 @@
       "onlyLeft": "फक्त {count} उरले",
       "veg": "शाकाहारी",
       "nonVeg": "मांसाहारी",
-      "sizes": "{count} आकार"
+      "sizes": "{count} आकार",
+      "noMore": "आणखी उपलब्ध नाही"
     },
     "cart": {
       "itemsOne": "{count} वस्तू",
@@ -462,7 +463,8 @@
       "nov": "नोव्हेंबर",
       "dec": "डिसेंबर"
     },
-    "inCart": "कार्टमध्ये {count}"
+    "inCart": "कार्टमध्ये {count}",
+    "allInCart": "आमच्याकडे असलेले सर्व {count} तुमच्या कार्टमध्ये आहेत"
   },
   "state": {
     "offline": {

@@ -1,6 +1,6 @@
 import { useRouter } from 'expo-router';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { ProductCard, gridCardWidth as gridWidth, space } from '@/ui';
+import { ProductCard, countRule, gridCardWidth as gridWidth, space } from '@/ui';
 import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
 import type { HomeItem } from './items';
@@ -51,6 +51,8 @@ export function ItemTile({
         addLabel: t('home.rails.add'),
         decreaseLabel: t('home.rails.removeOne'),
         increaseLabel: t('home.rails.addOne'),
+        maxLabel: t('home.rails.noMore'),
+        rule: countRule(item.maxQuantity),
       }}
     />
   );

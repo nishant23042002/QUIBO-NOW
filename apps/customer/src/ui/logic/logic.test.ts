@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { gridCardWidth } from './grid';
 import { initialOf } from './initial';
 import { freeDeliveryProgress, savings } from './money';
-import { COUNT_RULE, WEIGHT_RULE, formatQuantity, stepQuantity } from './quantity';
+import { COUNT_RULE, WEIGHT_RULE, countRule, formatQuantity, stepQuantity } from './quantity';
 import { SPLASH_FADE_MS, splashMinimumMs, splashPhase } from './splash';
 
 describe('stepQuantity', () => {
@@ -130,5 +130,23 @@ describe('gridCardWidth', () => {
     const width = gridCardWidth(361, two);
     expect(width).toBe(158);
     expect(width * 2 + two.gap + two.gutter * 2).toBeLessThanOrEqual(361);
+  });
+});
+
+describe('countRule', () => {
+  it('is the plain count rule when there is no stock figure', () => {
+    expect(countRule()).toBe(COUNT_RULE);
+  });
+
+  it('stops at the number in stock', () => {
+    const rule = countRule(3);
+    expect(rule.max).toBe(3);
+    expect(stepQuantity(2, 1, rule)).toBe(3);
+    expect(stepQuantity(3, 1, rule)).toBe(3);
+  });
+
+  it('never goes above the most one order may hold, and never below one', () => {
+    expect(countRule(500).max).toBe(COUNT_RULE.max);
+    expect(countRule(0).max).toBe(COUNT_RULE.min);
   });
 });

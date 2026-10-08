@@ -1,7 +1,7 @@
 import { Text as NativeText, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import { Icon, Sheet, Stepper, Text, radius, space } from '@/ui';
+import { Icon, Sheet, Stepper, Text, countRule, radius, space } from '@/ui';
 import type { DraftCart } from './cart';
 
 interface CartSheetProps {
@@ -134,6 +134,8 @@ export function CartSheet({ open, cart, tintOf, onClose }: CartSheetProps) {
                   addLabel={t('home.rails.add')}
                   decreaseLabel={t('home.rails.removeOne')}
                   increaseLabel={t('home.rails.addOne')}
+                  maxLabel={t('home.rails.noMore')}
+                  rule={countRule(line.maxQuantity)}
                 />
                 <View style={styles.amount}>
                   <Text variant="strong">{line.totalLabel}</Text>

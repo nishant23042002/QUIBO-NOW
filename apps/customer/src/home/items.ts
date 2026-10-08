@@ -258,6 +258,8 @@ export interface HomePack {
   bestValue: boolean;
   /** Can be bought. False when the pack is out of stock. */
   available: boolean;
+  /** How many can be bought: the number in stock, when that is a figure worth limiting by. Absent when there is no limit. */
+  maxQuantity?: number;
 }
 
 /**
@@ -286,6 +288,8 @@ export interface HomeItem {
   ribbon?: { amount: string; offLabel: string };
   quickLabel?: string;
   stock?: { kind: 'out' | 'low'; label: string };
+  /** The default pack's stock limit, as on `HomePack`. */
+  maxQuantity?: number;
 }
 
 export function useHomeItems(): readonly HomeItem[] {
@@ -346,6 +350,7 @@ export function useHomeItems(): readonly HomeItem[] {
           : {}),
         bestValue: best === index,
         available: pack.stock !== 0,
+        ...(pack.stock !== undefined && pack.stock > 0 ? { maxQuantity: pack.stock } : {}),
       };
     });
 
@@ -379,6 +384,7 @@ export function useHomeItems(): readonly HomeItem[] {
       ...(first.ribbon !== undefined ? { ribbon: first.ribbon } : {}),
       ...(first.quickLabel !== undefined ? { quickLabel: first.quickLabel } : {}),
       ...(first.stock !== undefined ? { stock: first.stock } : {}),
+      ...(first.maxQuantity !== undefined ? { maxQuantity: first.maxQuantity } : {}),
     };
   });
 }

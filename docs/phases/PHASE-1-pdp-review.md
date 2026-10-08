@@ -20,11 +20,11 @@ without it), **P2** (polish) and **Later** (belongs to a later sub-phase).
 
 ## Wrong today
 
-1. **P0, stock is not enforced.** Eggs show "Only 3 left", and the stepper still goes to 6 (it stops at 20 for every
-   product). The cap must come from the pack's stock, with a short "Max 3" note at the limit.
-2. **P0, an empty cart bar is still read out.** With nothing in the cart, the hidden bar is in the accessibility tree
-   as "0 items. ₹0. Add ₹199 for free delivery. View cart", on Home and on every page that shows it. It should be
-   hidden from screen readers while it is hidden on screen.
+1. ~~**P0, stock is not enforced.**~~ Fixed: see "Done since this review".
+2. ~~**P0, an empty cart bar is still read out.**~~ Not a bug. The bar and the undo toast are already hidden from
+   screen readers while they are hidden on screen (`aria-hidden` on the root, touches off). The browser tool I used for
+   the walkthrough lists hidden elements too, which made it look as if they were announced. Checked in the page: the
+   bar has `aria-hidden="true"` and `pointer-events: none` when the cart is empty.
 3. **P1, fixed heights break at 200% text.** The header's product card (50 dp), the delivery line (36 dp) and the
    size options use fixed heights. At the largest text size they will clip. Needs a check on a phone and `minHeight`
    instead of `height`.
@@ -97,3 +97,6 @@ without it), **P2** (polish) and **Later** (belongs to a later sub-phase).
   have two switches on the Profile screen to rehearse both states.
 - **Bug found and fixed on the way:** after opening one product and going back, opening another and going back took
   you to the first product instead of Home. The back trail is now only the items opened from a page's own rows.
+- **Stock is enforced.** A pack with "Only 3 left" can have at most 3 in the cart: the cart cuts any bigger request down
+  to the stock, the + button goes dim at the limit and is named "No more available" for screen readers, and the product
+  page says "All 3 we have are in your cart". Packs with no stock figure still stop at 20.

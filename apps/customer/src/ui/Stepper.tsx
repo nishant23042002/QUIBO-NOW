@@ -18,6 +18,8 @@ export interface StepperProps {
   /** Names of the two buttons for screen readers. */
   decreaseLabel: string;
   increaseLabel: string;
+  /** Name of the plus button once the limit in the rule is reached, for example "No more available". */
+  maxLabel?: string;
   /** Written after the number for a weight, for example "kg". */
   unitLabel?: string;
 }
@@ -44,6 +46,7 @@ const makeStyles = (c: ThemeColors) =>
     side: { width: 28, height: 32, alignItems: 'center', justifyContent: 'center' },
     value: { minWidth: 22, alignItems: 'center' },
     pressed: { opacity: 0.8 },
+    atMax: { opacity: 0.35 },
   });
 
 /** ADD that turns into a - and + stepper once the item is in the cart. Every target has a 48 dp touch area. */
@@ -54,6 +57,7 @@ export function Stepper({
   addLabel,
   decreaseLabel,
   increaseLabel,
+  maxLabel,
   unitLabel,
 }: StepperProps) {
   const styles = useStyles(makeStyles);
@@ -96,6 +100,7 @@ export function Stepper({
     );
   }
 
+  const atMax = value >= rule.max;
   const shown =
     unitLabel === undefined ? formatQuantity(value) : `${formatQuantity(value)} ${unitLabel}`;
 
@@ -119,12 +124,14 @@ export function Stepper({
       </View>
       <Pressable
         role="button"
-        aria-label={increaseLabel}
+        aria-label={atMax ? (maxLabel ?? increaseLabel) : increaseLabel}
+        aria-disabled={atMax}
+        disabled={atMax}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
         onPress={() => {
           onChange(stepQuantity(value, 1, rule));
         }}
-        style={({ pressed }) => [styles.side, pressed && styles.pressed]}
+        style={({ pressed }) => [styles.side, atMax && styles.atMax, pressed && styles.pressed]}
       >
         <Icon name="plus" color={colors.onAction} size={14} />
       </Pressable>

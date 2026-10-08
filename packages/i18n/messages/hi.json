@@ -111,7 +111,8 @@
       "onlyLeft": "सिर्फ़ {count} बचे",
       "veg": "शाकाहारी",
       "nonVeg": "मांसाहारी",
-      "sizes": "{count} साइज़"
+      "sizes": "{count} साइज़",
+      "noMore": "और उपलब्ध नहीं"
     },
     "cart": {
       "itemsOne": "{count} चीज़",
@@ -462,7 +463,8 @@
       "nov": "नवंबर",
       "dec": "दिसंबर"
     },
-    "inCart": "कार्ट में {count}"
+    "inCart": "कार्ट में {count}",
+    "allInCart": "हमारे पास जितने हैं, सभी {count} आपके कार्ट में हैं"
   },
   "state": {
     "offline": {

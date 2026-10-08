@@ -78,6 +78,19 @@ export function bestValueIndex(
   return winners.length === 1 ? winners[0]?.index : undefined;
 }
 
+/**
+ * How many of a pack can be in the cart: never more than are in stock, and never more than the most one order may
+ * hold. A pack with no stock figure has no stock limit.
+ */
+export function capQuantity(
+  quantity: number,
+  inStock: number | undefined,
+  mostPerOrder: number,
+): number {
+  const limit = inStock === undefined ? mostPerOrder : Math.min(inStock, mostPerOrder);
+  return Math.max(0, Math.min(quantity, limit));
+}
+
 /** The pack shown first on a card: the first one that can be bought, or the first one when none can. */
 export function defaultPackIndex(packs: readonly { available: boolean }[]): number {
   const found = packs.findIndex((pack) => pack.available);

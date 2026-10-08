@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { summariseCart, type CartEntry } from './cartMath';
 import { FREE_DELIVERY_FROM } from './delivery';
+import { capQuantity } from './packs';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
 /** One pack of an item in a shop's basket. */
@@ -15,6 +16,8 @@ export interface BasketLine {
   emoji: string;
   category: ItemCategory;
   quantity: number;
+  /** The most that can be bought, when there is a stock limit. */
+  maxQuantity?: number;
   /** What this line comes to, for example "₹58". */
   totalLabel: string;
 }
@@ -36,7 +39,7 @@ export interface ShopBasket {
 export interface DraftCart {
   /** How many of each pack, by pack id. */
   quantities: Readonly<Record<string, number>>;
-  /** Sets how many of a pack (by pack id) are in the cart. */
+  /** Sets how many of a pack (by pack id) are in the cart. More than are in stock is cut down to what is in stock. */
   setQuantity: (packId: string, next: number) => void;
   /** How many items are in the cart, from all shops. */
   count: number;
@@ -66,6 +69,9 @@ export interface DraftCart {
   undoRemove: () => void;
   clearRemoved: () => void;
 }
+
+/** The most of one pack that one order may hold, whatever the stock. */
+const COUNT_MAX = 20;
 
 interface Removal {
   packId: string;
@@ -104,9 +110,10 @@ export function useDraftCart(): DraftCart {
     const found = packs.get(packId);
     if (found === undefined) return;
     const previous = quantities[packId] ?? 0;
-    apply(packId, next);
-    if (next === 0 && previous > 0) setRemoval({ packId, name: found.item.name, previous });
-    else if (next > previous) setRemoval(null);
+    const allowed = capQuantity(next, found.pack.maxQuantity, COUNT_MAX);
+    apply(packId, allowed);
+    if (allowed === 0 && previous > 0) setRemoval({ packId, name: found.item.name, previous });
+    else if (allowed > previous) setRemoval(null);
   };
 
   // The packs in the cart, the latest-added first.
@@ -139,6 +146,7 @@ export function useDraftCart(): DraftCart {
         emoji: found?.item.emoji ?? '',
         category: found?.item.category ?? 'dairy',
         quantity: entry.quantity,
+        ...(found?.pack.maxQuantity !== undefined ? { maxQuantity: found.pack.maxQuantity } : {}),
         totalLabel: formatRupees(lineTotal),
       };
     }),
