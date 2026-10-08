@@ -19,15 +19,16 @@
     "eslint-config-next": "16.4.0",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "7.1.1",
     "globals": "catalog:",
     "typescript-eslint": "catalog:",
     "zod": "catalog:"
   },
   "devDependencies": {
+    "@types/node": "catalog:",
     "eslint": "catalog:",
     "next": "catalog:",
-    "@types/node": "catalog:",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
