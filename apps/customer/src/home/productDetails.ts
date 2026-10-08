@@ -61,6 +61,15 @@ export interface ProductDetails {
   information: readonly FactRow[];
   /** Who sells it, with the details a shopper expects to find on a pack. */
   seller: readonly FactRow[];
+  /** The few facts the picture's insight card reads out. */
+  glance: {
+    /** Where it comes from, for example "Roha, Maharashtra". */
+    place: string;
+    /** How long it keeps, for example "2 days", and the same in days. */
+    shelfLabel?: string;
+    shelfDays?: number;
+    goodFor?: string;
+  };
 }
 
 /**
@@ -81,6 +90,8 @@ export function useProductDetails(
 
   const row = (key: Parameters<typeof t>[0], value: string): FactRow => ({ label: t(key), value });
 
+  const origin = t(`product.origin.${ORIGIN[item.id] ?? 'india'}`);
+
   return {
     highlights: [
       row('product.rows.type', t(`home.categories.${item.category}`)),
@@ -92,7 +103,7 @@ export function useProductDetails(
     ],
     moreHighlights: [
       row('product.rows.storage', t(`product.storage.${item.category}`)),
-      row('product.rows.origin', t(`product.origin.${ORIGIN[item.id] ?? 'india'}`)),
+      row('product.rows.origin', origin),
       row('product.rows.packedBy', item.shopName),
     ],
     information: [
@@ -110,5 +121,15 @@ export function useProductDetails(
       row('product.rows.licence', seller.licence),
       row('product.rows.care', seller.care),
     ],
+    glance: {
+      place: origin,
+      ...(shelf !== undefined
+        ? {
+            shelfLabel: t(`product.shelf.${shelf.unit}`, { n: shelf.n }),
+            shelfDays: shelf.unit === 'days' ? shelf.n : shelf.n * 30,
+          }
+        : {}),
+      ...(entry !== undefined ? { goodFor: entry.goodFor } : {}),
+    },
   };
 }

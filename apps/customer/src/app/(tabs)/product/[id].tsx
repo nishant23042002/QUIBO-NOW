@@ -78,25 +78,27 @@ export default function ProductScreen() {
 
   return (
     <View style={styles.page}>
-      <AppHeader title={item?.name ?? ''} backLabel={t('common.back')} onBack={back} />
       {item === undefined ? (
-        <View style={styles.missing}>
-          <Icon name="bag" color={colors.inkMuted} size={40} />
-          <Text variant="heading" align="center">
-            {t('product.notFound.title')}
-          </Text>
-          <Text color="inkMuted" align="center">
-            {t('product.notFound.body')}
-          </Text>
-          <Button
-            label={t('product.notFound.back')}
-            onPress={() => {
-              router.replace('/');
-            }}
-          />
-        </View>
+        <>
+          <AppHeader title="" backLabel={t('common.back')} onBack={back} />
+          <View style={styles.missing}>
+            <Icon name="bag" color={colors.inkMuted} size={40} />
+            <Text variant="heading" align="center">
+              {t('product.notFound.title')}
+            </Text>
+            <Text color="inkMuted" align="center">
+              {t('product.notFound.body')}
+            </Text>
+            <Button
+              label={t('product.notFound.back')}
+              onPress={() => {
+                router.replace('/');
+              }}
+            />
+          </View>
+        </>
       ) : (
-        <ProductView key={item.id} item={item} />
+        <ProductView key={item.id} item={item} onBack={back} />
       )}
     </View>
   );

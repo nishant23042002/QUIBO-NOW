@@ -24,6 +24,7 @@ const SHAPES = {
   ],
   back: [path('M15 5l-7 7 7 7')],
   check: [path('M5 12.5l4.5 4.5L19 7.5')],
+  info: [ring(12, 12, 9), path('M12 11v5.5'), dot(12, 7.6, 1.2)],
   close: [path('M6 6l12 12M18 6L6 18')],
   clock: [ring(12, 12, 9), path('M12 7v5.5l3.5 2')],
   sun: [

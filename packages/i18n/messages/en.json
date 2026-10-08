@@ -424,6 +424,16 @@
         "title": "Replace or refund",
         "body": "Not right? Tell us at the door"
       }
+    },
+    "insight": {
+      "title": "Good to know",
+      "open": "Show product insight",
+      "close": "Hide product insight",
+      "from": "From {place}",
+      "keeps": "Keeps for {shelf}",
+      "goodFor": "Good for {use}",
+      "bestValue": "{unit}, the best value size",
+      "perUnit": "{unit} for this size"
     }
   }
 }

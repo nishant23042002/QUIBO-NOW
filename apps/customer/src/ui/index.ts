@@ -41,6 +41,7 @@ export { Price, type PriceProps } from './Price';
 export { ProductGallery, type GalleryImage, type ProductGalleryProps } from './ProductGallery';
 export { CardTitle, FactTable, type FactRow } from './FactTable';
 export { TrustTiles, type TrustTile } from './TrustTiles';
+export { ProductInsight, type InsightRow, type ProductInsightProps } from './ProductInsight';
 export { PackPicker, type PackOption, type PackPickerProps } from './PackPicker';
 export { PriceBadge, type PriceBadgeProps } from './PriceBadge';
 export { ProductCard, type ProductCardProps } from './ProductCard';
@@ -64,4 +65,12 @@ export { ShopCard, type ShopCardProps } from './ShopCard';
 export { Stepper, type StepperProps } from './Stepper';
 export { Text, type TextColor, type TextProps, type TextVariant } from './Text';
 export { WindowPicker, type DeliveryWindowOption, type WindowPickerProps } from './WindowPicker';
-export { BOTTOM_BAR_HEIGHT, fontSize, leading, radius, space, TAP_MIN } from './tokens';
+export {
+  BOTTOM_BAR_HEIGHT,
+  HEADER_HEIGHT,
+  fontSize,
+  leading,
+  radius,
+  space,
+  TAP_MIN,
+} from './tokens';

@@ -1,7 +1,7 @@
 import { formatRupees, subtract } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { Animated, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
@@ -16,6 +16,7 @@ import {
   PackPicker,
   PriceBadge,
   ProductGallery,
+  ProductInsight,
   ProductRail,
   Skeleton,
   SkeletonScope,
@@ -24,11 +25,13 @@ import {
   TrustTiles,
   radius,
   space,
+  type InsightRow,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
+import { ProductHeader } from './ProductHeader';
 import { useHomeItems, type HomeItem } from './items';
 import { moreFromShop, similarItems } from './product';
 import { useProductDetails } from './productDetails';
@@ -129,7 +132,7 @@ function ProductSkeleton({ label, width }: { label: string; width: number }) {
  * ADD sits in a bar above the bottom navigation, and turns into the stepper. The cart bar docks above that bar,
  * so the cart is one tap away here as everywhere.
  */
-export function ProductView({ item }: { item: HomeItem }) {
+export function ProductView({ item, onBack }: { item: HomeItem; onBack: () => void }) {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
@@ -141,6 +144,7 @@ export function ProductView({ item }: { item: HomeItem }) {
   const { width } = useWindowDimensions();
   const [loaded, setLoaded] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const [scrollY] = useState(() => new Animated.Value(0));
   const shop = useShop(item.shop);
   const details = useProductDetails(item, {
     id: item.shop,
@@ -175,15 +179,68 @@ export function ProductView({ item }: { item: HomeItem }) {
     increaseLabel: t('home.rails.addOne'),
   };
 
+  // The picture's insight card: only the facts that apply to this product and size.
+  const { glance } = details;
+  const insightRows: InsightRow[] = [
+    { key: 'from', icon: 'pin', text: t('product.insight.from', { place: glance.place }) },
+    ...(glance.shelfLabel !== undefined && glance.shelfDays !== undefined
+      ? [
+          {
+            key: 'keeps',
+            icon: 'clock' as const,
+            text: t('product.insight.keeps', { shelf: glance.shelfLabel }),
+            days: glance.shelfDays,
+          },
+        ]
+      : []),
+    ...(glance.goodFor !== undefined
+      ? [
+          {
+            key: 'good',
+            icon: 'check' as const,
+            text: t('product.insight.goodFor', { use: glance.goodFor }),
+          },
+        ]
+      : []),
+    ...(pack.unitPriceLabel !== undefined
+      ? [
+          {
+            key: 'value',
+            icon: 'bag' as const,
+            text: t(pack.bestValue ? 'product.insight.bestValue' : 'product.insight.perUnit', {
+              unit: pack.unitPriceLabel,
+            }),
+          },
+        ]
+      : []),
+  ];
+  // The header turns into the product card once most of the big picture has scrolled away.
+  const revealAt = Math.round(((width - space[3] * 2) / PICTURE_RATIO) * 0.75);
+
   const openShop = () => {
     router.push({ pathname: '/shop/[id]', params: { id: item.shop } });
   };
 
   return (
     <View style={styles.page}>
+      <ProductHeader
+        name={item.name}
+        emoji={item.emoji}
+        tint={tintOf(item.category)}
+        price={pack.price}
+        {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
+        backLabel={t('common.back')}
+        onBack={onBack}
+        scrollY={scrollY}
+        revealAt={revealAt}
+      />
       {loaded ? (
-        <ScrollView
+        <Animated.ScrollView
           showsVerticalScrollIndicator={false}
+          scrollEventThrottle={16}
+          onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
+            useNativeDriver: true,
+          })}
           contentContainerStyle={[
             styles.content,
             { paddingBottom: dock + ACTION_HEIGHT + space[6] + (cart.count > 0 ? CART_ROOM : 0) },
@@ -196,11 +253,19 @@ export function ProductView({ item }: { item: HomeItem }) {
               photoLabel={(position, total) => t('product.photoOf', { n: position, total })}
               faded={out}
               overlay={
-                pack.ribbon !== undefined && !out ? (
-                  <View style={styles.ribbon}>
-                    <DiscountRibbon amount={pack.ribbon.amount} offLabel={pack.ribbon.offLabel} />
-                  </View>
-                ) : undefined
+                <>
+                  {pack.ribbon !== undefined && !out ? (
+                    <View style={styles.ribbon}>
+                      <DiscountRibbon amount={pack.ribbon.amount} offLabel={pack.ribbon.offLabel} />
+                    </View>
+                  ) : null}
+                  <ProductInsight
+                    title={t('product.insight.title')}
+                    rows={insightRows}
+                    openLabel={t('product.insight.open')}
+                    closeLabel={t('product.insight.close')}
+                  />
+                </>
               }
             />
           </View>
@@ -376,7 +441,7 @@ export function ProductView({ item }: { item: HomeItem }) {
               </ProductRail>
             </View>
           ) : null}
-        </ScrollView>
+        </Animated.ScrollView>
       ) : (
         <ProductSkeleton label={t('common.loading')} width={width} />
       )}
