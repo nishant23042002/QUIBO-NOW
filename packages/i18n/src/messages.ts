@@ -1,6 +1,6 @@
-import type en from '../messages/en.json';
-import type hi from '../messages/hi.json';
-import type mr from '../messages/mr.json';
+import en from '../messages/en.json';
+import hi from '../messages/hi.json';
+import mr from '../messages/mr.json';
 import type { Locale } from './locales';
 
 /** The shape of every message file, taken from English. */
@@ -18,7 +18,10 @@ export type MessageShapeCheck = [
   MustBeTrue<SameShape<typeof mr, Messages>>,
 ];
 
-/** Load one language. Each file is its own chunk, so a visitor downloads only theirs. */
+/** All three languages, loaded together. They are a few kilobytes, so there is nothing to fetch later. */
+export const messages = { en, hi, mr } satisfies Record<Locale, Messages>;
+
+/** Load one language on demand. Used by the web app until it is removed in Phase 0b. */
 export async function loadMessages(locale: Locale): Promise<Messages> {
   switch (locale) {
     case 'en':
