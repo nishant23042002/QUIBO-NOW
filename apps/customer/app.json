@@ -5,7 +5,7 @@
     "version": "0.0.0",
     "scheme": "quibo",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "plugins": ["expo-router"]
   }
 }
