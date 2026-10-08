@@ -1,4 +1,0 @@
-{
-  "extends": "@quibo/config/tsconfig/react-library.json",
-  "include": ["src", ".storybook/*.ts", "vitest.config.ts"]
-}

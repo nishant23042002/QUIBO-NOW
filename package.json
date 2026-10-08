@@ -17,11 +17,7 @@
     "format:check": "prettier --check .",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "build": "turbo run build",
-    "e2e": "turbo run e2e",
-    "a11y": "turbo run a11y",
-    "storybook": "turbo run storybook",
-    "build-storybook": "turbo run build-storybook"
+    "build": "turbo run build"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.3",
@@ -33,6 +29,7 @@
     "lint-staged": "17.6.0",
     "prettier": "3.9.9",
     "turbo": "2.11.7",
-    "typescript": "catalog:"
+    "typescript": "catalog:",
+    "vite": "catalog:"
   }
 }

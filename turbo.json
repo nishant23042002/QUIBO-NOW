@@ -13,21 +13,7 @@
       "dependsOn": ["^build"],
       "outputs": ["dist/**"]
     },
-    "e2e": {
-      "dependsOn": ["build"],
-      "cache": false
-    },
-    "a11y": {
-      "cache": false
-    },
-    "build-storybook": {
-      "outputs": ["storybook-static/**"]
-    },
     "dev": {
-      "cache": false,
-      "persistent": true
-    },
-    "storybook": {
       "cache": false,
       "persistent": true
     }

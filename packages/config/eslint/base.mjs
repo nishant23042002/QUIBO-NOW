@@ -7,14 +7,10 @@ import tseslint from 'typescript-eslint';
 /** Paths no workspace should ever lint. */
 export const ignores = globalIgnores([
   '**/node_modules/**',
-  '**/.next/**',
   '**/.turbo/**',
+  '**/.expo/**',
   '**/dist/**',
   '**/coverage/**',
-  '**/storybook-static/**',
-  '**/playwright-report/**',
-  '**/test-results/**',
-  '**/next-env.d.ts',
 ]);
 
 /** TypeScript-first rules for every workspace. Type-aware via the project service. */
@@ -42,13 +38,6 @@ export const base = defineConfig(
     files: ['**/*.{js,mjs,cjs}'],
     extends: [tseslint.configs.disableTypeChecked],
     languageOptions: { globals: globals.node },
-    rules: {
-      // Next's Babel parser (used for JS files by eslint-config-next) does not give the
-      // TypeScript variant the scope data it needs and it wrongly reports `export default x`
-      // as unused. ESLint's core rule is used for JS files instead.
-      '@typescript-eslint/no-unused-vars': 'off',
-      'no-unused-vars': ['error', { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }],
-    },
   },
   prettier,
 );
