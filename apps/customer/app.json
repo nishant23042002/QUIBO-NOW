@@ -6,6 +6,14 @@
     "scheme": "quibo",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "monochromeImage": "./assets/adaptive-icon-monochrome.png",
+        "backgroundColor": "#3A1646"
+      }
+    },
     "plugins": ["expo-router"]
   }
 }
