@@ -1,4 +1,6 @@
 export { AddressPill, type AddressPillProps } from './AddressPill';
+export { AppHeader, type AppHeaderProps } from './AppHeader';
+export { AppSplash, type AppSplashProps } from './AppSplash';
 export { Badge, type BadgeProps } from './Badge';
 export {
   BillSummary,
@@ -6,7 +8,6 @@ export {
   type BillSummaryProps,
   type FreeDeliveryHint,
 } from './BillSummary';
-export { Boot } from './Boot';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { CartBar, type CartBarProps } from './CartBar';

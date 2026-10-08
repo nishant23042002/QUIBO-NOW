@@ -25,7 +25,8 @@
     "error": "Something went wrong.",
     "offline": "You are offline. Check your connection.",
     "retry": "Try again",
-    "close": "Close"
+    "close": "Close",
+    "back": "Back"
   },
   "components": {
     "title": "Components",

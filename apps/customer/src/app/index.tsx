@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
-import { Button, LogoStacked, Notice, Screen, Text, space } from '@/ui';
+import { Button, Notice, Screen, Text, space } from '@/ui';
 
 // Phase 0 placeholder. The real home (your shops, categories, reorder strip) is Phase 1.
 export default function HomeScreen() {
@@ -12,12 +12,9 @@ export default function HomeScreen() {
   return (
     <Screen>
       <LanguageSwitcher />
-      <View style={styles.hero}>
-        <LogoStacked width={220} ground="page" label={t('app.name')} />
-        <Text variant="lead" color="inkMuted">
-          {t('app.tagline')}
-        </Text>
-      </View>
+      <Text variant="lead" color="inkMuted">
+        {t('app.tagline')}
+      </Text>
       <View style={styles.copy}>
         <Text variant="heading">{t('home.title')}</Text>
         <Text>{t('home.subtitle')}</Text>
@@ -38,6 +35,5 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  hero: { alignItems: 'flex-start', gap: space[3] },
   copy: { gap: space[2] },
 });

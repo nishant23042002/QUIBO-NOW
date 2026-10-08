@@ -1,8 +1,13 @@
-import { Stack } from 'expo-router';
+import { SplashScreen, Stack } from 'expo-router';
+import { NavigationBar } from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
 import { ThemeProvider, useTheme } from '@/theme';
-import { Boot, HeaderLogo, ThemeToggle } from '@/ui';
+import { AppHeader, AppSplash } from '@/ui';
+
+// Keep Expo's own splash up until our animated one is on screen, so nothing flashes in between.
+// There is nothing to keep on the web or in Expo Go, which is fine.
+SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
 function Screens() {
   const { t } = useLanguage();
@@ -11,21 +16,21 @@ function Screens() {
   return (
     <Stack
       screenOptions={{
-        headerStyle: { backgroundColor: colors.chrome },
-        headerTintColor: colors.onChrome,
-        headerShadowVisible: false,
-        headerTitleAlign: 'left',
+        // Our own header, so its height never depends on when the phone reports the status bar.
+        header: ({ back, navigation, options }) =>
+          back === undefined ? (
+            <AppHeader logoLabel={t('app.name')} />
+          ) : (
+            <AppHeader
+              title={options.title ?? ''}
+              backLabel={t('common.back')}
+              onBack={navigation.goBack}
+            />
+          ),
         contentStyle: { backgroundColor: colors.bg },
-        headerRight: () => <ThemeToggle />,
       }}
     >
-      <Stack.Screen
-        name="index"
-        options={{
-          title: t('app.name'),
-          headerTitle: () => <HeaderLogo label={t('app.name')} />,
-        }}
-      />
+      <Stack.Screen name="index" options={{ title: t('app.name') }} />
       <Stack.Screen name="components" options={{ title: t('components.title') }} />
     </Stack>
   );
@@ -35,17 +40,29 @@ function Screens() {
 function Gate() {
   const theme = useTheme();
   const language = useLanguage();
+  const ready = theme.ready && language.ready;
 
-  if (!theme.ready || !language.ready) return <Boot />;
-  return <Screens />;
+  return <AppSplash ready={ready}>{ready ? <Screens /> : null}</AppSplash>;
+}
+
+/** The status bar and the navigation buttons stay readable on whatever is drawn behind them. */
+function SystemBars() {
+  const { scheme } = useTheme();
+  return (
+    <>
+      {/* The header is dark in both themes, so the status bar text is always light. */}
+      <StatusBar style="light" />
+      {/* Behind the navigation buttons is the page: a light bar with dark buttons, or the reverse. */}
+      <NavigationBar style={scheme === 'dark' ? 'dark' : 'light'} />
+    </>
+  );
 }
 
 export default function RootLayout() {
   return (
     <ThemeProvider>
       <LanguageProvider>
-        {/* The header is dark in both themes, so the status bar text is always light. */}
-        <StatusBar style="light" />
+        <SystemBars />
         <Gate />
       </LanguageProvider>
     </ThemeProvider>

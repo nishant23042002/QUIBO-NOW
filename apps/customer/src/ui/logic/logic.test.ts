@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { initialOf } from './initial';
 import { freeDeliveryProgress, savings } from './money';
 import { COUNT_RULE, WEIGHT_RULE, formatQuantity, stepQuantity } from './quantity';
+import { SPLASH_FADE_MS, splashMinimumMs, splashPhase } from './splash';
 
 describe('stepQuantity', () => {
   it('adds an item from nothing at the minimum, 1 for a count and 0.5 kg for loose weight', () => {
@@ -99,5 +100,20 @@ describe('initialOf', () => {
     expect(initialOf('  eggs')).toBe('E');
     expect(initialOf('')).toBe('·');
     expect(initialOf('   ')).toBe('·');
+  });
+});
+
+describe('splash timing', () => {
+  it('holds until the app is ready and the minimum time is up, then leaves', () => {
+    expect(splashPhase({ appReady: false, minimumElapsed: false })).toBe('holding');
+    expect(splashPhase({ appReady: true, minimumElapsed: false })).toBe('holding');
+    expect(splashPhase({ appReady: false, minimumElapsed: true })).toBe('holding');
+    expect(splashPhase({ appReady: true, minimumElapsed: true })).toBe('leaving');
+  });
+
+  it('is shorter with reduce motion, and long enough to see the logo without it', () => {
+    expect(splashMinimumMs(true)).toBeLessThan(splashMinimumMs(false));
+    expect(splashMinimumMs(false)).toBeGreaterThanOrEqual(1000);
+    expect(SPLASH_FADE_MS).toBeLessThanOrEqual(500);
   });
 });
