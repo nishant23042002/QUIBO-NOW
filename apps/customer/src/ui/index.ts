@@ -24,11 +24,17 @@ export { LogoStacked, QMark, type LogoGround } from './brand/Logo';
 export { COUNT_RULE, WEIGHT_RULE, type QuantityRule } from './logic/quantity';
 export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
 export { Notice, type NoticeProps } from './Notice';
+export {
+  PromoCarousel,
+  type PromoCarouselProps,
+  type PromoSlide,
+  type PromoTone,
+} from './PromoCarousel';
 export { Price, type PriceProps } from './Price';
 export { ProductImage, type ProductImageProps } from './ProductImage';
+export { Skeleton, SkeletonScope, type SkeletonProps, type SkeletonScopeProps } from './Skeleton';
 export { Screen } from './Screen';
 export { SearchBar, type SearchBarProps, type SearchHint } from './SearchBar';
-export { Collapsible, type CollapsibleProps } from './Collapsible';
 export { ShopInfoCard, type ShopInfoCardProps } from './ShopInfoCard';
 export { ShopsPanel, type ShopsPanelProps } from './ShopsPanel';
 export { ShopsChip, type ShopsChipProps } from './ShopsChip';

@@ -37,7 +37,7 @@ interface Place {
 
 const TAB_PADDING = space[3];
 const UNDERLINE = 3;
-const EMOJI_BOX = 44;
+const EMOJI_BOX = 36;
 const SLIDE_MS = 280;
 
 const makeStyles = (c: ThemeColors) =>
@@ -54,6 +54,15 @@ const makeStyles = (c: ThemeColors) =>
       paddingBottom: space[3],
     },
     pressed: { opacity: 0.7 },
+    track: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      bottom: 0,
+      height: 1,
+      backgroundColor: c.onHeader,
+      opacity: 0.25,
+    },
     dimmed: { opacity: 0.75 },
     // A fixed box, so the tabs keep one height whatever the phone's emoji set looks like.
     emoji: { width: EMOJI_BOX, height: EMOJI_BOX, alignItems: 'center', justifyContent: 'center' },
@@ -135,50 +144,54 @@ export function CategoryTabs({ tabs, selectedKey, onSelect, label }: CategoryTab
   }, [place, viewWidth, reduceMotion]);
 
   return (
-    <ScrollView
-      ref={scroller}
-      horizontal
-      showsHorizontalScrollIndicator={false}
-      contentContainerStyle={styles.row}
-      onLayout={(event) => {
-        setViewWidth(event.nativeEvent.layout.width);
-      }}
-      role="tablist"
-      aria-label={label}
-    >
-      <View style={styles.tabs}>
-        {tabs.map((tab) => {
-          const selected = tab.key === selectedKey;
-          return (
-            <Pressable
-              key={tab.key}
-              role="tab"
-              aria-selected={selected}
-              aria-label={tab.label}
-              onLayout={measure(tab.key)}
-              onPress={() => {
-                onSelect(tab.key);
-              }}
-              style={({ pressed }) => [styles.tab, pressed && styles.pressed]}
-            >
-              {/* The emoji keeps its colours on an unchosen tab; it is only softened, not greyed. */}
-              <View style={[styles.emoji, selected ? undefined : styles.dimmed]} aria-hidden>
-                <NativeText allowFontScaling={false} style={styles.emojiText}>
-                  {tab.emoji}
-                </NativeText>
-              </View>
-              <Text
-                variant="strong"
-                color={selected ? 'onHeader' : 'onHeaderMuted'}
-                numberOfLines={1}
+    <View>
+      {/* A fine line along the bottom of the whole row, under the chosen tab's thicker underline. */}
+      <View style={styles.track} aria-hidden />
+      <ScrollView
+        ref={scroller}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        contentContainerStyle={styles.row}
+        onLayout={(event) => {
+          setViewWidth(event.nativeEvent.layout.width);
+        }}
+        role="tablist"
+        aria-label={label}
+      >
+        <View style={styles.tabs}>
+          {tabs.map((tab) => {
+            const selected = tab.key === selectedKey;
+            return (
+              <Pressable
+                key={tab.key}
+                role="tab"
+                aria-selected={selected}
+                aria-label={tab.label}
+                onLayout={measure(tab.key)}
+                onPress={() => {
+                  onSelect(tab.key);
+                }}
+                style={({ pressed }) => [styles.tab, pressed && styles.pressed]}
               >
-                {tab.label}
-              </Text>
-            </Pressable>
-          );
-        })}
-        <Animated.View style={[styles.underline, { width, transform: [{ translateX: left }] }]} />
-      </View>
-    </ScrollView>
+                {/* The emoji keeps its colours on an unchosen tab; it is only softened, not greyed. */}
+                <View style={[styles.emoji, selected ? undefined : styles.dimmed]} aria-hidden>
+                  <NativeText allowFontScaling={false} style={styles.emojiText}>
+                    {tab.emoji}
+                  </NativeText>
+                </View>
+                <Text
+                  variant="strong"
+                  color={selected ? 'onHeader' : 'onHeaderMuted'}
+                  numberOfLines={1}
+                >
+                  {tab.label}
+                </Text>
+              </Pressable>
+            );
+          })}
+          <Animated.View style={[styles.underline, { width, transform: [{ translateX: left }] }]} />
+        </View>
+      </ScrollView>
+    </View>
   );
 }

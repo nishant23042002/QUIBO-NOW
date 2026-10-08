@@ -127,7 +127,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     inkMuted: '#B4B4BE',
     line: '#3E3844',
     ctl: '#9A92A4',
-    chrome: '#2A1235',
+    chrome: '#210F2C',
     onChrome: '#FFFFFF',
     onChromeMuted: '#CDBFD6',
     headerBg: '#3E1A4C',

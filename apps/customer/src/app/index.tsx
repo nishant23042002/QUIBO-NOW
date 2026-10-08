@@ -2,6 +2,8 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useHomeCategories } from '@/home/categories';
+import { HomeSkeleton } from '@/home/HomeSkeleton';
+import { useHomeOffers } from '@/home/offers';
 import { useSampleShops } from '@/home/sampleShops';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
@@ -18,13 +20,14 @@ const SEARCH_ITEMS = [
   'home.search.itemBread',
 ] as const;
 
-// Phase 1a is built one section at a time. So far: the header (with the shops row it opens), the search bar and the category tabs.
+// Phase 1a is built one section at a time. So far: the header (with the shops row it opens), the search bar, the category tabs, the sliding offers, and skeletons below.
 export default function HomeScreen() {
   const { t } = useLanguage();
   const router = useRouter();
   const styles = useStyles(makeStyles);
   const shops = useSampleShops();
   const categories = useHomeCategories();
+  const offers = useHomeOffers();
   const [category, setCategory] = useState('all');
   const openCount = shops.filter((shop) => shop.open).length;
 
@@ -46,13 +49,19 @@ export default function HomeScreen() {
         selectedCategory={category}
         categoriesLabel={t('home.categories.label')}
         onCategoryChange={setCategory}
+        offers={offers}
+        offersLabel={t('home.offers.label')}
+        onOfferPress={() => undefined}
         profileLabel={t('home.header.profile')}
         onSearchPress={() => undefined}
         onAddressPress={() => undefined}
         onProfilePress={() => {
           router.push('/profile');
         }}
-      />
+      >
+        {/* Skeletons until the shops and items load (Phase 1b). */}
+        <HomeSkeleton label={t('common.loading')} />
+      </HomeHeader>
     </View>
   );
 }

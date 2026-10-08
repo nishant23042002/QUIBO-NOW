@@ -51,6 +51,17 @@
       "fruits": "Fruits",
       "staples": "Staples",
       "snacks": "Snacks"
+    },
+    "offers": {
+      "label": "Offers",
+      "diwaliTitle": "Diwali essentials",
+      "diwaliBody": "Sweets, dry fruits and diyas",
+      "deliveryTitle": "Free delivery over {amount}",
+      "deliveryBody": "On your first three orders",
+      "milkTitle": "Fresh milk every morning",
+      "milkBody": "Order tonight for the 7–9 AM window",
+      "shopsTitle": "Shop from your own kirana",
+      "shopsBody": "Packed by a shop in your town"
     }
   },
   "language": {

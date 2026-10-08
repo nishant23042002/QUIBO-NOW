@@ -51,6 +51,17 @@
       "fruits": "फल",
       "staples": "राशन",
       "snacks": "नाश्ता"
+    },
+    "offers": {
+      "label": "ऑफ़र",
+      "diwaliTitle": "दिवाली का सामान",
+      "diwaliBody": "मिठाइयाँ, मेवे और दीये",
+      "deliveryTitle": "{amount} से ऊपर डिलीवरी मुफ़्त",
+      "deliveryBody": "आपके पहले तीन ऑर्डर पर",
+      "milkTitle": "हर सुबह ताज़ा दूध",
+      "milkBody": "आज रात ऑर्डर करें, सुबह 7–9 की विंडो",
+      "shopsTitle": "अपनी किराना दुकान से खरीदें",
+      "shopsBody": "आपके शहर की दुकान पैक करती है"
     }
   },
   "language": {
