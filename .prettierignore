@@ -1,11 +1,4 @@
-node_modules
-.next
-.turbo
-dist
-coverage
-storybook-static
-playwright-report
-test-results
+# Prettier already skips everything in .gitignore (node_modules, dist, .turbo, .expo, coverage).
 pnpm-lock.yaml
 .husky/_
 

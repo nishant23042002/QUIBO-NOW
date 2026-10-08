@@ -12,12 +12,13 @@
     "prepare": "husky",
     "dev": "pnpm --filter @quibo/customer dev",
     "lint": "turbo run lint && pnpm lint:root && pnpm format:check",
-    "lint:root": "eslint --max-warnings 0 *.mjs",
+    "lint:root": "eslint --max-warnings 0 *.mjs scripts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "turbo run typecheck",
     "test": "turbo run test",
-    "build": "turbo run build"
+    "build": "turbo run build",
+    "clean": "node scripts/clean.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.3",
