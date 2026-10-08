@@ -226,17 +226,21 @@ export function ProductView({
 
   // The picture's insight card: only the facts that apply to this product and size.
   const { glance } = details;
+  // In the order a shopper needs them: what to check when it arrives, what is in it, a tip, what it is good for,
+  // and what it costs per unit (only when there are several sizes to compare).
   const insightRows: InsightRow[] = [
-    { key: 'from', label: t('product.insight.labelFrom'), value: glance.place },
-    ...(glance.shelfLabel !== undefined && glance.shelfDays !== undefined
+    { key: 'check', label: t('product.insight.labelCheck'), value: glance.check },
+    ...(glance.nutrition !== undefined
       ? [
           {
-            key: 'keeps',
-            label: t('product.insight.labelKeeps'),
-            value: glance.shelfLabel,
-            days: glance.shelfDays,
+            key: 'nutrition',
+            label: t('product.insight.labelNutrition', { serving: glance.nutrition.serving }),
+            stats: glance.nutrition.stats,
           },
         ]
+      : []),
+    ...(glance.tip !== undefined
+      ? [{ key: 'tip', label: t('product.insight.labelTip'), value: glance.tip }]
       : []),
     ...(glance.goodFor !== undefined
       ? [{ key: 'good', label: t('product.insight.labelGood'), value: glance.goodFor }]

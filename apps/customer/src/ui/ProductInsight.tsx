@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Easing, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
 import { Text } from './Text';
@@ -8,17 +8,18 @@ import { useReduceMotion } from './useReduceMotion';
 
 export interface InsightRow {
   key: string;
-  /** What the fact is, for example "Keeps for". Small and quiet, above the value. */
+  /** What the fact is, for example "Healthy tip". Small and quiet, above the value. */
   label: string;
-  /** The fact itself, for example "2 days". */
-  value: string;
-  /** For a "keeps for" row: how many days it keeps, drawn as a row of small bars (one for each day of a week). */
-  days?: number;
+  /** The fact itself, in plain words. */
+  value?: string;
+  /** Instead of a sentence: a few short figures side by side, each a value over its name (calories, protein…). */
+  stats?: readonly { label: string; value: string }[];
 }
 
 export interface ProductInsightProps {
   /** The card's name for a screen reader, for example "Good to know". */
   title: string;
+  /** In the order they matter: the first is what the shopper most needs to know. */
   rows: readonly InsightRow[];
   /** The round button's name when the card is shut and when it is open. */
   openLabel: string;
@@ -27,7 +28,6 @@ export interface ProductInsightProps {
   onOpenChange?: (open: boolean) => void;
 }
 
-const WEEK = 7;
 const BUTTON = 40;
 /** The space between the picture's edge and the card and the button, the same on every side. */
 const INSET = space[4];
@@ -56,32 +56,31 @@ const makeStyles = (c: ThemeColors) =>
       left: INSET,
       right: INSET + BUTTON + space[2],
       bottom: INSET,
-      gap: space[3],
-      padding: space[3] + 2,
       borderRadius: radius.lg,
       backgroundColor: c.overlay,
+      overflow: 'hidden',
       // It grows out of the button's corner.
       transformOrigin: 'bottom right',
     },
+    content: { gap: space[3], padding: space[3] + 2 },
     row: { gap: 2 },
-    pips: { flexDirection: 'row', gap: 3, paddingTop: space[1] },
-    pip: {
-      width: 14,
-      height: 5,
-      borderRadius: radius.full,
-      backgroundColor: c.onOverlay,
-      opacity: 0.3,
+    // Two by two, so a figure like "145 kcal" never has to be cut short.
+    stats: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      columnGap: space[3],
+      rowGap: space[2],
+      paddingTop: space[1],
     },
-    pipOn: { backgroundColor: c.accent, opacity: 1 },
+    stat: { flexGrow: 1, flexBasis: '40%', minWidth: 0 },
   });
 
 /**
  * A sparkle button on the picture that opens a card of what is good to know about the product, and closes it again
  * (the same button turns into a cross). The card is dark glass over the picture: each fact is a small quiet label
- * with its value in white under it, the way a product label reads. The facts are only those that apply: where it
- * comes from, how long it keeps (with a bar for each day of the week, so freshness reads at a glance), what it is
- * good for, and its price per unit. The card grows out of the button's corner and fades; with "reduce motion" on it
- * simply appears.
+ * with its value in white under it, the way a product label reads, and the facts come in order of how much the
+ * shopper needs them. When there are more than fit on the picture, the card scrolls inside itself. It grows out of
+ * the button's corner and fades; with "reduce motion" on it simply appears.
  */
 export function ProductInsight({
   title,
@@ -97,6 +96,8 @@ export function ProductInsight({
   // Kept on screen until the closing animation has finished.
   const [mounted, setMounted] = useState(false);
   const [progress] = useState(() => new Animated.Value(0));
+  // How tall the picture is, so the card never grows past it.
+  const [room, setRoom] = useState(0);
 
   useEffect(() => {
     if (reduceMotion) {
@@ -127,15 +128,31 @@ export function ProductInsight({
   const showCard = open || (mounted && !reduceMotion);
 
   return (
-    <View style={styles.layer} pointerEvents="box-none">
+    <View
+      style={styles.layer}
+      pointerEvents="box-none"
+      onLayout={(event) => {
+        setRoom(Math.round(event.nativeEvent.layout.height));
+      }}
+    >
       {showCard ? (
         <Animated.View
           accessible
           role="summary"
-          aria-label={`${title}. ${rows.map((row) => `${row.label}: ${row.value}`).join('. ')}`}
+          aria-label={`${title}. ${rows
+            .map(
+              (row) =>
+                `${row.label}: ${
+                  row.stats?.map((stat) => `${stat.label} ${stat.value}`).join(', ') ??
+                  row.value ??
+                  ''
+                }`,
+            )
+            .join('. ')}`}
           style={[
             styles.card,
             {
+              maxHeight: Math.max(0, room - INSET * 2),
               opacity: progress,
               transform: [
                 { scale: progress.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] }) },
@@ -143,26 +160,34 @@ export function ProductInsight({
             },
           ]}
         >
-          {rows.map((row) => {
-            const days = row.days ?? 0;
-            return (
+          <ScrollView nestedScrollEnabled contentContainerStyle={styles.content}>
+            {rows.map((row) => (
               <View key={row.key} style={styles.row} aria-hidden>
                 <Text variant="caption" color="onOverlayMuted">
                   {row.label}
                 </Text>
-                <Text variant="strong" color="onOverlay">
-                  {row.value}
-                </Text>
-                {row.days !== undefined ? (
-                  <View style={styles.pips}>
-                    {Array.from({ length: WEEK }, (_, day) => (
-                      <View key={day} style={[styles.pip, day < days && styles.pipOn]} />
+                {row.value !== undefined ? (
+                  <Text variant="strong" color="onOverlay">
+                    {row.value}
+                  </Text>
+                ) : null}
+                {row.stats !== undefined ? (
+                  <View style={styles.stats}>
+                    {row.stats.map((stat) => (
+                      <View key={stat.label} style={styles.stat}>
+                        <Text variant="strong" color="onOverlay" numberOfLines={1}>
+                          {stat.value}
+                        </Text>
+                        <Text variant="caption" color="onOverlayMuted" numberOfLines={1}>
+                          {stat.label}
+                        </Text>
+                      </View>
                     ))}
                   </View>
                 ) : null}
               </View>
-            );
-          })}
+            ))}
+          </ScrollView>
         </Animated.View>
       ) : null}
       <Pressable

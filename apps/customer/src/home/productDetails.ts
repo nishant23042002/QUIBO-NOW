@@ -2,9 +2,10 @@ import { messages } from '@quibo/i18n';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import type { FactRow } from '@/ui';
 import { addDays, addMonths, formatDay } from './dates';
+import { NUTRITION, formatNutrient, perServing } from './nutrition';
 import type { HomeItem, ItemCategory } from './items';
 
-type Entry = { about: string; ingredients: string; goodFor: string };
+type Entry = { about: string; ingredients: string; goodFor: string; tip: string };
 
 /** How long each product keeps, until the catalogue supplies it (Phase 1b). */
 const SHELF: Readonly<Record<string, { n: number; unit: 'days' | 'months' }>> = {
@@ -108,13 +109,14 @@ export interface ProductDetails {
   information: readonly FactRow[];
   /** Who sells it, with the details a shopper expects to find on a pack. */
   seller: readonly FactRow[];
-  /** The few facts the picture's insight card reads out. */
+  /** The facts the picture's insight card reads out, in the order it shows them. */
   glance: {
-    /** Where it comes from, for example "Roha, Maharashtra". */
-    place: string;
-    /** How long it keeps, for example "2 days", and the same in days. */
-    shelfLabel?: string;
-    shelfDays?: number;
+    /** What to look at when it arrives, said for this kind of product. */
+    check: string;
+    /** What a normal helping holds (approximately), with the helping named: absent when there are no figures. */
+    nutrition?: { serving: string; stats: readonly { label: string; value: string }[] };
+    /** A short, practical food tip for this product. */
+    tip?: string;
     goodFor?: string;
   };
 }
@@ -148,6 +150,28 @@ export function useProductDetails(
         ? addDays(packedOn, shelf.n)
         : addMonths(packedOn, shelf.n);
   const packer = PACKERS[item.category];
+  const facts = NUTRITION[item.id];
+  const nutrition = (() => {
+    if (facts === undefined) return undefined;
+    const helping = perServing(facts.per100, facts.serving.amount);
+    const serving =
+      facts.serving.name !== undefined
+        ? t(`product.servings.${facts.serving.name}`)
+        : t(`home.units.${facts.serving.unit}`, { n: facts.serving.amount });
+    const grams = (value: number) => t('product.insight.grams', { n: formatNutrient(value) });
+    return {
+      serving,
+      stats: [
+        {
+          label: t('product.insight.statEnergy'),
+          value: t('product.insight.kcal', { n: String(helping.kcal) }),
+        },
+        { label: t('product.insight.statProtein'), value: grams(helping.protein) },
+        { label: t('product.insight.statCarbs'), value: grams(helping.carbs) },
+        { label: t('product.insight.statFat'), value: grams(helping.fat) },
+      ],
+    };
+  })();
 
   return {
     highlights: [
@@ -184,14 +208,15 @@ export function useProductDetails(
       row('product.rows.care', seller.care),
     ],
     glance: {
-      place: origin,
-      ...(shelf !== undefined
-        ? {
-            shelfLabel: t(`product.shelf.${shelf.unit}`, { n: shelf.n }),
-            shelfDays: shelf.unit === 'days' ? shelf.n : shelf.n * 30,
-          }
-        : {}),
-      ...(entry !== undefined ? { goodFor: entry.goodFor } : {}),
+      check: t(
+        item.id === 'eggs'
+          ? 'product.insight.checkEggs'
+          : item.category === 'vegetables' || item.category === 'fruits'
+            ? 'product.insight.checkFresh'
+            : 'product.insight.checkPacked',
+      ),
+      ...(nutrition !== undefined ? { nutrition } : {}),
+      ...(entry !== undefined ? { tip: entry.tip, goodFor: entry.goodFor } : {}),
     },
   };
 }
