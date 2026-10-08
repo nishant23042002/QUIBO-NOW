@@ -60,17 +60,21 @@ this before writing the Phase 1 prompt. Phase 1 is **customer UI on mock data** 
   note that the Expo CLI then writes `expo-env.d.ts` and `.expo/types` when `expo start` runs, so a fresh
   clone has no types until it is run: the same trap `next typegen` was in Phase 0.
 - **Still placeholders in the brand:** the URL scheme `quibo`, and there is no operating-system splash
-  image (the in-app boot screen covers loading). The Android package name is not set and cannot change
+  image (the in-app animated splash covers loading). The Android package name is not set and cannot change
   after the first Play Store release. The app icon files exist but only show in a built app, never in Expo
   Go (ADR 0007).
 - **A new colour pairing is not checked automatically.** `src/theme/palette.test.ts` lists the pairs by
   hand and checks each in both themes; add every new text-on-background or border-on-background pair.
-- **The Android navigation bar colour in the dark theme** has not been seen on a phone. The status bar
-  text is always light because the header is dark in both themes.
+- **Edge-to-edge on Android** is handled in the app (`AppHeader` insets, page colour behind the navigation
+  buttons, `expo-navigation-bar`), but it has only been checked in the browser. Check the status bar area,
+  the navigation buttons and the first load on a real phone, in Expo Go and then in a build: Expo Go may keep
+  the system's own contrast bar. The status bar text is always light because the header is dark in both themes.
+- **Add `KeyboardAvoidingView` behaviour to `Screen`** when the first form screen arrives; edge-to-edge changes
+  how Android resizes for the keyboard.
 - **The toggle never goes back to "follow the phone".** The first tap sets an explicit choice. If users
   need the automatic mode back, it belongs on a settings screen (`ThemeProvider` already supports the
   `system` mode).
-- **The boot screen waits for the saved theme and language.** If the first paint ever flickers on a slow
+- **The splash waits for the saved theme and language.** If the first paint ever flickers on a slow
   phone, draw with the phone's setting first and switch after (ADR 0008, Consequences).
 
 ## Using the Phase 0c components

@@ -70,30 +70,45 @@ screen by screen.
     one-colour layer for themed icons. The SVG masters are in `docs/brand/`. A test checks the sizes and
     transparency and that the Android background matches the header colour.
 
+11. **Header and system bars** (added after the first phone test). The app draws edge to edge, so it must own its
+    insets. `AppHeader` replaces the native header: a fixed 56 dp (`HEADER_HEIGHT`) plus the status bar
+    height from `react-native-safe-area-context`, with the dark colour painted behind the status bar. Its height
+    is therefore the same on every load, language and theme; a native header measured it late and doubled the
+    status bar's height. The first screen shows the QUIBO NOW logo, other screens a back button and a title.
+    The page background fills the screen behind the navigation buttons, and `expo-navigation-bar` sets their
+    style (dark buttons on the light page, light on the dark page; the plugin is configured with
+    `enforceContrast: false` so the setting takes effect in builds).
+12. **Splash.** `AppSplash` is an in-app animated splash, the same aubergine in both themes: the logo slides in
+    and fades up like a speed line, the tagline follows once the saved language is known, and the whole splash
+    fades into the finished home screen after at least 1.2 s. With "reduce motion" on it only covers loading
+    for 0.3 s. It uses React Native's own `Animated` (no animation library). The router's built-in
+    `SplashScreen` keeps Expo's native splash up until ours has been drawn, so nothing flashes between them.
+    Expo Go shows the app icon instead of a native splash, so this in-app splash is the one visible there.
+
 ## Deferred on purpose
 
 - **Eight more components** wait until a screen needs them: `EmptyState`, `StatusTimeline`, `Toast`,
   `ConfirmDialog`, `ItemRow`, `Skeleton`, `DietMark`, `Divider`.
 - **Poppins as the text font.** It would cost about 500 KB and one more package; decide it with the
   Phase 1 bundle-size numbers.
-- **The splash screen at the operating-system level** and store release setup (ADR 0007). The in-app boot
+- **A custom native splash image** (the `expo-splash-screen` plugin, which needs a build to check) and store release setup (ADR 0007). The in-app
   screen with the stacked logo and the tagline covers the moment the saved settings load.
 - **Real product photos and category art.**
 - **The driver, admin, api and worker placeholders** are untouched.
 
 ## Consequences
 
-- **Two packages were added to `apps/customer`**, both the exact versions Expo SDK 57 pins and both needing
+- **Three packages were added to `apps/customer`** (the third, `expo-navigation-bar` 57.0.3, in the header and splash follow-up), all the exact versions Expo SDK 57 pins and both needing
   only `react` and `react-native`: `react-native-svg` 15.15.4 (logo, icons, placeholder pattern) and
   `@react-native-async-storage/async-storage` 2.2.0 (the remembered theme and language). Recorded in
   ADR 0003. If a very old Android phone struggles with SVG, the fallback is PNG logos.
-- **The first paint waits** for the saved theme and language, behind the boot screen. If it ever flickers,
+- **The first paint waits** for the saved theme and language, behind the splash. If it ever flickers,
   the fallback is to draw with the phone's setting and switch after.
 - **`app.json` holds one colour literal** (the Android icon background), because JSON cannot import the
   palette. A test keeps it equal to the header colour.
 - **A new colour pairing is not checked automatically.** The palette test lists its pairs by hand: add
   every new text-on-background or border-on-background pair to it.
-- **The Android navigation bar colour in dark** is the one thing not checked yet; it needs a phone.
+- **The Android navigation buttons and the status bar area** are set up (11) but only a phone, or a build, can show them; Expo Go may keep the system's own contrast bar.
 - **Bundle size** grew by about 0.2 MB (3.3 MB to 3.5 MB Hermes bundle) with the two packages, the logo
   paths and the components.
 

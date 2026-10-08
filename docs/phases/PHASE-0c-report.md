@@ -175,3 +175,25 @@ It is in [`PHASE-0c.md`](./PHASE-0c.md). The steps that need your hands:
 4. Check **On this phone** still shows `₹1,23,456.50` and `200 {"status":"ok"}`, set the phone's font size to
    the largest, and look at the dark theme's navigation bar at the bottom of the screen.
 5. If it all looks right, sign off and push the tag `phase-0-complete`. Phase 0, 0b and 0c close together.
+
+## 9. Addendum: first phone test, header and splash fixes
+
+The first test on a real Android phone (Expo Go) found problems the browser could not show, and fixes were
+made after this report was first written:
+
+- **The header was too tall and off-centre on first load.** The native header added the status bar height on
+  top of the status bar that was already there. It is replaced by `AppHeader`: a fixed 56 dp plus the status
+  bar height from the phone, with the aubergine painted behind the status bar. In the browser it measures
+  exactly 56 px on both screens, and it keeps that height when the language, theme or screen changes.
+- **The app did not use the whole screen.** The page colour now fills behind the navigation buttons, and
+  `expo-navigation-bar` (new package, 57.0.3, exact) sets the button style with the theme; the plugin is set to
+  `enforceContrast: false` so it applies in builds. Expo Go may still keep the system's own bars, so this needs
+  your phone to confirm.
+- **An animated splash** replaces the plain boot screen (ADR 0008, decision 12). Measured by sampling the
+  running app every 80 ms: the logo starts at 28 px to the left and fully transparent, reaches full opacity
+  by about 640 ms, the tagline appears once the language is known, and the overlay fades out from about
+  1.4 s to 1.7 s onto an already-drawn home screen. It skips the movement with "reduce motion".
+- **Cleanup in the same change:** the duplicate big logo on Home is gone (the header already shows it), the
+  `Animated` warning on the web preview is gone, and the Boot screen file is deleted.
+- **Not verified:** all of this on a real phone, and the navigation-button style on Android. Expo Go shows the
+  app icon, not a custom native splash, so a native splash image stays deferred with the release setup.

@@ -90,8 +90,12 @@ work was a series of small commits, each leaving lint, typecheck, tests and buil
       from Phase 0b)
 - [ ] With the phone's font size at the largest, nothing is cut off in any of the three languages
 - [ ] **The palette looks right to you on a real screen** (aubergine and pistachio, outdoors if you can)
-- [ ] **The colour of the Android navigation bar in the dark theme** looks right. This is the one thing
-      nothing could check without a phone
+- [ ] **The app fills the whole screen:** the aubergine header runs up behind the clock and battery, its height
+      is the same on the first load and afterwards, and the area behind the navigation buttons is the page
+      colour, in both themes
+- [ ] **The opening splash** plays once (logo slides in, tagline follows) and fades into the home screen, and
+      with "remove animations" switched on in the phone's accessibility settings it only flashes briefly
+- [ ] **The navigation buttons are readable in the dark theme.** Nothing could check this without a phone
 - [ ] Tested by hand on a real low-end Android phone with a throttled network
 - [ ] **Hindi and Marathi text reviewed by a native speaker** (drafted by the assistant, now including about
       35 more strings in the Components screen and the tagline)
