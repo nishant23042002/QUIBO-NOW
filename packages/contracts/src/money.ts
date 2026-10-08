@@ -76,13 +76,20 @@ export interface FormatRupeesOptions {
   paise?: 'auto' | 'always';
 }
 
-const rupeeGrouping = new Intl.NumberFormat('en-IN', { numberingSystem: 'latn' });
+/** Indian digit grouping of a string of digits: 1234567 becomes 12,34,567. Plain string work. */
+function groupIndian(digits: string): string {
+  if (digits.length <= 3) return digits;
+  const lastThree = digits.slice(-3);
+  const rest = digits.slice(0, -3);
+  // A comma goes before every pair of digits that is left once the last three are set aside.
+  return `${rest.replace(/\B(?=(\d{2})+$)/g, ',')},${lastThree}`;
+}
 
 /**
  * Format as rupees with Indian digit grouping and Latin digits, e.g. ₹1,23,456.50 and -₹5.
- * Only the whole-rupee part goes through Intl (as a BigInt) and the paise are appended as
- * integers, so no float is ever involved. Digits are Latin in every language; Marathi's
- * default would otherwise be Devanagari digits.
+ * Everything is integer and string work, with no Intl and no float, so the result is the same
+ * in Node, in a browser and on a phone's JavaScript engine. Digits are Latin in every
+ * language (Marathi's Intl default would otherwise be Devanagari digits).
  */
 export function formatRupees(amount: Money, options: FormatRupeesOptions = {}): string {
   const total = BigInt(amount);
@@ -93,5 +100,5 @@ export function formatRupees(amount: Money, options: FormatRupeesOptions = {}): 
 
   const showPaise = options.paise === 'always' || paise !== 0;
   const fraction = showPaise ? `.${String(paise).padStart(2, '0')}` : '';
-  return `${negative ? '-' : ''}₹${rupeeGrouping.format(rupees)}${fraction}`;
+  return `${negative ? '-' : ''}₹${groupIndian(rupees.toString())}${fraction}`;
 }

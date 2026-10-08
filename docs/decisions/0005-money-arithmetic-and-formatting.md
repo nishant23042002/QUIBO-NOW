@@ -23,13 +23,17 @@ All of this lives in `packages/contracts/src/money.ts`.
    (0.5 paise becomes 1, -0.5 becomes -1). A fourth decimal throws instead of being silently rounded.
    Float noise such as `0.1 + 0.2` is accepted as 0.3.
 4. **`formatRupees` uses Indian digit grouping and Latin digits in every language:** `₹1,23,456.50`,
-   `-₹5`. Only the whole-rupee part goes through `Intl` (as a BigInt); the paise are appended as
-   integers. By default whole rupees omit `.00`; `{ paise: 'always' }` shows two decimals for bills.
+   `-₹5`. It is integer and string work only, with no `Intl` (its support differs between a browser
+   and a phone's JavaScript engine, so the same call could format differently) and no float. By
+   default whole rupees omit `.00`; `{ paise: 'always' }` shows two decimals for bills.
 
 ## Consequences
 
-- Marathi's default numbering in `Intl` is Devanagari digits. We chose Latin digits everywhere so prices
-  read the same on every screen. Confirm this with real users in Phase 1; changing it is one function.
+- We write Latin digits in every language (Marathi's `Intl` default would be Devanagari digits), so
+  prices read the same on every screen. Confirm this with real users in Phase 1; changing it is one
+  function.
+- Money maths uses BigInt. The customer app (React Native) runs it on Hermes; its Components screen
+  shows `₹1,23,456.50` as an on-device check (Phase 0b).
 - Half away from zero is a business rule: it favours neither the shop nor the customer on average. Change
   it here, with its tests, if the shops' billing practice differs.
 - Weighed prepaid orders still need the "final bill" rule from PLAN section 10 (take payment after
