@@ -8,13 +8,26 @@ import {
   type MessageValues,
 } from '@quibo/i18n';
 import { getLocales } from 'expo-localization';
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
+import { readSetting, writeSetting } from '@/storage';
+
+const LANGUAGE_KEY = 'quibo.language';
 
 interface Language {
   locale: Locale;
   setLocale: (locale: Locale) => void;
   /** The message for a key, in the current language. A misspelt key fails to compile. */
   t: (key: MessageKey, values?: MessageValues) => string;
+  /** False until the stored choice has been read, so the app can wait instead of flashing. */
+  ready: boolean;
 }
 
 const LanguageContext = createContext<Language | null>(null);
@@ -26,14 +39,38 @@ function deviceLocale(): Locale {
 }
 
 /**
- * Holds the chosen language for the whole app. The choice is kept in memory only, so it starts
- * from the phone's language again on the next launch. Remembering it is Phase 1 (PHASE-1-notes.md).
+ * Holds the chosen language for the whole app. It starts from the phone's language, and a choice
+ * made with the language buttons is remembered for the next launch.
  */
 export function LanguageProvider({ children }: { children: ReactNode }) {
-  const [locale, setLocale] = useState<Locale>(deviceLocale);
+  const [locale, setLocaleState] = useState<Locale>(deviceLocale);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let current = true;
+    void readSetting(LANGUAGE_KEY).then((stored) => {
+      if (!current) return;
+      if (isLocale(stored)) setLocaleState(stored);
+      setReady(true);
+    });
+    return () => {
+      current = false;
+    };
+  }, []);
+
+  const setLocale = useCallback((next: Locale) => {
+    setLocaleState(next);
+    void writeSetting(LANGUAGE_KEY, next);
+  }, []);
+
   const value = useMemo<Language>(
-    () => ({ locale, setLocale, t: (key, values) => translate(messages[locale], key, values) }),
-    [locale],
+    () => ({
+      locale,
+      setLocale,
+      t: (key, values) => translate(messages[locale], key, values),
+      ready,
+    }),
+    [locale, setLocale, ready],
   );
 
   return <LanguageContext value={value}>{children}</LanguageContext>;

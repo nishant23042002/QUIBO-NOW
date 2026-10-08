@@ -10,7 +10,7 @@ import {
 import { Appearance, StyleSheet, useColorScheme } from 'react-native';
 import { parseMode, resolveScheme, toggledMode, type Mode } from './mode';
 import { palettes, type Scheme, type ThemeColors } from './palette';
-import { readSetting, writeSetting } from './storage';
+import { readSetting, writeSetting } from '@/storage';
 
 const THEME_KEY = 'quibo.theme';
 

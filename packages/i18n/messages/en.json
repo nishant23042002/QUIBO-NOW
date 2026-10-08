@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Quibo Now",
-    "description": "Order groceries from the shops in your own town."
+    "description": "Order groceries from the shops in your own town.",
+    "tagline": "Dukaan se ghar tak."
   },
   "home": {
     "title": "Groceries from your town's own shops",
@@ -13,6 +14,10 @@
     "en": "English",
     "hi": "हिन्दी",
     "mr": "मराठी"
+  },
+  "theme": {
+    "toDark": "Switch to dark theme",
+    "toLight": "Switch to light theme"
   },
   "common": {
     "loading": "Loading…",

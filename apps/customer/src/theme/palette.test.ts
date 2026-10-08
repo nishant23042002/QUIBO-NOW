@@ -58,6 +58,10 @@ describe('theme contrast (WCAG AA)', () => {
     );
   }
 
+  it('keeps the logo tag readable on the page in the light theme (accent letters on an ink tag)', () => {
+    expect(contrast(palettes.light.accent, palettes.light.action)).toBeGreaterThanOrEqual(4.5);
+  });
+
   it('keeps the accent off light surfaces as text, where it would be unreadable', () => {
     // The accent is a fill with a dark label. Anything that needs accent-coloured text uses accentInk.
     expect(contrast(palettes.light.accent, palettes.light.surface)).toBeLessThan(3);

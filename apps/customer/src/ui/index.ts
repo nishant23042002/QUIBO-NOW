@@ -1,7 +1,10 @@
 export { Badge, type BadgeProps } from './Badge';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
+export { Icon, type IconName } from './Icon';
+export { IconButton, type IconButtonProps } from './IconButton';
 export { Input, type InputProps } from './Input';
+export { LogoCompact, LogoStacked, QMark, type LogoGround } from './brand/Logo';
 export { Screen } from './Screen';
 export { Sheet, type SheetProps } from './Sheet';
 export { Text, type TextProps, type TextVariant } from './Text';
