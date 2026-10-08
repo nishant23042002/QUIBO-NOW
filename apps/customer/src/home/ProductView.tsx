@@ -63,7 +63,12 @@ const makeStyles = (c: ThemeColors) =>
     cover: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: c.bg },
     ribbon: { position: 'absolute', top: 0, left: space[4] },
     packRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-    priceRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: space[3] },
+    priceRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: space[3],
+    },
     fact: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     shop: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     shopIcon: {
@@ -324,12 +329,25 @@ export function ProductView({ item, onBack }: { item: HomeItem; onBack: () => vo
                     amount={pack.price}
                     {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
                   />
-                  {saved !== undefined ? (
-                    <Text variant="strong" color="accentInk">
-                      {t('product.save', { amount: formatRupees(saved) })}
+                  {out ? (
+                    <Text variant="strong" color="inkMuted">
+                      {pack.stock?.label}
                     </Text>
-                  ) : null}
+                  ) : (
+                    <Stepper
+                      value={quantity}
+                      onChange={(next) => {
+                        cart.setQuantity(pack.id, next);
+                      }}
+                      {...stepper}
+                    />
+                  )}
                 </View>
+                {saved !== undefined ? (
+                  <Text variant="strong" color="accentInk">
+                    {t('product.save', { amount: formatRupees(saved) })}
+                  </Text>
+                ) : null}
                 <Text variant="small" color="inkMuted">
                   {t('product.taxes')}
                 </Text>

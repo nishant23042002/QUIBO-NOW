@@ -41,6 +41,7 @@ const makeStyles = (c: ThemeColors) =>
     thumbs: { flexDirection: 'row', gap: space[2], padding: space[3] },
     row: { justifyContent: 'center' },
     pair: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3] },
+    between: { alignItems: 'center', justifyContent: 'space-between' },
     options: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
     option: { flexGrow: 1, flexBasis: OPTION_MIN, minWidth: OPTION_MIN },
     tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
@@ -130,12 +131,11 @@ export function ProductSkeleton({
               {bar('diet', small, 90)}
               {bar('name', line(fontSize['3xl'], 'tight'), '70%')}
               {bar('net', body, '50%')}
-              <View style={styles.pair}>
+              <View style={[styles.pair, styles.between]}>
                 <Skeleton width={84} height={priceHeight - 4} rounded={radius.md} />
-                {item.mrp !== undefined && item.mrp > item.price ? (
-                  <View style={{ flex: 1 }}>{bar('save', priceHeight - 4, '70%')}</View>
-                ) : null}
+                <Skeleton width={78} height={32} rounded={radius.md} />
               </View>
+              {item.mrp !== undefined && item.mrp > item.price ? bar('save', small, '36%') : null}
               {bar('taxes', small, '42%')}
               {item.stock?.kind === 'low' ? bar('stock', small, '40%') : null}
               {item.quickLabel !== undefined ? bar('quick', small, '55%') : null}
