@@ -36,6 +36,11 @@ export interface ProductGalleryProps {
   photoLabel: (position: number, total: number) => string;
   /** Dims the pictures, for a product that cannot be bought. */
   faded?: boolean;
+  /**
+   * The width the card is expected to have, so the first frame is already drawn at full size and the pictures do not
+   * pop in after the card has been measured. The measured width replaces it.
+   */
+  initialWidth?: number;
   /** Drawn over the top of the pictures, for example the saving ribbon. It does not swipe. */
   overlay?: ReactNode;
 }
@@ -93,13 +98,14 @@ export function ProductGallery({
   tint,
   photoLabel,
   faded = false,
+  initialWidth = 0,
   overlay,
 }: ProductGalleryProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
   const reduceMotion = useReduceMotion();
   const scroller = useRef<ScrollView>(null);
-  const [width, setWidth] = useState(0);
+  const [width, setWidth] = useState(initialWidth);
   const [index, setIndex] = useState(0);
   const height = Math.round(width / GALLERY_RATIO);
   const many = images.length > 1;
