@@ -1,23 +1,13 @@
 import { formatRupees, type Money } from '@quibo/contracts';
-import { Animated, Text as NativeText, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Text as NativeText, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import {
-  HEADER_HEIGHT,
-  Icon,
-  IconButton,
-  ScreenStatusBar,
-  Text,
-  radius,
-  space,
-  type TextColor,
-} from '@/ui';
-import type { HeaderLook } from './productHeaderLook';
+import { HEADER_HEIGHT, Icon, IconButton, ScreenStatusBar, Text, radius, space } from '@/ui';
 
 export interface ProductHeaderProps {
   name: string;
   emoji: string;
-  /** The product's category tint: the colour of the Home header for this category. */
+  /** The product's category tint: the colour the Home header wears for this category. */
   tint: string;
   price: Money;
   mrp?: Money;
@@ -28,13 +18,9 @@ export interface ProductHeaderProps {
   backLabel: string;
   searchLabel: string;
   shareLabel: string;
-  /** Which colour the header wears: the Home header's tint, or the deep aubergine. */
-  look: HeaderLook;
   onBack: () => void;
   onSearch: () => void;
   onShare: () => void;
-  /** Tapping the delivery line. For now it switches the header's look, so the two can be compared on a phone. */
-  onDeliveryPress: () => void;
   /** The page's scroll position, from the native scroll event. */
   scrollY: Animated.Value;
   /** How far down the page the big picture ends. Past it, the header shows the product instead of its plain name. */
@@ -49,8 +35,8 @@ const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     // The whole header is one block of colour with a rounded lower edge, over the soft page.
     bar: {
-      borderBottomLeftRadius: radius.xl,
-      borderBottomRightRadius: radius.xl,
+      borderBottomLeftRadius: radius.lg,
+      borderBottomRightRadius: radius.lg,
     },
     where: {
       flexDirection: 'row',
@@ -86,7 +72,6 @@ const makeStyles = (c: ThemeColors) =>
     },
     text: { flex: 1, minWidth: 0 },
     price: { flexDirection: 'row', alignItems: 'baseline', gap: space[2], marginTop: -space[1] },
-    pressed: { opacity: 0.7 },
   });
 
 /**
@@ -96,8 +81,7 @@ const makeStyles = (c: ThemeColors) =>
  * to a small card with the product's picture, name and price, so the shopper always sees what they are looking
  * at. The change is a fade and a small slide driven by the page's scroll, which the phone animates on its own thread.
  *
- * It wears one of two colours while they are being compared (see `productHeaderLook.ts`): the soft tint of the
- * Home header, with the Home header's text and round buttons, or the deep aubergine of the app's dark bars.
+ * It wears the Home header's look: the product's category tint, with the same text and round buttons.
  */
 export function ProductHeader({
   name,
@@ -110,24 +94,15 @@ export function ProductHeader({
   backLabel,
   searchLabel,
   shareLabel,
-  look,
   onBack,
   onSearch,
   onShare,
-  onDeliveryPress,
   scrollY,
   revealAt,
 }: ProductHeaderProps) {
   const styles = useStyles(makeStyles);
   const { colors, scheme } = useTheme();
   const insets = useSafeAreaInsets();
-  const purple = look === 'purple';
-  const background = purple ? colors.chrome : tint;
-  const text: TextColor = purple ? 'onChrome' : 'onHeader';
-  const muted: TextColor = purple ? 'onChromeMuted' : 'onHeaderMuted';
-  const priceColor: TextColor = purple ? 'accent' : 'onHeader';
-  const iconColor = colors[text];
-  const mutedColor = colors[muted];
   const range = [revealAt, revealAt + FADE];
   const chipOpacity = scrollY.interpolate({
     inputRange: range,
@@ -151,47 +126,37 @@ export function ProductHeader({
       style={[
         styles.bar,
         {
-          backgroundColor: background,
+          backgroundColor: tint,
           paddingTop: insets.top + space[1],
           paddingLeft: insets.left + space[4],
           paddingRight: insets.right + space[4],
         },
       ]}
     >
-      {/* The tint is pale on the light theme and deep on the dark one, like the Home header; the aubergine is always deep. */}
-      <ScreenStatusBar style={purple || scheme === 'dark' ? 'light' : 'dark'} />
-      <Pressable
-        role="button"
-        aria-label={`${deliveryLabel}. ${addressLabel}`}
-        onPress={onDeliveryPress}
-        style={({ pressed }) => [styles.where, pressed && styles.pressed]}
-      >
+      {/* The tint is pale on the light theme and deep on the dark one, like the Home header, so the text follows it. */}
+      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+      <View style={styles.where} accessible aria-label={`${deliveryLabel}. ${addressLabel}`}>
         <View style={styles.when}>
-          <Icon name="clock" color={iconColor} size={16} />
-          <Text variant="strong" color={text} numberOfLines={1}>
+          <Icon name="clock" color={colors.onHeader} size={16} />
+          <Text variant="strong" color="onHeader" numberOfLines={1}>
             {deliveryLabel}
           </Text>
         </View>
-        <View style={[styles.dot, { backgroundColor: mutedColor }]} aria-hidden />
+        <View style={[styles.dot, { backgroundColor: colors.onHeaderMuted }]} aria-hidden />
         <View style={styles.address}>
-          <Text variant="strong" color={muted} numberOfLines={1}>
+          <Text variant="strong" color="onHeaderMuted" numberOfLines={1}>
             {addressLabel}
           </Text>
         </View>
-        <Icon name="chevron" color={mutedColor} size={16} />
-      </Pressable>
+        <Icon name="chevron" color={colors.onHeaderMuted} size={16} />
+      </View>
       <View style={styles.row}>
         <View style={styles.back}>
-          <IconButton
-            icon="back"
-            label={backLabel}
-            onPress={onBack}
-            ground={purple ? 'chrome' : 'header'}
-          />
+          <IconButton icon="back" label={backLabel} onPress={onBack} ground="header" />
         </View>
         <View style={styles.slot}>
           <Animated.View style={[styles.title, { opacity: titleOpacity }]}>
-            <Text variant="label" color={text} numberOfLines={1} role="heading">
+            <Text variant="label" color="onHeader" numberOfLines={1} role="heading">
               {name}
             </Text>
           </Animated.View>
@@ -199,21 +164,21 @@ export function ProductHeader({
             style={[styles.chip, { opacity: chipOpacity, transform: [{ translateY: chipLift }] }]}
             aria-hidden
           >
-            <View style={[styles.thumb, { backgroundColor: purple ? tint : colors.surface }]}>
+            <View style={[styles.thumb, { backgroundColor: colors.surface }]}>
               <NativeText allowFontScaling={false} style={{ fontSize: 22, lineHeight: 28 }}>
                 {emoji}
               </NativeText>
             </View>
             <View style={styles.text}>
-              <Text variant="strong" color={text} numberOfLines={1}>
+              <Text variant="strong" color="onHeader" numberOfLines={1}>
                 {name}
               </Text>
               <View style={styles.price}>
-                <Text variant="caption" color={priceColor}>
+                <Text variant="caption" color="onHeader">
                   {formatRupees(price)}
                 </Text>
                 {mrp !== undefined && mrp > price ? (
-                  <Text variant="caption" color={muted} strike>
+                  <Text variant="caption" color="onHeaderMuted" strike>
                     {formatRupees(mrp)}
                   </Text>
                 ) : null}
@@ -221,19 +186,9 @@ export function ProductHeader({
             </View>
           </Animated.View>
         </View>
-        <IconButton
-          icon="search"
-          label={searchLabel}
-          onPress={onSearch}
-          ground={purple ? 'chrome' : 'header'}
-        />
+        <IconButton icon="search" label={searchLabel} onPress={onSearch} ground="header" />
         <View style={styles.end}>
-          <IconButton
-            icon="share"
-            label={shareLabel}
-            onPress={onShare}
-            ground={purple ? 'chrome' : 'header'}
-          />
+          <IconButton icon="share" label={shareLabel} onPress={onShare} ground="header" />
         </View>
       </View>
     </View>
