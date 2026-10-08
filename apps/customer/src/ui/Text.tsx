@@ -4,7 +4,8 @@ import {
   type TextStyle,
 } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { colors, fontSize, leading, type ColorName } from './tokens';
+import { useTheme, type ThemeColors } from '@/theme';
+import { fontSize, leading } from './tokens';
 
 interface VariantStyle {
   fontSize: number;
@@ -24,9 +25,26 @@ const variants = {
 
 export type TextVariant = keyof typeof variants;
 
+/** The theme colours that text may use. Each is checked against the surface it sits on. */
+export type TextColor = Extract<
+  keyof ThemeColors,
+  | 'ink'
+  | 'inkMuted'
+  | 'onChrome'
+  | 'onChromeMuted'
+  | 'onAccent'
+  | 'onAction'
+  | 'accentInk'
+  | 'tagFg'
+  | 'success'
+  | 'warning'
+  | 'danger'
+  | 'info'
+>;
+
 export interface TextProps extends Omit<NativeTextProps, 'style'> {
   variant?: TextVariant;
-  color?: ColorName;
+  color?: TextColor;
 }
 
 /**
@@ -35,6 +53,7 @@ export interface TextProps extends Omit<NativeTextProps, 'style'> {
  */
 export function Text({ variant = 'body', color = 'ink', ...rest }: TextProps) {
   const { locale } = useLanguage();
+  const { colors } = useTheme();
   const { fontSize: size, fontWeight, leading: spacing } = variants[variant];
   const lineHeight = Math.round(size * leading[locale === 'en' ? 'latin' : 'devanagari'][spacing]);
   const isHeading = variant === 'title' || variant === 'heading';

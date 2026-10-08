@@ -7,7 +7,7 @@ import {
   useState,
   type ReactNode,
 } from 'react';
-import { Appearance, StyleSheet, useColorScheme } from 'react-native';
+import { Appearance, useColorScheme } from 'react-native';
 import { parseMode, resolveScheme, toggledMode, type Mode } from './mode';
 import { palettes, type Scheme, type ThemeColors } from './palette';
 import { readSetting, writeSetting } from '@/storage';
@@ -81,11 +81,10 @@ export function useTheme(): Theme {
 
 /**
  * Styles that follow the theme. Pass a function defined outside the component, so the styles are
- * rebuilt only when the theme changes: `const makeStyles = (c: ThemeColors) => ({ ... })`.
+ * rebuilt only when the theme changes:
+ * `const makeStyles = (c: ThemeColors) => StyleSheet.create({ ... })`.
  */
-export function useStyles<T extends StyleSheet.NamedStyles<T>>(
-  make: (colors: ThemeColors) => T,
-): T {
+export function useStyles<T>(make: (colors: ThemeColors) => T): T {
   const { colors } = useTheme();
-  return useMemo(() => StyleSheet.create(make(colors)), [make, colors]);
+  return useMemo(() => make(colors), [make, colors]);
 }

@@ -9,13 +9,8 @@ export default defineConfig(
   { files: ['apps/customer/**'], extends: [native] },
   {
     // The only places a colour value may be typed: the palette itself, and tests, which need
-    // literal colours to prove the contrast check can fail. tokens.ts goes when the old static
-    // colours are replaced by the theme.
-    files: [
-      'apps/customer/src/theme/palette.ts',
-      'apps/customer/src/ui/tokens.ts',
-      'apps/customer/**/*.test.ts',
-    ],
+    // literal colours to prove the contrast check can fail.
+    files: ['apps/customer/src/theme/palette.ts', 'apps/customer/**/*.test.ts'],
     rules: { 'no-restricted-syntax': 'off' },
   },
 );

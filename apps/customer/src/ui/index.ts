@@ -1,4 +1,5 @@
 export { Badge, type BadgeProps } from './Badge';
+export { Boot } from './Boot';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { Icon, type IconName } from './Icon';
@@ -7,5 +8,6 @@ export { Input, type InputProps } from './Input';
 export { LogoCompact, LogoStacked, QMark, type LogoGround } from './brand/Logo';
 export { Screen } from './Screen';
 export { Sheet, type SheetProps } from './Sheet';
-export { Text, type TextProps, type TextVariant } from './Text';
-export { colors, radius, space, TAP_MIN, type ColorName } from './tokens';
+export { Text, type TextColor, type TextProps, type TextVariant } from './Text';
+export { ThemeToggle } from './ThemeToggle';
+export { radius, space, TAP_MIN } from './tokens';

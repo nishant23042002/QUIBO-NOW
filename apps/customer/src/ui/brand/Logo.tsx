@@ -58,14 +58,7 @@ export function LogoStacked({
   const c = useLogoColors(ground);
   const height = (width * SIZE.stacked.height) / SIZE.stacked.width;
   return (
-    <Svg
-      width={width}
-      height={height}
-      viewBox={VIEW_BOX.stacked}
-      accessible
-      accessibilityLabel={label}
-      role="img"
-    >
+    <Svg width={width} height={height} viewBox={VIEW_BOX.stacked} aria-label={label} role="img">
       {BARS_STACKED.map((d) => (
         <Path key={d} d={d} fill={c.lines} />
       ))}
@@ -81,14 +74,7 @@ export function LogoCompact({ height, label }: LogoProps & { height: number }) {
   const c = useLogoColors('chrome');
   const width = (height * SIZE.compact.width) / SIZE.compact.height;
   return (
-    <Svg
-      width={width}
-      height={height}
-      viewBox={VIEW_BOX.compact}
-      accessible
-      accessibilityLabel={label}
-      role="img"
-    >
+    <Svg width={width} height={height} viewBox={VIEW_BOX.compact} aria-label={label} role="img">
       {BARS_COMPACT.map((d) => (
         <Path key={d} d={d} fill={c.lines} />
       ))}
@@ -108,14 +94,7 @@ export function QMark({
   const c = useLogoColors(ground);
   const height = (size * SIZE.mark.height) / SIZE.mark.width;
   return (
-    <Svg
-      width={size}
-      height={height}
-      viewBox={VIEW_BOX.mark}
-      accessible
-      accessibilityLabel={label}
-      role="img"
-    >
+    <Svg width={size} height={height} viewBox={VIEW_BOX.mark} aria-label={label} role="img">
       {BARS_COMPACT.map((d) => (
         <Path key={d} d={d} fill={c.lines} />
       ))}

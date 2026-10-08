@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
-import { Text } from './Text';
-import { colors, radius, space, type ColorName } from './tokens';
+import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { Text, type TextColor } from './Text';
+import { radius, space } from './tokens';
 
 export interface BadgeProps {
   /** The text in the pill. Colour is never the only cue, so a badge always has text. */
@@ -14,13 +15,31 @@ export interface BadgeProps {
   loadingLabel?: string | undefined;
 }
 
-const TONE = {
-  neutral: { background: 'surfaceMuted', text: 'ink' },
-  success: { background: 'successSubtle', text: 'success' },
-  warning: { background: 'warningSubtle', text: 'warning' },
-  danger: { background: 'dangerSubtle', text: 'danger' },
-  info: { background: 'infoSubtle', text: 'info' },
-} as const satisfies Record<string, { background: ColorName; text: ColorName }>;
+interface Look {
+  background: keyof ThemeColors;
+  text: TextColor;
+}
+
+const TONE: Record<NonNullable<BadgeProps['tone']>, Look> = {
+  neutral: { background: 'muted', text: 'ink' },
+  success: { background: 'successBg', text: 'success' },
+  warning: { background: 'warningBg', text: 'warning' },
+  danger: { background: 'dangerBg', text: 'danger' },
+  info: { background: 'infoBg', text: 'info' },
+};
+
+const DISABLED: Look = { background: 'muted', text: 'inkMuted' };
+
+const makeStyles = (c: ThemeColors) =>
+  StyleSheet.create({
+    pill: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: space[3],
+      paddingVertical: 2,
+      borderRadius: radius.full,
+    },
+    placeholder: { width: 56, height: 20, borderRadius: radius.full, backgroundColor: c.line },
+  });
 
 export function Badge({
   label,
@@ -29,9 +48,9 @@ export function Badge({
   loading = false,
   loadingLabel,
 }: BadgeProps) {
-  const look: { background: ColorName; text: ColorName } = disabled
-    ? { background: 'surfaceMuted', text: 'inkMuted' }
-    : TONE[tone];
+  const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
+  const look = disabled ? DISABLED : TONE[tone];
 
   return (
     <View
@@ -50,13 +69,3 @@ export function Badge({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  pill: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: space[3],
-    paddingVertical: 2,
-    borderRadius: radius.full,
-  },
-  placeholder: { width: 56, height: 20, borderRadius: radius.full, backgroundColor: colors.line },
-});

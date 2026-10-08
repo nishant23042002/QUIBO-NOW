@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { ActivityIndicator, StyleSheet, TextInput, View, type TextInputProps } from 'react-native';
+import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Text } from './Text';
-import { TAP_MIN, colors, fontSize, radius, space } from './tokens';
+import { TAP_MIN, fontSize, radius, space } from './tokens';
 
 export interface InputProps extends Omit<TextInputProps, 'style' | 'editable'> {
   /** Visible label. Required: placeholder text is not a label. */
@@ -15,6 +16,31 @@ export interface InputProps extends Omit<TextInputProps, 'style' | 'editable'> {
   disabled?: boolean;
 }
 
+const makeStyles = (c: ThemeColors) =>
+  StyleSheet.create({
+    field: { gap: space[2] },
+    input: {
+      minHeight: TAP_MIN,
+      paddingHorizontal: space[4],
+      paddingVertical: space[2],
+      borderWidth: 2,
+      borderRadius: radius.md,
+      backgroundColor: c.surface,
+      color: c.ink,
+      fontSize: fontSize.base,
+    },
+    withSpinner: { paddingRight: space[12] },
+    disabled: { backgroundColor: c.muted, color: c.inkMuted },
+    spinner: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      right: space[4],
+      justifyContent: 'center',
+      pointerEvents: 'none',
+    },
+  });
+
 export function Input({
   label,
   hint,
@@ -25,14 +51,16 @@ export function Input({
   onBlur,
   ...rest
 }: InputProps) {
+  const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
   const [focused, setFocused] = useState(false);
   const borderColor = disabled
     ? 'transparent'
     : error !== undefined
       ? colors.danger
       : focused
-        ? colors.focus
-        : colors.lineStrong;
+        ? colors.action
+        : colors.ctl;
 
   return (
     <View style={styles.field}>
@@ -77,27 +105,3 @@ export function Input({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  field: { gap: space[2] },
-  input: {
-    minHeight: TAP_MIN,
-    paddingHorizontal: space[4],
-    paddingVertical: space[2],
-    borderWidth: 2,
-    borderRadius: radius.md,
-    backgroundColor: colors.surface,
-    color: colors.ink,
-    fontSize: fontSize.base,
-  },
-  withSpinner: { paddingRight: space[12] },
-  disabled: { backgroundColor: colors.disabledBg, color: colors.disabledText },
-  spinner: {
-    position: 'absolute',
-    top: 0,
-    bottom: 0,
-    right: space[4],
-    justifyContent: 'center',
-    pointerEvents: 'none',
-  },
-});

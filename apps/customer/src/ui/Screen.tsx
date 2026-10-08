@@ -1,11 +1,20 @@
 import type { ReactNode } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { colors, space } from './tokens';
+import { useStyles, type ThemeColors } from '@/theme';
+import { space } from './tokens';
+
+const makeStyles = (c: ThemeColors) =>
+  StyleSheet.create({
+    scroll: { flex: 1, backgroundColor: c.bg },
+    content: { alignItems: 'center', paddingHorizontal: space[4], paddingTop: space[6] },
+    column: { width: '100%', maxWidth: 560, gap: space[6] },
+  });
 
 /** Every screen starts with this: it scrolls, keeps the standard gutters and stays readable on a tablet. */
 export function Screen({ children }: { children: ReactNode }) {
   const insets = useSafeAreaInsets();
+  const styles = useStyles(makeStyles);
 
   return (
     <ScrollView
@@ -17,9 +26,3 @@ export function Screen({ children }: { children: ReactNode }) {
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  scroll: { flex: 1, backgroundColor: colors.canvas },
-  content: { alignItems: 'center', paddingHorizontal: space[4], paddingTop: space[6] },
-  column: { width: '100%', maxWidth: 560, gap: space[6] },
-});

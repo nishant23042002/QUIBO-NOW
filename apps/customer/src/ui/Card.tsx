@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { colors, radius, space } from './tokens';
+import { useStyles, type ThemeColors } from '@/theme';
+import { radius, space } from './tokens';
 
 export interface CardProps {
   /** `error` is for a card whose content failed to load or is invalid. */
@@ -14,6 +15,22 @@ export interface CardProps {
   children: ReactNode;
 }
 
+const makeStyles = (c: ThemeColors) =>
+  StyleSheet.create({
+    card: {
+      padding: space[4],
+      gap: space[3],
+      borderWidth: 2,
+      borderRadius: radius.lg,
+      borderColor: c.line,
+      backgroundColor: c.surface,
+    },
+    error: { borderColor: c.danger, backgroundColor: c.dangerBg },
+    disabled: { backgroundColor: c.muted, opacity: 0.6 },
+    skeleton: { gap: space[3] },
+    bar: { borderRadius: radius.sm, backgroundColor: c.muted },
+  });
+
 export function Card({
   tone = 'default',
   disabled = false,
@@ -21,6 +38,8 @@ export function Card({
   loadingLabel,
   children,
 }: CardProps) {
+  const styles = useStyles(makeStyles);
+
   return (
     <View
       accessible={loading}
@@ -40,18 +59,3 @@ export function Card({
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  card: {
-    padding: space[4],
-    gap: space[3],
-    borderWidth: 2,
-    borderRadius: radius.lg,
-    borderColor: colors.line,
-    backgroundColor: colors.surface,
-  },
-  error: { borderColor: colors.danger, backgroundColor: colors.dangerSubtle },
-  disabled: { backgroundColor: colors.surfaceMuted, opacity: 0.6 },
-  skeleton: { gap: space[3] },
-  bar: { borderRadius: radius.sm, backgroundColor: colors.surfaceMuted },
-});

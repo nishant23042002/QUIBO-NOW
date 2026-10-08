@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
 import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { Icon } from './Icon';
 import { Text } from './Text';
-import { TAP_MIN, colors, radius, space } from './tokens';
+import { TAP_MIN, radius, space } from './tokens';
 
 export interface SheetProps {
   open: boolean;
@@ -21,6 +23,62 @@ export interface SheetProps {
   busy?: boolean;
 }
 
+const makeStyles = (c: ThemeColors) =>
+  StyleSheet.create({
+    root: { flex: 1, justifyContent: 'flex-end' },
+    scrim: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      backgroundColor: c.scrim,
+    },
+    sheet: {
+      width: '100%',
+      maxWidth: 560,
+      maxHeight: '90%',
+      alignSelf: 'center',
+      borderTopLeftRadius: radius.xl,
+      borderTopRightRadius: radius.xl,
+      backgroundColor: c.surface,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingLeft: space[5],
+      paddingRight: space[2],
+      paddingVertical: space[2],
+      borderBottomWidth: 2,
+      borderBottomColor: c.line,
+    },
+    title: { flex: 1 },
+    close: {
+      width: TAP_MIN,
+      height: TAP_MIN,
+      borderRadius: radius.full,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    closePressed: { backgroundColor: c.muted },
+    error: {
+      paddingHorizontal: space[5],
+      paddingVertical: space[3],
+      borderBottomWidth: 2,
+      borderBottomColor: c.danger,
+      backgroundColor: c.dangerBg,
+    },
+    body: { flexGrow: 0 },
+    bodyContent: { paddingHorizontal: space[5], paddingVertical: space[4], gap: space[3] },
+    footer: {
+      paddingHorizontal: space[5],
+      paddingVertical: space[3],
+      borderTopWidth: 2,
+      borderTopColor: c.line,
+    },
+  });
+
 /** A bottom sheet. React Native's Modal gives it the back button, a dimmed page and screen-reader focus. */
 export function Sheet({
   open,
@@ -33,6 +91,8 @@ export function Sheet({
   busy = false,
 }: SheetProps) {
   const insets = useSafeAreaInsets();
+  const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
 
   return (
     <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
@@ -50,8 +110,7 @@ export function Sheet({
               onPress={onClose}
               style={({ pressed }) => [styles.close, pressed && styles.closePressed]}
             >
-              <View style={[styles.bar, styles.barUp]} />
-              <View style={[styles.bar, styles.barDown]} />
+              <Icon name="close" color={colors.ink} size={22} />
             </Pressable>
           </View>
           {error !== undefined ? (
@@ -70,68 +129,3 @@ export function Sheet({
     </Modal>
   );
 }
-
-const styles = StyleSheet.create({
-  root: { flex: 1, justifyContent: 'flex-end' },
-  scrim: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-    backgroundColor: colors.scrim,
-  },
-  sheet: {
-    width: '100%',
-    maxWidth: 560,
-    maxHeight: '90%',
-    alignSelf: 'center',
-    borderTopLeftRadius: radius.xl,
-    borderTopRightRadius: radius.xl,
-    backgroundColor: colors.surface,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: space[3],
-    paddingLeft: space[5],
-    paddingRight: space[2],
-    paddingVertical: space[2],
-    borderBottomWidth: 2,
-    borderBottomColor: colors.line,
-  },
-  title: { flex: 1 },
-  close: {
-    width: TAP_MIN,
-    height: TAP_MIN,
-    borderRadius: radius.full,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  closePressed: { backgroundColor: colors.surfaceMuted },
-  // The close icon is two bars, so it needs no icon font and renders the same everywhere.
-  bar: {
-    position: 'absolute',
-    width: 22,
-    height: 3,
-    borderRadius: 2,
-    backgroundColor: colors.ink,
-  },
-  barUp: { transform: [{ rotate: '45deg' }] },
-  barDown: { transform: [{ rotate: '-45deg' }] },
-  error: {
-    paddingHorizontal: space[5],
-    paddingVertical: space[3],
-    borderBottomWidth: 2,
-    borderBottomColor: colors.danger,
-    backgroundColor: colors.dangerSubtle,
-  },
-  body: { flexGrow: 0 },
-  bodyContent: { paddingHorizontal: space[5], paddingVertical: space[4], gap: space[3] },
-  footer: {
-    paddingHorizontal: space[5],
-    paddingVertical: space[3],
-    borderTopWidth: 2,
-    borderTopColor: colors.line,
-  },
-});
