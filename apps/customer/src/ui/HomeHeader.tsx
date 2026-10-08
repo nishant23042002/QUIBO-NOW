@@ -238,8 +238,11 @@ export function HomeHeader({
   // Where the lower part (search bar and tabs) starts when the page is at the top, and where the page's own
   // content starts under the offers.
   const lowerTop = insets.top + topHeight - SEAM;
+  // The page itself: its scroll, less how far the open shops row has pushed it down. Rows below use it to stick.
+  const pageScroll = Animated.subtract(scroll, push);
+  const riseWithPage = scroll.interpolate({ inputRange: [0, 1], outputRange: [0, -1] });
   const scrollInfo = {
-    scroll,
+    scroll: pageScroll,
     childrenTop: lowerTop + lowerHeight - SEAM + offersHeight,
     pin: insets.top + lowerHeight - SEAM,
   };
@@ -282,6 +285,26 @@ export function HomeHeader({
           <HomeScrollContext value={scrollInfo}>{children}</HomeScrollContext>
         </Animated.View>
       </Animated.ScrollView>
+
+      {/* The shops row, under the chip. It scrolls away with the page, one for one, and passes under the status bar's tint and the search bar and tabs, so nothing of it shows once it has gone up. It is uncovered as the search bar slides down. */}
+      <Animated.View
+        pointerEvents={shopsOpen ? 'box-none' : 'none'}
+        style={[
+          styles.overlay,
+          { top: insets.top + topHeight, transform: [{ translateY: riseWithPage }] },
+        ]}
+      >
+        <ShopsPanel
+          progress={panelAt}
+          open={shopsOpen}
+          background={background}
+          height={panelHeight}
+          onHeight={setPanelHeight}
+          title={shopsTitle}
+          shops={shops}
+          onShopPress={onShopPress}
+        />
+      </Animated.View>
 
       {/* The tint behind the status bar. It stays put, and the part that slides away passes over it. */}
       <Animated.View
@@ -354,26 +377,6 @@ export function HomeHeader({
             </View>
           </Animated.View>
         </Animated.View>
-      </Animated.View>
-
-      {/* The shops row, under the chip. It rides with the upper part, and is uncovered as the search bar slides down. */}
-      <Animated.View
-        pointerEvents={shopsOpen ? 'box-none' : 'none'}
-        style={[
-          styles.overlay,
-          { top: insets.top + topHeight, transform: [{ translateY: slideTop }] },
-        ]}
-      >
-        <ShopsPanel
-          progress={panelAt}
-          open={shopsOpen}
-          background={background}
-          height={panelHeight}
-          onHeight={setPanelHeight}
-          title={shopsTitle}
-          shops={shops}
-          onShopPress={onShopPress}
-        />
       </Animated.View>
 
       {/* The search bar and the tabs: they rise with the page until they meet the status bar, then stay. */}
