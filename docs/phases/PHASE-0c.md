@@ -55,16 +55,18 @@ work was a series of small commits, each leaving lint, typecheck, tests and buil
 
 ## Verification
 
-1. [ ] Fresh clone: `pnpm install --frozen-lockfile` prints no warnings
-2. [ ] `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` pass
-3. [ ] `expo install --check` says "Dependencies are up to date"; `expo-doctor` passes
-4. [ ] The dev server returns the Android manifest and the Android and iOS bundles with HTTP 200
-5. [ ] Web preview in all three languages and both themes: the toggle works, the choice and the language
+1. [x] Fresh clone: `pnpm install --frozen-lockfile` prints no warnings
+2. [x] `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` pass
+3. [x] `expo install --check` says "Dependencies are up to date"; `expo-doctor` passes
+4. [x] The dev server returns the Android manifest and the Android and iOS bundles with HTTP 200
+5. [x] Web preview in all three languages and both themes: the toggle works, the choice and the language
        survive a reload, text contrast and overflow are measured on every text node, no console errors
-6. [ ] Planted defects are caught and reverted: a hex colour in a screen (lint), a missing theme token
+6. [x] Planted defects are caught and reverted: a hex colour in a screen (lint), a missing theme token
        (typecheck), a low-contrast token (test), a bad stored value (test), a wrong icon background, an icon
        with transparency
-7. [ ] `git status` is clean afterwards; `pnpm clean` last
+7. [x] `git status` is clean afterwards; `pnpm clean` removes build output and caches and keeps
+       `node_modules`, `.env` and the git hooks (run in the fresh clone, because a dev server is using the
+       working copy)
 8. [ ] On a real phone in Expo Go (the human; steps in the README)
 
 ## Budgets (working targets)
