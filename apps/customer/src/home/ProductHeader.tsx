@@ -38,6 +38,19 @@ const makeStyles = (c: ThemeColors) =>
       borderBottomLeftRadius: radius.lg,
       borderBottomRightRadius: radius.lg,
     },
+    // A fine line along the lower edge, following the rounded corners, in the header's own text colour at low strength
+    // (the same as the line under Home's category tabs), so it shows on every tint and in both themes.
+    edge: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderBottomWidth: 1,
+      borderBottomLeftRadius: radius.lg,
+      borderBottomRightRadius: radius.lg,
+      opacity: 0.3,
+    },
     where: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -135,6 +148,11 @@ export function ProductHeader({
     >
       {/* The tint is pale on the light theme and deep on the dark one, like the Home header, so the text follows it. */}
       <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+      <View
+        pointerEvents="none"
+        style={[styles.edge, { borderColor: colors.onHeader }]}
+        aria-hidden
+      />
       <View style={styles.where} accessible aria-label={`${deliveryLabel}. ${addressLabel}`}>
         <View style={styles.when}>
           <Icon name="clock" color={colors.onHeader} size={16} />
