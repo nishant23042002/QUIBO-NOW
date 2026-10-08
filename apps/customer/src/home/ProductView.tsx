@@ -41,6 +41,7 @@ import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { ProductHeader } from './ProductHeader';
+import { toggleHeaderLook, useHeaderLook } from './productHeaderLook';
 import { ProductSkeleton } from './ProductSkeleton';
 import { ACTION_HEIGHT, makePageStyles } from './productLayout';
 import { useHomeItems, type HomeItem } from './items';
@@ -125,6 +126,7 @@ export function ProductView({ item, onBack }: { item: HomeItem; onBack: () => vo
   const items = useHomeItems();
   const { width } = useWindowDimensions();
   const reduceMotion = useReduceMotion();
+  const headerLook = useHeaderLook();
   const [loaded, setLoaded] = useState(false);
   // 0 while the skeleton shows, 1 once the real page has faded in over it. The skeleton goes when the fade is done.
   const [reveal] = useState(() => new Animated.Value(0));
@@ -256,6 +258,8 @@ export function ProductView({ item, onBack }: { item: HomeItem; onBack: () => vo
         backLabel={t('common.back')}
         searchLabel={t('home.search.hintLabel')}
         shareLabel={t('product.share')}
+        look={headerLook}
+        onDeliveryPress={toggleHeaderLook}
         onBack={onBack}
         onSearch={() => {
           router.push({ pathname: '/search', params: { fresh: String(Date.now()) } });
