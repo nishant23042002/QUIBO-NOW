@@ -13,14 +13,13 @@ import {
   DietMark,
   DiscountRibbon,
   FactTable,
+  GALLERY_RATIO,
   Icon,
   PackPicker,
   PriceBadge,
   ProductGallery,
   ProductInsight,
   ProductRail,
-  Skeleton,
-  SkeletonScope,
   Stepper,
   Text,
   TrustTiles,
@@ -33,6 +32,8 @@ import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { ProductHeader } from './ProductHeader';
+import { ProductSkeleton } from './ProductSkeleton';
+import { ACTION_HEIGHT, makePageStyles } from './productLayout';
 import { useHomeItems, type HomeItem } from './items';
 import { moreFromShop, similarItems } from './product';
 import { useProductDetails } from './productDetails';
@@ -40,25 +41,11 @@ import { useShop } from './sampleShops';
 
 /** How long the loading skeleton shows when the page opens, as real data would take to arrive. */
 const LOAD_MS = 400;
-/** The height of the bar with the price and ADD, above the bottom navigation bar. */
-const ACTION_HEIGHT = 68;
-/** The picture's width over its height: the same as the gallery's, so the skeleton is the same size. */
-const PICTURE_RATIO = 1.1;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
+    ...makePageStyles(c),
     page: { flex: 1, backgroundColor: c.bg },
-    content: { gap: space[3], paddingTop: space[3] },
-    gutter: { paddingHorizontal: space[3] },
-    // Every block of the page is a card: white on the soft page, one rounded edge, one line.
-    card: {
-      gap: space[2],
-      padding: space[4],
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      borderColor: c.line,
-      backgroundColor: c.surface,
-    },
     ribbon: { position: 'absolute', top: 0, left: space[4] },
     packRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     priceRow: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: space[3] },
@@ -90,7 +77,6 @@ const makeStyles = (c: ThemeColors) =>
     },
     add: { minWidth: 140 },
     rail: { paddingBottom: space[2] },
-    section: { gap: space[3] },
     more: {
       minHeight: 40,
       flexDirection: 'row',
@@ -105,26 +91,6 @@ const makeStyles = (c: ThemeColors) =>
     flipped: { transform: [{ rotate: '180deg' }] },
     shopName: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
   });
-
-/** The page while the item loads: a picture block and a few cards, in the shapes of the real page. */
-function ProductSkeleton({ label, width }: { label: string; width: number }) {
-  const styles = useStyles(makeStyles);
-  const picture = Math.round((width - space[3] * 2) / PICTURE_RATIO);
-  return (
-    <SkeletonScope label={label}>
-      <View style={[styles.content, styles.gutter]}>
-        <Skeleton height={picture} rounded={radius.lg} />
-        <View style={styles.card}>
-          <Skeleton width="80%" height={26} />
-          <Skeleton width="40%" height={16} />
-          <Skeleton width={110} height={28} rounded={radius.md} />
-          <Skeleton width="50%" height={14} />
-        </View>
-        <Skeleton height={96} rounded={radius.lg} />
-      </View>
-    </SkeletonScope>
-  );
-}
 
 /**
  * An item's own page, built from cards on a soft page. First the pictures (swipe, or tap a thumbnail), then a card
@@ -216,7 +182,7 @@ export function ProductView({ item, onBack }: { item: HomeItem; onBack: () => vo
       : []),
   ];
   // The header turns into the product card once most of the big picture has scrolled away.
-  const revealAt = Math.round(((width - space[3] * 2) / PICTURE_RATIO) * 0.75);
+  const revealAt = Math.round(((width - space[3] * 2) / GALLERY_RATIO) * 0.75);
 
   // Opens the phone's own share sheet with a line about the product. Cancelling it, or a phone with nothing to
   // share to, is not an error worth showing.
@@ -472,7 +438,11 @@ export function ProductView({ item, onBack }: { item: HomeItem; onBack: () => vo
           ) : null}
         </Animated.ScrollView>
       ) : (
-        <ProductSkeleton label={t('common.loading')} width={width} />
+        <ProductSkeleton
+          label={t('common.loading')}
+          item={item}
+          rails={[...(more.length > 0 ? [true] : []), ...(similar.length > 0 ? [false] : [])]}
+        />
       )}
       <View style={[styles.action, { bottom: dock }]}>
         <PriceBadge amount={pack.price} {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})} />

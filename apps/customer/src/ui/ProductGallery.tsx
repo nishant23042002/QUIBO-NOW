@@ -40,8 +40,8 @@ export interface ProductGalleryProps {
   overlay?: ReactNode;
 }
 
-/** Width over height of the big picture. */
-const RATIO = 1.1;
+/** Width over height of the big picture. The page's loading skeleton uses the same number. */
+export const GALLERY_RATIO = 1.1;
 const THUMB = 52;
 
 const makeStyles = (c: ThemeColors) =>
@@ -101,7 +101,7 @@ export function ProductGallery({
   const scroller = useRef<ScrollView>(null);
   const [width, setWidth] = useState(0);
   const [index, setIndex] = useState(0);
-  const height = Math.round(width / RATIO);
+  const height = Math.round(width / GALLERY_RATIO);
   const many = images.length > 1;
 
   const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
