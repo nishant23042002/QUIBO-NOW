@@ -38,15 +38,17 @@ const makeStyles = (c: ThemeColors) =>
       borderBottomLeftRadius: radius.lg,
       borderBottomRightRadius: radius.lg,
     },
-    // A fine line along the lower edge, following the rounded corners, in the header's own text colour at low strength
-    // (the same as the line under Home's category tabs), so it shows on every tint and in both themes.
+    // A fine line all the way round the lower edge, the rounded corners included, the same thickness throughout. It is
+    // drawn in the header's own text colour at low strength (like the line under Home's category tabs), so it shows
+    // on every tint and in both themes. Its top and sides are pushed one dp off the screen, so only the lower edge
+    // and the curves show.
     edge: {
       position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
+      top: -1,
+      left: -1,
+      right: -1,
       bottom: 0,
-      borderBottomWidth: 1,
+      borderWidth: 1,
       borderBottomLeftRadius: radius.lg,
       borderBottomRightRadius: radius.lg,
       opacity: 0.3,
