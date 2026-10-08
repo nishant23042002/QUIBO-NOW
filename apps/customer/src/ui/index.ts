@@ -5,4 +5,4 @@ export { Input, type InputProps } from './Input';
 export { Screen } from './Screen';
 export { Sheet, type SheetProps } from './Sheet';
 export { Text, type TextProps, type TextVariant } from './Text';
-export { colors, fontSize, leading, radius, space, TAP_MIN, type ColorName } from './tokens';
+export { colors, radius, space, TAP_MIN, type ColorName } from './tokens';
