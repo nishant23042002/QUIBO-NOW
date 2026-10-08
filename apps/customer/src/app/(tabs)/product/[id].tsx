@@ -1,22 +1,14 @@
 import { useFocusEffect, useLocalSearchParams, useRouter } from 'expo-router';
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { BackHandler, Platform, StyleSheet, View } from 'react-native';
 import { useHomeItems } from '@/home/items';
 import { ProductView } from '@/home/ProductView';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { useTheme } from '@/theme';
-import { AppHeader, BOTTOM_BAR_HEIGHT, Button, Icon, Text, space } from '@/ui';
+import { AppHeader, BOTTOM_BAR_HEIGHT, StatePanel } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
-  missing: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: space[3],
-    padding: space[6],
-    paddingBottom: space[6] + BOTTOM_BAR_HEIGHT,
-  },
+  missing: { flex: 1, paddingBottom: BOTTOM_BAR_HEIGHT },
 });
 
 /**
@@ -29,27 +21,21 @@ const styles = StyleSheet.create({
 export default function ProductScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { t } = useLanguage();
-  const { colors } = useTheme();
   const router = useRouter();
   const item = useHomeItems().find((candidate) => candidate.id === id);
 
   const trail = useRef<string[]>([]);
-  const shown = useRef(id);
-  const stepping = useRef(false);
 
-  // A new id that arrives while the page is open was opened from the item that was showing: remember that one.
-  useEffect(() => {
-    if (shown.current === id) return;
-    if (stepping.current) stepping.current = false;
-    else if (shown.current !== undefined) trail.current.push(shown.current);
-    shown.current = id;
+  // An item opened from this page (a card in "More from this shop" or "Popular in"): remember the one showing now,
+  // so back can return to it. Opening an item from anywhere else starts a fresh trail.
+  const openRelated = useCallback(() => {
+    if (id !== undefined) trail.current.push(id);
   }, [id]);
 
   // Back to the item before this one, if there is one. Returns whether it did.
   const stepBack = useCallback((): boolean => {
     const previous = trail.current.pop();
     if (previous === undefined) return false;
-    stepping.current = true;
     router.setParams({ id: previous });
     return true;
   }, [router]);
@@ -82,23 +68,19 @@ export default function ProductScreen() {
         <>
           <AppHeader title="" backLabel={t('common.back')} onBack={back} />
           <View style={styles.missing}>
-            <Icon name="bag" color={colors.inkMuted} size={40} />
-            <Text variant="heading" align="center">
-              {t('product.notFound.title')}
-            </Text>
-            <Text color="inkMuted" align="center">
-              {t('product.notFound.body')}
-            </Text>
-            <Button
-              label={t('product.notFound.back')}
-              onPress={() => {
+            <StatePanel
+              icon="bag"
+              title={t('product.notFound.title')}
+              body={t('product.notFound.body')}
+              actionLabel={t('product.notFound.back')}
+              onAction={() => {
                 router.replace('/');
               }}
             />
           </View>
         </>
       ) : (
-        <ProductView key={item.id} item={item} onBack={back} />
+        <ProductView key={item.id} item={item} onBack={back} onOpenRelated={openRelated} />
       )}
     </View>
   );

@@ -2,6 +2,7 @@ import { LOCALES, messages } from '@quibo/i18n';
 import { useRouter } from 'expo-router';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme, type Mode } from '@/theme';
+import { armFailNext, setSimulatedOffline, useFailNextArmed, useSimulatedOffline } from '@/network';
 import { Button, OptionGroup, Screen } from '@/ui';
 
 const MODES: readonly Mode[] = ['system', 'light', 'dark'];
@@ -11,6 +12,8 @@ export default function ProfileScreen() {
   const { locale, setLocale, t } = useLanguage();
   const { mode, setMode } = useTheme();
   const router = useRouter();
+  const offline = useSimulatedOffline();
+  const failArmed = useFailNextArmed();
 
   return (
     <Screen>
@@ -26,15 +29,34 @@ export default function ProfileScreen() {
         value={mode}
         onChange={setMode}
       />
-      {/* The components gallery is for developers and testers: only development builds link to it. */}
+      {/* The components gallery and the network switches are for developers and testers: only development builds show them. */}
       {__DEV__ ? (
-        <Button
-          label={t('components.title')}
-          variant="secondary"
-          onPress={() => {
-            router.push('/components');
-          }}
-        />
+        <>
+          <OptionGroup
+            title={t('profile.dev.network')}
+            options={[
+              { value: 'online', label: t('profile.dev.online') },
+              { value: 'offline', label: t('profile.dev.offline') },
+            ]}
+            value={offline ? 'offline' : 'online'}
+            onChange={(value) => {
+              setSimulatedOffline(value === 'offline');
+            }}
+          />
+          <Button
+            label={failArmed ? t('profile.dev.failArmed') : t('profile.dev.fail')}
+            variant="secondary"
+            disabled={failArmed}
+            onPress={armFailNext}
+          />
+          <Button
+            label={t('components.title')}
+            variant="secondary"
+            onPress={() => {
+              router.push('/components');
+            }}
+          />
+        </>
       ) : null}
     </Screen>
   );

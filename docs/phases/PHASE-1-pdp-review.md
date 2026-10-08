@@ -84,3 +84,16 @@ without it), **P2** (polish) and **Later** (belongs to a later sub-phase).
 2. Do the delivery-information line and the per-size cart count (small, visible).
 3. Reorder the cards and shrink the trust tiles (decide the look first).
 4. Weight-based items with the cart screen (1d); offline and error states in 1h.
+
+## Done since this review
+
+- **Per-size cart count:** each size in the picker shows a small cart badge with how many are in the cart.
+- **Packaging labels:** Information now has Packed on, Best before, Packed by and the packer's address (sample names and
+  addresses, marked as samples). Packed-on dates are today for fresh things and earlier for packaged goods; best before
+  is worked out from the shelf life.
+- **Offline and error states:** a full-page "You are offline" and "Something went wrong" with Try again, and a notice
+  at the top of a page that is already showing when the network drops. The page loads again by itself when the network
+  returns. On a phone the network cannot be detected yet (needs the netinfo library, to be approved); development builds
+  have two switches on the Profile screen to rehearse both states.
+- **Bug found and fixed on the way:** after opening one product and going back, opening another and going back took
+  you to the first product instead of Home. The back trail is now only the items opened from a page's own rows.

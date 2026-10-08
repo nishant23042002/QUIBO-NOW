@@ -1,5 +1,6 @@
 import { Pressable, StyleSheet, View } from 'react-native';
-import { useStyles, type ThemeColors } from '@/theme';
+import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { Icon } from './Icon';
 import { Text } from './Text';
 import { radius, space } from './tokens';
 
@@ -13,6 +14,10 @@ export interface PackOption {
   unitLabel?: string;
   /** For example "Best value". Leave out for the others. */
   tagLabel?: string;
+  /** How many of this size are in the cart. Shown as a small cart badge when above 0. */
+  inCart?: number;
+  /** What a screen reader says for the badge, for example "2 in cart". */
+  inCartLabel?: string;
   /** For example "Out of stock". When present the pack cannot be chosen. */
   unavailableLabel?: string;
 }
@@ -54,6 +59,23 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.accent,
     },
     pressed: { opacity: 0.8 },
+    top: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: space[2],
+    },
+    // How many of this size are in the cart: a small cart with the number, in the action colour.
+    badge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 2,
+      minWidth: 30,
+      justifyContent: 'center',
+      paddingHorizontal: space[1] + 2,
+      borderRadius: radius.full,
+      backgroundColor: c.action,
+    },
   });
 
 /**
@@ -63,6 +85,7 @@ const makeStyles = (c: ThemeColors) =>
  */
 export function PackPicker({ title, options, selectedId, onSelect }: PackPickerProps) {
   const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
 
   return (
     <View style={styles.group} role="radiogroup" aria-label={title}>
@@ -82,6 +105,7 @@ export function PackPicker({ title, options, selectedId, onSelect }: PackPickerP
                 option.priceLabel,
                 option.unitLabel,
                 option.tagLabel,
+                option.inCartLabel,
                 option.unavailableLabel,
               ]
                 .filter((part) => part !== undefined)
@@ -104,7 +128,17 @@ export function PackPicker({ title, options, selectedId, onSelect }: PackPickerP
                   </Text>
                 </View>
               ) : null}
-              <Text variant="strong">{option.label}</Text>
+              <View style={styles.top}>
+                <Text variant="strong">{option.label}</Text>
+                {option.inCart !== undefined && option.inCart > 0 ? (
+                  <View style={styles.badge} aria-hidden>
+                    <Icon name="bag" color={colors.onAction} size={12} />
+                    <Text variant="caption" color="onAction">
+                      {String(option.inCart)}
+                    </Text>
+                  </View>
+                ) : null}
+              </View>
               <Text variant="label">{option.priceLabel}</Text>
               <Text variant="small" color="inkMuted" numberOfLines={1}>
                 {option.unavailableLabel ?? option.unitLabel ?? ' '}

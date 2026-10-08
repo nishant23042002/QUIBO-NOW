@@ -204,7 +204,14 @@
   },
   "profile": {
     "title": "Profile",
-    "appearance": "Appearance"
+    "appearance": "Appearance",
+    "dev": {
+      "network": "Network (testing)",
+      "online": "Online",
+      "offline": "Pretend offline",
+      "fail": "Make the next page load fail",
+      "failArmed": "The next page load will fail"
+    }
   },
   "nav": {
     "home": "Home",
@@ -383,7 +390,10 @@
       "seller": "Seller name",
       "address": "Seller address",
       "licence": "Licence number",
-      "care": "Customer care"
+      "care": "Customer care",
+      "packedOn": "Packed on",
+      "bestBefore": "Best before",
+      "packerAddress": "Packer address"
     },
     "shelf": {
       "days": "{n} days",
@@ -437,6 +447,33 @@
       "perUnit": "{unit} for this size"
     },
     "share": "Share",
-    "shareMessage": "{name} ({pack}) for {price} from {shop} on Quibo Now: {link}"
+    "shareMessage": "{name} ({pack}) for {price} from {shop} on Quibo Now: {link}",
+    "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
+    },
+    "inCart": "{count} in cart"
+  },
+  "state": {
+    "offline": {
+      "title": "You are offline",
+      "body": "Connect to the internet and try again.",
+      "banner": "You are offline. Prices and stock may be out of date."
+    },
+    "error": {
+      "title": "Something went wrong",
+      "body": "We could not load this page. Please try again."
+    },
+    "retry": "Try again"
   }
 }

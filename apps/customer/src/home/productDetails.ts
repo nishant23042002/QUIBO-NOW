@@ -1,7 +1,8 @@
 import { messages } from '@quibo/i18n';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import type { FactRow } from '@/ui';
-import type { HomeItem } from './items';
+import { addDays, addMonths, formatDay } from './dates';
+import type { HomeItem, ItemCategory } from './items';
 
 type Entry = { about: string; ingredients: string; goodFor: string };
 
@@ -45,6 +46,52 @@ const ORIGIN: Readonly<Record<string, 'india' | 'maharashtra' | 'local'>> = {
   apple: 'india',
 };
 
+/** How many days before today each product was packed, until the catalogue supplies it (Phase 1b). Fresh things are packed today. */
+const PACKED_DAYS_AGO: Readonly<Record<string, number>> = {
+  paneer: 1,
+  eggs: 3,
+  apple: 2,
+  atta: 14,
+  rice: 30,
+  oil: 45,
+  sugar: 30,
+  biscuits: 40,
+  chips: 25,
+  popcorn: 30,
+  chocolate: 60,
+};
+
+/**
+ * Who packs each kind of product and where, until the catalogue supplies it (Phase 1b). These are made-up names,
+ * marked as samples, so nothing in the mock data can be mistaken for a real business or address. Addresses stay in
+ * Latin letters, as on a pack.
+ */
+const PACKERS: Readonly<Record<ItemCategory, { name: string; address: string }>> = {
+  dairy: { name: 'Roha Taluka Dairy (sample)', address: 'MIDC Area, Roha, Raigad 402109' },
+  vegetables: { name: 'Patil Farm Produce (sample)', address: 'Dhatav Road, Roha, Raigad 402116' },
+  fruits: { name: 'Patil Farm Produce (sample)', address: 'Dhatav Road, Roha, Raigad 402116' },
+  staples: {
+    name: 'Konkan Mills Pvt Ltd (sample)',
+    address: 'Industrial Estate, Mahad, Raigad 402301',
+  },
+  snacks: { name: 'Konkan Foods Pvt Ltd (sample)', address: 'MIDC, Mahad, Raigad 402301' },
+};
+
+const MONTH_KEYS = [
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'may',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
+] as const;
+
 export interface SellerInfo {
   name: string;
   address: string;
@@ -57,7 +104,7 @@ export interface ProductDetails {
   highlights: readonly FactRow[];
   /** The facts behind "View more": how to store it, where it comes from and who packed it. */
   moreHighlights: readonly FactRow[];
-  /** The longer information: description, ingredients and the label disclaimer. */
+  /** The longer information: description, ingredients, when it was packed and by whom, and the label disclaimer. */
   information: readonly FactRow[];
   /** Who sells it, with the details a shopper expects to find on a pack. */
   seller: readonly FactRow[];
@@ -91,6 +138,16 @@ export function useProductDetails(
   const row = (key: Parameters<typeof t>[0], value: string): FactRow => ({ label: t(key), value });
 
   const origin = t(`product.origin.${ORIGIN[item.id] ?? 'india'}`);
+  const monthNames = MONTH_KEYS.map((key) => messages[locale].product.months[key]);
+  const today = new Date();
+  const packedOn = addDays(today, -(PACKED_DAYS_AGO[item.id] ?? 0));
+  const bestBefore =
+    shelf === undefined
+      ? undefined
+      : shelf.unit === 'days'
+        ? addDays(packedOn, shelf.n)
+        : addMonths(packedOn, shelf.n);
+  const packer = PACKERS[item.category];
 
   return {
     highlights: [
@@ -104,7 +161,6 @@ export function useProductDetails(
     moreHighlights: [
       row('product.rows.storage', t(`product.storage.${item.category}`)),
       row('product.rows.origin', origin),
-      row('product.rows.packedBy', item.shopName),
     ],
     information: [
       ...(entry !== undefined
@@ -113,6 +169,12 @@ export function useProductDetails(
             row('product.rows.ingredients', entry.ingredients),
           ]
         : []),
+      row('product.rows.packedOn', formatDay(packedOn, monthNames)),
+      ...(bestBefore !== undefined
+        ? [row('product.rows.bestBefore', formatDay(bestBefore, monthNames))]
+        : []),
+      row('product.rows.packedBy', packer.name),
+      row('product.rows.packerAddress', packer.address),
       row('product.rows.disclaimer', t('product.disclaimer')),
     ],
     seller: [
