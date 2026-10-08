@@ -11,6 +11,7 @@ import {
   DietMark,
   DiscountRibbon,
   Icon,
+  PackPicker,
   PriceBadge,
   ProductRail,
   Skeleton,
@@ -132,11 +133,15 @@ export function ProductView({ item }: { item: HomeItem }) {
     };
   }, [item.id]);
 
-  const quantity = cart.quantities[item.id] ?? 0;
-  const out = item.stock?.kind === 'out';
+  // The size chosen on this page; it starts as the one the card showed.
+  const [packId, setPackId] = useState(item.defaultPackId);
+  const pack = item.packs.find((candidate) => candidate.id === packId) ?? item.packs[0];
+  if (pack === undefined) return null;
+  const quantity = cart.quantities[pack.id] ?? 0;
+  const out = pack.stock?.kind === 'out';
   const more = otherItemsInShop(items, item);
   const saved =
-    item.mrp !== undefined && item.mrp > item.price ? subtract(item.mrp, item.price) : undefined;
+    pack.mrp !== undefined && pack.mrp > pack.price ? subtract(pack.mrp, pack.price) : undefined;
   const dock = insets.bottom + BOTTOM_BAR_HEIGHT;
   const stepper = {
     addLabel: t('home.rails.add'),
@@ -167,9 +172,9 @@ export function ProductView({ item }: { item: HomeItem }) {
               >
                 {item.emoji}
               </NativeText>
-              {item.ribbon !== undefined && !out ? (
+              {pack.ribbon !== undefined && !out ? (
                 <View style={styles.ribbon}>
-                  <DiscountRibbon amount={item.ribbon.amount} offLabel={item.ribbon.offLabel} />
+                  <DiscountRibbon amount={pack.ribbon.amount} offLabel={pack.ribbon.offLabel} />
                 </View>
               ) : null}
             </View>
@@ -177,13 +182,13 @@ export function ProductView({ item }: { item: HomeItem }) {
           <View style={[styles.gutter, styles.info]}>
             <View style={styles.packRow}>
               <DietMark kind={item.diet.kind} label={item.diet.label} size={18} />
-              <Text color="inkMuted">{item.pack}</Text>
+              <Text color="inkMuted">{pack.label}</Text>
             </View>
             <Text variant="title">{item.name}</Text>
             <View style={styles.priceRow}>
               <PriceBadge
-                amount={item.price}
-                {...(item.mrp !== undefined ? { mrp: item.mrp } : {})}
+                amount={pack.price}
+                {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
               />
               {saved !== undefined ? (
                 <Text variant="strong" color="accentInk">
@@ -191,18 +196,37 @@ export function ProductView({ item }: { item: HomeItem }) {
                 </Text>
               ) : null}
             </View>
-            {item.stock?.kind === 'low' ? (
+            {pack.stock?.kind === 'low' ? (
               <Text variant="strong" color="warning">
-                {item.stock.label}
+                {pack.stock.label}
               </Text>
             ) : null}
-            {item.quickLabel !== undefined && !out ? (
+            {pack.quickLabel !== undefined && !out ? (
               <View style={styles.fact}>
                 <Icon name="clock" color={colors.accentInk} size={18} />
-                <Text variant="strong">{item.quickLabel}</Text>
+                <Text variant="strong">{pack.quickLabel}</Text>
               </View>
             ) : null}
           </View>
+          {item.packs.length > 1 ? (
+            <View style={styles.gutter}>
+              <PackPicker
+                title={t('product.pickSize')}
+                selectedId={pack.id}
+                onSelect={setPackId}
+                options={item.packs.map((option) => ({
+                  id: option.id,
+                  label: option.label,
+                  priceLabel: formatRupees(option.price),
+                  ...(option.unitPriceLabel !== undefined
+                    ? { unitLabel: option.unitPriceLabel }
+                    : {}),
+                  ...(option.bestValue ? { tagLabel: t('product.bestValue') } : {}),
+                  ...(option.available ? {} : { unavailableLabel: t('home.rails.outOfStock') }),
+                }))}
+              />
+            </View>
+          ) : null}
           <View style={styles.gutter}>
             <Pressable
               role="button"
@@ -242,17 +266,17 @@ export function ProductView({ item }: { item: HomeItem }) {
         <ProductSkeleton label={t('common.loading')} />
       )}
       <View style={[styles.action, { bottom: dock }]}>
-        <PriceBadge amount={item.price} {...(item.mrp !== undefined ? { mrp: item.mrp } : {})} />
+        <PriceBadge amount={pack.price} {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})} />
         {out ? (
           <Text variant="strong" color="inkMuted">
-            {item.stock?.label}
+            {pack.stock?.label}
           </Text>
         ) : quantity === 0 ? (
           <View style={styles.add}>
             <Button
               label={t('home.rails.add')}
               onPress={() => {
-                cart.setQuantity(item.id, 1);
+                cart.setQuantity(pack.id, 1);
               }}
             />
           </View>
@@ -260,7 +284,7 @@ export function ProductView({ item }: { item: HomeItem }) {
           <Stepper
             value={quantity}
             onChange={(next) => {
-              cart.setQuantity(item.id, next);
+              cart.setQuantity(pack.id, next);
             }}
             {...stepper}
           />

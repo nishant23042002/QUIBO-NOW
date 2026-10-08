@@ -29,7 +29,7 @@ export function ItemTile({
   return (
     <ProductCard
       name={item.name}
-      pack={item.pack}
+      pack={item.sizesLabel === undefined ? item.pack : `${item.pack} \u00B7 ${item.sizesLabel}`}
       price={item.price}
       {...(item.mrp !== undefined ? { mrp: item.mrp } : {})}
       {...(item.ribbon !== undefined ? { ribbon: item.ribbon } : {})}
@@ -43,9 +43,9 @@ export function ItemTile({
         onOpen?.(item.id);
         router.push({ pathname: '/product/[id]', params: { id: item.id } });
       }}
-      quantity={cart.quantities[item.id] ?? 0}
+      quantity={cart.quantities[item.defaultPackId] ?? 0}
       onQuantityChange={(next) => {
-        cart.setQuantity(item.id, next);
+        cart.setQuantity(item.defaultPackId, next);
       }}
       stepper={{
         addLabel: t('home.rails.add'),

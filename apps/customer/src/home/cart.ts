@@ -1,20 +1,16 @@
-import {
-  add,
-  formatRupees,
-  money,
-  multiplyByQuantity,
-  subtract,
-  type Money,
-} from '@quibo/contracts';
+import { formatRupees, money, subtract } from '@quibo/contracts';
 import { useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { summariseCart, type CartEntry } from './cartMath';
 import { FREE_DELIVERY_FROM } from './delivery';
-import { useHomeItems, type ItemCategory } from './items';
+import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
-/** One item in a shop's basket. */
+/** One pack of an item in a shop's basket. */
 export interface BasketLine {
+  /** The pack's id, for example "milk:500ml". The cart counts by pack. */
   id: string;
   name: string;
+  /** For example "500 ml". */
   pack: string;
   emoji: string;
   category: ItemCategory;
@@ -38,8 +34,10 @@ export interface ShopBasket {
 }
 
 export interface DraftCart {
+  /** How many of each pack, by pack id. */
   quantities: Readonly<Record<string, number>>;
-  setQuantity: (id: string, next: number) => void;
+  /** Sets how many of a pack (by pack id) are in the cart. */
+  setQuantity: (packId: string, next: number) => void;
   /** How many items are in the cart, from all shops. */
   count: number;
   /** For example "3 items". */
@@ -63,105 +61,103 @@ export interface DraftCart {
   savedLabel?: string;
   /** What is in the cart, latest first: for the little pictures in the cart bar. */
   lines: readonly { id: string; emoji: string; category: ItemCategory }[];
-  /** The item whose last unit was just taken out, so it can be put back. Cleared by `clearRemoved` or any new addition. */
+  /** The pack whose last unit was just taken out, so it can be put back. Cleared by `clearRemoved` or any new addition. */
   removed: { name: string } | null;
   undoRemove: () => void;
   clearRemoved: () => void;
 }
 
 interface Removal {
-  id: string;
+  packId: string;
   name: string;
   previous: number;
+}
+
+/** Every pack of every item, with the item it belongs to, by pack id. */
+function packIndex(items: readonly HomeItem[]) {
+  return new Map(
+    items.flatMap((item) => item.packs.map((pack) => [pack.id, { item, pack }] as const)),
+  );
 }
 
 /**
  * The cart as it is being filled on Home, kept in memory. The real cart (Phase 1d) takes this over, with
  * the same shape. A cart can hold items from several shops: they are grouped into one basket per shop for
- * packing, but the whole cart is a single order with one delivery. Money is added up in integer paise.
+ * packing, but the whole cart is a single order with one delivery. The cart counts by pack, so a product's
+ * two sizes are two lines. Money is added up in integer paise.
  */
 export function useDraftCart(): DraftCart {
   const { t } = useLanguage();
   const items = useHomeItems();
   const [quantities, setQuantities] = useState<Readonly<Record<string, number>>>({});
-  // The order things were first added in, so "latest first" is known.
+  // The order packs were first added in, so "latest first" is known.
   const [order, setOrder] = useState<readonly string[]>([]);
   const [removal, setRemoval] = useState<Removal | null>(null);
+  const packs = packIndex(items);
 
-  const apply = (id: string, next: number) => {
-    setQuantities((current) => ({ ...current, [id]: next }));
-    setOrder((current) => (current.includes(id) ? current : [...current, id]));
+  const apply = (packId: string, next: number) => {
+    setQuantities((current) => ({ ...current, [packId]: next }));
+    setOrder((current) => (current.includes(packId) ? current : [...current, packId]));
   };
 
-  const setQuantity = (id: string, next: number) => {
-    const item = items.find((candidate) => candidate.id === id);
-    if (item === undefined) return;
-    const previous = quantities[id] ?? 0;
-    apply(id, next);
-    if (next === 0 && previous > 0) setRemoval({ id, name: item.name, previous });
+  const setQuantity = (packId: string, next: number) => {
+    const found = packs.get(packId);
+    if (found === undefined) return;
+    const previous = quantities[packId] ?? 0;
+    apply(packId, next);
+    if (next === 0 && previous > 0) setRemoval({ packId, name: found.item.name, previous });
     else if (next > previous) setRemoval(null);
   };
 
-  // The items in the cart, the latest-added first.
-  const inCart = items
-    .filter((item) => (quantities[item.id] ?? 0) > 0)
-    .sort((a, b) => order.indexOf(b.id) - order.indexOf(a.id));
+  // The packs in the cart, the latest-added first.
+  const inCart = [...packs.entries()]
+    .filter(([packId]) => (quantities[packId] ?? 0) > 0)
+    .sort(([a], [b]) => order.indexOf(b) - order.indexOf(a));
 
-  let count = 0;
-  let total: Money = money(0);
-  let saved: Money = money(0);
-  const byShop = new Map<
-    string,
-    { name: string; lines: BasketLine[]; total: Money; count: number }
-  >();
-  for (const item of inCart) {
-    const quantity = quantities[item.id] ?? 0;
-    const lineTotal = multiplyByQuantity(item.price, quantity);
-    count += quantity;
-    total = add(total, lineTotal);
-    if (item.mrp !== undefined && item.mrp > item.price) {
-      saved = add(saved, multiplyByQuantity(subtract(item.mrp, item.price), quantity));
-    }
-    const basket = byShop.get(item.shop) ?? {
-      name: item.shopName,
-      lines: [],
-      total: money(0),
-      count: 0,
-    };
-    basket.lines.push({
-      id: item.id,
-      name: item.name,
-      pack: item.pack,
-      emoji: item.emoji,
-      category: item.category,
-      quantity,
-      totalLabel: formatRupees(lineTotal),
-    });
-    basket.total = add(basket.total, lineTotal);
-    basket.count += quantity;
-    byShop.set(item.shop, basket);
-  }
+  const entries: CartEntry[] = inCart.map(([packId, { item, pack }]) => ({
+    packId,
+    productId: item.id,
+    shopId: item.shop,
+    shopName: item.shopName,
+    price: pack.price,
+    ...(pack.mrp !== undefined ? { mrp: pack.mrp } : {}),
+    quantity: quantities[packId] ?? 0,
+  }));
+  const sum = summariseCart(entries);
 
-  const baskets: ShopBasket[] = [...byShop.entries()].map(([id, basket]) => ({
-    id,
-    name: basket.name,
+  const baskets: ShopBasket[] = sum.baskets.map((basket) => ({
+    id: basket.shopId,
+    name: basket.shopName,
     count: basket.count,
     totalLabel: formatRupees(basket.total),
-    lines: basket.lines,
+    lines: basket.lines.map(({ entry, lineTotal }) => {
+      const found = packs.get(entry.packId);
+      return {
+        id: entry.packId,
+        name: found?.item.name ?? '',
+        pack: found?.pack.label ?? '',
+        emoji: found?.item.emoji ?? '',
+        category: found?.item.category ?? 'dairy',
+        quantity: entry.quantity,
+        totalLabel: formatRupees(lineTotal),
+      };
+    }),
   }));
 
   // Free delivery is worked out on the whole cart, so a few things from each of two shops can add up to it.
-  const free = total >= FREE_DELIVERY_FROM;
-  const remaining = free ? money(0) : subtract(FREE_DELIVERY_FROM, total);
+  const free = sum.total >= FREE_DELIVERY_FROM;
+  const remaining = free ? money(0) : subtract(FREE_DELIVERY_FROM, sum.total);
 
   const focus = baskets[0];
 
   return {
     quantities,
     setQuantity,
-    count,
-    itemsLabel: t(count === 1 ? 'home.cart.itemsOne' : 'home.cart.itemsMany', { count }),
-    totalLabel: formatRupees(total),
+    count: sum.count,
+    itemsLabel: t(sum.count === 1 ? 'home.cart.itemsOne' : 'home.cart.itemsMany', {
+      count: sum.count,
+    }),
+    totalLabel: formatRupees(sum.total),
     baskets,
     shopLabel:
       baskets.length > 1
@@ -171,13 +167,19 @@ export function useDraftCart(): DraftCart {
     hint: free
       ? t('home.cart.freeReached')
       : t('home.cart.freeNeed', { amount: formatRupees(remaining) }),
-    progress: Math.min(Number(total) / Number(FREE_DELIVERY_FROM), 1),
-    ...(saved > 0 ? { savedLabel: t('home.cart.saved', { amount: formatRupees(saved) }) } : {}),
-    lines: inCart.map((item) => ({ id: item.id, emoji: item.emoji, category: item.category })),
+    progress: Math.min(Number(sum.total) / Number(FREE_DELIVERY_FROM), 1),
+    ...(sum.saved > 0
+      ? { savedLabel: t('home.cart.saved', { amount: formatRupees(sum.saved) }) }
+      : {}),
+    lines: inCart.map(([packId, { item }]) => ({
+      id: packId,
+      emoji: item.emoji,
+      category: item.category,
+    })),
     removed: removal === null ? null : { name: removal.name },
     undoRemove: () => {
       if (removal === null) return;
-      apply(removal.id, removal.previous);
+      apply(removal.packId, removal.previous);
       setRemoval(null);
     },
     clearRemoved: () => {

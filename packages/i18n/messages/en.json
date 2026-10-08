@@ -109,7 +109,8 @@
       "outOfStock": "Out of stock",
       "onlyLeft": "Only {count} left",
       "veg": "Vegetarian",
-      "nonVeg": "Non-vegetarian"
+      "nonVeg": "Non-vegetarian",
+      "sizes": "{count} sizes"
     },
     "cart": {
       "itemsOne": "{count} item",
@@ -124,6 +125,11 @@
       "title": "Your cart",
       "total": "total",
       "separate": "From {count} shops. One rider collects it all and brings it together. Free delivery counts the whole cart."
+    },
+    "unitPrice": {
+      "l": "{amount}/L",
+      "kg": "{amount}/kg",
+      "pc": "{amount}/pc"
     }
   },
   "language": {
@@ -243,6 +249,8 @@
       "title": "We could not find this item",
       "body": "It may no longer be available. Go back and pick something else.",
       "back": "Back to Home"
-    }
+    },
+    "pickSize": "Pick a size",
+    "bestValue": "Best value"
   }
 }
