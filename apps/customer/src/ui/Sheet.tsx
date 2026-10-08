@@ -1,10 +1,20 @@
-import type { ReactNode } from 'react';
-import { Modal, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import { useEffect, useState, type ReactNode } from 'react';
+import {
+  Animated,
+  Easing,
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
 import { Text } from './Text';
 import { TAP_MIN, radius, space } from './tokens';
+import { useReduceMotion } from './useReduceMotion';
 
 export interface SheetProps {
   open: boolean;
@@ -23,6 +33,9 @@ export interface SheetProps {
   busy?: boolean;
 }
 
+const OPEN_MS = 320;
+const CLOSE_MS = 220;
+
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     root: { flex: 1, justifyContent: 'flex-end' },
@@ -34,6 +47,7 @@ const makeStyles = (c: ThemeColors) =>
       left: 0,
       backgroundColor: c.scrim,
     },
+    scrimTap: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 },
     sheet: {
       width: '100%',
       maxWidth: 560,
@@ -93,13 +107,72 @@ export function Sheet({
   const insets = useSafeAreaInsets();
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
+  const { height: screen } = useWindowDimensions();
+  const reduceMotion = useReduceMotion();
+  const [progress] = useState(() => new Animated.Value(0));
+  // The modal stays on screen while the sheet slides away, then is taken down when the slide has finished.
+  const [closing, setClosing] = useState(false);
+  const [wasOpen, setWasOpen] = useState(open);
+  if (open !== wasOpen) {
+    setWasOpen(open);
+    if (!open) setClosing(true);
+  }
+  // With reduced motion there is no slide to wait for, so it goes away at once.
+  const visible = open || (closing && !reduceMotion);
+
+  useEffect(() => {
+    if (!visible) return undefined;
+    if (reduceMotion) {
+      progress.setValue(open ? 1 : 0);
+      return undefined;
+    }
+    const move = Animated.timing(progress, {
+      toValue: open ? 1 : 0,
+      duration: open ? OPEN_MS : CLOSE_MS,
+      easing: open ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
+      useNativeDriver: true,
+    });
+    move.start(({ finished }) => {
+      if (finished && !open) setClosing(false);
+    });
+    return () => {
+      move.stop();
+    };
+  }, [open, visible, reduceMotion, progress]);
 
   return (
-    <Modal visible={open} transparent animationType="slide" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="none"
+      // Draw under the status bar and the navigation buttons too, so the dimming covers the whole screen.
+      statusBarTranslucent
+      navigationBarTranslucent
+      onRequestClose={onClose}
+    >
       <View style={styles.root}>
+        {/* The dimming fades in and out by itself while the sheet slides, so it never moves with the sheet. */}
+        <Animated.View style={[styles.scrim, { opacity: progress }]} pointerEvents="none" />
         {/* A pointer shortcut only: everyone else has the close button and the back button. */}
-        <Pressable accessible={false} onPress={onClose} style={styles.scrim} />
-        <View aria-modal aria-busy={busy} style={[styles.sheet, { paddingBottom: insets.bottom }]}>
+        <Pressable accessible={false} onPress={onClose} style={styles.scrimTap} />
+        <Animated.View
+          aria-modal
+          aria-busy={busy}
+          style={[
+            styles.sheet,
+            {
+              paddingBottom: insets.bottom,
+              transform: [
+                {
+                  translateY: progress.interpolate({
+                    inputRange: [0, 1],
+                    outputRange: [screen, 0],
+                  }),
+                },
+              ],
+            },
+          ]}
+        >
           <View style={styles.header}>
             <View style={styles.title}>
               <Text variant="heading">{title}</Text>
@@ -124,7 +197,7 @@ export function Sheet({
             {children}
           </ScrollView>
           {footer !== undefined ? <View style={styles.footer}>{footer}</View> : null}
-        </View>
+        </Animated.View>
       </View>
     </Modal>
   );
