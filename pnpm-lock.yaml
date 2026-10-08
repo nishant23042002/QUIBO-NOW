@@ -122,9 +122,15 @@ importers:
 
   apps/customer:
     dependencies:
+      '@quibo/contracts':
+        specifier: workspace:*
+        version: link:../../packages/contracts
       '@quibo/i18n':
         specifier: workspace:*
         version: link:../../packages/i18n
+      '@quibo/mocks':
+        specifier: workspace:*
+        version: link:../../packages/mocks
       expo:
         specifier: 57.0.27
         version: 57.0.27(@babel/core@7.29.7)(@expo/metro-runtime@57.0.16)(expo-router@57.0.25)(react-dom@19.2.3(react@19.2.3))(react-native-web@0.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
@@ -174,6 +180,9 @@ importers:
       typescript:
         specifier: 'catalog:'
         version: 6.0.3
+      vitest:
+        specifier: 'catalog:'
+        version: 5.0.3(@types/node@24.19.1)(@vitest/browser-playwright@5.0.3)(@vitest/ui@5.0.3)(vite@8.3.3(@types/node@24.19.1)(esbuild@0.28.2)(jiti@2.7.0)(terser@5.51.2)(yaml@2.9.1))
 
   apps/driver:
     devDependencies:

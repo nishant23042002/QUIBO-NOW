@@ -21,5 +21,17 @@
     "offline": "You are offline. Check your connection.",
     "retry": "Try again",
     "close": "Close"
+  },
+  "components": {
+    "title": "Components",
+    "intro": "Every building block in every state. Use it to check languages, text size and touch targets.",
+    "sampleAction": "Place order",
+    "sampleBadge": "Open now",
+    "inputLabel": "Phone number",
+    "inputHint": "We only use it to reach you about your order.",
+    "inputError": "Enter a valid phone number.",
+    "openSheet": "Choose a delivery window",
+    "sheetTitle": "Delivery window",
+    "sheetBody": "Pick the slot that suits you."
   }
 }

@@ -18,7 +18,8 @@ const variants = {
   lead: { fontSize: fontSize.lg, fontWeight: '400', leading: 'relaxed' },
   body: { fontSize: fontSize.base, fontWeight: '400', leading: 'normal' },
   label: { fontSize: fontSize.base, fontWeight: '600', leading: 'normal' },
-  caption: { fontSize: fontSize.xs, fontWeight: '400', leading: 'normal' },
+  small: { fontSize: fontSize.sm, fontWeight: '400', leading: 'normal' },
+  strong: { fontSize: fontSize.sm, fontWeight: '600', leading: 'normal' },
 } as const satisfies Record<string, VariantStyle>;
 
 export type TextVariant = keyof typeof variants;

@@ -15,6 +15,7 @@ function Screens() {
       }}
     >
       <Stack.Screen name="index" options={{ title: t('app.name') }} />
+      <Stack.Screen name="components" options={{ title: t('components.title') }} />
     </Stack>
   );
 }
