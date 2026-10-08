@@ -57,9 +57,10 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /**
- * The cart, grouped by shop. Each shop's items are their own basket with their own total, because each
- * basket becomes its own order with its own delivery. Free delivery is one line for the whole cart. Quantities can be
- * changed here, and the whole cart's total and a note on how many separate orders it makes are pinned below.
+ * The cart, grouped by shop. Each shop's items are the part that shop packs, with its own subtotal. The whole
+ * cart is one order: one rider collects from every shop and delivers it together, and free delivery is one line
+ * for the whole cart. Quantities can be changed here, and the whole cart's total and a note about the shops
+ * are pinned below.
  */
 export function CartSheet({ open, cart, tintOf, onClose }: CartSheetProps) {
   const { t } = useLanguage();

@@ -33,7 +33,7 @@ The phase gate (section "Gate checklist") runs once, at the end of 1h.
 ## Design direction (open, replaces the locked parts of ADR 0008)
 
 Phase 0c locked a look. You have now said **nothing from the design is locked**: colours, header, navigation,
-components and behaviour can all change. Sub-phase 1a writes **ADR 0009** to record the new direction and mark the
+components and behaviour can all change. Sub-phase 1a writes **ADR 0010** to record the new direction and mark the
 parts of ADR 0008 it replaces (the "header is always dark" rule, the flat cards, the no-bottom-tabs layout and
 anything else we change). The aubergine and pistachio palette stays only until you choose otherwise.
 
@@ -69,7 +69,7 @@ work on a 2 GB Android phone on a weak network (no heavy shadows, blur or animat
 
 _Goal: you approve the design before any other screen exists._
 
-- **Build:** ADR 0009 (new design direction). Revised theme tokens if needed. Bottom tab shell (Expo Router tabs:
+- **Build:** ADR 0010 (new design direction). Revised theme tokens if needed. Bottom tab shell (Expo Router tabs:
   Home, Order again, Categories, Orders; the last three show a placeholder). A **static** Home: tinted header block
   with address row, profile button and search bar; category tabs; hero banner; sub-category chips; two product
   rails; the floating cart bar. Product cards restyled with the "ADD" interaction. All built from fixed sample data
@@ -118,6 +118,8 @@ _Goal: Home runs on mock data through the same path the live API will use._
   estimated-weight tolerance note), the permanent cart store (kept across app restarts), and the floating
   `CartBar` wired to it. Money is integer paise throughout; weights go through `multiplyByQuantity` in
   `@quibo/contracts`.
+- **One cart, one order (ADR 0009):** the cart can hold several shops. It shows each shop's items as that shop's
+  part, with one total, one free-delivery line on the whole cart, and one delivery window set by the slowest shop.
 - **Tests:** Vitest for totals, fee bands, free-delivery threshold, rounding and weight conversion (these are
   the bugs that cost real money later); Maestro flow: add items, change a quantity, remove an item.
 - **Your check:** bill numbers add up by hand; weights and rupees look right; empty cart is helpful.
@@ -142,6 +144,8 @@ _Goal: Home runs on mock data through the same path the live API will use._
   mock) and **order tracking** (`StatusTimeline` through placed, accepted, ready, picked up, delivered, plus the
   rejected, cancelled and undelivered exits; call shop, call rider, the delivery OTP shown to the customer, COD
   amount). A mock "order clock" moves an order through the states on a timer so you can watch tracking work.
+- **Several shops, one rider (ADR 0009):** tracking is one order with one rider. The timeline shows each shop's
+  part as packed or picked up, then one trip to the customer.
 - **Fulfilment modes:** dark mode skips the "shop accepts" step; the timeline reflects the mode without the screen
   branching in code (it reads the town's configuration, as ADR 0002 requires).
 - **Tests:** Vitest for the timeline for each mode; Maestro flow: cart to placed order to watching it delivered, in
@@ -176,7 +180,7 @@ _Goal: Home runs on mock data through the same path the live API will use._
 - [ ] The twelve customer screens of PLAN section 6, each with loading, empty, error and offline states
 - [ ] Both fulfilment modes, driven by town configuration, never branched on in order logic
 - [ ] English, Hindi and Marathi for every string, light and dark themes
-- [ ] The new design direction, recorded in ADR 0009
+- [ ] The new design direction, recorded in ADR 0010
 - [ ] A bottom tab bar, a floating cart bar, and the shared state views
 - [ ] Contracts, fixtures and an API client so that Phase 2 swaps the mocks for the real API with no screen change
 - [ ] Maestro flows for each journey in both modes, and Vitest tests for all logic

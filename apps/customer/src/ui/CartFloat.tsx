@@ -26,7 +26,7 @@ export interface CartFloatProps {
   itemsLabel: string;
   /** The total, already formatted, for example "₹126". */
   totalLabel: string;
-  /** The shop the cart is from, already worded, for example "From Sharma Dairy". An order is from one shop. */
+  /** The shop the cart is from, already worded, for example "From Sharma Dairy" or "2 shops". */
   shopLabel: string;
   /** What the cart saves, for example "You saved ₹7". Leave out when it saves nothing. */
   savedLabel?: string;

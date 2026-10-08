@@ -140,7 +140,7 @@ The MVP is one town, three apps (customer, admin with a store portal, driver) on
 
 ## 6. The apps: customer, store, rider, admin
 
-Build in this order: customer web app, then the admin panel (which includes the store portal), then the driver app; each starts as a mock-data UI phase and goes live in a second phase against the shared API. Orders stay single-shop in the MVP, so every order has exactly one store and one delivery.
+Build in this order: customer web app, then the admin panel (which includes the store portal), then the driver app; each starts as a mock-data UI phase and goes live in a second phase against the shared API. An order can hold items from several shops (ADR 0009): each shop packs only its own part, one rider collects from every shop on one trip, and the customer gets one delivery, one bill and one tracking page.
 
 **Two modes, one UI.** Screens read the town's fulfilment mode: in partner mode Home lists shops, in dark-store mode Home opens straight into the one branded store; item availability is a toggle in one mode and a stock count in the other. Build each screen once and design both states in Phase 1.
 
@@ -341,11 +341,12 @@ The model is about 23 tables, five of them used only in dark-store mode; the har
 | `master_item` | names in en, hi, mr; brand; unit type; pack size; MRP; category | The shared catalogue |
 | `item_alias` | item\_id, alias, language | Powers "dudh" finding milk |
 | `store_item` | store\_id, master\_item\_id, price, available, max\_qty, sold\_by\_weight, tolerance | Availability toggle in partner mode; in dark-store mode the count is derived from stock movements |
-| `order` | customer, store, address snapshot, status, payment method and status, totals, promised\_by | One store per order in the MVP |
-| `order_item` | name and price snapshot, ordered qty, final qty, final price, substitute\_of | Final values come from weighing and packing |
+| `order` | customer, address snapshot, status, payment method and status, totals, promised\_by | One order, one delivery, however many shops it has |
+| `order_shop` | order\_id, store\_id, status (placed, accepted, packed, picked up, rejected), subtotal, packed\_at, picked\_at | The part of the order one shop packs; the store portal and pick tasks work on this row |
+| `order_item` | order\_shop\_id, name and price snapshot, ordered qty, final qty, final price, substitute\_of | Final values come from weighing and packing |
 | `order_event` | order\_id, from and to status, actor, reason, time | Append-only; the audit trail |
 | `payment` | order\_id, provider, provider\_ref, amount, status, idempotency\_key | One row per attempt |
-| `delivery` | order\_id, rider\_id, picked\_at, delivered\_at, distance, payout, COD collected, proof | Batch id when orders share a ride |
+| `delivery` | order\_id, rider\_id, delivered\_at, distance, payout, COD collected, proof | One per order; the pickups are the order's `order_shop` rows. Batch id when orders share a ride |
 | `rider` | user\_id, vehicle, documents, status, cash\_in\_hand, engagement\_days | Engagement days support the gig-worker rules in section 11 |
 | `ledger_entry` | account, debit or credit, amount, ref type and id | Double-entry; never edited |
 | `payout` | party (store or rider), period, amount, status, bank reference | Created by a settlement run |
@@ -355,7 +356,7 @@ The model is about 23 tables, five of them used only in dark-store mode; the har
 | goods\_receipt | store\_id, supplier\_id, invoice number, lines (item, qty, cost, expiry), received\_by | One receipt creates stock batches and movements |
 | stock\_batch | store\_id, item\_id, qty\_on\_hand, cost, expiry, received\_at | Picked first-expiry-first-out |
 | stock\_movement | store\_id, item\_id, batch\_id, type (receipt, reserve, release, pick, wastage, adjustment, return), qty, reference | Append-only; on-hand is derived from it |
-| pick\_task | order\_id, picker\_id, status, picked and short lines, started and finished at | One per order in dark-store mode |
+| pick\_task | order\_shop\_id, picker\_id, status, picked and short lines, started and finished at | One per order\_shop in dark-store mode |
 
 **The hard parts**
 

@@ -199,7 +199,7 @@ const SHOP_OF: Record<ItemCategory, 'one' | 'two' | 'three'> = {
 
 export interface HomeItem {
   id: string;
-  /** The shop that sells it. An order is from one shop, so a cart holds one shop's items. */
+  /** The shop that sells it. One order can hold items from several shops. */
   shop: string;
   shopName: string;
   category: ItemCategory;

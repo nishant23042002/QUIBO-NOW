@@ -123,7 +123,7 @@
       "shopsMany": "{count} shops",
       "title": "Your cart",
       "total": "total",
-      "separate": "From {count} shops, so it arrives as {count} separate orders. Free delivery counts the whole cart."
+      "separate": "From {count} shops. One rider collects it all and brings it together. Free delivery counts the whole cart."
     },
     "detail": {
       "soldBy": "Sold by {shop}",

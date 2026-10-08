@@ -24,8 +24,9 @@ export interface BasketLine {
 }
 
 /**
- * Everything in the cart that comes from one shop. Each shop's basket becomes its own order, with its own
- * delivery. Free delivery is not decided per basket: it counts the whole cart (see `DraftCart.free`).
+ * Everything in the cart that comes from one shop: the part that shop packs. All the baskets are one order,
+ * collected by one rider on one trip and delivered together. Free delivery counts the whole cart (see
+ * `DraftCart.free`).
  */
 export interface ShopBasket {
   id: string;
@@ -76,8 +77,8 @@ interface Removal {
 
 /**
  * The cart as it is being filled on Home, kept in memory. The real cart (Phase 1d) takes this over, with
- * the same shape. A cart can hold items from several shops: they are grouped into one basket per shop, and
- * each basket will be its own order (an order is from one shop). Money is added up in integer paise.
+ * the same shape. A cart can hold items from several shops: they are grouped into one basket per shop for
+ * packing, but the whole cart is a single order with one delivery. Money is added up in integer paise.
  */
 export function useDraftCart(): DraftCart {
   const { t } = useLanguage();

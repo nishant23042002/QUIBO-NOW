@@ -9,7 +9,7 @@ export interface CartBarProps {
   /** How many items, already worded and pluralised, for example "3 items". */
   itemsLabel: string;
   total: Money;
-  /** The shop the cart belongs to. A cart holds items from one shop. */
+  /** The shop the cart is from, or a count such as "2 shops". A cart can hold items from several shops. */
   shopName: string;
   /** The button text, for example "View cart". */
   actionLabel: string;
