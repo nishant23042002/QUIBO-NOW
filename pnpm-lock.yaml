@@ -131,6 +131,9 @@ importers:
       expo-localization:
         specifier: 57.0.2
         version: 57.0.2(expo@57.0.27)(react@19.2.3)
+      expo-navigation-bar:
+        specifier: 57.0.3
+        version: 57.0.3(expo@57.0.27)(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
       expo-router:
         specifier: 57.0.25
         version: 57.0.25(@babel/core@7.29.7)(@types/react@19.2.18)(expo-constants@57.0.21)(expo-font@57.0.4)(expo-linking@57.0.12)(expo@57.0.27)(react-dom@19.2.3(react@19.2.3))(react-native-safe-area-context@5.7.0(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native-screens@4.26.2(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native-web@0.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)
@@ -2328,6 +2331,13 @@ packages:
   expo-modules-jsi@57.1.1:
     resolution: {integrity: sha512-ssnwz3ZuIgCbZj5A3J6NlhQrXZojg+BjkeWrOWqVJhyMHlV/A/cRT7s986chKku97BFt6ucmDu6/BCzrV45Wcw==}
     peerDependencies:
+      react-native: '*'
+
+  expo-navigation-bar@57.0.3:
+    resolution: {integrity: sha512-+9Q/2OQtpYjObmby1EMpFyhfK5LyT/oHD3lfkU6Z9as8f7arq7vGTlAXzYDP+xK2t76g9TFk//zya56vN5CkzA==}
+    peerDependencies:
+      expo: '*'
+      react: '*'
       react-native: '*'
 
   expo-router@57.0.25:
@@ -6788,6 +6798,15 @@ snapshots:
   expo-modules-jsi@57.1.1(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3)):
     dependencies:
       react-native: 0.86.3(@types/react@19.2.18)(react@19.2.3)
+
+  expo-navigation-bar@57.0.3(expo@57.0.27)(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3):
+    dependencies:
+      debug: 4.4.3
+      expo: 57.0.27(@babel/core@7.29.7)(@expo/metro-runtime@57.0.16)(expo-router@57.0.25)(react-dom@19.2.3(react@19.2.3))(react-native-web@0.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3)(typescript@6.0.3)
+      react: 19.2.3
+      react-native: 0.86.3(@types/react@19.2.18)(react@19.2.3)
+    transitivePeerDependencies:
+      - supports-color
 
   expo-router@57.0.25(@babel/core@7.29.7)(@types/react@19.2.18)(expo-constants@57.0.21)(expo-font@57.0.4)(expo-linking@57.0.12)(expo@57.0.27)(react-dom@19.2.3(react@19.2.3))(react-native-safe-area-context@5.7.0(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native-screens@4.26.2(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3))(react-native-web@0.21.3(react-dom@19.2.3(react@19.2.3))(react@19.2.3))(react-native@0.86.3(@types/react@19.2.18)(react@19.2.3))(react@19.2.3):
     dependencies:
