@@ -13,12 +13,12 @@ Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 - At the end of a phase write docs/phases/PHASE-N-report.md, stop, and wait. The human signs off; then tag phase-N-complete.
 
 ## Surfaces
-- apps/customer-web: Next.js PWA (phases 1 and 2)
+- apps/customer: Expo React Native app (phases 1 and 2)
 - apps/admin: Next.js ops panel with the store portal and the dark-store console as route groups (phases 3 and 4)
 - apps/driver: Expo React Native app (phases 5 and 6)
 - apps/api: NestJS modular monolith, REST + OpenAPI (from phase 2)
 - apps/worker: BullMQ jobs (from phase 2)
-- packages: contracts, mocks, ui, i18n, db, config
+- packages: contracts, mocks, i18n, db, config
 
 ## Non-negotiables
 - TypeScript strict. Zod validation at every API boundary; contracts are the single source of truth.
@@ -33,10 +33,10 @@ Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 - Every screen has loading, empty, error and offline states and works on a low-end Android phone (2 GB RAM) on a weak network.
 
 ## Commands
-pnpm install | pnpm dev | pnpm lint | pnpm typecheck | pnpm test | pnpm build | pnpm e2e | pnpm storybook
+pnpm install | pnpm dev | pnpm lint | pnpm typecheck | pnpm test | pnpm build | pnpm clean
 
 ## Definition of done
-Types and lint pass; tests added (Vitest for logic, Playwright for flows); accessibility check passes; migration and seed updated when data changes; docs updated if scope changed.
+Types and lint pass; tests added (Vitest for logic, Maestro for phone-app flows from Phase 1, Playwright for admin web flows); accessibility check passes; migration and seed updated when data changes; docs updated if scope changed.
 
 ## Working style
 Small commits with conventional messages. Ask before adding a dependency. Record architecture decisions in docs/decisions/. Never loosen or skip a check to get green.

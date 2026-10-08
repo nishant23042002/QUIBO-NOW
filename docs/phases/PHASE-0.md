@@ -1,5 +1,10 @@
 # Phase 0: Foundation
 
+> **Update (Phase 0b, 2026-10-08):** the customer web app, `packages/ui`, Storybook, Playwright and MSW described
+> below were replaced by an Expo (React Native) customer app (see [`PHASE-0b.md`](./PHASE-0b.md)). This file
+> records what Phase 0 delivered, up to commit `c4ac9ce`. Its human gate checklist is superseded by the one in
+> `PHASE-0b.md`.
+
 **Goal.** Create the monorepo skeleton, tooling, design-system foundation, shared contracts package,
 mock-API package, i18n scaffold and CI, so that Phase 1 (customer UI on mock data) starts with zero setup
 work. **No business logic, no real screens beyond the placeholder home and the Storybook primitives, no API

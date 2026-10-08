@@ -19,12 +19,12 @@ settle first.
 3. **`packages/contracts` is the single source of truth.** Every request, response and shared type is a
    Zod schema there. The mock API (`packages/mocks`) and, from Phase 2, the real API (`apps/api`) both
    implement those schemas. Nothing is defined twice.
-4. **Screens never import fixtures directly.** They call the API client; in UI phases MSW answers with
-   data that was parsed through the contracts. Going live is therefore a swap of the transport, not a
-   rewrite of the screens.
-5. **A phase is done only when its gate passes** (lint, typecheck, unit tests, e2e, build, accessibility,
-   performance, zero open blocker or major defects) and a human signs off. Work is never started ahead
-   of the current phase; ideas go into the next phase's notes file.
+4. **Screens never import fixtures directly.** They call the API client; in UI phases the mock API
+   (`handleMockRequest`) answers with data built from the contracts. Going live is therefore a swap of the
+   transport, not a rewrite of the screens.
+5. **A phase is done only when its gate passes** (lint, typecheck, unit tests, flow tests, build,
+   accessibility, performance, zero open blocker or major defects) and a human signs off. Work is never
+   started ahead of the current phase; ideas go into the next phase's notes file.
 
 ## Consequences
 

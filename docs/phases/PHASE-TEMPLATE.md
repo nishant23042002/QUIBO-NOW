@@ -40,27 +40,30 @@ Numbered, each with the exact command or check and the expected result.
 
 ## Budgets (working targets)
 
-- First-load JavaScript on key routes: **\_\_\_ kB gzip**
-- Lighthouse mobile performance on key screens: **90 or higher**
+- Bundle size: **\_\_\_** (web screens: first-load JavaScript in kB gzip; phone apps: the Android Hermes
+  bundle in MB)
+- Lighthouse mobile performance on key web screens: **90 or higher**
 - Other numbers specific to this phase
 
 ## Gate checklist (PLAN section 16)
 
 - [ ] Plan approved before coding; nothing outside the phase was built
 - [ ] `lint`, `typecheck`, `test` and `build` pass on a clean install, with no unexplained warnings
-- [ ] Playwright flows for the phase pass locally and in CI, in both fulfilment modes
-- [ ] axe shows no serious accessibility issues; screens stay usable at 200% text size
-- [ ] Lighthouse mobile performance 90 or higher on the phase's key screens, and first-load JavaScript
-      inside the budget above
+- [ ] Flow tests for the phase pass (Maestro for the phone apps, Playwright for the admin panel), in both
+      fulfilment modes
+- [ ] No serious accessibility issues (axe on the admin panel; the contrast tests, a screen-reader pass and
+      the largest font size on the phone apps); screens stay usable at 200% text size
+- [ ] Performance inside the budget above (Lighthouse mobile 90 or higher on key web screens; bundle size and
+      a cold start on a 2 GB phone for the phone apps)
 - [ ] Tested by hand on a real low-end Android phone with a throttled network
 - [ ] No open blocker or major defects; minor ones are logged with an owner
 - [ ] `PHASE-N-report.md` written, demo done, human sign-off recorded, tag `phase-N-complete` pushed
 
 ## Done means
 
-Types and lint pass; tests added (Vitest for logic, Playwright for flows); accessibility check passes;
-migration and seed updated when data changes; docs updated if scope changed (`CLAUDE.md`, "Definition of
-done").
+Types and lint pass; tests added (Vitest for logic, Maestro for phone-app flows, Playwright for admin web
+flows); accessibility check passes; migration and seed updated when data changes; docs updated if scope
+changed (`CLAUDE.md`, "Definition of done").
 
 ## Report
 

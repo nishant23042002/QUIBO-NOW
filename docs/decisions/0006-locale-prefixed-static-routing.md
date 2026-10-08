@@ -1,6 +1,9 @@
 # 0006. Locale-prefixed static routing
 
-- **Status:** Accepted (Phase 0)
+- **Status:** Superseded by [0007](./0007-customer-and-driver-are-expo-apps.md) (Phase 0b). The customer
+  app is now a React Native app, so it has no URLs, no `next-intl` and no routing by language. Kept as
+  history. What still holds: messages are typed, and the lint rule `react/jsx-no-literals` rejects text
+  typed straight into a screen (now through the `native` preset).
 - **Date:** 2026-10-08
 - **Source:** `docs/PLAN.md` sections 4 and 9; `CLAUDE.md` ("no hard-coded UI strings", weak networks)
 

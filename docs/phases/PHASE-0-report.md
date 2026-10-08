@@ -1,5 +1,10 @@
 # Phase 0 report: Foundation
 
+> **Update (Phase 0b, 2026-10-08):** this report is the record of Phase 0 as it stood at commit `c4ac9ce`. The
+> customer web app, `packages/ui`, Storybook, Playwright, MSW and the Lighthouse numbers below no longer exist
+> in the repository; Phase 0b replaced them with an Expo (React Native) customer app. See `PHASE-0b.md` and its
+> report for the current state and gate.
+
 - **Branch:** `phase-0/foundation` (17 build commits on top of `master`, plus this report). Not pushed, not merged, not tagged.
 - **Status:** every automated check passes in a fresh clone of the final commit. **Four things need your decision or
   your hands before sign-off** (section 9): the first-load JavaScript budget, the OrderStatus stub, the Hindi and

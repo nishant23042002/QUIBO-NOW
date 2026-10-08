@@ -2,6 +2,8 @@
 
 Oct 8, 2026 · @workspace.nishant
 
+> **Update, 2026-10-08 (Phase 0b):** the customer app is now an Expo (React Native) app, like the driver app, not a Next.js PWA, and `apps/customer-web` is now `apps/customer`. Wherever this plan says PWA, customer web app, service worker or Lighthouse for the customer app, read it as the React Native app. What the PWA choice was protecting (no install, WhatsApp link previews, iPhone coverage) and what it costs now are in [ADR 0007](decisions/0007-customer-and-driver-are-expo-apps.md). The admin panel and store portal stay Next.js web. Nothing else in this plan changed.
+
 ## 1. Read this first
 
 Build one delivery product that runs in two switchable modes per town: partner stores first, and a single small dark store of your own when the numbers justify it; either way it is not a smaller copy of Blinkit. Writing the app is only part of the job; winning shops, riders and trust in one town is the rest.

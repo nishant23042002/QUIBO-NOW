@@ -1,85 +1,93 @@
 # Phase 1 notes
 
-Things found or deliberately left out during Phase 0. Nothing here is built. Read this before writing the
-Phase 1 prompt. Phase 1 is **customer UI on mock data** (PLAN sections 6 and 12).
+Things found or deliberately left out during Phase 0 and Phase 0b. Nothing here is built. Read this before
+writing the Phase 1 prompt. Phase 1 is **customer UI on mock data** in the React Native app (PLAN sections 6
+and 12; ADR 0007).
 
-## First tasks, because Phase 0 stopped short of them
+## First tasks, because Phase 0b stopped short of them
 
-1. **Wire the mock API into customer-web.** Phase 0 ships `@quibo/mocks/browser` (a typed MSW worker) but
-   not the pieces that make it run in the app, to keep to "nothing more" for customer-web:
-   - generate `apps/customer-web/public/mockServiceWorker.js` with MSW's CLI (check the v3 command; the
-     file also ships inside the package at `msw/lib/mockServiceWorker.js`);
-   - a small client component that starts the worker before the first fetch, only when a flag such as
-     `NEXT_PUBLIC_API_MOCKING=enabled` is set (add it to `publicEnvSchema` and `.env.example`; the env
-     test will then force the example and the schema to agree);
-   - **MSW 3 renamed the unhandled-request option** to `onUnhandledFrame` (`'error'`, `'warn'`,
-     `'bypass'`). The worker needs `bypass` or Next's own assets will be reported; the node server in
-     tests uses `error` on purpose.
-   - Screens call an API client; they never import fixtures (ADR 0001).
-2. **Service worker and offline.** The PWA shell is manifest only. `CLAUDE.md` requires loading, empty,
-   error and **offline** states on every screen, so the offline shell, cache strategy and install prompt
-   belong here. Real behaviour needs a real service worker, which Next does not provide by itself.
+1. **Wire the mock API into the app.** `handleMockRequest` exists, and only the Components screen's device
+   check calls it. Add a small API client in `apps/customer/src`: in UI phases it calls
+   `handleMockRequest`, in live phases `fetch` on `EXPO_PUBLIC_API_URL`, and either way it parses the answer
+   with the contract's Zod schema. Screens call the client and never import fixtures (ADR 0001).
+   - `EXPO_PUBLIC_API_URL` is already in `publicEnvSchema` and `.env.example`. Expo only replaces the
+     literal expression `process.env.EXPO_PUBLIC_X`, so `loadEnv(schema, process.env)` sees nothing on a
+     phone: pass the value explicitly, `loadEnv(schema, { EXPO_PUBLIC_API_URL: process.env.EXPO_PUBLIC_API_URL })`.
+   - Typing `process.env` needs Expo's types: add a `.d.ts` under `src` that references `expo/types`. Do
+     not use `expo-env.d.ts`: the Expo CLI deletes it whenever typed routes are off.
+2. **The four states, and offline.** `CLAUDE.md` requires loading, empty, error and offline states on every
+   screen. The Components screen shows loading and error for cards, inputs and badges, but there is no
+   shared empty, error or offline view, no way to detect being offline, and no stored cart. Build the
+   shared view when the second screen needs it. Detecting offline and storing a cart need a package each
+   (NetInfo, a storage library): ask before adding them.
 3. **The 12 customer screens** (PLAN section 6 inventory), each in both fulfilment modes using the
    `partnerTown` and `darkTown` fixtures: Home lists shops in partner mode and opens straight into the
    one store in dark mode.
 4. **Add the fixtures Phase 1 needs** to `packages/mocks` (stores, items, cart, orders), parsed through
    new schemas in `packages/contracts`, the way `towns.ts` is.
+5. **Maestro flows** (simple YAML) for the phase's flows, in both fulfilment modes. Maestro needs its CLI
+   and an emulator or phone on the machine that runs it. Update the gate wording in `PHASE-TEMPLATE.md`
+   accordingly (Phase 0b already changed it from Playwright to flow tests).
+6. **Remember the chosen language.** It is held in memory today and resets to the phone's language each
+   launch. Needs a storage package (ask first).
+7. **A title per screen in all three languages.** The header shows the app name on the home screen and
+   "Components" on the gallery; every real screen needs its own key.
+8. **Keep the Components screen out of production builds.** Only the home screen's link to it is hidden
+   (`__DEV__`); the route itself can still be opened with a link such as `quibo://components`.
 
 ## Known gaps in what exists
 
-- **The language switcher always links to each language's home (`/en`, `/hi`, `/mr`).** It should keep the
-  current path once there is more than one page. A server component can build the target from the
-  request path; avoid making it a client component with `usePathname` unless the weight is accepted.
-- **There is deliberately no `NextIntlClientProvider` and no `src/i18n/navigation.ts`.** Merely importing
-  the navigation module (it calls `createNavigation()`) puts next-intl's client runtime on the page: 13.3 kB
-  gzip, measured (ADR 0006). When the first client component needs translations, add the provider with
-  only the messages that component uses, re-measure first-load JavaScript, and decide the budget with
-  that number in hand.
-- **The unknown-language 404 is not localised.** `/fr` goes to `/en/fr` and shows Next's default 404.
-  Use `global-not-found`.
-- **`<title>` is the brand name on every page.** Each screen needs its own title in all three languages.
-- **Brand is a placeholder.** Name ("Quibo Now"), palette, and the "Q" icon are stand-ins. The brand colours
-  are repeated in `tokens.css`, `layout.tsx` (`themeColor`), `manifest.ts` and `pwa-icons/[name]/route.tsx`
-  because CSS variables cannot be read there. When the brand is chosen, make one source file for them.
-- **`Sheet` does not lock page scroll** behind it and has only been run in desktop Chromium. Test the native
-  `<dialog>` on a low-end Android WebView and on iOS Safari before relying on it.
-- **No `Skeleton`, icon set, toast, tabs or bottom navigation primitives.** `Card` and `Badge` have inline
-  skeletons. Add shared ones when the second screen needs them, not before.
-- **No dark mode.** Tokens are light only (`color-scheme: light`).
-- **System font stack.** Chosen so nothing downloads on a weak network and because Android and Windows ship
-  Devanagari fonts. Check rendering of Hindi and Marathi on real low-end phones; add a subset web font only
-  if it is poor.
+- **`Sheet` has only been run in the desktop web preview, never on a phone.** Check the Android back
+  button, the keyboard, the bottom safe area and the slide animation on a real device. In the preview the
+  exit animation could not be watched finishing (the pane throttles animations), so the close paths were
+  verified with the animation switched off.
+- **No keyboard handling.** `Input` has no `KeyboardAvoidingView` behaviour; a form near the bottom of a
+  screen will be covered by the keyboard.
+- **`Input` errors rely on a live-region alert.** React Native has no `aria-invalid` or `aria-describedby`;
+  the error text is announced when it appears (`role="alert"`). Check with TalkBack, Android's screen
+  reader.
+- **Text size is capped at 200% for `Text` only** (`maxFontSizeMultiplier`). `TextInput` has no cap; check
+  large text on every input.
+- **No icons.** The sheet's close icon is two bars. Add an icon approach when a screen needs one.
+- **Cards are flat** (2 px border, no shadow) and the loading skeleton is static, both to stay cheap on
+  low-end phones. A disabled card is dimmed with opacity, because React Native text does not inherit colour.
+- **No dark mode** (`userInterfaceStyle` is `light`) and system fonts only.
+- **Typed routes are off,** so `router.push('/components')` is not checked. To adopt `experiments.typedRoutes`,
+  note that the Expo CLI then writes `expo-env.d.ts` and `.expo/types` when `expo start` runs, so a fresh
+  clone has no types until it is run: the same trap `next typegen` was in Phase 0.
+- **Brand is a placeholder.** Name ("Quibo Now"), the palette in `src/ui/tokens.ts` (now the single
+  place), the URL scheme `quibo`, and no icon or splash image. The Android package name is not set and
+  cannot change after the first Play Store release.
+- **A new colour pairing is not checked automatically.** `tokens.test.ts` lists the pairs by hand; add
+  every new text-on-background or border-on-background pair to it.
 
-## Accessibility: a blind spot in axe
+## Accessibility
 
-**axe-core silently skips some Devanagari text when it measures contrast.** On `/hi` it checked 4 text
-nodes and skipped 2 (the subtitle and the active "हिन्दी" link). Planting a low-contrast Hindi link did not
-make the axe test fail. `apps/customer-web/e2e/contrast.ts` measures every text node from the browser's
-computed colours instead, with tests that prove it fails on bad contrast. Use it on every Phase 1 screen in
-every language. **The Storybook run (`pnpm a11y`) very likely has the same blind spot** (it uses the same
-axe-core engine; this was not tested there) and its stories are English; when stories use Hindi or Marathi
-text, check contrast with the helper there too.
+Automated checks cover colour pairs only (`tokens.test.ts`: text 4.5:1, control edges 3:1). Nothing
+automated checks screen-reader labels or large text. For every Phase 1 screen, by hand and in every
+language: a TalkBack pass, the phone's largest font size, and Devanagari rendering on a real low-end phone
+(system fonts; if the glyphs look poor, a subset font can be bundled at a cost in bytes).
 
 ## Translations and numbers
 
-- The Hindi and Marathi strings are the assistant's drafts. Have them reviewed by a native speaker before
-  any user sees them; Hindi and Marathi text also often runs longer than English, so check wrapping.
-- Prices use **Latin digits in every language** (ADR 0005); Marathi's `Intl` default would be Devanagari.
-  Confirm with real users.
-- The 200% text size check is done for the placeholder only. Do it for every screen.
+- The Hindi and Marathi strings are the assistant's drafts, including the Components screen's. Have them
+  reviewed by a native speaker before any user sees them; Hindi and Marathi text also often runs longer than
+  English, so check wrapping.
+- Prices use **Latin digits in every language** (ADR 0005). Confirm with real users.
 
 ## Performance
 
-- **The framework floor is 133.9 kB gzip** (a bare Next 16.4.0 + React 19.3.0 page: React DOM 72 kB, Next's
-  client runtime 50 kB, the rest small). The Phase 0 home page is 134.8 kB. The 130 kB budget proposed in
-  the plan cannot be met by any Next 16.4 page; the human decides the replacement at sign-off (140 kB
-  recommended). Set a budget per key screen in `PHASE-1.md` as "floor plus what the screen needs", and
-  re-measure after each new client component. Next 16 does not print "First Load JS" in `next build`;
-  measure it from the network trace.
-- Lighthouse runs by hand in Phase 0 (`pnpm dlx lighthouse@13.5.0`, not in the lockfile). Adding it to CI
-  (for example Lighthouse CI) would make the gate automatic.
-- Add a throttled-network Playwright project to approximate a weak connection, and keep the real low-end
-  Android check as a manual step.
+- **The Android Hermes bundle is 3.3 MB** (2.6 MB before the building blocks, `contracts`, `mocks` and Zod
+  were added). Zod and the contracts are most of that increase; `zod/mini` is smaller, but moving to it is
+  a rewrite of every contract, so decide it with the numbers in hand. `pnpm build` prints the size; report
+  it for every phase.
+- **Expo Router bundles a 971 KB icon font** (Material Symbols) that the app does not use. Find which
+  import pulls it in, and whether it can be left out.
+- Set a budget per key screen once real screens exist, and measure on a 2 GB Android phone with a
+  throttled network: cold start and memory. Performance tuning is deferred (ADR 0007), but the first
+  measurement belongs in the Phase 1 gate (PLAN section 16).
+- **Money maths runs on Hermes.** The Components screen is the on-device check. If it ever shows `wrong`,
+  fall back to plain integer maths in `money.ts` (amounts stay below 2^53).
 
 ## For Phase 2 (parked, not for now)
 
@@ -96,13 +104,12 @@ text, check contrast with the helper there too.
 
 ## Tooling follow-ups
 
-- Remove the `peerDependencyRules` entries in `pnpm-workspace.yaml` when `eslint-plugin-react`, `-import`
-  and `-jsx-a11y` publish ESLint 10 peers; move to TypeScript 7 when typescript-eslint supports it; consider
-  pnpm 12 as its own change (ADR 0003).
-- Run `actionlint` on `.github/workflows/ci.yml` (Docker was not running in Phase 0; the file was checked
-  structurally only).
-- Turborepo restores a cached `.next` **over** the existing folder without deleting stale files. After
-  switching between branches or experiments, delete `apps/customer-web/.next` before trusting a cached
-  build. CI starts from an empty checkout, so it is not affected.
-- Playwright's Chromium and headless shell take about 720 MB on disk.
-- `eslint-plugin-storybook` and `@storybook/addon-docs` were not added (not requested).
+- Remove the `eslint-plugin-react` entry in `peerDependencyRules` (`pnpm-workspace.yaml`) when it publishes
+  an ESLint 10 peer; move to TypeScript 7 when typescript-eslint supports it; consider pnpm 12 as its own
+  change (ADR 0003).
+- Run `actionlint` on `.github/workflows/ci.yml` (Docker was not running in Phase 0; the workflow has not run
+  on GitHub, and was checked structurally only).
+- A mobile build in CI (an Expo build service or a local Android build) is deferred; `pnpm build` only
+  proves the code bundles and compiles for Hermes.
+- Upgrade Expo by SDK, never one package at a time (ADR 0003), and run
+  `pnpm --filter @quibo/customer exec expo install --check` after any change to `apps/customer`'s packages.
