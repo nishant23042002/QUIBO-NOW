@@ -21,9 +21,9 @@ screen by screen.
    दुकान से घर तक।, Marathi दुकानातून थेट घरी.). It says shop to home, in the language people speak, and makes
    no promise about minutes. Hindi and Marathi are drafts for a native speaker.
 2. **Logo.** Option A, stacked: the parent's outlined wordmark and speed lines, with a **NOW** tag under the
-   right end. The header uses the compact form of the same family (Q mark plus tag), because the stacked
-   form is too tall for a header. A third form, the Q mark alone, serves tiny spaces and the app icon. All
-   three are drawn with `react-native-svg` from path data in `src/ui/brand/paths.ts`: the wordmark, mark and
+   right end. The header uses the same stacked logo, sized to the screen (about 30% of its width, 96 to 120 dp, never
+   taller than the shortest header). A second form, the Q mark alone, serves tiny spaces and the app icon.
+   Both are drawn with `react-native-svg` from path data in `src/ui/brand/paths.ts`: the wordmark, mark and
    lines are the parent's own outlines, and NOW is outlined once from Poppins Black (SIL Open Font
    License 1.1) with the same italic skew baked in. No font is needed at run time. The generated path data
    is committed; the generator and the font are not.
@@ -104,8 +104,8 @@ screen by screen.
 - **Teal and coral, and the other first-round palettes.** The human liked teal but not coral; coral sat only
   8 degrees of hue from the error red, which is a risk of its own.
 - **Teal and Mango, and Indigo and Mint** (second round). Both were contrast-checked and offered; not chosen.
-- **Logo options B and C as the main logo.** Not chosen: the human picked A. The compact form (C) is used
-  only in headers, because A is too tall for one; that was an assumption in the approved plan.
+- **Logo options B and C as the main logo.** Not chosen: the human picked A. A compact form (Q mark plus tag) was built first for the header, then
+  removed when the header was changed to the full stacked logo.
 - **A theme or styling library** (NativeWind, Tamagui, Unistyles). Rejected for the same reason as in
   ADR 0007: plain code is easier to read and lighter on a 2 GB phone. Revisit if the twelve screens make
   `useStyles` repetitive.

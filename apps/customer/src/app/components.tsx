@@ -19,7 +19,6 @@ import {
   IconButton,
   Input,
   ItemCard,
-  LogoCompact,
   LogoStacked,
   Notice,
   Price,
@@ -207,11 +206,6 @@ export default function ComponentsScreen() {
         <Demo name="stacked, on the header colour">
           <OnChrome>
             <LogoStacked width={200} ground="chrome" label={t('app.name')} />
-          </OnChrome>
-        </Demo>
-        <Demo name="compact (header)">
-          <OnChrome>
-            <LogoCompact height={36} label={t('app.name')} />
           </OnChrome>
         </Demo>
         <Demo name="Q mark, page and header colour">

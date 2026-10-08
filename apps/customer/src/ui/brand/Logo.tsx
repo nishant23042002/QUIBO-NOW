@@ -1,15 +1,6 @@
 import Svg, { Path } from 'react-native-svg';
 import { useTheme } from '@/theme';
-import {
-  BARS_COMPACT,
-  BARS_STACKED,
-  NOW_COMPACT,
-  NOW_STACKED,
-  Q_MARK,
-  SIZE,
-  VIEW_BOX,
-  WORDMARK,
-} from './paths';
+import { BARS_MARK, BARS_STACKED, NOW_STACKED, Q_MARK, SIZE, VIEW_BOX, WORDMARK } from './paths';
 
 /**
  * Where the logo sits. "chrome" is the header or the boot screen, which are dark in both themes.
@@ -69,22 +60,6 @@ export function LogoStacked({
   );
 }
 
-/** The compact logo: the Q mark with the NOW tag. For headers, always on the dark chrome. */
-export function LogoCompact({ height, label }: LogoProps & { height: number }) {
-  const c = useLogoColors('chrome');
-  const width = (height * SIZE.compact.width) / SIZE.compact.height;
-  return (
-    <Svg width={width} height={height} viewBox={VIEW_BOX.compact} aria-label={label} role="img">
-      {BARS_COMPACT.map((d) => (
-        <Path key={d} d={d} fill={c.lines} />
-      ))}
-      <Path d={Q_MARK} fill={c.letters} />
-      <Path d={NOW_COMPACT.pill} fill={c.tag} />
-      <Path d={NOW_COMPACT.letters} fill={c.tagLetters} />
-    </Svg>
-  );
-}
-
 /** The Q mark alone, for places too small for the tag. */
 export function QMark({
   size,
@@ -95,7 +70,7 @@ export function QMark({
   const height = (size * SIZE.mark.height) / SIZE.mark.width;
   return (
     <Svg width={size} height={height} viewBox={VIEW_BOX.mark} aria-label={label} role="img">
-      {BARS_COMPACT.map((d) => (
+      {BARS_MARK.map((d) => (
         <Path key={d} d={d} fill={c.lines} />
       ))}
       <Path d={Q_MARK} fill={c.letters} />

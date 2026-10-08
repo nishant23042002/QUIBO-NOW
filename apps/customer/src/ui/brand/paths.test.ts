@@ -1,20 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import {
-  BARS_COMPACT,
-  BARS_STACKED,
-  NOW_COMPACT,
-  NOW_STACKED,
-  Q_MARK,
-  SIZE,
-  VIEW_BOX,
-  WORDMARK,
-} from './paths';
+import { BARS_MARK, BARS_STACKED, NOW_STACKED, Q_MARK, SIZE, VIEW_BOX, WORDMARK } from './paths';
 
 const contours = (d: string) => (d.match(/Z/g) ?? []).length;
 
 describe('logo path data', () => {
-  it('has four speed lines in both versions, each a closed shape', () => {
-    for (const bars of [BARS_STACKED, BARS_COMPACT]) {
+  it('has four speed lines on the wordmark and on the mark, each a closed shape', () => {
+    for (const bars of [BARS_STACKED, BARS_MARK]) {
       expect(bars).toHaveLength(4);
       for (const d of bars) expect(d).toMatch(/^M[\d.]+ [\d.]+.*Z$/);
     }
@@ -27,15 +18,12 @@ describe('logo path data', () => {
   });
 
   it('outlines NOW as four contours (N, the two of O, and W) inside one rounded tag', () => {
-    for (const tag of [NOW_STACKED, NOW_COMPACT]) {
-      expect(contours(tag.letters)).toBe(4);
-      expect(contours(tag.pill)).toBe(1);
-      expect(tag.letters).toMatch(/^[MLCQZ\d. -]+$/);
-    }
+    expect(contours(NOW_STACKED.letters)).toBe(4);
+    expect(contours(NOW_STACKED.pill)).toBe(1);
+    expect(NOW_STACKED.letters).toMatch(/^[MLCQZ\d. -]+$/);
   });
 
   it('declares a view box that matches its stated size', () => {
-    expect(VIEW_BOX.compact).toBe(`0 0 ${SIZE.compact.width} ${SIZE.compact.height}`);
     expect(VIEW_BOX.mark).toBe(`0 0 ${SIZE.mark.width} ${SIZE.mark.height}`);
     expect(VIEW_BOX.stacked.endsWith(`${SIZE.stacked.width} ${SIZE.stacked.height}`)).toBe(true);
   });

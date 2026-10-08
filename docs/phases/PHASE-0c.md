@@ -23,7 +23,7 @@ package pins are in [ADR 0003](../decisions/0003-toolchain-version-pins.md).
 
 ### In
 
-- [x] Logo option A (stacked), a compact header logo and the Q mark, drawn with `react-native-svg` from the
+- [x] Logo option A (stacked), the Q mark (the header later changed to the stacked logo), drawn with `react-native-svg` from the
       parent's outlined paths, with NOW outlined from Poppins Black
 - [x] The tagline "Dukaan se ghar tak." in English, Hindi and Marathi
 - [x] The aubergine and pistachio palette in a light and a dark theme (28 colour roles), a `ThemeProvider`,

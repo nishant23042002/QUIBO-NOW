@@ -2,7 +2,7 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
 import { ThemeProvider, useTheme } from '@/theme';
-import { Boot, LogoCompact, ThemeToggle } from '@/ui';
+import { Boot, HeaderLogo, ThemeToggle } from '@/ui';
 
 function Screens() {
   const { t } = useLanguage();
@@ -14,6 +14,7 @@ function Screens() {
         headerStyle: { backgroundColor: colors.chrome },
         headerTintColor: colors.onChrome,
         headerShadowVisible: false,
+        headerTitleAlign: 'left',
         contentStyle: { backgroundColor: colors.bg },
         headerRight: () => <ThemeToggle />,
       }}
@@ -22,7 +23,7 @@ function Screens() {
         name="index"
         options={{
           title: t('app.name'),
-          headerTitle: () => <LogoCompact height={36} label={t('app.name')} />,
+          headerTitle: () => <HeaderLogo label={t('app.name')} />,
         }}
       />
       <Stack.Screen name="components" options={{ title: t('components.title') }} />
