@@ -7,6 +7,7 @@ import { Icon } from './Icon';
 import { IconButton } from './IconButton';
 import type { ShopInfoCardProps } from './ShopInfoCard';
 import { ShopsChip } from './ShopsChip';
+import { SearchBar, type SearchHint } from './SearchBar';
 import { ShopsPanel } from './ShopsPanel';
 import { Text } from './Text';
 import { TAP_MIN, space } from './tokens';
@@ -29,7 +30,12 @@ export interface HomeHeaderProps {
   shopsLabel: string;
   /** The title inside the panel, for example "Local shops in Roha". */
   shopsTitle: string;
+  /** The search bar's name for a screen reader, for example "Search for items and shops". */
+  searchLabel: string;
+  /** The search bar's hint: a fixed part ("Search") and example words that type themselves in. */
+  searchHint: SearchHint;
   profileLabel: string;
+  onSearchPress: () => void;
   onAddressPress: () => void;
   onProfilePress: () => void;
 }
@@ -52,17 +58,18 @@ const makeStyles = (c: ThemeColors) =>
     button: { marginTop: -BUTTON_LIFT },
     // The bar's right padding leaves room for the profile button's empty edge; the chip keeps the full 16 dp gutter.
     chip: { marginRight: BUTTON_INSET, alignItems: 'flex-start' },
+    search: { marginTop: space[3] },
     pressed: { opacity: 0.7 },
   });
 
 /**
  * The top block of Home: the delivery window, the address, the shops chip (which opens a row of shop cards
- * under it), and the profile button.
+ * under it), the search bar, and the profile button.
  * It fills the status bar area with its own colour, and the status bar text follows the tint:
  * dark on the light theme's soft tint, light on the dark theme's deep one.
  *
  * Spacing: a 16 dp gutter on both sides (the profile circle, not its touch target, sits on the right
- * gutter), 12 dp below the status bar, the address under the heading, the shops chip 4 dp under the address, 16 dp below the block.
+ * gutter), 12 dp below the status bar, the address under the heading, the shops chip 4 dp under the address, the search bar 12 dp under the chip (or under the shops row when it is open), 16 dp below the block.
  */
 export function HomeHeader({
   deliveryLine,
@@ -71,7 +78,10 @@ export function HomeHeader({
   shops,
   shopsLabel,
   shopsTitle,
+  searchLabel,
+  searchHint,
   profileLabel,
+  onSearchPress,
   onAddressPress,
   onProfilePress,
 }: HomeHeaderProps) {
@@ -128,6 +138,18 @@ export function HomeHeader({
       </View>
       {/* Slides open under the chip and pushes the page down; the cards swipe sideways. */}
       <ShopsPanel open={shopsOpen} title={shopsTitle} shops={shops} />
+      {/* Last in the block, so it stays next to what comes after it (the category tabs) whether the shops are open or not. */}
+      <View
+        style={[
+          styles.search,
+          {
+            paddingLeft: insets.left + space[4],
+            paddingRight: insets.right + space[4],
+          },
+        ]}
+      >
+        <SearchBar placeholder={searchLabel} hint={searchHint} onPress={onSearchPress} />
+      </View>
     </View>
   );
 }

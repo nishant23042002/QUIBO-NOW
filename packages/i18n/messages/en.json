@@ -34,6 +34,14 @@
         "opensTime": "7 AM"
       },
       "closed": "Closed now"
+    },
+    "search": {
+      "label": "Search for items and shops",
+      "itemMilk": "milk",
+      "itemAtta": "atta",
+      "itemVegetables": "vegetables",
+      "itemBread": "bread",
+      "hintLabel": "Search"
     }
   },
   "language": {

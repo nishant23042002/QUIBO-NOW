@@ -34,6 +34,14 @@
         "opensTime": "सुबह 7 बजे"
       },
       "closed": "अभी बंद है"
+    },
+    "search": {
+      "label": "सामान और दुकानें खोजें",
+      "itemMilk": "दूध",
+      "itemAtta": "आटा",
+      "itemVegetables": "सब्ज़ी",
+      "itemBread": "ब्रेड",
+      "hintLabel": "खोजें"
     }
   },
   "language": {

@@ -34,6 +34,14 @@
         "opensTime": "सकाळी 7"
       },
       "closed": "आत्ता बंद"
+    },
+    "search": {
+      "label": "वस्तू आणि दुकाने शोधा",
+      "itemMilk": "दूध",
+      "itemAtta": "पीठ",
+      "itemVegetables": "भाजी",
+      "itemBread": "ब्रेड",
+      "hintLabel": "शोधा"
     }
   },
   "language": {

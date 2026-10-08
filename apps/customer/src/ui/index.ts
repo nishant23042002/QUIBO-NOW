@@ -26,7 +26,7 @@ export { Notice, type NoticeProps } from './Notice';
 export { Price, type PriceProps } from './Price';
 export { ProductImage, type ProductImageProps } from './ProductImage';
 export { Screen } from './Screen';
-export { SearchBar, type SearchBarProps } from './SearchBar';
+export { SearchBar, type SearchBarProps, type SearchHint } from './SearchBar';
 export { Collapsible, type CollapsibleProps } from './Collapsible';
 export { ShopInfoCard, type ShopInfoCardProps } from './ShopInfoCard';
 export { ShopsPanel, type ShopsPanelProps } from './ShopsPanel';
