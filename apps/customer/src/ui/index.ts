@@ -38,6 +38,7 @@ export { CartFloat, type CartFloatProps, type CartThumb } from './CartFloat';
 export { DietMark, type DietMarkProps } from './DietMark';
 export { DiscountRibbon, type DiscountRibbonProps } from './DiscountRibbon';
 export { Price, type PriceProps } from './Price';
+export { ProductGallery, type GalleryImage, type ProductGalleryProps } from './ProductGallery';
 export { PackPicker, type PackOption, type PackPickerProps } from './PackPicker';
 export { PriceBadge, type PriceBadgeProps } from './PriceBadge';
 export { ProductCard, type ProductCardProps } from './ProductCard';

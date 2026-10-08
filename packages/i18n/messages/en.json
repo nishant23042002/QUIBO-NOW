@@ -251,6 +251,14 @@
       "back": "Back to Home"
     },
     "pickSize": "Pick a size",
-    "bestValue": "Best value"
+    "bestValue": "Best value",
+    "netQuantity": "Net quantity: {pack}",
+    "taxes": "Inclusive of all taxes",
+    "photoOf": "Photo {n} of {total}",
+    "photos": {
+      "front": "Front",
+      "pack": "Inside the pack",
+      "close": "Close up"
+    }
   }
 }

@@ -1,5 +1,6 @@
 import { formatRupees, money, subtract, type Money } from '@quibo/contracts';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import type { GalleryImage } from '@/ui';
 import {
   bestValueIndex,
   baseAmount,
@@ -203,6 +204,17 @@ const SHOP_OF: Record<ItemCategory, 'one' | 'two' | 'three'> = {
   snacks: 'two',
 };
 
+/**
+ * The pictures of a product until there are real photos (Phase 1b): its emoji drawn three ways, front, inside the
+ * pack and close up. Most products have all three; these have fewer, so the page shows one and two pictures too.
+ */
+const PHOTO_VIEWS = [
+  { key: 'front', scale: 0.5, alt: false },
+  { key: 'pack', scale: 0.22, alt: true },
+  { key: 'close', scale: 0.95, alt: false },
+] as const;
+const PHOTO_COUNT: Readonly<Record<string, number>> = { banana: 1, chips: 2, biscuits: 2 };
+
 /** One more way a product is sold: its own size, price and stock. The first pack is the sample's own fields above. */
 interface SamplePack {
   amount: number;
@@ -261,6 +273,8 @@ export interface HomeItem {
   emoji: string;
   name: string;
   diet: { kind: 'veg' | 'nonveg'; label: string };
+  /** The product's pictures, the first being the one the big picture opens on. */
+  images: readonly GalleryImage[];
   /** The id of the pack a card shows and adds. */
   defaultPackId: string;
   packs: readonly HomePack[];
@@ -349,6 +363,13 @@ export function useHomeItems(): readonly HomeItem[] {
         kind: sample.nonVeg === true ? 'nonveg' : 'veg',
         label: t(sample.nonVeg === true ? 'home.rails.nonVeg' : 'home.rails.veg'),
       },
+      images: PHOTO_VIEWS.slice(0, PHOTO_COUNT[sample.id] ?? PHOTO_VIEWS.length).map((view) => ({
+        key: view.key,
+        label: t(`product.photos.${view.key}`),
+        emoji: sample.emoji,
+        scale: view.scale,
+        alt: view.alt,
+      })),
       defaultPackId: first.id,
       packs,
       ...(packs.length > 1 ? { sizesLabel: t('home.rails.sizes', { count: packs.length }) } : {}),
