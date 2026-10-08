@@ -1,13 +1,32 @@
+export { AddressPill, type AddressPillProps } from './AddressPill';
 export { Badge, type BadgeProps } from './Badge';
+export {
+  BillSummary,
+  type BillRow,
+  type BillSummaryProps,
+  type FreeDeliveryHint,
+} from './BillSummary';
 export { Boot } from './Boot';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
+export { CartBar, type CartBarProps } from './CartBar';
+export { CategoryTile, type CategoryTileProps } from './CategoryTile';
+export { Chip, type ChipProps } from './Chip';
 export { Icon, type IconName } from './Icon';
 export { IconButton, type IconButtonProps } from './IconButton';
 export { Input, type InputProps } from './Input';
+export { ItemCard, type ItemCardProps } from './ItemCard';
 export { LogoCompact, LogoStacked, QMark, type LogoGround } from './brand/Logo';
+export { COUNT_RULE, WEIGHT_RULE, type QuantityRule } from './logic/quantity';
+export { Notice, type NoticeProps } from './Notice';
+export { Price, type PriceProps } from './Price';
+export { ProductImage, type ProductImageProps } from './ProductImage';
 export { Screen } from './Screen';
+export { SearchBar, type SearchBarProps } from './SearchBar';
 export { Sheet, type SheetProps } from './Sheet';
+export { ShopCard, type ShopCardProps } from './ShopCard';
+export { Stepper, type StepperProps } from './Stepper';
 export { Text, type TextColor, type TextProps, type TextVariant } from './Text';
 export { ThemeToggle } from './ThemeToggle';
+export { WindowPicker, type DeliveryWindowOption, type WindowPickerProps } from './WindowPicker';
 export { radius, space, TAP_MIN } from './tokens';

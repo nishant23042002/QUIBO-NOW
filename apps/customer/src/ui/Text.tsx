@@ -34,6 +34,7 @@ export type TextColor = Extract<
   | 'onChromeMuted'
   | 'onAccent'
   | 'onAction'
+  | 'action'
   | 'accentInk'
   | 'tagFg'
   | 'success'
@@ -45,13 +46,15 @@ export type TextColor = Extract<
 export interface TextProps extends Omit<NativeTextProps, 'style'> {
   variant?: TextVariant;
   color?: TextColor;
+  /** A line through the text, for a printed price that has been beaten. */
+  strike?: boolean;
 }
 
 /**
  * The only way text reaches a screen. It uses system fonts, follows the phone's text-size
  * setting up to 200%, and gives Hindi and Marathi the extra line height they need.
  */
-export function Text({ variant = 'body', color = 'ink', ...rest }: TextProps) {
+export function Text({ variant = 'body', color = 'ink', strike = false, ...rest }: TextProps) {
   const { locale } = useLanguage();
   const { colors } = useTheme();
   const { fontSize: size, fontWeight, leading: spacing } = variants[variant];
@@ -63,7 +66,13 @@ export function Text({ variant = 'body', color = 'ink', ...rest }: TextProps) {
       maxFontSizeMultiplier={2}
       role={isHeading ? 'heading' : undefined}
       {...rest}
-      style={{ color: colors[color], fontSize: size, fontWeight, lineHeight }}
+      style={{
+        color: colors[color],
+        fontSize: size,
+        fontWeight,
+        lineHeight,
+        textDecorationLine: strike ? 'line-through' : 'none',
+      }}
     />
   );
 }
