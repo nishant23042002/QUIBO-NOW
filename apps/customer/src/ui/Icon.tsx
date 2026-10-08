@@ -38,8 +38,6 @@ const SHAPES = {
 
 export type IconName = keyof typeof SHAPES;
 
-export const ICON_NAMES = Object.keys(SHAPES) as IconName[];
-
 interface IconProps {
   name: IconName;
   /** Pass a colour from useTheme(). */

@@ -14,7 +14,7 @@ import { readSetting, writeSetting } from '@/storage';
 
 const THEME_KEY = 'quibo.theme';
 
-export interface Theme {
+interface Theme {
   mode: Mode;
   /** The theme being drawn: light or dark. */
   scheme: Scheme;
