@@ -1,39 +1,36 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
+import { useSampleShops } from '@/home/sampleShops';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { LanguageSwitcher } from '@/i18n/LanguageSwitcher';
-import { Button, Notice, Screen, Text, space } from '@/ui';
+import { useStyles, type ThemeColors } from '@/theme';
+import { HomeHeader } from '@/ui';
 
-// Phase 0 placeholder. The real home (your shops, categories, reorder strip) is Phase 1.
+const makeStyles = (c: ThemeColors) =>
+  StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
+
+// Phase 1a is built one section at a time. So far: the header and the shops row it opens.
 export default function HomeScreen() {
   const { t } = useLanguage();
   const router = useRouter();
+  const styles = useStyles(makeStyles);
+  const shops = useSampleShops();
+  const openCount = shops.filter((shop) => shop.open).length;
 
   return (
-    <Screen>
-      <LanguageSwitcher />
-      <Text variant="lead" color="inkMuted">
-        {t('app.tagline')}
-      </Text>
-      <View style={styles.copy}>
-        <Text variant="heading">{t('home.title')}</Text>
-        <Text>{t('home.subtitle')}</Text>
-      </View>
-      <Notice tone="info" icon="clock" message={t('home.windowNote')} />
-      {/* The components gallery is for developers and testers: only development builds link to it. */}
-      {__DEV__ ? (
-        <Button
-          label={t('components.title')}
-          variant="secondary"
-          onPress={() => {
-            router.push('/components');
-          }}
-        />
-      ) : null}
-    </Screen>
+    <View style={styles.page}>
+      <HomeHeader
+        deliveryLine={t('home.header.deliveryToday', { window: t('home.header.sampleWindow') })}
+        address={t('home.header.sampleAddress')}
+        addressCaption={t('home.header.addressCaption')}
+        shops={shops}
+        shopsLabel={t('home.header.shopsOpen', { count: openCount })}
+        shopsTitle={t('home.shopsSheet.title')}
+        profileLabel={t('home.header.profile')}
+        onAddressPress={() => undefined}
+        onProfilePress={() => {
+          router.push('/profile');
+        }}
+      />
+    </View>
   );
 }
-
-const styles = StyleSheet.create({
-  copy: { gap: space[2] },
-});

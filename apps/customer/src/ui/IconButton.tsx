@@ -8,8 +8,8 @@ export interface IconButtonProps {
   /** What a screen reader says. Pass a translated string. */
   label: string;
   onPress: () => void;
-  /** "chrome" for the dark header, "page" for the page itself. */
-  ground?: 'chrome' | 'page';
+  /** "chrome" for the dark header, "header" for the tinted home header, "page" for the page itself. */
+  ground?: 'chrome' | 'header' | 'page';
 }
 
 const CIRCLE = 38;
@@ -26,6 +26,7 @@ const makeStyles = (c: ThemeColors) =>
       justifyContent: 'center',
     },
     chrome: { borderColor: c.onChrome },
+    header: { borderWidth: 0, backgroundColor: c.headerControl },
     page: { borderColor: c.ctl },
     pressed: { opacity: 0.7 },
   });
@@ -34,7 +35,12 @@ const makeStyles = (c: ThemeColors) =>
 export function IconButton({ icon, label, onPress, ground = 'chrome' }: IconButtonProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
-  const iconColor = ground === 'chrome' ? colors.onChrome : colors.ink;
+  const iconColor =
+    ground === 'chrome'
+      ? colors.onChrome
+      : ground === 'header'
+        ? colors.onHeaderControl
+        : colors.ink;
 
   return (
     <Pressable
@@ -43,7 +49,7 @@ export function IconButton({ icon, label, onPress, ground = 'chrome' }: IconButt
       onPress={onPress}
       style={({ pressed }) => [styles.hit, pressed && styles.pressed]}
     >
-      <View style={[styles.circle, ground === 'chrome' ? styles.chrome : styles.page]}>
+      <View style={[styles.circle, styles[ground]]}>
         <Icon name={icon} color={iconColor} size={18} />
       </View>
     </Pressable>

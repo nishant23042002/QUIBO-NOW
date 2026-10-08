@@ -1,6 +1,7 @@
 import { SplashScreen, Stack } from 'expo-router';
 import { NavigationBar } from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
+import { StatusBar as NativeStatusBar } from 'react-native';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
 import { ThemeProvider, useTheme } from '@/theme';
 import { AppHeader, AppSplash } from '@/ui';
@@ -17,20 +18,19 @@ function Screens() {
     <Stack
       screenOptions={{
         // Our own header, so its height never depends on when the phone reports the status bar.
-        header: ({ back, navigation, options }) =>
-          back === undefined ? (
-            <AppHeader logoLabel={t('app.name')} />
-          ) : (
-            <AppHeader
-              title={options.title ?? ''}
-              backLabel={t('common.back')}
-              onBack={navigation.goBack}
-            />
-          ),
+        header: ({ navigation, options }) => (
+          <AppHeader
+            title={options.title ?? ''}
+            backLabel={t('common.back')}
+            onBack={navigation.goBack}
+          />
+        ),
         contentStyle: { backgroundColor: colors.bg },
       }}
     >
-      <Stack.Screen name="index" options={{ title: t('app.name') }} />
+      {/* Home draws its own tinted header (HomeHeader), so the status bar area takes its colour. */}
+      <Stack.Screen name="index" options={{ title: t('app.name'), headerShown: false }} />
+      <Stack.Screen name="profile" options={{ title: t('profile.title') }} />
       <Stack.Screen name="components" options={{ title: t('components.title') }} />
     </Stack>
   );
@@ -50,8 +50,10 @@ function SystemBars() {
   const { scheme } = useTheme();
   return (
     <>
-      {/* The header is dark in both themes, so the status bar text is always light. */}
+      {/* Each header sets its own text colour, since the home header's tint changes with the theme. */}
       <StatusBar style="light" />
+      {/* Draw under the status bar on phones that do not do it by themselves, so the header's colour reaches the top edge. */}
+      <NativeStatusBar translucent backgroundColor="transparent" />
       {/* Behind the navigation buttons is the page: a light bar with dark buttons, or the reverse. */}
       <NavigationBar style={scheme === 'dark' ? 'dark' : 'light'} />
     </>

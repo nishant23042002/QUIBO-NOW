@@ -15,6 +15,13 @@ const SHAPES = {
   search: [ring(10.5, 10.5, 6.5), path('M15.5 15.5L21 21')],
   pin: [path('M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z'), dot(12, 9.5, 2.4)],
   chevron: [path('M6 9l6 6 6-6')],
+  chevronRight: [path('M9 6l6 6-6 6')],
+  shield: [path('M12 3l7 3v5.5c0 4.4-3 7.7-7 9.5-4-1.8-7-5.1-7-9.5V6z'), path('M9 12l2 2 4-4')],
+  store: [
+    path('M4 10l1.5-5.5h13L20 10'),
+    path('M4 10a2.7 2.7 0 0 0 5.3 0 2.7 2.7 0 0 0 5.4 0A2.7 2.7 0 0 0 20 10'),
+    path('M5.5 12.5V20h13v-7.5'),
+  ],
   back: [path('M15 5l-7 7 7 7')],
   check: [path('M5 12.5l4.5 4.5L19 7.5')],
   close: [path('M6 6l12 12M18 6L6 18')],
@@ -29,6 +36,7 @@ const SHAPES = {
   plus: [path('M12 5v14M5 12h14')],
   minus: [path('M5 12h14')],
   bag: [path('M5 8h14l-1 12H6L5 8z'), path('M9 8V6.5a3 3 0 0 1 6 0V8')],
+  user: [ring(12, 8, 3.8), path('M4.5 20.5c0-4 3.4-6.6 7.5-6.6s7.5 2.6 7.5 6.6')],
   wifiOff: [
     path('M3 9a14 14 0 0 1 18 0M6 12.5a9.5 9.5 0 0 1 12 0M9 16a5 5 0 0 1 6 0'),
     dot(12, 19, 1.6),

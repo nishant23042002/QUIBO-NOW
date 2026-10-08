@@ -7,7 +7,34 @@
   "home": {
     "title": "Groceries from your town's own shops",
     "subtitle": "Order from the kirana, dairy and vegetable shops you already trust. We bring it to your door.",
-    "windowNote": "You always get a delivery window, so you know when to expect us."
+    "windowNote": "You always get a delivery window, so you know when to expect us.",
+    "header": {
+      "deliveryToday": "Delivery today, {window}",
+      "sampleWindow": "4–6 PM",
+      "sampleAddress": "Roha, Raigad, Maharashtra",
+      "addressCaption": "Deliver to",
+      "profile": "Profile",
+      "shopsOpen": "{count} local shops open now"
+    },
+    "shopsSheet": {
+      "title": "Verified local shops in Roha",
+      "open": "Open now",
+      "opensAt": "Opens {time}",
+      "verified": "Verified by Quibo",
+      "since": "In Roha since {year}",
+      "sample": {
+        "oneName": "Sharma Dairy",
+        "oneType": "Milk, curd, paneer, eggs",
+        "twoName": "Joshi Kirana",
+        "twoType": "Atta, dal, oil, spices",
+        "threeName": "Patil Vegetables",
+        "threeType": "Fresh vegetables and fruit",
+        "fourName": "Kamat Bakery",
+        "fourType": "Bread, biscuits, snacks",
+        "opensTime": "7 AM"
+      },
+      "closed": "Closed now"
+    }
   },
   "language": {
     "label": "Language",
@@ -16,8 +43,9 @@
     "mr": "मराठी"
   },
   "theme": {
-    "toDark": "Switch to dark theme",
-    "toLight": "Switch to light theme"
+    "system": "Same as phone",
+    "light": "Light",
+    "dark": "Dark"
   },
   "common": {
     "loading": "Loading…",
@@ -76,5 +104,9 @@
       "freeReached": "You get free delivery",
       "noticeInfo": "Each shop sets its own prices."
     }
+  },
+  "profile": {
+    "title": "Profile",
+    "appearance": "Appearance"
   }
 }

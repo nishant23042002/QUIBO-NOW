@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { parseMode, resolveScheme, toggledMode } from './mode';
+import { parseMode, resolveScheme } from './mode';
 
 describe('resolveScheme', () => {
   it('follows the phone while the mode is "system"', () => {
@@ -30,19 +30,6 @@ describe('parseMode', () => {
   it('treats nothing stored, or anything unexpected, as "system"', () => {
     for (const bad of [null, undefined, '', 'DARK', 'Light', 'blue', ' dark', '1']) {
       expect(parseMode(bad)).toBe('system');
-    }
-  });
-});
-
-describe('toggledMode', () => {
-  it('switches to the opposite of the theme being shown', () => {
-    expect(toggledMode('light')).toBe('dark');
-    expect(toggledMode('dark')).toBe('light');
-  });
-
-  it('never goes back to "system", so a tap is always an explicit choice', () => {
-    for (const scheme of ['light', 'dark'] as const) {
-      expect(toggledMode(scheme)).not.toBe('system');
     }
   });
 });

@@ -1,5 +1,6 @@
 /*
- * The Quibo Now palette: Aubergine and Pistachio, in a light and a dark theme. This is the only file
+ * The Quibo Now palette: Aubergine and Pistachio in the light theme, and a black and graphite dark theme
+ * that keeps Aubergine for the header and bars, and Pistachio as the accent. This is the only file
  * that may contain a colour value (lint enforces it); everything else reads colours from useTheme().
  * Every text and control pairing below is checked in palette.test.ts: 4.5:1 for text, 3:1 for the
  * edge of a control.
@@ -27,6 +28,17 @@ export interface ThemeColors {
   chrome: string;
   onChrome: string;
   onChromeMuted: string;
+
+  /**
+   * The tinted block at the top of Home: address, profile and search. It paints behind the status bar too.
+   * Light and soft in the light theme, deep in the dark one; text on it uses `onHeader`.
+   */
+  headerBg: string;
+  onHeader: string;
+  onHeaderMuted: string;
+  /** The round buttons on the header (profile, theme), and the icon on them. */
+  headerControl: string;
+  onHeaderControl: string;
 
   /** The main action. Only ever a fill with `onAccent` on it, or text in `accentInk`. */
   accent: string;
@@ -69,6 +81,11 @@ export const palettes: Record<Scheme, ThemeColors> = {
     chrome: '#3A1646',
     onChrome: '#FFFFFF',
     onChromeMuted: '#D2BDDB',
+    headerBg: '#E9D8F0',
+    onHeader: '#2A1033',
+    onHeaderMuted: '#563E60',
+    headerControl: '#FFFFFF',
+    onHeaderControl: '#2A1033',
     accent: '#B8E86B',
     onAccent: '#2A1033',
     accentPressed: '#9FD24E',
@@ -89,33 +106,38 @@ export const palettes: Record<Scheme, ThemeColors> = {
     scrim: 'rgba(42, 16, 51, 0.55)',
   },
   dark: {
-    bg: '#170A1E',
-    surface: '#26122F',
-    muted: '#341A40',
-    ink: '#F6EEF8',
-    inkMuted: '#BBA5C4',
-    line: '#3E2349',
-    ctl: '#9A82A5',
-    chrome: '#26122F',
+    bg: '#0C0C0E',
+    surface: '#1B1B1F',
+    muted: '#2C2631',
+    ink: '#F5F5F7',
+    inkMuted: '#B4B4BE',
+    line: '#3E3844',
+    ctl: '#9A92A4',
+    chrome: '#2A1235',
     onChrome: '#FFFFFF',
-    onChromeMuted: '#BBA5C4',
+    onChromeMuted: '#CDBFD6',
+    headerBg: '#3E1A4C',
+    onHeader: '#FFFFFF',
+    onHeaderMuted: '#DCCBE4',
+    headerControl: '#F6EEF8',
+    onHeaderControl: '#2A1033',
     accent: '#B8E86B',
     onAccent: '#2A1033',
     accentPressed: '#9FD24E',
-    accentSubtle: '#2F4A12',
+    accentSubtle: '#33481A',
     accentInk: '#B8E86B',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',
-    success: '#7FD99B',
-    successBg: '#10301C',
-    warning: '#F2C265',
-    warningBg: '#3A2A08',
-    danger: '#FF9C94',
-    dangerBg: '#3A1512',
-    info: '#8DB8F5',
-    infoBg: '#10243F',
+    success: '#93E8AC',
+    successBg: '#16341F',
+    warning: '#F7CB74',
+    warningBg: '#3B2E0E',
+    danger: '#FFA8A0',
+    dangerBg: '#401A17',
+    info: '#9CC4F8',
+    infoBg: '#142C4D',
     action: '#B8E86B',
     onAction: '#2A1033',
-    scrim: 'rgba(0, 0, 0, 0.6)',
+    scrim: 'rgba(0, 0, 0, 0.7)',
   },
 };

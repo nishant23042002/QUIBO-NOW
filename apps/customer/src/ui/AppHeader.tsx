@@ -1,10 +1,10 @@
+import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, type ThemeColors } from '@/theme';
 import { HeaderLogo } from './brand/HeaderLogo';
 import { IconButton } from './IconButton';
 import { Text } from './Text';
-import { ThemeToggle } from './ThemeToggle';
 import { HEADER_HEIGHT, space } from './tokens';
 
 export interface AppHeaderProps {
@@ -47,6 +47,8 @@ export function AppHeader({ logoLabel, title, onBack, backLabel }: AppHeaderProp
         },
       ]}
     >
+      {/* This header is dark in both themes, so the status bar text is light. */}
+      <StatusBar style="light" />
       <View style={styles.row}>
         {onBack !== undefined && backLabel !== undefined ? (
           <View style={styles.back}>
@@ -63,7 +65,6 @@ export function AppHeader({ logoLabel, title, onBack, backLabel }: AppHeaderProp
         ) : (
           <View style={styles.spacer} />
         )}
-        <ThemeToggle />
       </View>
     </View>
   );

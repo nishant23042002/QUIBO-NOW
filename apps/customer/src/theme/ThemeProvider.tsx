@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from 'react';
 import { Appearance, useColorScheme } from 'react-native';
-import { parseMode, resolveScheme, toggledMode, type Mode } from './mode';
+import { parseMode, resolveScheme, type Mode } from './mode';
 import { palettes, type Scheme, type ThemeColors } from './palette';
 import { readSetting, writeSetting } from '@/storage';
 
@@ -21,15 +21,15 @@ interface Theme {
   colors: ThemeColors;
   /** False until the stored choice has been read, so the app can wait instead of flashing. */
   ready: boolean;
-  /** Switch to the other theme and remember it. */
-  toggle: () => void;
+  /** Choose a theme, or "system" to follow the phone again, and remember the choice. */
+  setMode: (mode: Mode) => void;
 }
 
 const ThemeContext = createContext<Theme | null>(null);
 
 /**
- * Holds the theme for the whole app. It starts from the phone's light or dark setting, and the
- * toggle overrides that and is remembered. Every colour on screen comes from here.
+ * Holds the theme for the whole app. It starts from the phone's light or dark setting, and a choice
+ * on the profile screen overrides that and is remembered. Every colour on screen comes from here.
  */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const system = useColorScheme();
@@ -59,15 +59,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 
   const scheme = resolveScheme(mode, system);
 
-  const toggle = useCallback(() => {
-    const next = toggledMode(scheme);
+  const choose = useCallback((next: Mode) => {
     setMode(next);
     void writeSetting(THEME_KEY, next);
-  }, [scheme]);
+  }, []);
 
   const value = useMemo<Theme>(
-    () => ({ mode, scheme, colors: palettes[scheme], ready, toggle }),
-    [mode, scheme, ready, toggle],
+    () => ({ mode, scheme, colors: palettes[scheme], ready, setMode: choose }),
+    [mode, scheme, ready, choose],
   );
 
   return <ThemeContext value={value}>{children}</ThemeContext>;
