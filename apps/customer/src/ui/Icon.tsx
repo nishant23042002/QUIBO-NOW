@@ -25,6 +25,12 @@ const SHAPES = {
   back: [path('M15 5l-7 7 7 7')],
   check: [path('M5 12.5l4.5 4.5L19 7.5')],
   info: [ring(12, 12, 9), path('M12 11v5.5'), dot(12, 7.6, 1.2)],
+  share: [path('M12 15V4'), path('M8 7.5L12 4l4 3.5'), path('M6 11v8h12v-8')],
+  // A large four-pointed star with a small one at its upper right.
+  sparkle: [
+    path('M10.5 7l1.6 5.4 5.4 1.6-5.4 1.6-1.6 5.4-1.6-5.4L3.5 14l5.4-1.6z'),
+    path('M18 2.8l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z'),
+  ],
   close: [path('M6 6l12 12M18 6L6 18')],
   clock: [ring(12, 12, 9), path('M12 7v5.5l3.5 2')],
   sun: [

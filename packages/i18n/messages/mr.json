@@ -14,7 +14,8 @@
       "sampleAddress": "रोहा, रायगड, महाराष्ट्र",
       "addressCaption": "येथे पोहोचवा",
       "profile": "प्रोफाइल",
-      "shopsOpen": "{count} दुकाने आत्ता सुरू आहेत"
+      "shopsOpen": "{count} दुकाने आत्ता सुरू आहेत",
+      "fullAddress": "घर - स्टेशन रोड, रोहा, रायगड, महाराष्ट्र 402109"
     },
     "shopsSheet": {
       "title": "रोह्यातील तपासलेली स्थानिक दुकाने",
@@ -434,6 +435,8 @@
       "goodFor": "यासाठी चांगले: {use}",
       "bestValue": "{unit}, सर्वात किफायतशीर आकार",
       "perUnit": "या आकारासाठी {unit}"
-    }
+    },
+    "share": "शेअर करा",
+    "shareMessage": "{shop} कडून {name} ({pack}) {price} ला, Quibo Now वर: {link}"
   }
 }

@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState, type ReactNode } from 'react';
 import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,6 +10,7 @@ import { PromoCarousel, type PromoSlide } from './PromoCarousel';
 import { SearchBar, type SearchHint } from './SearchBar';
 import type { ShopInfoCardProps } from './ShopInfoCard';
 import { ShopsChip } from './ShopsChip';
+import { ScreenStatusBar } from './ScreenStatusBar';
 import { ShopsPanel } from './ShopsPanel';
 import { Text } from './Text';
 import { TAP_MIN, radius, space } from './tokens';
@@ -254,7 +254,7 @@ export function HomeHeader({
 
   return (
     <View style={styles.frame}>
-      <StatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <Animated.ScrollView
         showsVerticalScrollIndicator={false}
         overScrollMode="never"

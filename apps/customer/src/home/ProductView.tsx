@@ -1,7 +1,8 @@
 import { formatRupees, subtract } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Animated, Pressable, StyleSheet, View, useWindowDimensions } from 'react-native';
+import * as Linking from 'expo-linking';
+import { Animated, Pressable, Share, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
@@ -217,6 +218,24 @@ export function ProductView({ item, onBack }: { item: HomeItem; onBack: () => vo
   // The header turns into the product card once most of the big picture has scrolled away.
   const revealAt = Math.round(((width - space[3] * 2) / PICTURE_RATIO) * 0.75);
 
+  // Opens the phone's own share sheet with a line about the product. Cancelling it, or a phone with nothing to
+  // share to, is not an error worth showing.
+  const shareProduct = async () => {
+    try {
+      await Share.share({
+        message: t('product.shareMessage', {
+          name: item.name,
+          pack: pack.label,
+          price: formatRupees(pack.price),
+          shop: item.shopName,
+          link: Linking.createURL(`/product/${item.id}`),
+        }),
+      });
+    } catch {
+      // Nothing to do: the shopper closed the sheet, or this phone cannot share.
+    }
+  };
+
   const openShop = () => {
     router.push({ pathname: '/shop/[id]', params: { id: item.shop } });
   };
@@ -229,8 +248,18 @@ export function ProductView({ item, onBack }: { item: HomeItem; onBack: () => vo
         tint={tintOf(item.category)}
         price={pack.price}
         {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
+        deliveryLabel={t('home.rails.today', { window: t('home.header.sampleWindow') })}
+        addressLabel={t('home.header.fullAddress')}
         backLabel={t('common.back')}
+        searchLabel={t('home.search.hintLabel')}
+        shareLabel={t('product.share')}
         onBack={onBack}
+        onSearch={() => {
+          router.push({ pathname: '/search', params: { fresh: String(Date.now()) } });
+        }}
+        onShare={() => {
+          void shareProduct();
+        }}
         scrollY={scrollY}
         revealAt={revealAt}
       />

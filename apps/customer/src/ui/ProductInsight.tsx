@@ -41,12 +41,10 @@ const makeStyles = (c: ThemeColors) =>
       height: BUTTON,
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: radius.full,
-      borderWidth: 1,
-      borderColor: c.line,
-      backgroundColor: c.surface,
+      borderRadius: radius.md,
+      backgroundColor: c.scrim,
     },
-    buttonOn: { backgroundColor: c.action, borderColor: c.action },
+    buttonOn: { backgroundColor: c.action },
     pressed: { opacity: 0.8 },
     card: {
       position: 'absolute',
@@ -156,9 +154,9 @@ export function ProductInsight({ title, rows, openLabel, closeLabel }: ProductIn
         style={({ pressed }) => [styles.button, open && styles.buttonOn, pressed && styles.pressed]}
       >
         <Icon
-          name={open ? 'close' : 'info'}
-          color={open ? colors.onAction : colors.ink}
-          size={20}
+          name={open ? 'close' : 'sparkle'}
+          color={open ? colors.onAction : colors.onChrome}
+          size={22}
         />
       </Pressable>
     </View>

@@ -1,5 +1,4 @@
 import { useRouter } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import type { Ref } from 'react';
 import {
   Pressable,
@@ -17,6 +16,7 @@ import {
   Chip,
   Icon,
   IconButton,
+  ScreenStatusBar,
   SearchField,
   ShopRow,
   Text,
@@ -251,7 +251,7 @@ export function SearchView({
 
   return (
     <View style={styles.page}>
-      <StatusBar style="light" />
+      <ScreenStatusBar style="light" />
       <View style={[styles.header, { paddingTop: insets.top + space[2], paddingBottom: space[2] }]}>
         <View style={{ marginLeft: space[2] - insets.left }}>
           <IconButton icon="back" label={t('common.back')} onPress={router.back} />

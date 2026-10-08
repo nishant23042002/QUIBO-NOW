@@ -14,7 +14,8 @@
       "sampleAddress": "Roha, Raigad, Maharashtra",
       "addressCaption": "Deliver to",
       "profile": "Profile",
-      "shopsOpen": "{count} local shops open now"
+      "shopsOpen": "{count} local shops open now",
+      "fullAddress": "Home - Station Road, Roha, Raigad, Maharashtra 402109"
     },
     "shopsSheet": {
       "title": "Verified local shops in Roha",
@@ -434,6 +435,8 @@
       "goodFor": "Good for {use}",
       "bestValue": "{unit}, the best value size",
       "perUnit": "{unit} for this size"
-    }
+    },
+    "share": "Share",
+    "shareMessage": "{name} ({pack}) for {price} from {shop} on Quibo Now: {link}"
   }
 }
