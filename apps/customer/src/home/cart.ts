@@ -1,7 +1,9 @@
 import { formatRupees, money, subtract } from '@quibo/contracts';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { readSetting, writeSetting } from '@/storage';
 import { summariseCart, type CartEntry } from './cartMath';
+import { restoreCart, serialiseCart, type PackLimit } from './cartStore';
 import { FREE_DELIVERY_FROM } from './delivery';
 import { capQuantity } from './packs';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
@@ -64,6 +66,14 @@ export interface DraftCart {
   savedLabel?: string;
   /** What is in the cart, latest first: for the little pictures in the cart bar. */
   lines: readonly { id: string; emoji: string; category: ItemCategory }[];
+  /** False until the cart saved on the phone has been read back. Until then it looks empty only because it is still loading. */
+  ready: boolean;
+  /**
+   * What changed in the saved cart when it was read back: how many packs were taken out (gone or out of stock) and how
+   * many were lowered to the stock left. Null when nothing changed, or once the shopper has seen it.
+   */
+  restored: { gone: number; lowered: number } | null;
+  dismissRestored: () => void;
   /** The pack whose last unit was just taken out, so it can be put back. Cleared by `clearRemoved` or any new addition. */
   removed: { name: string } | null;
   undoRemove: () => void;
@@ -72,6 +82,9 @@ export interface DraftCart {
 
 /** The most of one pack that one order may hold, whatever the stock. */
 const COUNT_MAX = 20;
+
+/** Where the phone keeps the cart, so it is still there after the app is closed. */
+const CART_KEY = 'quibo.cart';
 
 interface Removal {
   packId: string;
@@ -87,10 +100,10 @@ function packIndex(items: readonly HomeItem[]) {
 }
 
 /**
- * The cart as it is being filled on Home, kept in memory. The real cart (Phase 1d) takes this over, with
- * the same shape. A cart can hold items from several shops: they are grouped into one basket per shop for
- * packing, but the whole cart is a single order with one delivery. The cart counts by pack, so a product's
- * two sizes are two lines. Money is added up in integer paise.
+ * The cart, kept on the phone: it is read back when the app opens and checked against what the shops have now. A
+ * cart can hold items from several shops: they are grouped into one basket per shop for packing, but the whole cart
+ * is a single order with one delivery. The cart counts by pack, so a product's two sizes are two lines. Money is
+ * added up in integer paise.
  */
 export function useDraftCart(): DraftCart {
   const { t } = useLanguage();
@@ -99,7 +112,46 @@ export function useDraftCart(): DraftCart {
   // The order packs were first added in, so "latest first" is known.
   const [order, setOrder] = useState<readonly string[]>([]);
   const [removal, setRemoval] = useState<Removal | null>(null);
+  const [ready, setReady] = useState(false);
+  const [restored, setRestored] = useState<{ gone: number; lowered: number } | null>(null);
   const packs = packIndex(items);
+
+  // The catalogue as it is when the app opens, for the read-back below to check the saved cart against.
+  const [limits] = useState<ReadonlyMap<string, PackLimit>>(
+    () =>
+      new Map(
+        [...packs.entries()].map(([packId, { pack }]) => [
+          packId,
+          {
+            available: pack.available,
+            ...(pack.maxQuantity !== undefined ? { maxQuantity: pack.maxQuantity } : {}),
+          },
+        ]),
+      ),
+  );
+
+  // Read the saved cart once. Anything added before it arrives stays on top of it.
+  useEffect(() => {
+    let live = true;
+    void readSetting(CART_KEY).then((saved) => {
+      if (!live) return;
+      const back = restoreCart(saved, limits, COUNT_MAX);
+      setQuantities((current) => ({ ...back.quantities, ...current }));
+      setOrder((current) => [...back.order.filter((id) => !current.includes(id)), ...current]);
+      if (back.gone > 0 || back.lowered > 0)
+        setRestored({ gone: back.gone, lowered: back.lowered });
+      setReady(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, [limits]);
+
+  // Keep the phone's copy up to date, but never write over the saved cart before it has been read.
+  useEffect(() => {
+    if (!ready) return;
+    void writeSetting(CART_KEY, serialiseCart(order, quantities));
+  }, [ready, order, quantities]);
 
   const apply = (packId: string, next: number) => {
     setQuantities((current) => ({ ...current, [packId]: next }));
@@ -184,6 +236,11 @@ export function useDraftCart(): DraftCart {
       emoji: item.emoji,
       category: item.category,
     })),
+    ready,
+    restored,
+    dismissRestored: () => {
+      setRestored(null);
+    },
     removed: removal === null ? null : { name: removal.name },
     undoRemove: () => {
       if (removal === null) return;

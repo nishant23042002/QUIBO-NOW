@@ -1,8 +1,7 @@
-import { useState } from 'react';
+import { useRouter } from 'expo-router';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { CartFloat, Toast, space, type CartThumb } from '@/ui';
 import { useCart } from './CartProvider';
-import { CartSheet } from './CartSheet';
 import { useTintOf } from './categories';
 
 /** About the height of the docked cart bar: how much room a page keeps under its last row while the bar shows. */
@@ -13,15 +12,35 @@ const CART_BAR = 96;
 const MAX_THUMBS = 3;
 
 /**
- * Everything the cart puts on a screen: the docked cart bar, the undo toast and the cart sheet the bar opens.
- * A screen places it once and says how far above its own bottom the bar docks (above the tab bar on Home,
- * at the phone's bottom edge on a shop page).
+ * The "removed, undo" note shown when the last unit of something leaves the cart. `bottom` is how far above the
+ * screen's bottom edge the note's own bottom sits; `aboveBar` lifts it clear of the docked cart bar when that shows.
+ */
+export function UndoToast({ bottom, aboveBar = false }: { bottom: number; aboveBar?: boolean }) {
+  const { t } = useLanguage();
+  const cart = useCart();
+
+  return (
+    <Toast
+      visible={cart.removed !== null}
+      message={t('home.cart.removed', { name: cart.removed?.name ?? '' })}
+      actionLabel={t('home.cart.undo')}
+      onAction={cart.undoRemove}
+      onTimeout={cart.clearRemoved}
+      bottom={bottom + (aboveBar && cart.count > 0 ? CART_BAR : 0) + space[2]}
+    />
+  );
+}
+
+/**
+ * Everything the cart puts on a screen that is not the cart itself: the docked cart bar and the undo toast. The bar
+ * opens the cart page. A screen places it once and says how far above its own bottom the bar docks (above the tab bar
+ * on Home, at the phone's bottom edge on a shop page).
  */
 export function CartLayer({ bottom }: { bottom: number }) {
   const { t } = useLanguage();
   const cart = useCart();
   const tintOf = useTintOf();
-  const [open, setOpen] = useState(false);
+  const router = useRouter();
 
   const room = cart.lines.length > MAX_THUMBS ? MAX_THUMBS - 1 : cart.lines.length;
   const thumbs: CartThumb[] = cart.lines
@@ -43,26 +62,11 @@ export function CartLayer({ bottom }: { bottom: number }) {
         progress={cart.progress}
         actionLabel={t('home.cart.view')}
         onPress={() => {
-          setOpen(true);
+          router.push('/cart');
         }}
         bottom={bottom}
       />
-      <Toast
-        visible={cart.removed !== null}
-        message={t('home.cart.removed', { name: cart.removed?.name ?? '' })}
-        actionLabel={t('home.cart.undo')}
-        onAction={cart.undoRemove}
-        onTimeout={cart.clearRemoved}
-        bottom={bottom + (cart.count > 0 ? CART_BAR : 0) + space[2]}
-      />
-      <CartSheet
-        open={open}
-        cart={cart}
-        tintOf={tintOf}
-        onClose={() => {
-          setOpen(false);
-        }}
-      />
+      <UndoToast bottom={bottom} aboveBar />
     </>
   );
 }

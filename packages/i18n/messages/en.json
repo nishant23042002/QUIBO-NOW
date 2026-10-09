@@ -123,10 +123,7 @@
       "saved": "You saved {amount}",
       "removed": "{name} removed",
       "undo": "Undo",
-      "shopsMany": "{count} shops",
-      "title": "Your cart",
-      "total": "total",
-      "separate": "From {count} shops. One rider collects it all and brings it together. Free delivery counts the whole cart."
+      "shopsMany": "{count} shops"
     },
     "unitPrice": {
       "l": "{amount}/L",
@@ -516,5 +513,20 @@
       "body": "We could not load this page. Please try again."
     },
     "retry": "Try again"
+  },
+  "cart": {
+    "title": "Your cart",
+    "emptyTitle": "Your cart is empty",
+    "emptyBody": "Add things from the shops in your town and they will show up here.",
+    "emptyAction": "Start shopping",
+    "offline": "You are offline. Your cart is saved on this phone, but you need a connection to order.",
+    "goneOne": "{count} item from your last visit is not available now and was taken out.",
+    "goneMany": "{count} items from your last visit are not available now and were taken out.",
+    "lowered": "Some quantities were lowered to what is in stock.",
+    "gotIt": "Got it",
+    "freeNote": "Free delivery counts everything in your cart, from every shop together.",
+    "oneTrip": "From {count} shops. One rider collects it all and delivers it together.",
+    "subtotal": "Subtotal",
+    "itemTotal": "Item total"
   }
 }

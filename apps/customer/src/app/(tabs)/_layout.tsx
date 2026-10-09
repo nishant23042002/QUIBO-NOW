@@ -60,6 +60,8 @@ export default function TabsLayout() {
       <Tabs.Screen name="product/[id]" options={{ href: null }} />
       {/* The search screen is the same: reached from the search bar on Home, with the bottom bar kept. */}
       <Tabs.Screen name="search" options={{ href: null }} />
+      {/* The cart is the same: opened from the cart bar, with the bottom bar kept and Home lit. */}
+      <Tabs.Screen name="cart" options={{ href: null }} />
     </Tabs>
   );
 }
