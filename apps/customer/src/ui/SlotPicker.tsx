@@ -174,7 +174,7 @@ export function SlotPicker({
                         strike={full}
                         numberOfLines={1}
                         adjustsFontSizeToFit
-                        minimumFontScale={0.8}
+                        minimumFontScale={0.875}
                       >
                         {slot.label}
                       </Text>

@@ -32,7 +32,7 @@ import {
   type SlotGroup,
 } from './slots';
 
-/** The confirm bar's height: a line of small print, the button, and the space around them. */
+/** The confirm bar's least height: a line of small print, the button, and the space around them. It grows with large text. */
 const DOCK = 124;
 const GROUPS: readonly SlotGroup[] = ['morning', 'afternoon', 'evening'];
 const GROUP_ICON = { morning: 'sun', afternoon: 'sun', evening: 'moon' } as const;
@@ -66,8 +66,7 @@ const makeStyles = (c: ThemeColors) =>
     options: { flexDirection: 'row', gap: space[3] },
     option: {
       flex: 1,
-      minHeight: 76,
-      gap: 2,
+      minHeight: 88,
       padding: space[3],
       borderWidth: 1.5,
       borderRadius: radius.lg,
@@ -76,11 +75,12 @@ const makeStyles = (c: ThemeColors) =>
     },
     optionOn: { borderColor: c.action, backgroundColor: c.accentSubtle },
     optionOff: { opacity: 0.55, borderColor: c.line },
-    optionHead: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
-    optionTitle: { flex: 1, minWidth: 0 },
+    // The text on the left, and the icon centred on the right, so the icon never depends on how many lines the title takes.
+    optionRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    optionText: { flex: 1, minWidth: 0, gap: space[1] },
     pressed: { opacity: 0.85 },
     quickNote: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3], padding: space[4] },
-    quickNoteText: { flex: 1, minWidth: 0 },
+    quickNoteText: { flex: 1, minWidth: 0, gap: space[1] },
     picker: { paddingHorizontal: space[4], paddingBottom: space[4] },
     hint: { paddingHorizontal: space[4], paddingTop: space[3] },
     itemRow: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
@@ -96,7 +96,8 @@ const makeStyles = (c: ThemeColors) =>
       position: 'absolute',
       left: 0,
       right: 0,
-      height: DOCK,
+      minHeight: DOCK,
+      paddingVertical: space[3],
       gap: space[2],
       justifyContent: 'center',
       paddingHorizontal: space[4],
@@ -131,6 +132,8 @@ export function ScheduleView() {
   const resolved = resolveChoice(draft, now);
   const [day, setDay] = useState<SlotDay>(resolved?.kind === 'slot' ? resolved.slot.day : 'today');
   const [itemsOpen, setItemsOpen] = useState(false);
+  // How tall the confirm bar really is, so the page's end clears it at any text size.
+  const [dockHeight, setDockHeight] = useState(DOCK);
 
   const earliest = earliestSlot(now);
   const todaySlots = slotsFor('today', now);
@@ -203,7 +206,7 @@ export function ScheduleView() {
   return (
     <View style={styles.page}>
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingBottom: room + DOCK + space[6] }]}
+        contentContainerStyle={[styles.content, { paddingBottom: room + dockHeight + space[6] }]}
         showsVerticalScrollIndicator={false}
       >
         {cart.count > 0 ? (
@@ -259,22 +262,19 @@ export function ScheduleView() {
               pressed && styles.pressed,
             ]}
           >
-            <View style={styles.optionHead}>
-              <View style={styles.optionTitle}>
-                <Text variant="label">{t('cart.quickCard')}</Text>
+            <View style={styles.optionRow}>
+              <View style={styles.optionText}>
+                <Text variant="label" numberOfLines={2}>
+                  {t('cart.quickCard')}
+                </Text>
+                <Text variant="small" color="inkMuted" numberOfLines={2}>
+                  {quickOpen
+                    ? t('cart.quickSub', { from: eta.from, to: eta.to })
+                    : t('cart.quickClosed')}
+                </Text>
               </View>
-              <Icon name="bolt" color={colors.success} size={18} />
+              <Icon name="bolt" color={colors.success} size={20} />
             </View>
-            <Text variant="small" color="inkMuted" numberOfLines={2}>
-              {quickOpen
-                ? t('cart.quickSub', { from: eta.from, to: eta.to })
-                : t('cart.quickClosed')}
-            </Text>
-            {quickOpen && quickFee !== undefined ? (
-              <Text variant="caption" color="inkMuted">
-                {t('cart.feeLine', { amount: quickFee })}
-              </Text>
-            ) : null}
           </Pressable>
           <Pressable
             role="radio"
@@ -292,15 +292,19 @@ export function ScheduleView() {
               pressed && styles.pressed,
             ]}
           >
-            <View style={styles.optionHead}>
-              <View style={styles.optionTitle}>
-                <Text variant="label">{t('cart.scheduleCard')}</Text>
+            <View style={styles.optionRow}>
+              <View style={styles.optionText}>
+                <Text variant="label" numberOfLines={2}>
+                  {t('cart.scheduleCard')}
+                </Text>
+                <Text variant="small" color="inkMuted" numberOfLines={2}>
+                  {resolved?.kind === 'slot'
+                    ? text.dayWindow(resolved.slot)
+                    : t('cart.scheduleSub')}
+                </Text>
               </View>
-              <Icon name="calendar" color={colors.warning} size={18} />
+              <Icon name="calendar" color={colors.warning} size={20} />
             </View>
-            <Text variant="small" color="inkMuted" numberOfLines={2}>
-              {resolved?.kind === 'slot' ? text.dayWindow(resolved.slot) : t('cart.scheduleSub')}
-            </Text>
           </Pressable>
         </View>
         {quick ? (
@@ -310,6 +314,9 @@ export function ScheduleView() {
               <Text variant="small" color="inkMuted">
                 {t('cart.quickNote', { from: eta.from, to: eta.to })}
               </Text>
+              {quickFee !== undefined ? (
+                <Text variant="strong">{t('cart.feeLine', { amount: quickFee })}</Text>
+              ) : null}
             </View>
           </View>
         ) : (
@@ -348,14 +355,19 @@ export function ScheduleView() {
           </View>
         )}
       </ScrollView>
-      <View style={[styles.dock, { bottom: room }]}>
+      <View
+        style={[styles.dock, { bottom: room }]}
+        onLayout={(event) => {
+          setDockHeight(Math.round(event.nativeEvent.layout.height));
+        }}
+      >
         <Text variant="small" color="inkMuted" align="center">
           {t('cart.cancelNote')}
         </Text>
         <Button
           label={
             resolved === undefined
-              ? t('cart.scheduleCard')
+              ? t('cart.scheduleTitle')
               : resolved.kind === 'quick'
                 ? t('cart.confirmQuick')
                 : t('cart.confirm', { when: text.dayWindow(resolved.slot) })

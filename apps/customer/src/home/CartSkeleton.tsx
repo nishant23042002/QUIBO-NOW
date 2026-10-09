@@ -3,9 +3,13 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import { Skeleton, SkeletonScope, radius, space } from '@/ui';
 
-/** The cart's picture square and the height of one line, shared with `CartView` so nothing jumps when it loads. */
+/**
+ * The cart's picture square and the height of one line, shared with `CartView` so nothing jumps when it loads. A line is
+ * as tall as its three lines of text (name, size, shop) plus 8 above and below: 85 for English, and a line taller than
+ * that for Hindi and Marathi, whose lines need more room, so the line in `CartView` grows and this is its least.
+ */
 export const THUMB = 56;
-export const LINE_HEIGHT = 80;
+export const LINE_HEIGHT = 85;
 
 const LINES = 3;
 

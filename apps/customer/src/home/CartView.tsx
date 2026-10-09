@@ -1,5 +1,6 @@
 import { add, formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Text as NativeText, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -29,7 +30,7 @@ import { SAMPLE_DISTANCE_KM } from './delivery';
 import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
 import { useSlotText } from './slotText';
 
-/** The checkout bar's height: 12 above and below a 48 dp button, and its top line. */
+/** The checkout bar's least height: 12 above and below a 48 dp button, and its top line. It grows with large text. */
 const DOCK = 73;
 
 const makeStyles = (c: ThemeColors) =>
@@ -49,7 +50,8 @@ const makeStyles = (c: ThemeColors) =>
     track: { height: 4, borderRadius: radius.full, backgroundColor: c.line },
     fill: { height: 4, borderRadius: radius.full, backgroundColor: c.accentEdge },
     line: {
-      height: LINE_HEIGHT,
+      minHeight: LINE_HEIGHT,
+      paddingVertical: space[2],
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[3],
@@ -77,7 +79,7 @@ const makeStyles = (c: ThemeColors) =>
     },
     arriveText: { flex: 1, minWidth: 0 },
     change: {
-      minHeight: 36,
+      minHeight: 40,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
@@ -136,7 +138,7 @@ const makeStyles = (c: ThemeColors) =>
       position: 'absolute',
       left: 0,
       right: 0,
-      height: DOCK,
+      minHeight: DOCK,
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[4],
@@ -172,6 +174,8 @@ export function CartView() {
   const online = useOnline();
   const slotText = useSlotText();
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
+  // How tall the checkout bar really is, so the list's end and the undo note clear it at any text size.
+  const [dockHeight, setDockHeight] = useState(DOCK);
   const { bill } = cart;
   const current = cart.delivery.current;
   const quick = current?.kind === 'quick';
@@ -242,7 +246,7 @@ export function CartView() {
   return (
     <PopoverHost style={styles.page}>
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingBottom: room + DOCK + space[6] }]}
+        contentContainerStyle={[styles.content, { paddingBottom: room + dockHeight + space[6] }]}
         showsVerticalScrollIndicator={false}
       >
         {notices}
@@ -396,7 +400,12 @@ export function CartView() {
           </Text>
         </View>
       </ScrollView>
-      <View style={[styles.dock, { bottom: room }]}>
+      <View
+        style={[styles.dock, { bottom: room }]}
+        onLayout={(event) => {
+          setDockHeight(Math.round(event.nativeEvent.layout.height));
+        }}
+      >
         <View style={styles.dockTotal} accessible>
           <View style={styles.dockPrice}>
             <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
@@ -426,7 +435,7 @@ export function CartView() {
           />
         </View>
       </View>
-      <UndoToast bottom={room + DOCK} />
+      <UndoToast bottom={room + dockHeight} />
     </PopoverHost>
   );
 }
