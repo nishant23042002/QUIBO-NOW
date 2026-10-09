@@ -21,12 +21,16 @@ export interface OfferView {
 export type ApplyResult = 'ok' | 'invalid' | 'short';
 
 export interface CouponState {
+  /** False until the saved coupon has been read back, so the cart does not first show no coupon and then jump. */
+  loaded: boolean;
   /** Every coupon on offer, as worked out for the cart. */
   offers: readonly OfferView[];
   /** The coupon that is applied. It always works on the cart: one that stops working is taken off at once. */
   applied: OfferView | undefined;
   /** The best coupon that works on these items and is not applied yet, to suggest. */
   best: { offer: Offer; discount: Money } | undefined;
+  /** A coupon that would save more than the applied one, and how much more, to offer a switch. */
+  better: { offer: Offer; extra: Money } | undefined;
   /** The coupon that was just taken off because the items no longer reach its minimum, and what they would need. */
   dropped: { offer: Offer; shortBy: Money } | undefined;
   /** What the applied coupon takes off the items now. Nothing when none is applied. */
@@ -130,9 +134,24 @@ export function useCoupon(itemTotal: Money, cartReady: boolean): CouponState {
       ? { offer: droppedOffer, shortBy: shortBy(droppedOffer, itemTotal) }
       : undefined;
 
+  // With one applied, a different coupon that would save more is worth a mention.
+  const other =
+    applied === undefined
+      ? undefined
+      : bestCoupon(
+          SAMPLE_COUPONS.filter((offer) => offer.code !== applied.offer.code),
+          itemTotal,
+        );
+  const better =
+    applied !== undefined && other !== undefined && other.discount > applied.discount
+      ? { offer: other.coupon, extra: money(other.discount - applied.discount) }
+      : undefined;
+
   return {
+    loaded,
     offers,
     applied,
+    better,
     best: best === undefined ? undefined : { offer: best.coupon, discount: best.discount },
     dropped,
     discount: applied?.discount ?? money(0),

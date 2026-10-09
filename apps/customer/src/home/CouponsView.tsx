@@ -46,6 +46,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.ctl,
     },
     link: { minHeight: 36, justifyContent: 'center' },
+    badge: { alignSelf: 'flex-start' },
   });
 
 /**
@@ -95,6 +96,13 @@ export function CouponsView() {
     (a, b) => rank(a) - rank(b) || b.discount - a.discount || a.shortBy - b.shortBy,
   );
 
+  // With more than one coupon that works, the one that saves the most is marked.
+  const working = sorted.filter((view) => view.eligible && view.discount > 0);
+  const topSaving =
+    working.length > 1
+      ? working.reduce((best, view) => (view.discount > best.discount ? view : best)).offer.code
+      : undefined;
+
   const title = (view: OfferView) =>
     view.offer.kind === 'percent'
       ? t('coupons.percentOff', {
@@ -138,6 +146,11 @@ export function CouponsView() {
             <View key={view.offer.code} style={[styles.card, styles.offer]}>
               <View style={styles.offerTop}>
                 <View style={styles.offerText}>
+                  {view.offer.code === topSaving ? (
+                    <View style={styles.badge}>
+                      <Badge label={t('coupons.bestBadge')} tone="success" />
+                    </View>
+                  ) : null}
                   <Text variant="strong">{title(view)}</Text>
                   <Text variant="small" color="inkMuted">
                     {t(view.offer.descKey)}

@@ -637,6 +637,9 @@
     "descSmall": "Even a small order can save",
     "emptyTitle": "No offers right now",
     "emptyBody": "Check back soon.",
-    "dropped": "{code} was taken off. Add {amount} more to use it again."
+    "dropped": "{code} was taken off. Add {amount} more to use it again.",
+    "better": "Save {amount} more with {code}",
+    "switch": "Switch",
+    "bestBadge": "Best saving"
   }
 }

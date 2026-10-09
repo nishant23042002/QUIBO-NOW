@@ -28,6 +28,8 @@ export interface SlotState {
   quickOpen: boolean;
   /** Set when the order is not delivered the way the shopper chose (their window passed, or quick delivery has closed). */
   note: DeliveryNote | undefined;
+  /** False until the saved choice has been read back, so the cart does not first show the default and then jump. */
+  loaded: boolean;
   /** Accepts a change the shopper did not make: their old window is forgotten, and the order follows quick delivery. */
   dismissNote: () => void;
 }
@@ -41,6 +43,7 @@ export function useSlotChoice(): SlotState {
   const [choice, setChoiceState] = useState<SlotChoice>({ mode: 'quick' });
   // A choice made before the saved one has been read back must not be written over by it.
   const touched = useRef(false);
+  const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -54,7 +57,9 @@ export function useSlotChoice(): SlotState {
   useEffect(() => {
     let live = true;
     void readSetting(SLOT_KEY).then((saved) => {
-      if (live && !touched.current) setChoiceState(parseChoice(saved));
+      if (!live) return;
+      if (!touched.current) setChoiceState(parseChoice(saved));
+      setLoaded(true);
     });
     return () => {
       live = false;
@@ -74,6 +79,7 @@ export function useSlotChoice(): SlotState {
     setChoice,
     current,
     quickOpen: quickAvailable(now),
+    loaded,
     note: deliveryNote(choice, current),
     dismissNote: () => {
       setChoice({ mode: 'quick' });

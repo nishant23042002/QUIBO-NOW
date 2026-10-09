@@ -367,40 +367,69 @@ export function CartView() {
             )}
           </Pressable>
           {coupon.applied !== undefined ? (
-            <View style={styles.couponNote}>
-              <View style={styles.couponNoteText}>
-                {coupon.applied.discount > 0 ? (
-                  <>
-                    <Text variant="strong" color="accentInk">
-                      {t('coupons.applied', { code: coupon.applied.offer.code })}
+            <>
+              <View style={styles.couponNote}>
+                <View style={styles.couponNoteText}>
+                  {coupon.applied.discount > 0 ? (
+                    <>
+                      <Text variant="strong" color="accentInk">
+                        {t('coupons.applied', { code: coupon.applied.offer.code })}
+                      </Text>
+                      <Text variant="small" color="inkMuted">
+                        {t('coupons.youSave', { amount: formatRupees(coupon.applied.discount) })}
+                      </Text>
+                    </>
+                  ) : (
+                    <Text variant="strong" color="warning">
+                      {t('coupons.shortApplied', {
+                        amount: formatRupees(coupon.applied.shortBy),
+                        code: coupon.applied.offer.code,
+                      })}
                     </Text>
-                    <Text variant="small" color="inkMuted">
-                      {t('coupons.youSave', { amount: formatRupees(coupon.applied.discount) })}
-                    </Text>
-                  </>
-                ) : (
-                  <Text variant="strong" color="warning">
-                    {t('coupons.shortApplied', {
-                      amount: formatRupees(coupon.applied.shortBy),
-                      code: coupon.applied.offer.code,
-                    })}
+                  )}
+                </View>
+                <Pressable
+                  role="button"
+                  hitSlop={6}
+                  onPress={() => {
+                    glide();
+                    coupon.remove();
+                  }}
+                  style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
+                >
+                  <Text variant="strong" color="accentInk">
+                    {t('coupons.remove')}
                   </Text>
-                )}
+                </Pressable>
               </View>
-              <Pressable
-                role="button"
-                hitSlop={6}
-                onPress={() => {
-                  glide();
-                  coupon.remove();
-                }}
-                style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
-              >
-                <Text variant="strong" color="accentInk">
-                  {t('coupons.remove')}
-                </Text>
-              </Pressable>
-            </View>
+              {coupon.better !== undefined ? (
+                <View style={styles.couponNote}>
+                  <View style={styles.couponNoteText}>
+                    <Text variant="strong" color="accentInk">
+                      {t('coupons.better', {
+                        amount: formatRupees(coupon.better.extra),
+                        code: coupon.better.offer.code,
+                      })}
+                    </Text>
+                  </View>
+                  <Pressable
+                    role="button"
+                    hitSlop={6}
+                    onPress={() => {
+                      const better = coupon.better;
+                      if (better === undefined) return;
+                      glide();
+                      coupon.apply(better.offer.code);
+                    }}
+                    style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
+                  >
+                    <Text variant="strong" color="accentInk">
+                      {t('coupons.switch')}
+                    </Text>
+                  </Pressable>
+                </View>
+              ) : null}
+            </>
           ) : coupon.dropped !== undefined ? (
             <View style={[styles.couponNote, { backgroundColor: colors.warningBg }]}>
               <View style={styles.couponNoteText}>

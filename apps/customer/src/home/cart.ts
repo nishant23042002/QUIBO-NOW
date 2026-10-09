@@ -122,7 +122,8 @@ export function useDraftCart(): DraftCart {
   // The order packs were first added in, so "latest first" is known.
   const [order, setOrder] = useState<readonly string[]>([]);
   const [removal, setRemoval] = useState<Removal | null>(null);
-  const [ready, setReady] = useState(false);
+  // The saved cart has been read back. (The cart as a whole is `ready` once its coupon and delivery choice are too.)
+  const [loaded, setLoaded] = useState(false);
   const [restored, setRestored] = useState<{ gone: number; lowered: number } | null>(null);
   const packs = packIndex(homeItems);
 
@@ -150,7 +151,7 @@ export function useDraftCart(): DraftCart {
       setOrder((current) => [...back.order.filter((id) => !current.includes(id)), ...current]);
       if (back.gone > 0 || back.lowered > 0)
         setRestored({ gone: back.gone, lowered: back.lowered });
-      setReady(true);
+      setLoaded(true);
     });
     return () => {
       live = false;
@@ -159,9 +160,9 @@ export function useDraftCart(): DraftCart {
 
   // Keep the phone's copy up to date, but never write over the saved cart before it has been read.
   useEffect(() => {
-    if (!ready) return;
+    if (!loaded) return;
     void writeSetting(CART_KEY, serialiseCart(order, quantities));
-  }, [ready, order, quantities]);
+  }, [loaded, order, quantities]);
 
   const apply = (packId: string, next: number) => {
     setQuantities((current) => ({ ...current, [packId]: next }));
@@ -193,7 +194,7 @@ export function useDraftCart(): DraftCart {
     quantity: quantities[packId] ?? 0,
   }));
   const sum = summariseCart(entries);
-  const coupon = useCoupon(sum.total, ready);
+  const coupon = useCoupon(sum.total, loaded);
   const bill = computeBill({
     itemTotal: sum.total,
     saved: sum.saved,
@@ -278,7 +279,7 @@ export function useDraftCart(): DraftCart {
       emoji: item.emoji,
       category: item.category,
     })),
-    ready,
+    ready: loaded && coupon.loaded && delivery.loaded,
     restored,
     dismissRestored: () => {
       setRestored(null);
