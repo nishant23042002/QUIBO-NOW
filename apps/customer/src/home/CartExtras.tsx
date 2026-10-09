@@ -663,8 +663,9 @@ export function VerifiedShops() {
 }
 
 /**
- * Four short promises under the order, each with its own picture: the price you see is the price you pay, a code to hand
- * over safely, an easy fix if something is wrong, and one trip for everything. (A fifth, about being refunded when a
+ * Four short promises, each with its own picture: the price you see is the price you pay, a rider who follows your
+ * instructions and hands the order over with care (there is no code to read out), an easy fix if something is wrong, and
+ * one trip for everything. (A fifth, about being refunded when a
  * weighed item comes out lighter, joins them when loose items sold by weight do.)
  */
 export function TrustPromises() {
@@ -677,9 +678,15 @@ export function TrustPromises() {
         {t('trust.title')}
       </Text>
       <TrustTiles
+        tone="brand"
         tiles={[
           { key: 'price', icon: 'tag', title: t('trust.priceTitle'), body: t('trust.priceBody') },
-          { key: 'safe', icon: 'lock', title: t('trust.safeTitle'), body: t('trust.safeBody') },
+          {
+            key: 'safe',
+            icon: 'shieldUser',
+            title: t('trust.safeTitle'),
+            body: t('trust.safeBody'),
+          },
           { key: 'fix', icon: 'undo', title: t('trust.fixTitle'), body: t('trust.fixBody') },
           { key: 'trip', icon: 'bag', title: t('trust.tripTitle'), body: t('trust.tripBody') },
         ]}

@@ -126,7 +126,7 @@ The MVP is one town, three apps (customer, admin with a store portal, driver) on
 | Admin and ops | Order board, store onboarding, catalogue editor, zones, manual assign, refunds, basic reports | Settlement and payout runs, cash reconciliation, festival collections, support inbox | Multi-town tenancy, demand forecast, fraud rules, AI ops assistant |
 | Payments | COD, UPI through a gateway, refunds | Prepaid offer, doorstep UPI QR, reconciliation | Wallet or credits, ONDC settlement |
 | Messaging | WhatsApp utility templates, SMS or WhatsApp OTP, web push | Rider and store push, ops alerts to a WhatsApp group | Smart nudges, reorder reminders |
-| Trust | FSSAI number shown per shop, order OTP at delivery, bill photo | Ratings, complaint tracking, store quality score | Verified-shop badges |
+| Trust | FSSAI number shown per shop, photo proof at delivery (no customer code, ADR 0013), bill photo | Ratings, complaint tracking, store quality score | Verified-shop badges |
 | Fulfilment modes | Partner mode live in the pilot town; dark-store mode designed in contracts, data model and admin screens and switched off by a per-town setting | Dark-store mode live in the pilot town if the switch triggers in section 7 are met; goods receipt, stock counts and pick lists in daily use | Hybrid towns, expiry and wastage analytics, reorder suggestions, supplier price tracking |
 
 **Deliberately not built yet**
@@ -151,7 +151,7 @@ Build in this order: customer web app, then the admin panel (which includes the 
 - **Address:** map pin, landmark text, ward or mohalla, alternate phone number; serviceability checked against zone polygons.
 - **Checkout rules:** no minimum order (ADR 0011), a delivery fee from the trip's distance band plus rush-hour, festival and weather extras and capped at 30 rupees, a handling fee under 18 rupees set by the most delicate item, free delivery above a threshold, COD cap for new customers, per-item substitution choice, estimated weight bill with a stated tolerance.
 - **Tracking:** status timeline, call shop, call rider, WhatsApp updates for every state change.
-- **Delivery proof:** customer OTP or photo at the door; COD amount shown to the rider.
+- **Delivery proof:** a photo at the door, or the rider's tap on delivered; the customer is never asked for a code (ADR 0013). COD amount shown to the rider.
 
 ### Store partner portal (inside the admin app)
 
@@ -165,7 +165,7 @@ Build in this order: customer web app, then the admin panel (which includes the 
 ### Driver app (React Native, phases 5 and 6)
 
 - **Until the app ships:** ops assigns by call or WhatsApp and marks Picked up and Delivered in admin on the rider's behalf.
-- **Driver app:** duty on and off, offer card (pickup, drop, distance, payout), hand-off to Google Maps or Ola Maps navigation, pickup code, call customer, drop OTP, show UPI QR, record COD cash.
+- **Driver app:** duty on and off, offer card (pickup, drop, distance, payout), hand-off to Google Maps or Ola Maps navigation, pickup code (the shop's, never the customer's), call customer, drop photo, show UPI QR, record COD cash.
 - **Rules by design:** no countdown timers, no late penalties, up to 3 orders batched inside one ward, payout per delivery with a distance band, same-day payout.
 - **Cash ledger:** every COD rupee collected is a liability until the rider deposits it; the app blocks new offers above a cash limit.
 
@@ -197,7 +197,7 @@ Every screen below is designed and built on mock data first, then wired to the l
 | --- | --- | --- |
 | Customer app, phases 1 and 2 | 1 language and phone OTP; 2 home with Your shops, categories and reorder strip; 3 shop page; 4 search results; 5 item sheet (pack size, loose weight, substitution choice); 6 cart; 7 address and map pin; 8 checkout (slot, COD or UPI); 9 order tracking; 10 order history and reorder; 11 help; 12 profile and saved addresses | Loading, empty, error and offline states; Hindi and Marathi text, which often runs longer than English; 200% text size; the main action within thumb reach; every screen shown in both fulfilment modes |
 | Admin panel and store portal, phases 3 and 4 | Admin: login; order board; order detail; Assisted order form; stores list and onboarding; catalogue editor; zone editor; customers and support; finance (payouts, cash close); content; staff and roles. Store portal: new-order alert; pack screen; availability and prices; today and payouts; shop profile. Dark-store console (enabled per town): goods receipt, stock list and counts, expiry and wastage, pick list, pack and handover, reorder list | The same four states; keyboard use; search and filters on every list; an audit trail on every change |
-| Driver app, phases 5 and 6 | 1 login and duty switch; 2 offer card; 3 pickup with code; 4 navigation hand-off; 5 drop with OTP and COD amount; 6 UPI QR; 7 cash ledger and deposit; 8 earnings; 9 support and SOS | Large buttons usable on a bike stand; works on poor signal; no timers or penalties |
+| Driver app, phases 5 and 6 | 1 login and duty switch; 2 offer card; 3 pickup with code; 4 navigation hand-off; 5 drop with photo and COD amount; 6 UPI QR; 7 cash ledger and deposit; 8 earnings; 9 support and SOS | Large buttons usable on a bike stand; works on poor signal; no timers or penalties |
 
 ## 7. Operations model
 
@@ -409,7 +409,7 @@ Build UI first, one surface at a time: customer app, then admin panel with the s
 | 3. Admin UI on mock data (9 to 10) | Every admin, store-portal and dark-store-console screen and state, role-based layout, mock data | One operator and 3 shop owners try the screens | Operator and shop owners finish their tasks unaided; same accessibility and performance bars; zero open blocker or major defects |
 | 4. Admin live (11 to 13) | Assisted order, order board, store onboarding, catalogue, zones, finance basics, store alerts with the 90-second timeout; dark-store console (receiving, stock counts, pick lists) behind a per-town switch | Move every pilot order and shop onto admin and retire the sheet | All pilot orders run in admin; 80%+ accepted inside 90 seconds; every admin change appears in the audit log; a test town switches from partner to dark-store mode and back with no code change |
 | 5. Driver UI on mock data (14 to 15) | Every driver screen and state in Expo on mock data | 3 riders walk through a mock delivery | 3 of 3 riders complete a mock delivery unaided; usable one-handed on a bike stand; zero open blocker or major defects |
-| 6. Driver live (16 to 18) | Offers, batching, location, drop OTP, UPI QR, cash ledger, earnings | Move riders onto the app; nightly cash close | Cash reconciles to zero daily for a week; 90%+ delivered inside the window |
+| 6. Driver live (16 to 18) | Offers, batching, location, drop photo, UPI QR, cash ledger, earnings | Move riders onto the app; nightly cash close | Cash reconciles to zero daily for a week; 90%+ delivered inside the window |
 | 7. Harden and replicate (19 to 21) | Monitoring, backups, load test, runbooks, town setup by configuration | Pick town two using the section 3 filters | Backup restore tested; load test passes; town two launches with under a week of engineering |
 
 Why this order:

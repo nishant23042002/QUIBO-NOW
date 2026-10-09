@@ -138,7 +138,7 @@ _Goal: Home runs on mock data through the same path the live API will use._
   phone), placed after the bill, a rider-tip line in the bill, and "You might also like", a row of items that go with the cart, each with ADD. E (done, apart from the refund for lighter weighed items, which comes with F): a "Delivering to" row in the
   delivery card with a Change link (the address screens are built in 1e), a "Packed by verified shops" card (shield,
   name, Verified mark and food licence number for each store, or the one Quibo store), four promises (price, safe
-  handover, easy fix, one trip), a bookmark on each item to put it aside for later with a "Saved for later" list that is
+  careful handover, easy fix, one trip), a bookmark on each item to put it aside for later with a "Saved for later" list that is
   kept on the phone and shown even when the cart is empty, and a share button for the cart. F: loose items sold by weight and the "if unavailable" choice. G: offline and error
   states, accessibility, large text, Hindi and Marathi review.
 
@@ -160,7 +160,7 @@ _Goal: Home runs on mock data through the same path the live API will use._
 - **Build:** **checkout** (address, delivery-window picker with full windows struck through, payment choice with a
   COD cap for new customers and UPI in test form, order summary, place order with an idempotency key kept in the
   mock) and **order tracking** (`StatusTimeline` through placed, accepted, ready, picked up, delivered, plus the
-  rejected, cancelled and undelivered exits; call shop, call rider, the delivery OTP shown to the customer, COD
+  rejected, cancelled and undelivered exits; call shop, call rider, COD
   amount). A mock "order clock" moves an order through the states on a timer so you can watch tracking work.
 - **Several shops, one rider (ADR 0009):** tracking is one order with one rider. The timeline shows each shop's
   part as packed or picked up, then one trip to the customer.

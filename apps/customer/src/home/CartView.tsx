@@ -24,6 +24,7 @@ import {
   PopoverHost,
   PopOnChange,
   ProgressBar,
+  SectionDivider,
   ShineSweep,
   QTile,
   StatePanel,
@@ -173,6 +174,8 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.accentSubtle,
     },
     couponNoteText: { flex: 1, minWidth: 0 },
+    // The last part of the page: set apart from the shopping above it by a break and a little more room.
+    closing: { gap: space[4], paddingTop: space[3] },
     forgot: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -734,9 +737,13 @@ export function CartView() {
           </Text>
         </View>
         <TipAndNotes />
-        <VerifiedShops />
-        <TrustPromises />
         <AlsoLike />
+        {/* The page ends on what makes it safe to order: the promises, then who packs it. */}
+        <View style={styles.closing}>
+          <SectionDivider />
+          <TrustPromises />
+          <VerifiedShops />
+        </View>
       </ScrollView>
       {keyboard ? null : (
         <View

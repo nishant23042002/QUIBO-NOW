@@ -48,7 +48,7 @@ export {
   type ProductGalleryProps,
 } from './ProductGallery';
 export { CardTitle, FactTable, type FactRow } from './FactTable';
-export { TrustTiles, type TrustTile } from './TrustTiles';
+export { TrustTiles, type TrustTile, type TrustTilesProps } from './TrustTiles';
 export { StatePanel, type StatePanelProps } from './StatePanel';
 export { ScreenStatusBar } from './ScreenStatusBar';
 export { ProductInsight, type InsightPage, type ProductInsightProps } from './ProductInsight';
