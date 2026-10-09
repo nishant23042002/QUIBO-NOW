@@ -52,7 +52,7 @@ What the two screenshots do that we adopt as patterns:
 | **Round category chips with an offer line**                                                                                                       | Chips for sub-categories, with an offer line only when a real offer exists                                                                                   |
 | **Product cards** with the image on top, a round "ADD" or "+" on the image corner, then price, strike-through price, name, pack size and "2 left" | Our `ItemCard`, restyled: ADD turns into a stepper in place; "2 left" only in dark-store mode (stock count), while partner mode shows an in/out toggle state |
 | **Horizontal rails** of cards, with a cut-off card showing there is more                                                                          | Same: rails for "Your shops", "Order again" and each category                                                                                                |
-| **Bottom tab bar**                                                                                                                                | Home, Order again, Categories, Orders, with the cart bar floating above it                                                                                   |
+| **Bottom tab bar**                                                                                                                                | Home, Categories, Cart, Orders (with Order again inside it), with the cart bar floating above it                                                             |
 | **Floating cart bar and "Unlock free delivery, shop for ₹49"**                                                                                    | Floating bar with item count and total, plus a progress line to free delivery                                                                                |
 
 What we deliberately do **not** take: their logos, fonts, illustrations, banners, copy, colour values, lightning
@@ -70,7 +70,7 @@ work on a 2 GB Android phone on a weak network (no heavy shadows, blur or animat
 _Goal: you approve the design before any other screen exists._
 
 - **Build:** ADR 0010 (new design direction). Revised theme tokens if needed. Bottom tab shell (Expo Router tabs:
-  Home, Order again, Categories, Orders; the last three show a placeholder). A **static** Home: tinted header block
+  Home, Categories, Cart, Orders; Categories and Orders show a placeholder, and Order again will sit inside Orders). A **static** Home: tinted header block
   with address row, profile button and search bar; category tabs; hero banner; sub-category chips; two product
   rails; the floating cart bar. Product cards restyled with the "ADD" interaction. All built from fixed sample data
   in the screen itself (replaced in 1b), so the look can change fast.

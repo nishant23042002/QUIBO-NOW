@@ -1,7 +1,7 @@
 import Svg, { Circle, Path } from 'react-native-svg';
 
 /** The usual stroke weight, round ends, drawn on a 24 by 24 grid, and the thin one for larger, quieter pictures. */
-const STROKE = 2.4;
+const STROKE = 2;
 const STROKE_LIGHT = 1.6;
 
 type Shape = { kind: 'path'; d: string } | { kind: 'dot'; x: number; y: number; r: number };
@@ -87,6 +87,11 @@ const SHAPES = {
   plus: [path('M12 5v14M5 12h14')],
   minus: [path('M5 12h14')],
   bag: [path('M5 8h14l-1 12H6L5 8z'), path('M9 8V6.5a3 3 0 0 1 6 0V8')],
+  cart: [
+    path('M3 3.5h2l2.6 11.6a2 2 0 0 0 2 1.6h8a2 2 0 0 0 1.95-1.55L21 7.5H6'),
+    dot(9.5, 20.2, 1.3),
+    dot(17.5, 20.2, 1.3),
+  ],
   home: [path('M4 11l8-7 8 7'), path('M6.5 9.5V20h11V9.5')],
   repeat: [
     path('M17 3l3 3-3 3'),

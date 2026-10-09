@@ -225,8 +225,8 @@
   },
   "nav": {
     "home": "Home",
-    "again": "Order again",
     "categories": "Categories",
+    "cart": "Cart",
     "orders": "Orders",
     "soon": "This screen is built in a later section of the customer app."
   },

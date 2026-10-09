@@ -23,7 +23,7 @@ and the look moved a long way from 0008. This records where it ended up so later
 3. **The header is no longer dark in both themes** (replaces the "header is always dark" rule of 0008).
    Light theme: the category's soft tint. Dark theme: black and graphite with an aubergine header and a pistachio
    accent. Text on the header uses the `onHeader*` roles, each tested for contrast.
-4. **A bottom navigation bar** with Home, Order again, Categories and Orders replaces the "no bottom tabs"
+4. **A bottom navigation bar** with Home, Categories, Cart and Orders (Order again lives inside Orders; ADR 0015) replaces the "no bottom tabs"
    layout. It is solid, 64 dp plus the phone's bottom inset, and the docked cart bar and every tab page
    leave room for it (`BOTTOM_BAR_HEIGHT`).
 5. **Cards and badges.** Product cards show an emoji picture on the category tint (until real photos
