@@ -552,7 +552,6 @@
     "savingsTitle": "Savings on this order",
     "savingsPrinted": "Discount on printed price",
     "savingsDelivery": "Free delivery",
-    "strip": "Yay! You saved {amount} on this order",
     "continue": "Continue",
     "checkout": "Checkout",
     "forgot": "Forgot something?",
@@ -570,6 +569,7 @@
     "whyRain": "Rain",
     "whyCapped": "Delivery never costs more than {max}.",
     "whyFree": "Your items come to {amount} or more, so delivery is free. It would have cost {fee}.",
-    "whyTrim": "Kept at our top fee"
+    "whyTrim": "Kept at our top fee",
+    "savedShort": "saved {amount}"
   }
 }

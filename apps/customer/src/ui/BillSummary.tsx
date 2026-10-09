@@ -1,8 +1,10 @@
 import { formatRupees, type Money } from '@quibo/contracts';
+import type { ReactNode } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
 import { freeDeliveryProgress } from './logic/money';
+import { Popover } from './Popover';
 import { Text } from './Text';
 import { radius, space } from './tokens';
 
@@ -14,9 +16,9 @@ export interface BillRow {
   valueLabel?: string;
   /** The value is good news (free, or a saving), so it is shown in the success colour. */
   positive?: boolean;
-  /** Gives the row a small (i) button that explains the amount. Needs `infoLabel`. */
-  onInfo?: () => void;
-  /** Name of the (i) button for screen readers, for example "Why this price?". Pass a translated string. */
+  /** Gives the row a small (i) button that opens this in a popover beside it, to explain the amount. Needs `infoLabel`. */
+  info?: ReactNode;
+  /** Name of the (i) button and its popover for screen readers, for example "Why this price?". Pass a translated string. */
   infoLabel?: string;
 }
 
@@ -36,6 +38,8 @@ export interface BillSummaryProps {
   totalLabel: string;
   total: Money;
   freeDelivery?: FreeDeliveryHint;
+  /** Name of the area that closes a row's popover, for example "Close". Needed when any row has `info`. */
+  closeLabel?: string;
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -67,7 +71,13 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /** The bill at checkout and in the cart: each charge on its own line, the total, and progress to free delivery. */
-export function BillSummary({ rows, totalLabel, total, freeDelivery }: BillSummaryProps) {
+export function BillSummary({
+  rows,
+  totalLabel,
+  total,
+  freeDelivery,
+  closeLabel = '',
+}: BillSummaryProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
   const progress =
@@ -101,16 +111,21 @@ export function BillSummary({ rows, totalLabel, total, freeDelivery }: BillSumma
             <Text variant="body" color="inkMuted">
               {row.label}
             </Text>
-            {row.onInfo !== undefined && row.infoLabel !== undefined ? (
-              <Pressable
-                role="button"
-                aria-label={row.infoLabel}
-                onPress={row.onInfo}
-                hitSlop={8}
-                style={({ pressed }) => [styles.info, pressed && styles.pressed]}
-              >
-                <Icon name="info" color={colors.inkMuted} size={18} />
-              </Pressable>
+            {row.info !== undefined && row.infoLabel !== undefined ? (
+              <Popover content={row.info} label={row.infoLabel} closeLabel={closeLabel}>
+                {(trigger) => (
+                  <Pressable
+                    ref={trigger.anchor}
+                    role="button"
+                    aria-label={row.infoLabel}
+                    onPress={trigger.onPress}
+                    hitSlop={8}
+                    style={({ pressed }) => [styles.info, pressed && styles.pressed]}
+                  >
+                    <Icon name="info" color={colors.inkMuted} size={18} />
+                  </Pressable>
+                )}
+              </Popover>
             ) : null}
           </View>
           <Text variant="body" color={row.positive === true ? 'success' : 'ink'}>

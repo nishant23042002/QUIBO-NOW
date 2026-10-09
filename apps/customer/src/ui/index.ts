@@ -67,6 +67,7 @@ export { ShopRow, type ShopRowProps } from './ShopRow';
 export { ShopInfoCard, type ShopInfoCardProps } from './ShopInfoCard';
 export { ShopsPanel, type ShopsPanelProps } from './ShopsPanel';
 export { ShopsChip, type ShopsChipProps } from './ShopsChip';
+export { Popover, type PopoverProps, type PopoverTrigger } from './Popover';
 export { Sheet, type SheetProps } from './Sheet';
 export { ShopCard, type ShopCardProps } from './ShopCard';
 export { Stepper, type StepperProps } from './Stepper';

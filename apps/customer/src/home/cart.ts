@@ -1,4 +1,4 @@
-import { formatRupees, money, subtract } from '@quibo/contracts';
+import { formatRupees, money, multiplyByQuantity, subtract } from '@quibo/contracts';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { readSetting, writeSetting } from '@/storage';
@@ -25,6 +25,8 @@ export interface CartItem {
   maxQuantity?: number;
   /** What this line comes to, for example "₹58". */
   totalLabel: string;
+  /** What the same line would cost at the printed price, for example "₹64", when that is more. Shown struck through. */
+  mrpLabel?: string;
   /** The partner shop that sells it. Absent when the town has one dark store, where there is nothing to tell apart. */
   soldBy?: string;
 }
@@ -204,6 +206,9 @@ export function useDraftCart(): DraftCart {
     quantity: quantities[packId] ?? 0,
     ...(pack.maxQuantity !== undefined ? { maxQuantity: pack.maxQuantity } : {}),
     totalLabel: formatRupees(lineTotals.get(packId) ?? money(0)),
+    ...(pack.mrp !== undefined && pack.mrp > pack.price
+      ? { mrpLabel: formatRupees(multiplyByQuantity(pack.mrp, quantities[packId] ?? 0)) }
+      : {}),
     ...(dark ? {} : { soldBy: item.shopName }),
   }));
 

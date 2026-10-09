@@ -1,6 +1,5 @@
 import { formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
 import { Text as NativeText, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -12,6 +11,7 @@ import {
   Button,
   Icon,
   Notice,
+  Popover,
   StatePanel,
   Stepper,
   Text,
@@ -25,7 +25,7 @@ import { useCart } from './CartProvider';
 import { CartSkeleton, LINE_HEIGHT, THUMB } from './CartSkeleton';
 import { useTintOf } from './categories';
 import { SAMPLE_DISTANCE_KM } from './delivery';
-import { PriceSheet, kmLabel } from './PriceSheet';
+import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
 
 /** The checkout bar's height: 12 above and below a 48 dp button, and its top line. */
 const DOCK = 73;
@@ -36,19 +36,6 @@ const makeStyles = (c: ThemeColors) =>
     // Cards sit 12 from the screen's edges with 12 between them, and 16 inside, as on the product page.
     content: { gap: space[3], paddingHorizontal: space[3], paddingTop: space[3] },
     gutter: { paddingHorizontal: space[3], paddingTop: space[3], gap: space[3] },
-    // The strip under the header that says what the order saves; it stays while the page scrolls.
-    strip: {
-      minHeight: 36,
-      marginHorizontal: space[3],
-      marginTop: space[3],
-      paddingHorizontal: space[3],
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: space[2],
-      borderRadius: radius.md,
-      backgroundColor: c.accentSubtle,
-    },
     card: {
       overflow: 'hidden',
       borderRadius: radius.lg,
@@ -76,6 +63,7 @@ const makeStyles = (c: ThemeColors) =>
     },
     name: { flex: 1, minWidth: 0 },
     side: { alignItems: 'flex-end', gap: space[1] },
+    price: { flexDirection: 'row', alignItems: 'baseline', gap: space[1] },
     // Who sells it: a small shop mark and the name, short enough for the narrow column.
     sold: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
     // One quiet line under the items when they come from more than one store.
@@ -124,7 +112,8 @@ const makeStyles = (c: ThemeColors) =>
       borderTopColor: c.line,
       backgroundColor: c.surface,
     },
-    dockTotal: { minWidth: 0 },
+    dockTotal: { flexShrink: 0 },
+    dockCaption: { flexDirection: 'row', gap: space[1] },
     dockButton: { flex: 1 },
     empty: { flex: 1 },
   });
@@ -147,13 +136,8 @@ export function CartView() {
   const cart = useCart();
   const tintOf = useTintOf();
   const online = useOnline();
-  const [why, setWhy] = useState(false);
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
   const { bill } = cart;
-
-  const openWhy = () => {
-    setWhy(true);
-  };
 
   const notices = (
     <>
@@ -207,27 +191,19 @@ export function CartView() {
       label: t('cart.deliveryKm', { km: kmLabel(SAMPLE_DISTANCE_KM) }),
       amount: bill.delivery.fee,
       ...(bill.delivery.free ? { valueLabel: t('cart.free'), positive: true } : {}),
-      onInfo: openWhy,
+      info: <DeliveryDetails bill={bill} distanceKm={SAMPLE_DISTANCE_KM} />,
       infoLabel: t('cart.whyTitle'),
     },
     {
       label: t('cart.handlingFee'),
       amount: bill.handling.fee,
-      onInfo: openWhy,
+      info: <HandlingDetails bill={bill} />,
       infoLabel: t('cart.whyTitle'),
     },
   ];
 
   return (
     <View style={styles.page}>
-      {bill.totalSaved > 0 ? (
-        <Pressable role="button" onPress={openWhy} style={styles.strip}>
-          <Text variant="strong" color="accentInk" numberOfLines={1}>
-            {t('cart.strip', { amount: formatRupees(bill.totalSaved) })}
-          </Text>
-          <Icon name="chevron" color={colors.accentInk} size={16} />
-        </Pressable>
-      ) : null}
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: room + DOCK + space[6] }]}
         showsVerticalScrollIndicator={false}
@@ -281,7 +257,14 @@ export function CartView() {
                   maxLabel={t('home.rails.noMore')}
                   rule={countRule(line.maxQuantity)}
                 />
-                <Text variant="strong">{line.totalLabel}</Text>
+                <View style={styles.price}>
+                  {line.mrpLabel !== undefined ? (
+                    <Text variant="small" color="inkMuted" strike>
+                      {line.mrpLabel}
+                    </Text>
+                  ) : null}
+                  <Text variant="strong">{line.totalLabel}</Text>
+                </View>
               </View>
             </View>
           ))}
@@ -319,14 +302,32 @@ export function CartView() {
               {t('cart.billTitle')}
             </Text>
           </View>
-          <BillSummary rows={rows} totalLabel={t('cart.toPay')} total={bill.toPay} />
+          <BillSummary
+            rows={rows}
+            totalLabel={t('cart.toPay')}
+            total={bill.toPay}
+            closeLabel={t('common.close')}
+          />
           {bill.totalSaved > 0 ? (
-            <Pressable role="button" onPress={openWhy} style={styles.save}>
-              <Text variant="strong" color="accentInk" numberOfLines={1}>
-                {t('cart.saveLine', { amount: formatRupees(bill.totalSaved) })}
-              </Text>
-              <Icon name="chevron" color={colors.accentInk} size={16} />
-            </Pressable>
+            <Popover
+              content={<SavingsDetails bill={bill} />}
+              label={t('cart.savingsTitle')}
+              closeLabel={t('common.close')}
+            >
+              {(trigger) => (
+                <Pressable
+                  ref={trigger.anchor}
+                  role="button"
+                  onPress={trigger.onPress}
+                  style={styles.save}
+                >
+                  <Text variant="strong" color="accentInk" numberOfLines={1}>
+                    {t('cart.saveLine', { amount: formatRupees(bill.totalSaved) })}
+                  </Text>
+                  <Icon name="chevron" color={colors.accentInk} size={16} />
+                </Pressable>
+              )}
+            </Popover>
           ) : null}
           <Text variant="small" color="inkMuted">
             {t('cart.taxes')}
@@ -336,9 +337,16 @@ export function CartView() {
       <View style={[styles.dock, { bottom: room }]}>
         <View style={styles.dockTotal} accessible>
           <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
-          <Text variant="caption" color="inkMuted">
-            {t('cart.toPay')}
-          </Text>
+          <View style={styles.dockCaption}>
+            <Text variant="caption" color="inkMuted">
+              {t('cart.toPay')}
+            </Text>
+            {bill.totalSaved > 0 ? (
+              <Text variant="caption" color="success">
+                {`· ${t('cart.savedShort', { amount: formatRupees(bill.totalSaved) })}`}
+              </Text>
+            ) : null}
+          </View>
         </View>
         <View style={styles.dockButton}>
           <Button
@@ -350,14 +358,6 @@ export function CartView() {
         </View>
       </View>
       <UndoToast bottom={room + DOCK} />
-      <PriceSheet
-        open={why}
-        onClose={() => {
-          setWhy(false);
-        }}
-        bill={bill}
-        distanceKm={SAMPLE_DISTANCE_KM}
-      />
     </View>
   );
 }
