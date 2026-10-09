@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { CartHeader } from '@/home/CartHeader';
+import { armQuietCartReturn } from '@/home/cartReturn';
 import { CouponsView } from '@/home/CouponsView';
 import { useLanguage } from '@/i18n/LanguageProvider';
 
@@ -19,6 +20,7 @@ export default function CouponsScreen() {
         title={t('coupons.title')}
         backLabel={t('common.back')}
         onBack={() => {
+          armQuietCartReturn();
           if (router.canGoBack()) router.back();
           else router.replace('/cart');
         }}

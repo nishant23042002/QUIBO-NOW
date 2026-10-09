@@ -1,15 +1,35 @@
 import { LOCALES, messages } from '@quibo/i18n';
 import { useRouter } from 'expo-router';
 import { setConditions, useConditions } from '@/home/conditions';
+import { SETTINGS_LOAD_MS, SETTINGS_POLICY } from '@/home/loading';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme, type Mode } from '@/theme';
 import { armFailNext, setSimulatedOffline, useFailNextArmed, useSimulatedOffline } from '@/network';
-import { Button, OptionGroup, Screen } from '@/ui';
+import { Button, LoadGate, OptionGroup, ProfileSkeleton, Screen, useScreenLoad } from '@/ui';
 
 const MODES: readonly Mode[] = ['system', 'light', 'dark'];
 
+/** How many choices each settings group has, for the skeleton: language, appearance, then the developer switches. */
+const DEV_GROUPS = [2, 2, 2, 2, 2] as const;
+/** The developer buttons at the end: "fail the next load" and the components gallery. */
+const DEV_BUTTONS = 2;
+
 // The profile screen holds the settings. For now: language and appearance. Orders, addresses and help join later.
 export default function ProfileScreen() {
+  const load = useScreenLoad({ loadMs: SETTINGS_LOAD_MS, policy: SETTINGS_POLICY });
+  const groups = [LOCALES.length, MODES.length, ...(__DEV__ ? DEV_GROUPS : [])];
+
+  return (
+    <LoadGate
+      load={load}
+      skeleton={<ProfileSkeleton groups={groups} buttons={__DEV__ ? DEV_BUTTONS : 0} />}
+    >
+      <Settings />
+    </LoadGate>
+  );
+}
+
+function Settings() {
   const { locale, setLocale, t } = useLanguage();
   const { mode, setMode } = useTheme();
   const router = useRouter();

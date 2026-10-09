@@ -9,19 +9,24 @@ import {
   BOTTOM_BAR_HEIGHT,
   Button,
   Icon,
+  LoadGate,
   QTile,
   Sheet,
   SlotPicker,
   Text,
   radius,
   space,
+  useScreenLoad,
   type SlotGroupData,
 } from '@/ui';
+import { armQuietCartReturn } from './cartReturn';
 import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
 import { useConditions } from './conditions';
 import { SAMPLE_DISTANCE_KM } from './delivery';
 import { deliveryFee } from './deliveryFee';
+import { STEP_LOAD_MS, STEP_POLICY } from './loading';
+import { ScheduleSkeleton } from './ScheduleSkeleton';
 import { useSlotText } from './slotText';
 import {
   choiceFor,
@@ -126,7 +131,7 @@ const makeStyles = (c: ThemeColors) =>
  * option says what delivery costs then, so a quieter time that costs less is easy to see. Nothing changes until
  * "Confirm"; then the cart shows the new time and bill.
  */
-export function ScheduleView() {
+function SchedulePage() {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
@@ -208,6 +213,7 @@ export function ScheduleView() {
 
   const confirm = () => {
     cart.delivery.setChoice(draft);
+    armQuietCartReturn();
     if (router.canGoBack()) router.back();
     else router.replace('/cart');
   };
@@ -426,5 +432,31 @@ export function ScheduleView() {
         ))}
       </Sheet>
     </View>
+  );
+}
+
+/** The delivery-time page as it opens: its skeleton, in the shape of the choice made now, then the page fading in over it. */
+export function ScheduleView() {
+  const cart = useCart();
+  const insets = useSafeAreaInsets();
+  const load = useScreenLoad({
+    loadMs: STEP_LOAD_MS,
+    policy: STEP_POLICY,
+    hold: !cart.ready,
+  });
+
+  return (
+    <LoadGate
+      load={load}
+      skeleton={
+        <ScheduleSkeleton
+          items={cart.count > 0}
+          mode={cart.delivery.choice.mode === 'slot' ? 'slot' : 'quick'}
+          bottom={insets.bottom + BOTTOM_BAR_HEIGHT}
+        />
+      }
+    >
+      <SchedulePage />
+    </LoadGate>
   );
 }

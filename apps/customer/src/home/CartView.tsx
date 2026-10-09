@@ -1,6 +1,6 @@
 import { add, formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   LayoutAnimation,
   Text as NativeText,
@@ -15,6 +15,7 @@ import { useOnline } from '@/network';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
+  LoadGate,
   BillSummary,
   Button,
   Icon,
@@ -37,10 +38,12 @@ import {
   useKeyboardVisible,
   useReduceMotion,
   useScreenFocused,
+  useScreenLoad,
   type BillRow,
 } from '@/ui';
 import { UndoToast } from './CartLayer';
 import { useCart } from './CartProvider';
+import { takeQuietCartReturn } from './cartReturn';
 import { CartSkeleton, LINE_HEIGHT, THUMB } from './CartSkeleton';
 import { useTintOf } from './categories';
 import {
@@ -52,7 +55,9 @@ import {
   VerifiedShops,
 } from './CartExtras';
 import { SAMPLE_DISTANCE_KM } from './delivery';
+import { CART_LOAD_MS, CART_POLICY } from './loading';
 import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
+import { rememberCartShape, rememberedCartShape, cartShape } from './skeletonShape';
 import { useSlotText } from './slotText';
 
 /** The checkout bar's least height: 12 above and below a 48 dp button, and its top line. It grows with large text. */
@@ -246,7 +251,7 @@ const makeStyles = (c: ThemeColors) =>
  * undo note. An empty cart says so and points back to the shops. The cart is kept on the phone, so it works with no
  * connection; only ordering will need one.
  */
-export function CartView() {
+function CartPage() {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
@@ -301,7 +306,8 @@ export function CartView() {
     </>
   );
 
-  if (!cart.ready) return <CartSkeleton />;
+  // The skeleton is drawn over the page until the saved cart has been read (see `CartView`).
+  if (!cart.ready) return null;
 
   if (cart.count === 0) {
     return (
@@ -802,5 +808,45 @@ export function CartView() {
       )}
       <UndoToast bottom={room + (keyboard ? 0 : dockHeight)} />
     </PopoverHost>
+  );
+}
+
+/**
+ * The cart as it opens: its skeleton first, then the page fading in over it. The skeleton is drawn in the cart's own
+ * shape (a line for each item, a saved list only when something is saved, the empty cart's picture when it is empty), taken
+ * from what is in the cart, or from what it looked like last time while the saved cart is still being read. Coming back from
+ * the delivery time or coupons page does not show it again. With no network the cart still shows, with its notice; a failed
+ * load shows a message to try again.
+ */
+export function CartView() {
+  const cart = useCart();
+  const insets = useSafeAreaInsets();
+  const load = useScreenLoad({
+    loadMs: CART_LOAD_MS,
+    policy: CART_POLICY,
+    hold: !cart.ready,
+    quietReturn: takeQuietCartReturn,
+  });
+  const { ready } = cart;
+  const known = cartShape({
+    lines: cart.items.length,
+    saved: cart.saved.items.length,
+    shops: cart.storeCount,
+  });
+  const shape = ready ? known : rememberedCartShape();
+
+  // What the cart looked like, to draw the next skeleton from.
+  const { empty, lines, saved, trip } = known;
+  useEffect(() => {
+    if (ready) rememberCartShape({ empty, lines, saved, trip });
+  }, [ready, empty, lines, saved, trip]);
+
+  return (
+    <LoadGate
+      load={load}
+      skeleton={<CartSkeleton shape={shape} bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />}
+    >
+      <CartPage />
+    </LoadGate>
   );
 }

@@ -145,7 +145,13 @@ _Goal: Home runs on mock data through the same path the live API will use._
   refunded; a fifth cart promise, "Pay for what you get", appears when the cart holds one) and an "If something is
   unavailable" card (swap for the closest match at no higher price, leave it out and refund, or call me; one choice for
   the order and a choice of its own for any item, kept on the phone). The settlement and the choices are plain logic with
-  tests (ADR 0014); the order's real weighing comes with the store portal and the driver app. G: offline and error
+  tests (ADR 0014); the order's real weighing comes with the store portal and the driver app. Loading (done): the cart, the
+  delivery-time page, the coupons page and the profile open with a skeleton drawn in the shape of what is coming (a line for
+  each item in the cart, a saved list only when something is saved, the empty cart's picture when it is empty, a card for
+  each coupon, the settings groups), then the page fades in over it. Each open loads again, except coming back to the cart from
+  its own steps. With no network the cart still shows, with its notice, while the delivery-time and coupons pages show the
+  offline screen; a failed load shows a message with Try again; the profile never blocks, because the switch that brings the
+  network back is on it. Checkout and the address pages get theirs when they are built (1e). G: offline and error
   states, accessibility, large text, Hindi and Marathi review.
 
 ### 1e. First run and address: language, phone OTP, address

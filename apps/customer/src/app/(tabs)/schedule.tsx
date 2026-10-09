@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { CartHeader } from '@/home/CartHeader';
+import { armQuietCartReturn } from '@/home/cartReturn';
 import { useCart } from '@/home/CartProvider';
 import { ScheduleView } from '@/home/ScheduleView';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -22,6 +23,7 @@ export default function ScheduleScreen() {
         {...(cart.count > 0 ? { subtitle: cart.itemsLabel } : {})}
         backLabel={t('common.back')}
         onBack={() => {
+          armQuietCartReturn();
           if (router.canGoBack()) router.back();
           else router.replace('/cart');
         }}

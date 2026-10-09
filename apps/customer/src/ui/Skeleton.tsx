@@ -1,5 +1,13 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
-import { Animated, Easing, StyleSheet, View, type DimensionValue } from 'react-native';
+import {
+  Animated,
+  Easing,
+  StyleSheet,
+  View,
+  type DimensionValue,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { useStyles, type ThemeColors } from '@/theme';
 import { radius } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
@@ -12,6 +20,8 @@ const PULSE_MS = 750;
 export interface SkeletonScopeProps {
   /** What a screen reader says for the whole group, for example "Loading". Pass a translated string. */
   label: string;
+  /** For a skeleton that fills its page and pins something to the bottom, such as the checkout bar: `{ flex: 1 }`. */
+  style?: StyleProp<ViewStyle>;
   children: ReactNode;
 }
 
@@ -20,7 +30,7 @@ export interface SkeletonScopeProps {
  * cheap on a low-end phone), the group is announced once as "loading", and with "reduce motion" on they
  * stay still.
  */
-export function SkeletonScope({ label, children }: SkeletonScopeProps) {
+export function SkeletonScope({ label, style, children }: SkeletonScopeProps) {
   const reduceMotion = useReduceMotion();
   const [pulse] = useState(() => new Animated.Value(1));
 
@@ -53,7 +63,7 @@ export function SkeletonScope({ label, children }: SkeletonScopeProps) {
 
   return (
     <PulseContext value={pulse}>
-      <View accessible aria-busy aria-label={label}>
+      <View accessible aria-busy aria-label={label} style={style}>
         {children}
       </View>
     </PulseContext>

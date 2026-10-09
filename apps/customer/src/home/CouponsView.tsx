@@ -10,13 +10,18 @@ import {
   Badge,
   Button,
   Input,
+  LoadGate,
   Notice,
   StatePanel,
   Text,
   radius,
   space,
+  useScreenLoad,
 } from '@/ui';
+import { armQuietCartReturn } from './cartReturn';
 import { useCart } from './CartProvider';
+import { CouponsSkeleton } from './CouponsSkeleton';
+import { STEP_LOAD_MS, STEP_POLICY } from './loading';
 import type { OfferView } from './useCoupon';
 
 const makeStyles = (c: ThemeColors) =>
@@ -54,7 +59,7 @@ const makeStyles = (c: ThemeColors) =>
  * with what each would save; one that needs more items says how much more. Picking one applies it and returns to the
  * cart. These are sample coupons until real offers arrive, and the page says so.
  */
-export function CouponsView() {
+function CouponsPage() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
@@ -64,6 +69,7 @@ export function CouponsView() {
   const [error, setError] = useState<string | undefined>();
 
   const back = () => {
+    armQuietCartReturn();
     if (router.canGoBack()) router.back();
     else router.replace('/cart');
   };
@@ -204,5 +210,17 @@ export function CouponsView() {
         )}
       </ScrollView>
     </View>
+  );
+}
+
+/** The coupons page as it opens: a skeleton with a card for each coupon, then the page fading in over it. */
+export function CouponsView() {
+  const { coupon, ready } = useCart();
+  const load = useScreenLoad({ loadMs: STEP_LOAD_MS, policy: STEP_POLICY, hold: !ready });
+
+  return (
+    <LoadGate load={load} skeleton={<CouponsSkeleton offers={coupon.offers.length} />}>
+      <CouponsPage />
+    </LoadGate>
   );
 }
