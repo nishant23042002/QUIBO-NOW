@@ -7,22 +7,39 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme, type ThemeColors } from '@/theme';
 import { fontSize, leading } from './tokens';
 
+/** What a piece of text is for, which decides its weight: `display` is a heading, `emphasis` a name, label or link, `regular` the rest. */
+type Role = 'display' | 'emphasis' | 'regular';
+
 interface VariantStyle {
   fontSize: number;
-  fontWeight: NonNullable<TextStyle['fontWeight']>;
+  role: Role;
   leading: keyof typeof leading.latin;
 }
 
+/**
+ * Weights by script. Nothing is 700 or above: on a phone, bold small text makes a whole screen look loud. Latin gets
+ * 600 for headings (they are large, so they need no more), and a medium 500 for names, labels and links, which is plainly
+ * heavier than the regular text beside it. Devanagari is set one step heavier, because its fonts are often only Regular
+ * and Bold (a 500 would quietly fall back to Regular and the emphasis would vanish), and because its fine strokes and
+ * joined letters are harder to read thin at small sizes.
+ */
+const WEIGHTS = {
+  latin: { display: '600', emphasis: '500', regular: '400' },
+  devanagari: { display: '600', emphasis: '600', regular: '400' },
+} as const satisfies Record<string, Record<Role, NonNullable<TextStyle['fontWeight']>>>;
+
 const variants = {
-  title: { fontSize: fontSize['3xl'], fontWeight: '700', leading: 'tight' },
-  heading: { fontSize: fontSize.xl, fontWeight: '700', leading: 'tight' },
-  subheading: { fontSize: fontSize.lg, fontWeight: '700', leading: 'tight' },
-  lead: { fontSize: fontSize.lg, fontWeight: '400', leading: 'relaxed' },
-  body: { fontSize: fontSize.base, fontWeight: '400', leading: 'normal' },
-  label: { fontSize: fontSize.base, fontWeight: '600', leading: 'normal' },
-  caption: { fontSize: fontSize.xs, fontWeight: '600', leading: 'normal' },
-  small: { fontSize: fontSize.sm, fontWeight: '400', leading: 'normal' },
-  strong: { fontSize: fontSize.sm, fontWeight: '600', leading: 'normal' },
+  title: { fontSize: fontSize['3xl'], role: 'display', leading: 'tight' },
+  heading: { fontSize: fontSize.xl, role: 'display', leading: 'tight' },
+  subheading: { fontSize: fontSize.lg, role: 'display', leading: 'tight' },
+  lead: { fontSize: fontSize.lg, role: 'regular', leading: 'relaxed' },
+  body: { fontSize: fontSize.base, role: 'regular', leading: 'normal' },
+  label: { fontSize: fontSize.base, role: 'emphasis', leading: 'normal' },
+  caption: { fontSize: fontSize.xs, role: 'emphasis', leading: 'normal' },
+  small: { fontSize: fontSize.sm, role: 'regular', leading: 'normal' },
+  /** The smallest regular text: a line of supporting detail under something, not a label. */
+  fine: { fontSize: fontSize.xs, role: 'regular', leading: 'normal' },
+  strong: { fontSize: fontSize.sm, role: 'emphasis', leading: 'normal' },
 } as const satisfies Record<string, VariantStyle>;
 
 export type TextVariant = keyof typeof variants;
@@ -73,8 +90,9 @@ export function Text({
 }: TextProps) {
   const { locale } = useLanguage();
   const { colors } = useTheme();
-  const { fontSize: size, fontWeight, leading: spacing } = variants[variant];
-  const lineHeight = Math.round(size * leading[locale === 'en' ? 'latin' : 'devanagari'][spacing]);
+  const { fontSize: size, role, leading: spacing } = variants[variant];
+  const script = locale === 'en' ? 'latin' : 'devanagari';
+  const lineHeight = Math.round(size * leading[script][spacing]);
   const isHeading = variant === 'title' || variant === 'heading';
 
   return (
@@ -85,7 +103,7 @@ export function Text({
       style={{
         color: colors[color],
         fontSize: size,
-        fontWeight,
+        fontWeight: WEIGHTS[script][role],
         lineHeight,
         textDecorationLine: strike ? 'line-through' : 'none',
         textAlign: align,

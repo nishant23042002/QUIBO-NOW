@@ -489,7 +489,7 @@ export function CartView() {
           ) : coupon.dropped !== undefined ? (
             <View style={[styles.couponNote, { backgroundColor: colors.warningBg }]}>
               <View style={styles.couponNoteText}>
-                <Text variant="strong" color="warning">
+                <Text variant="small" color="warning">
                   {t('coupons.dropped', {
                     code: coupon.dropped.offer.code,
                     amount: formatRupees(coupon.dropped.shortBy),
@@ -581,7 +581,7 @@ export function CartView() {
           <View style={styles.address}>
             <Icon name="pin" color={colors.accentInk} size={20} />
             <View style={styles.arriveText}>
-              <Text variant="caption" color="inkMuted">
+              <Text variant="fine" color="inkMuted">
                 {t('trust.deliveringTo')}
               </Text>
               <Text variant="small" numberOfLines={1}>
@@ -639,7 +639,7 @@ export function CartView() {
                     aria-label={t('cart.soldBy', { shop: line.soldBy })}
                   >
                     <Icon name="store" color={colors.inkMuted} size={12} />
-                    <Text variant="caption" color="inkMuted" numberOfLines={1}>
+                    <Text variant="fine" color="inkMuted" numberOfLines={1}>
                       {line.soldBy}
                     </Text>
                   </View>
@@ -779,7 +779,7 @@ export function CartView() {
               ) : null}
             </View>
             <View style={styles.dockCaption}>
-              <Text variant="caption" color="inkMuted">
+              <Text variant="fine" color="inkMuted">
                 {t('cart.toPay')}
               </Text>
               {bill.totalSaved > 0 ? (

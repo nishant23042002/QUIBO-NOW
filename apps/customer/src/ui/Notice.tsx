@@ -63,7 +63,7 @@ export function Notice({ tone, message, icon, actionLabel, onAction }: NoticePro
     >
       {icon !== undefined ? <Icon name={icon} color={colors[look.text]} size={20} /> : null}
       <View style={styles.message}>
-        <Text variant="strong" color={look.text}>
+        <Text variant="small" color={look.text}>
           {message}
         </Text>
         {actionLabel !== undefined && onAction !== undefined ? (

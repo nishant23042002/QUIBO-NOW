@@ -235,7 +235,7 @@ function PageBody({ page }: { page: InsightPage }) {
       <Text variant="caption" color="onOverlayMuted">
         {page.title}
       </Text>
-      <Text variant="strong" color="onOverlay">
+      <Text variant="small" color="onOverlay">
         {page.text}
       </Text>
       {page.extras.map((extra) => (

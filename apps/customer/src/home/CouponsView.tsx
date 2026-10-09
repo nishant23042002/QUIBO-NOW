@@ -155,7 +155,7 @@ export function CouponsView() {
                   <Text variant="small" color="inkMuted">
                     {t(view.offer.descKey)}
                   </Text>
-                  <Text variant="caption" color="inkMuted">
+                  <Text variant="fine" color="inkMuted">
                     {t('coupons.minOrder', { amount: formatRupees(view.offer.minOrder) })}
                   </Text>
                 </View>
@@ -183,7 +183,7 @@ export function CouponsView() {
                       }}
                     />
                   ) : (
-                    <Text variant="caption" color="inkMuted" align="center">
+                    <Text variant="fine" color="inkMuted" align="center">
                       {t('coupons.addMore', { amount: formatRupees(view.shortBy) })}
                     </Text>
                   )}

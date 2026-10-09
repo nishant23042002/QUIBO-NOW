@@ -140,7 +140,7 @@ function SlotChip({
           {slot.label}
         </Text>
         {full ? (
-          <Text variant="caption" color="inkMuted">
+          <Text variant="fine" color="inkMuted">
             {fullLabel}
           </Text>
         ) : slot.caption !== undefined ? (
@@ -223,7 +223,7 @@ export function SlotPicker({
               <Text variant="label" color={active ? 'ink' : 'inkMuted'}>
                 {day.label}
               </Text>
-              <Text variant="caption" color="inkMuted">
+              <Text variant="fine" color="inkMuted">
                 {day.sub}
               </Text>
             </Pressable>

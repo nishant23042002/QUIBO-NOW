@@ -84,7 +84,7 @@ export function DeliveryDetails({ bill, distanceKm }: { bill: Bill; distanceKm: 
               sign={'−'}
             />
           ) : null}
-          <Text variant="caption" color="inkMuted">
+          <Text variant="fine" color="inkMuted">
             {t('cart.whyCapped', { max: formatRupees(ZONE.delivery.max) })}
           </Text>
         </>
