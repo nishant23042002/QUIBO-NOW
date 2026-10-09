@@ -113,6 +113,8 @@ _Goal: Home runs on mock data through the same path the live API will use._
 
 ### 1d. Cart
 
+**Signed off** by the owner on 2026-10-09.
+
 - **Build:** the **cart screen** (lines, steppers, weights in 0.5 kg steps for loose items, remove with undo, the
   `BillSummary`, the free-delivery progress line, the minimum-basket notice, a substitution choice per item, the
   estimated-weight tolerance note), the permanent cart store (kept across app restarts), and the floating
@@ -175,6 +177,8 @@ _Goal: Home runs on mock data through the same path the live API will use._
   the one that replaces it (measured: the same tops and heights on the cart, coupons and delivery-time pages).
 
 ### 1e. First run and address: language, phone OTP, address
+
+**Signed off** by the owner on 2026-10-09.
 
 **Progress.** Both halves are built: the first-run flow (language, mobile number, code; ADR 0017) and the addresses. The saved addresses are kept on
 the phone and the chosen one feeds Home's header, the product page and the cart through `useDeliveryAddress`, so choosing one
