@@ -656,7 +656,7 @@
     "tipAdd": "Add tip",
     "tipInvalid": "Enter a whole number from ₹1 up to {max}.",
     "notesTitle": "Tell your rider",
-    "notesBody": "Pick what helps, and add a note if you like.",
+    "notesBody": "Slide through the choices, tap the ones that help, and add a note if you like.",
     "leaveAtDoor": "Leave at the door",
     "noBell": "Don't ring the bell",
     "callOnArrival": "Call on arrival",
@@ -664,6 +664,11 @@
     "noteLabel": "Note for the rider",
     "notePlaceholder": "For example: green gate, second floor",
     "noteCount": "{count} of {max} characters",
-    "alsoTitle": "You might also like"
+    "alsoTitle": "You might also like",
+    "security": "Leave with security",
+    "saveNote": "Save note",
+    "noteSaved": "Note added for your rider",
+    "editNote": "Edit",
+    "removeNote": "Remove"
   }
 }

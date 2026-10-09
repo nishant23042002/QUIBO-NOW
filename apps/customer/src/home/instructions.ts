@@ -1,5 +1,5 @@
 /** The quick choices for the rider, in the order they are shown. */
-export const INSTRUCTIONS = ['leaveAtDoor', 'noBell', 'callOnArrival', 'pets'] as const;
+export const INSTRUCTIONS = ['security', 'leaveAtDoor', 'noBell', 'callOnArrival', 'pets'] as const;
 export type InstructionKey = (typeof INSTRUCTIONS)[number];
 
 /** The longest note for the rider, in characters. */

@@ -134,8 +134,8 @@ _Goal: Home runs on mock data through the same path the live API will use._
   savings, kept on the phone; free delivery is judged before the coupon; a coupon the cart no longer qualifies for is taken
   off at once with a note saying why, and an emptied cart keeps no coupon. The cart also says when the chosen delivery window
   has gone or quick delivery has closed, instead of changing the delivery silently. D (done): a tip and delivery instructions card (a Tip view with ₹10, ₹20, ₹30 and a typed amount up to ₹100, nothing chosen by
-  default and one tap to take it away, all of it for the rider; an Instructions view with quick choices and a note, kept on the
-  phone), a rider-tip line in the bill, and "You might also like", a row of items that go with the cart, each with ADD. E: trust extras (one-trip strip,
+  default and one tap to take it away, all of it for the rider; an Instructions view with a row of icon tiles to slide through and a note that is saved with a button and shown back, kept on the
+  phone), placed after the bill, a rider-tip line in the bill, and "You might also like", a row of items that go with the cart, each with ADD. E: trust extras (one-trip strip,
   verified shops, price promise, refund for lighter weight, easy problems, safe handover code, save for later and
   share, delivering-to strip). F: loose items sold by weight and the "if unavailable" choice. G: offline and error
   states, accessibility, large text, Hindi and Marathi review.

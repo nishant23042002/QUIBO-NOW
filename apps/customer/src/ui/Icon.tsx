@@ -32,6 +32,34 @@ const SHAPES = {
     path('M18 2.8l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z'),
   ],
   close: [path('M6 6l12 12M18 6L6 18')],
+  // A person inside a shield: leave it with the building's security.
+  shieldUser: [
+    path('M12 3l7 3v5.5c0 4.4-3 7.7-7 9.5-4-1.8-7-5.1-7-9.5V6z'),
+    ring(12, 10, 2.1),
+    path('M8.4 16.1a3.8 3.8 0 0 1 7.2 0'),
+  ],
+  // A bell with a line through it: do not ring.
+  bellOff: [
+    path('M5.5 17.5h13l-1.7-2.3V11a4.8 4.8 0 0 0-9.6 0v4.2z'),
+    path('M10 20.3a2 2 0 0 0 4 0'),
+    path('M4 4l16 16'),
+  ],
+  // A telephone handset.
+  phone: [
+    path(
+      'M6.6 3.5h2.7l1.4 3.9-1.8 1.2a11 11 0 0 0 5.5 5.5l1.2-1.8 3.9 1.4v2.7a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z',
+    ),
+  ],
+  // A paw: four toes over a pad.
+  paw: [
+    dot(6.6, 11.3, 1.6),
+    dot(9.6, 7.4, 1.6),
+    dot(14.4, 7.4, 1.6),
+    dot(17.4, 11.3, 1.6),
+    path(
+      'M12 12c-2.7 0-5 2.7-5 4.7 0 1.5 1.2 2.3 2.6 2.3.9 0 1.6-.4 2.4-.4s1.5.4 2.4.4c1.4 0 2.6-.8 2.6-2.3 0-2-2.3-4.7-5-4.7z',
+    ),
+  ],
   // A price tag with its hole, and a percent sign inside.
   tag: [
     path(

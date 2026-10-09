@@ -611,7 +611,6 @@ export function CartView() {
             </Text>
           </Pressable>
         </View>
-        <TipAndNotes />
         <View style={[styles.card, styles.bill]}>
           <View style={styles.billHead}>
             <Icon name="receipt" color={colors.accentInk} size={20} />
@@ -658,6 +657,7 @@ export function CartView() {
             {t('cart.taxes')}
           </Text>
         </View>
+        <TipAndNotes />
         <AlsoLike />
       </ScrollView>
       {keyboard ? null : (
