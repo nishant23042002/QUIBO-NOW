@@ -70,7 +70,9 @@ export function OrderPlaced({ order, onDone }: { order: Order; onDone: () => voi
     }).start();
     const open = setTimeout(
       () => {
+        // The list goes under the order's page, so "back" from the page is the list.
         router.navigate('/orders');
+        router.push({ pathname: '/order', params: { id: order.id } });
       },
       reduceMotion ? 0 : 300,
     );
@@ -88,7 +90,7 @@ export function OrderPlaced({ order, onDone }: { order: Order; onDone: () => voi
       clearTimeout(open);
       clearTimeout(leave);
     };
-  }, [reduceMotion, enter, fade, router, onDone]);
+  }, [reduceMotion, enter, fade, router, onDone, order.id]);
 
   const pop = {
     opacity: enter,

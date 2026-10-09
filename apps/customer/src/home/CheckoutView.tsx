@@ -5,7 +5,7 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useOnline } from '@/network';
-import { effectivePayment, paymentOptions, shopLines } from '@/orders/checkout';
+import { effectivePayment, orderDeliveryOf, paymentOptions, shopLines } from '@/orders/checkout';
 import { newUuid } from '@/orders/ids';
 import { useOrders } from '@/orders/OrdersProvider';
 import { IDLE, isBusy, nextFlow } from '@/orders/placeFlow';
@@ -208,6 +208,8 @@ function CheckoutPage() {
   const busy = isBusy(flow);
   const codAllowed = options.some((option) => option.method === 'cod' && option.allowed);
 
+  const delivery = orderDeliveryOf(cart.delivery.current, cart.delivery.eta);
+
   const later = (run: () => void, ms: number) => {
     timers.current.push(setTimeout(run, ms));
   };
@@ -216,16 +218,20 @@ function CheckoutPage() {
   const save = () => {
     const mode = conditions.store;
     later(() => {
-      orders.place({
-        key: orderKey,
-        id: newUuid(),
-        townId: towns[mode].id,
-        mode,
-        shops: cart.stores,
-        method,
-        total: bill.toPay,
-        now: new Date(),
-      });
+      orders.place(
+        {
+          key: orderKey,
+          id: newUuid(),
+          townId: towns[mode].id,
+          mode,
+          shops: cart.stores,
+          delivery,
+          method,
+          total: bill.toPay,
+          now: new Date(),
+        },
+        { ending: 'delivered', speed: conditions.orderSpeed },
+      );
       cart.clearAfterOrder();
       dispatch({ type: 'saved' });
     }, PLACE_MS);
@@ -443,7 +449,7 @@ function CheckoutPage() {
           <Button
             label={flow.step === 'placing' ? t('checkout.placing') : t('checkout.place')}
             loading={flow.step === 'placing'}
-            disabled={!online || !hasAddress || busy}
+            disabled={!online || !hasAddress || cart.delivery.current === undefined || busy}
             shine
             onPress={place}
           />

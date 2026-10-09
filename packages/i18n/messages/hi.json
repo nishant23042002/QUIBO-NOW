@@ -203,7 +203,10 @@
       "byClock": "घड़ी के अनुसार",
       "rushNow": "अभी भीड़ का समय",
       "partnerShops": "साझेदार दुकानें",
-      "darkStore": "एक डार्क स्टोर"
+      "darkStore": "एक डार्क स्टोर",
+      "orderSpeed": "ऑर्डर की गति (टेस्टिंग)",
+      "speedFast": "तेज़, करीब एक मिनट",
+      "speedSlow": "धीमी, छह गुना धीमी"
     },
     "account": "आपका खाता",
     "signedIn": "{phone} से साइन इन हैं",
@@ -801,6 +804,60 @@
       "cancelled": "रद्द किया गया",
       "undelivered": "पहुँचाया नहीं जा सका"
     }
+  },
+  "tracking": {
+    "headline": {
+      "waitingShop": "दुकान के स्वीकार करने का इंतज़ार",
+      "gettingStarted": "आपका ऑर्डर शुरू हो रहा है",
+      "packingShop": "दुकान आपका ऑर्डर पैक कर रही है",
+      "packingStore": "हम आपका ऑर्डर पैक कर रहे हैं",
+      "readyForRider": "पैक हो गया। राइडर इसे ले रहा है",
+      "onTheWay": "आपका राइडर रास्ते में है",
+      "delivered": "पहुँच गया",
+      "rejected": "दुकान यह ऑर्डर नहीं ले सकी",
+      "cancelled": "यह ऑर्डर रद्द हो गया",
+      "undelivered": "हम यह ऑर्डर पहुँचा नहीं सके"
+    },
+    "etaRange": "करीब {from}⁠–⁠{to} मिनट में पहुँचेगा। यह अनुमान है, वादा नहीं।",
+    "etaToday": "आज पहुँचेगा, {window}",
+    "etaTomorrow": "कल पहुँचेगा, {window}",
+    "etaOther": "{date} को पहुँचेगा, {window}",
+    "deliveredAt": "{time} पर पहुँचा",
+    "step": {
+      "placed": "ऑर्डर दिया",
+      "accepted": "दुकान ने स्वीकार किया",
+      "ready": "पैक और तैयार",
+      "picked_up": "रास्ते में",
+      "delivered": "पहुँच गया",
+      "rejected": "दुकान नहीं ले सकी",
+      "cancelled": "रद्द किया गया",
+      "undelivered": "पहुँचाया नहीं जा सका"
+    },
+    "inProgress": "जारी है",
+    "yourShops": "आपकी दुकानें",
+    "part": {
+      "waiting": "इंतज़ार",
+      "packing": "पैक हो रहा है",
+      "packed": "पैक हो गया",
+      "picked_up": "उठा लिया गया"
+    },
+    "call": "कॉल करें",
+    "callShop": "{name} को कॉल करें",
+    "oneRider": "एक ही राइडर सब कुछ इकट्ठा करके साथ पहुँचाता है।",
+    "yourRider": "आपका राइडर",
+    "callRider": "राइडर को कॉल करें",
+    "callRiderLabel": "अपने राइडर {name} को कॉल करें",
+    "payDoor": "दरवाज़े पर भुगतान",
+    "keepCash": "राइडर के लिए {amount} तैयार रखें।",
+    "paidUpi": "UPI से भुगतान हो गया",
+    "nothingToPay": "दरवाज़े पर कुछ देना नहीं है।",
+    "paidCash": "नकद भुगतान हो गया",
+    "cashCollected": "राइडर ने {amount} लिए।",
+    "offline": "कनेक्शन नहीं है। ऑनलाइन होते ही अपडेट दिखेंगे।",
+    "notFoundTitle": "यह ऑर्डर नहीं मिला",
+    "notFoundBody": "हो सकता है यह इस फ़ोन से हटा दिया गया हो।",
+    "notFoundAction": "अपने ऑर्डर देखें",
+    "viewOrder": "ऑर्डर ट्रैक करें"
   },
   "firstRun": {
     "progress": "चरण {n}, कुल {total}",

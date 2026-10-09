@@ -18,6 +18,9 @@ const TABS = [
 /** The steps after the cart are reached from it, so the Cart tab stays lit while they show. */
 const STEP_OF_CART: readonly string[] = ['checkout', 'schedule', 'coupons'];
 
+/** One order's page is reached from the Orders tab, so that tab stays lit while it shows. */
+const STEP_OF_ORDERS: readonly string[] = ['order'];
+
 /** The address pages are reached from Home and from the cart alike, so no tab is lit for them. */
 const NEUTRAL: readonly string[] = ['address', 'address-edit'];
 
@@ -32,9 +35,11 @@ function Bar({ state, navigation }: TabBarProps) {
     ? current
     : STEP_OF_CART.includes(current)
       ? 'cart'
-      : NEUTRAL.includes(current)
-        ? 'none'
-        : 'index';
+      : STEP_OF_ORDERS.includes(current)
+        ? 'orders'
+        : NEUTRAL.includes(current)
+          ? 'none'
+          : 'index';
 
   // While the keyboard is up the bar would only ride on top of it, so it steps aside.
   if (keyboard) return null;

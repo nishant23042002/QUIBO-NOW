@@ -203,7 +203,10 @@
       "byClock": "By the clock",
       "rushNow": "Rush hour now",
       "partnerShops": "Partner shops",
-      "darkStore": "One dark store"
+      "darkStore": "One dark store",
+      "orderSpeed": "Order speed (testing)",
+      "speedFast": "Fast, about a minute",
+      "speedSlow": "Slow, six times slower"
     },
     "account": "Your account",
     "signedIn": "Signed in as {phone}",
@@ -801,6 +804,60 @@
       "cancelled": "Cancelled",
       "undelivered": "Could not be delivered"
     }
+  },
+  "tracking": {
+    "headline": {
+      "waitingShop": "Waiting for the shop to confirm",
+      "gettingStarted": "Getting your order started",
+      "packingShop": "The shop is packing your order",
+      "packingStore": "We are packing your order",
+      "readyForRider": "Packed. Your rider is picking it up",
+      "onTheWay": "Your rider is on the way",
+      "delivered": "Delivered",
+      "rejected": "The shop could not take this order",
+      "cancelled": "This order was cancelled",
+      "undelivered": "We could not deliver this order"
+    },
+    "etaRange": "Arriving in about {from}⁠–⁠{to} mins. An estimate, not a promise.",
+    "etaToday": "Arriving today, {window}",
+    "etaTomorrow": "Arriving tomorrow, {window}",
+    "etaOther": "Arriving {date}, {window}",
+    "deliveredAt": "Delivered at {time}",
+    "step": {
+      "placed": "Order placed",
+      "accepted": "Shop confirmed",
+      "ready": "Packed and ready",
+      "picked_up": "On the way",
+      "delivered": "Delivered",
+      "rejected": "The shop could not take it",
+      "cancelled": "Cancelled",
+      "undelivered": "Could not be delivered"
+    },
+    "inProgress": "In progress",
+    "yourShops": "Your shops",
+    "part": {
+      "waiting": "Waiting",
+      "packing": "Packing",
+      "packed": "Packed",
+      "picked_up": "Picked up"
+    },
+    "call": "Call",
+    "callShop": "Call {name}",
+    "oneRider": "One rider collects it all and delivers it together.",
+    "yourRider": "Your rider",
+    "callRider": "Call rider",
+    "callRiderLabel": "Call your rider, {name}",
+    "payDoor": "Pay at the door",
+    "keepCash": "Keep {amount} ready for the rider.",
+    "paidUpi": "Paid by UPI",
+    "nothingToPay": "Nothing to pay at the door.",
+    "paidCash": "Paid in cash",
+    "cashCollected": "The rider collected {amount}.",
+    "offline": "No connection. Updates will show when you are back online.",
+    "notFoundTitle": "We could not find this order",
+    "notFoundBody": "It may have been removed from this phone.",
+    "notFoundAction": "See your orders",
+    "viewOrder": "Track order"
   },
   "firstRun": {
     "progress": "Step {n} of {total}",

@@ -1,5 +1,6 @@
-import type { Money, PaymentMethod } from '@quibo/contracts';
+import type { Money, OrderDelivery, PaymentMethod } from '@quibo/contracts';
 import { ZONE, type ZoneSettings } from '../home/delivery';
+import type { Delivery } from '../home/slots';
 
 /** One way of paying, and whether it can be used for this order. */
 export interface PaymentOption {
@@ -59,4 +60,21 @@ export function shopLines(items: readonly { soldBy?: string }[], fallback: strin
     else found.items += 1;
   }
   return lines;
+}
+
+/**
+ * How the order will be delivered, as the order remembers it: the one-hour window the shopper picked, or the quick-delivery estimate
+ * as a range of minutes. A window is kept as the times it starts and ends.
+ */
+export function orderDeliveryOf(
+  current: Delivery | undefined,
+  eta: { from: number; to: number },
+): OrderDelivery {
+  if (current?.kind === 'slot') {
+    const start = new Date(current.slot.date);
+    start.setHours(current.slot.hour, 0, 0, 0);
+    const end = new Date(start.getTime() + 3_600_000);
+    return { kind: 'slot', start: start.toISOString(), end: end.toISOString() };
+  }
+  return { kind: 'quick', fromMinutes: eta.from, toMinutes: eta.to };
 }

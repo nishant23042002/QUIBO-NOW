@@ -13,10 +13,18 @@ export interface Conditions {
   rush: boolean;
   /** How the town is supplied. Only the cart reads it so far. */
   store: 'partner' | 'dark';
+  /** How fast the mock order clock moves an order along: a whole order in about a minute, or six times slower. */
+  orderSpeed: 'fast' | 'slow';
 }
 
 const listeners = new Set<() => void>();
-let current: Conditions = { festival: false, rain: false, rush: false, store: 'partner' };
+let current: Conditions = {
+  festival: false,
+  rain: false,
+  rush: false,
+  store: 'partner',
+  orderSpeed: 'fast',
+};
 
 function subscribe(listener: () => void): () => void {
   listeners.add(listener);

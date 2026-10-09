@@ -15,6 +15,7 @@ describe('package index', () => {
         'MoneySchema',
         'ORDER_STATUSES',
         'ORDER_TRANSITIONS',
+        'OrderDeliverySchema',
         'OrderEventSchema',
         'OrderIdSchema',
         'OrderSchema',

@@ -1,6 +1,6 @@
 import { formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SETTINGS_LOAD_MS, SETTINGS_POLICY } from '@/home/loading';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -99,10 +99,13 @@ function OrdersList() {
       showsVerticalScrollIndicator={false}
     >
       {orders.map(({ order }) => (
-        <View
+        <Pressable
           key={order.id}
-          style={styles.card}
-          accessible
+          role="link"
+          onPress={() => {
+            router.push({ pathname: '/order', params: { id: order.id } });
+          }}
+          style={({ pressed }) => [styles.card, pressed && { opacity: 0.85 }]}
           aria-label={`${t('orders.card', { number: orderNumber(order.id) })}, ${t(`orders.status.${order.status}`)}`}
         >
           <View style={styles.head}>
@@ -122,7 +125,7 @@ function OrdersList() {
               ? t('orders.payCod', { amount: formatRupees(order.total) })
               : t('orders.payUpi', { amount: formatRupees(order.total) })}
           </Text>
-        </View>
+        </Pressable>
       ))}
     </ScrollView>
   );

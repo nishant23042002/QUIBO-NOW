@@ -28,6 +28,11 @@ fulfilment mode without a screen asking which mode the town is in (ADR 0002).
 5. **The clock is only a mock.** The plan and the pace are kept beside the order, never inside it, because a real order has
    neither. A fast pace lets a whole order be watched in about a minute; a slow one is six times slower.
 6. **The customer can cancel until packing is finished**, that is while the order is placed or accepted.
+7. **The order remembers how it is delivered.** `delivery` holds either the quick-delivery estimate as a range of minutes or the
+   one-hour window the customer picked, taken from the cart when the order is placed. Tracking shows it as a range or a
+   window, never as a countdown (ADR 0012).
+8. **The clock runs while the app is open and sleeps until the next move is due.** With no connection it pauses, and when the phone
+   is back it catches up with the true times. The development switch "Order speed" sets how fast the next order moves.
 
 ## Consequences
 

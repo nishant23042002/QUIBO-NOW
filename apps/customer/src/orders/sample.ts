@@ -16,6 +16,7 @@ export function samplePlacedOrder(
       { id: 'dairy', name: 'Sharma Dairy' },
       { id: 'veg', name: 'Gupta Vegetables' },
     ],
+    delivery: { kind: 'quick', fromMinutes: 25, toMinutes: 30 },
     payment: { method, status: method === 'cod' ? 'to_collect' : 'paid' },
     total: 24900,
     placedAt: at.toISOString(),

@@ -35,6 +35,29 @@ export const OrderEventSchema = z.object({
 });
 export type OrderEvent = z.infer<typeof OrderEventSchema>;
 
+/**
+ * How the order is delivered, as it was when the order was placed. Quick delivery is an estimate in minutes, shown as a range and
+ * never a promise (ADR 0012). A scheduled order has the one-hour window the customer picked.
+ */
+export const OrderDeliverySchema = z
+  .discriminatedUnion('kind', [
+    z.object({
+      kind: z.literal('quick'),
+      fromMinutes: z.int().positive(),
+      toMinutes: z.int().positive(),
+    }),
+    z.object({ kind: z.literal('slot'), start: z.iso.datetime(), end: z.iso.datetime() }),
+  ])
+  .superRefine((delivery, ctx) => {
+    if (delivery.kind === 'quick' && delivery.toMinutes < delivery.fromMinutes) {
+      ctx.addIssue({ code: 'custom', path: ['toMinutes'], message: 'The range runs upwards' });
+    }
+    if (delivery.kind === 'slot' && Date.parse(delivery.end) <= Date.parse(delivery.start)) {
+      ctx.addIssue({ code: 'custom', path: ['end'], message: 'The window ends after it starts' });
+    }
+  });
+export type OrderDelivery = z.infer<typeof OrderDeliverySchema>;
+
 /** One shop's part of the order. One order can hold several shops; there is still one rider and one delivery (ADR 0009). */
 export const OrderShopSchema = z.object({
   id: z.string().min(1),
@@ -55,6 +78,7 @@ export const OrderSchema = z
     status: OrderStatusSchema,
     acceptance: AcceptanceSchema,
     shops: z.array(OrderShopSchema).min(1),
+    delivery: OrderDeliverySchema,
     payment: z.object({ method: PaymentMethodSchema, status: PaymentStatusSchema }),
     /** What the customer pays, in paise. For cash on delivery this is the amount the rider collects. */
     total: MoneySchema,

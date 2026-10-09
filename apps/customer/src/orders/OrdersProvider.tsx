@@ -8,9 +8,17 @@ import {
   type ReactNode,
 } from 'react';
 import type { Order } from '@quibo/contracts';
+import { useOnline } from '@/network';
 import { readSetting, writeSetting } from '@/storage';
-import type { TrackedOrder } from './machine';
-import { parseOrders, placeOnce, serialiseOrders, type PlaceRequest } from './place';
+import { advance, nextDueAt, type TrackedOrder } from './machine';
+import {
+  DEFAULT_PLAN,
+  parseOrders,
+  placeOnce,
+  serialiseOrders,
+  type ClockPlan,
+  type PlaceRequest,
+} from './place';
 
 /** Where the phone keeps the orders, so an order placed a moment ago is still there after the app is closed. */
 const ORDERS_KEY = 'quibo.orders';
@@ -23,7 +31,9 @@ export interface Orders {
   /** The newest order, if there is one. */
   latest: TrackedOrder | undefined;
   /** Places an order. The same key always gives the same order, so a retry never places a second one. */
-  place: (request: PlaceRequest) => Order;
+  place: (request: PlaceRequest, plan?: ClockPlan) => Order;
+  /** One order by its id, if it is kept on the phone. */
+  find: (id: string) => TrackedOrder | undefined;
   /** The order that was just placed, while the "Order placed" screen is up. */
   justPlaced: Order | null;
   dismissPlaced: () => void;
@@ -62,14 +72,40 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     void writeSetting(ORDERS_KEY, serialiseOrders(orders));
   }, [loaded, orders]);
 
-  const place = useCallback((request: PlaceRequest): Order => {
+  // The mock order clock: makes each move of each order when it is due, and sleeps until the next one. With no connection nothing
+  // moves, as it would be if the updates could not arrive; when the phone is back online it catches up, with the true times.
+  const online = useOnline();
+  useEffect(() => {
+    if (!loaded || !online) return;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const run = () => {
+      const moved = current.current.map((tracked) => advance(tracked, new Date()));
+      if (moved.some((tracked, index) => tracked !== current.current[index])) {
+        current.current = moved;
+        setOrders(moved);
+      }
+      const due = moved.flatMap((tracked) => nextDueAt(tracked) ?? []);
+      if (due.length > 0) timer = setTimeout(run, Math.max(250, Math.min(...due) - Date.now()));
+    };
+    timer = setTimeout(run, 0);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [loaded, online, orders]);
+
+  const place = useCallback((request: PlaceRequest, plan: ClockPlan = DEFAULT_PLAN): Order => {
     touched.current = true;
-    const result = placeOnce(current.current, request);
+    const result = placeOnce(current.current, request, plan);
     current.current = result.orders;
     setOrders(result.orders);
     if (result.created) setJustPlaced(result.order);
     return result.order;
   }, []);
+
+  const find = useCallback(
+    (id: string) => orders.find((tracked) => tracked.order.id === id),
+    [orders],
+  );
 
   const dismissPlaced = useCallback(() => {
     setJustPlaced(null);
@@ -80,6 +116,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     orders,
     latest: orders[0],
     place,
+    find,
     justPlaced,
     dismissPlaced,
   };

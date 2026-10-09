@@ -25,6 +25,7 @@ function request(overrides: Partial<PlaceRequest> = {}): PlaceRequest {
       { id: 'dairy', name: 'Sharma Dairy' },
       { id: 'veg', name: 'Patil Vegetables' },
     ],
+    delivery: { kind: 'quick', fromMinutes: 25, toMinutes: 30 },
     method: 'cod',
     total: money(34_100),
     now: NOW,
@@ -59,6 +60,20 @@ describe('buildOrder', () => {
     expect(order.events).toEqual([{ status: 'placed', at: NOW.toISOString(), by: 'customer' }]);
     expect(order.placedAt).toBe(NOW.toISOString());
     expect(order.idempotencyKey).toBe('key-aaaaaaaa');
+  });
+
+  it('remembers how the order is delivered', () => {
+    const slot = {
+      kind: 'slot',
+      start: '2026-10-10T07:00:00.000Z',
+      end: '2026-10-10T08:00:00.000Z',
+    } as const;
+    expect(buildOrder(request({ delivery: slot })).delivery).toEqual(slot);
+    expect(buildOrder(request()).delivery).toEqual({
+      kind: 'quick',
+      fromMinutes: 25,
+      toMinutes: 30,
+    });
   });
 
   it('keeps the total as integer paise and the shops it came from', () => {

@@ -1,7 +1,13 @@
 import { money } from '@quibo/contracts';
 import { describe, expect, it } from 'vitest';
 import { ZONE } from '../home/delivery';
-import { defaultPayment, effectivePayment, paymentOptions, shopLines } from './checkout';
+import {
+  defaultPayment,
+  effectivePayment,
+  orderDeliveryOf,
+  paymentOptions,
+  shopLines,
+} from './checkout';
 
 const CAP = ZONE.payment.codMaxNewCustomer;
 
@@ -73,5 +79,31 @@ describe('shopLines', () => {
 
   it('is empty for an empty cart', () => {
     expect(shopLines([], 'Quibo Store')).toEqual([]);
+  });
+});
+
+describe('orderDeliveryOf', () => {
+  const eta = { from: 25, to: 30 };
+
+  it('is the estimate as a range for quick delivery, and for nothing chosen', () => {
+    const quick = { kind: 'quick', fromMinutes: 25, toMinutes: 30 };
+    expect(orderDeliveryOf({ kind: 'quick' }, eta)).toEqual(quick);
+    expect(orderDeliveryOf(undefined, eta)).toEqual(quick);
+  });
+
+  it('is the one-hour window for a scheduled order', () => {
+    const slot = {
+      id: '2026-10-10-7',
+      day: 'tomorrow' as const,
+      date: new Date(2026, 9, 10),
+      hour: 7,
+      full: false,
+      group: 'morning' as const,
+    };
+    const result = orderDeliveryOf({ kind: 'slot', slot }, eta);
+    expect(result.kind).toBe('slot');
+    if (result.kind !== 'slot') return;
+    expect(new Date(result.start)).toEqual(new Date(2026, 9, 10, 7, 0));
+    expect(Date.parse(result.end) - Date.parse(result.start)).toBe(3_600_000);
   });
 });

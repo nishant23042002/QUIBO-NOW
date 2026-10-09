@@ -8,6 +8,7 @@ const base = {
   status: 'accepted',
   acceptance: 'by_shop',
   shops: [{ id: 'dairy', name: 'Sharma Dairy' }],
+  delivery: { kind: 'quick', fromMinutes: 25, toMinutes: 30 },
   payment: { method: 'cod', status: 'to_collect' },
   total: 24900,
   placedAt: '2026-10-09T10:00:00.000Z',
@@ -51,6 +52,33 @@ describe('OrderSchema', () => {
       events: [base.events[0], { status: 'accepted', at: '2026-10-09T09:59:00.000Z', by: 'shop' }],
     };
     expect(OrderSchema.safeParse(back).success).toBe(false);
+  });
+
+  it('takes a scheduled window as well as a quick range', () => {
+    const slot = {
+      ...base,
+      delivery: {
+        kind: 'slot',
+        start: '2026-10-10T07:00:00.000Z',
+        end: '2026-10-10T08:00:00.000Z',
+      },
+    };
+    expect(OrderSchema.safeParse(slot).success).toBe(true);
+  });
+
+  it('needs a range that runs upwards and a window that ends after it starts', () => {
+    const backwards = { ...base, delivery: { kind: 'quick', fromMinutes: 30, toMinutes: 25 } };
+    expect(OrderSchema.safeParse(backwards).success).toBe(false);
+    const empty = {
+      ...base,
+      delivery: {
+        kind: 'slot',
+        start: '2026-10-10T07:00:00.000Z',
+        end: '2026-10-10T07:00:00.000Z',
+      },
+    };
+    expect(OrderSchema.safeParse(empty).success).toBe(false);
+    expect(OrderSchema.safeParse({ ...base, delivery: undefined }).success).toBe(false);
   });
 
   it('keeps money as integer paise', () => {
