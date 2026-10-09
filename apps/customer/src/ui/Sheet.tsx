@@ -9,7 +9,11 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import {
+  SafeAreaProvider,
+  initialWindowMetrics,
+  useSafeAreaInsets,
+} from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
 import { Text } from './Text';
@@ -93,6 +97,15 @@ const makeStyles = (c: ThemeColors) =>
     },
   });
 
+/**
+ * The room the phone's own navigation buttons or gesture bar take at the bottom of the window this is drawn in. The sheet
+ * is drawn in a window of its own (the modal's), reaching under those buttons, so it has to measure that window, not the
+ * app's: the app's window can stop short of the buttons and report no room at all.
+ */
+function WindowBottom({ children }: { children: (bottom: number) => ReactNode }) {
+  return children(useSafeAreaInsets().bottom);
+}
+
 /** A bottom sheet. React Native's Modal gives it the back button, a dimmed page and screen-reader focus. */
 export function Sheet({
   open,
@@ -104,7 +117,6 @@ export function Sheet({
   error,
   busy = false,
 }: SheetProps) {
-  const insets = useSafeAreaInsets();
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
   const { height: screen } = useWindowDimensions();
@@ -150,55 +162,61 @@ export function Sheet({
       navigationBarTranslucent
       onRequestClose={onClose}
     >
-      <View style={styles.root}>
-        {/* The dimming fades in and out by itself while the sheet slides, so it never moves with the sheet. */}
-        <Animated.View style={[styles.scrim, { opacity: progress }]} pointerEvents="none" />
-        {/* A pointer shortcut only: everyone else has the close button and the back button. */}
-        <Pressable accessible={false} onPress={onClose} style={styles.scrimTap} />
-        <Animated.View
-          aria-modal
-          aria-busy={busy}
-          style={[
-            styles.sheet,
-            {
-              paddingBottom: insets.bottom,
-              transform: [
-                {
-                  translateY: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [screen, 0],
-                  }),
-                },
-              ],
-            },
-          ]}
-        >
-          <View style={styles.header}>
-            <View style={styles.title}>
-              <Text variant="heading">{title}</Text>
+      <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+        <WindowBottom>
+          {(bottom) => (
+            <View style={styles.root}>
+              {/* The dimming fades in and out by itself while the sheet slides, so it never moves with the sheet. */}
+              <Animated.View style={[styles.scrim, { opacity: progress }]} pointerEvents="none" />
+              {/* A pointer shortcut only: everyone else has the close button and the back button. */}
+              <Pressable accessible={false} onPress={onClose} style={styles.scrimTap} />
+              <Animated.View
+                aria-modal
+                aria-busy={busy}
+                style={[
+                  styles.sheet,
+                  {
+                    paddingBottom: bottom,
+                    transform: [
+                      {
+                        translateY: progress.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: [screen, 0],
+                        }),
+                      },
+                    ],
+                  },
+                ]}
+              >
+                <View style={styles.header}>
+                  <View style={styles.title}>
+                    <Text variant="heading">{title}</Text>
+                  </View>
+                  <Pressable
+                    role="button"
+                    aria-label={closeLabel}
+                    onPress={onClose}
+                    style={({ pressed }) => [styles.close, pressed && styles.closePressed]}
+                  >
+                    <Icon name="close" color={colors.ink} size={22} />
+                  </Pressable>
+                </View>
+                {error !== undefined ? (
+                  <View role="alert" style={styles.error}>
+                    <Text variant="strong" color="danger">
+                      {error}
+                    </Text>
+                  </View>
+                ) : null}
+                <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
+                  {children}
+                </ScrollView>
+                {footer !== undefined ? <View style={styles.footer}>{footer}</View> : null}
+              </Animated.View>
             </View>
-            <Pressable
-              role="button"
-              aria-label={closeLabel}
-              onPress={onClose}
-              style={({ pressed }) => [styles.close, pressed && styles.closePressed]}
-            >
-              <Icon name="close" color={colors.ink} size={22} />
-            </Pressable>
-          </View>
-          {error !== undefined ? (
-            <View role="alert" style={styles.error}>
-              <Text variant="strong" color="danger">
-                {error}
-              </Text>
-            </View>
-          ) : null}
-          <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
-            {children}
-          </ScrollView>
-          {footer !== undefined ? <View style={styles.footer}>{footer}</View> : null}
-        </Animated.View>
-      </View>
+          )}
+        </WindowBottom>
+      </SafeAreaProvider>
     </Modal>
   );
 }
