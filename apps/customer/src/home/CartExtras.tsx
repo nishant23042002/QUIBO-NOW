@@ -89,12 +89,15 @@ const makeStyles = (c: ThemeColors) =>
     // The instruction tiles run out to the card's edges, so they plainly slide sideways.
     tilesBleed: { marginHorizontal: -space[4] },
     tiles: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
+    // Everything in a tile sits on its centre line: the picture over the words, both centred.
     tile: {
       width: TILE,
-      minHeight: 92,
-      justifyContent: 'space-between',
+      minHeight: 104,
+      alignItems: 'center',
+      justifyContent: 'center',
       gap: space[2],
-      padding: space[3],
+      paddingHorizontal: space[3],
+      paddingVertical: space[4],
       borderWidth: 1.5,
       borderRadius: radius.lg,
       borderColor: c.line,
@@ -179,8 +182,8 @@ function InstructionTile({
           pressed && { opacity: 0.85 },
         ]}
       >
-        <Icon name={icon} color={selected ? colors.accentInk : colors.ink} size={28} />
-        <Text variant="strong" color={selected ? 'accentInk' : 'ink'}>
+        <Icon name={icon} color={selected ? colors.accentInk : colors.ink} size={32} light />
+        <Text variant="caption" color={selected ? 'accentInk' : 'ink'} align="center">
           {label}
         </Text>
         {selected ? (
@@ -390,7 +393,7 @@ export function TipAndNotes() {
           ) : (
             <View style={styles.note}>
               <Text variant="label">{t('extras.noteLabel')}</Text>
-              <PopOnChange value={instructions.note}>
+              <PopOnChange value={instructions.note} stretch>
                 <View style={styles.noteCard}>
                   <Icon name="check" color={colors.accentInk} size={20} />
                   <View style={styles.noteText}>

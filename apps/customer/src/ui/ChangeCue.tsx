@@ -7,6 +7,7 @@ import { useReduceMotion } from './useReduceMotion';
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     wrap: { alignSelf: 'flex-start' },
+    stretch: { alignSelf: 'stretch' },
     flash: {
       position: 'absolute',
       top: -space[1],
@@ -22,7 +23,16 @@ const makeStyles = (c: ThemeColors) =>
  * Wraps a value, such as a price. Each time `value` changes (but not when it first appears) it gives a quick pop, so the
  * eye is drawn to the number that just moved. With "reduce motion" on it does nothing.
  */
-export function PopOnChange({ value, children }: { value: string | number; children: ReactNode }) {
+export function PopOnChange({
+  value,
+  children,
+  stretch = false,
+}: {
+  value: string | number;
+  children: ReactNode;
+  /** Take the whole width there is, for something that fills it (a card whose text wraps), instead of fitting its content. */
+  stretch?: boolean;
+}) {
   const styles = useStyles(makeStyles);
   const reduceMotion = useReduceMotion();
   const [scale] = useState(() => new Animated.Value(1));
@@ -47,7 +57,11 @@ export function PopOnChange({ value, children }: { value: string | number; child
 
   return (
     <Animated.View
-      style={[styles.wrap, { transform: [{ scale }], transformOrigin: 'left center' }]}
+      style={[
+        styles.wrap,
+        stretch && styles.stretch,
+        { transform: [{ scale }], transformOrigin: 'left center' },
+      ]}
     >
       {children}
     </Animated.View>

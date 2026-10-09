@@ -1,7 +1,8 @@
 import Svg, { Circle, Path } from 'react-native-svg';
 
-/** One stroke weight, round ends, drawn on a 24 by 24 grid. */
+/** The usual stroke weight, round ends, drawn on a 24 by 24 grid, and the thin one for larger, quieter pictures. */
 const STROKE = 2.4;
+const STROKE_LIGHT = 1.6;
 
 type Shape = { kind: 'path'; d: string } | { kind: 'dot'; x: number; y: number; r: number };
 
@@ -50,14 +51,14 @@ const SHAPES = {
       'M6.6 3.5h2.7l1.4 3.9-1.8 1.2a11 11 0 0 0 5.5 5.5l1.2-1.8 3.9 1.4v2.7a2 2 0 0 1-2.2 2A15.5 15.5 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z',
     ),
   ],
-  // A paw: four toes over a pad.
+  // A paw: four toes over a pad, all outlines.
   paw: [
-    dot(6.6, 11.3, 1.6),
-    dot(9.6, 7.4, 1.6),
-    dot(14.4, 7.4, 1.6),
-    dot(17.4, 11.3, 1.6),
+    ring(6.4, 11, 1.5),
+    ring(9.7, 6.9, 1.5),
+    ring(14.3, 6.9, 1.5),
+    ring(17.6, 11, 1.5),
     path(
-      'M12 12c-2.7 0-5 2.7-5 4.7 0 1.5 1.2 2.3 2.6 2.3.9 0 1.6-.4 2.4-.4s1.5.4 2.4.4c1.4 0 2.6-.8 2.6-2.3 0-2-2.3-4.7-5-4.7z',
+      'M12 12.3c-2.5 0-4.8 2.6-4.8 4.5 0 1.4 1.1 2.2 2.5 2.2.9 0 1.5-.4 2.3-.4s1.4.4 2.3.4c1.4 0 2.5-.8 2.5-2.2 0-1.9-2.3-4.5-4.8-4.5z',
     ),
   ],
   // A price tag with its hole, and a percent sign inside.
@@ -106,10 +107,12 @@ interface IconProps {
   /** Pass a colour from useTheme(). */
   color: string;
   size?: number;
+  /** A thin line instead of the usual one: for an icon drawn large, where the usual line would look heavy. */
+  light?: boolean;
 }
 
 /** Decorative: whatever holds the icon (a button, a notice) carries the accessible name. */
-export function Icon({ name, color, size = 20 }: IconProps) {
+export function Icon({ name, color, size = 20, light = false }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
       {SHAPES[name].map((shape, index) =>
@@ -119,7 +122,7 @@ export function Icon({ name, color, size = 20 }: IconProps) {
             d={shape.d}
             fill="none"
             stroke={color}
-            strokeWidth={STROKE}
+            strokeWidth={light ? STROKE_LIGHT : STROKE}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
