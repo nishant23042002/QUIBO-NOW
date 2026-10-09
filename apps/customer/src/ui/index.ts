@@ -72,6 +72,7 @@ export { ShopsPanel, type ShopsPanelProps } from './ShopsPanel';
 export { ShopsChip, type ShopsChipProps } from './ShopsChip';
 export { Popover, PopoverHost, type PopoverProps } from './Popover';
 export { ProgressBar, type ProgressBarProps } from './ProgressBar';
+export { Segmented, type SegmentedOption, type SegmentedProps } from './Segmented';
 export { ShineSweep, type ShineSweepProps } from './ShineSweep';
 export { useReduceMotion } from './useReduceMotion';
 export { useScreenFocused } from './useScreenFocused';

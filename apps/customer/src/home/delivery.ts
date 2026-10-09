@@ -52,6 +52,14 @@ export interface SlotRules {
   full: readonly string[];
 }
 
+/** Tips for the rider. */
+export interface TipRules {
+  /** The ready-made amounts, smallest first. */
+  options: readonly Money[];
+  /** The most a tip may be. */
+  max: Money;
+}
+
 /** A town's delivery rules. Fees and limits live in data, not in screens (the town's own rules arrive in Phase 2). */
 export interface ZoneSettings {
   /** The item total from which delivery is free. */
@@ -59,6 +67,7 @@ export interface ZoneSettings {
   delivery: DeliveryRules;
   slots: SlotRules;
   quick: QuickRules;
+  tip: TipRules;
   /** The handling fee for each class of care, before any festival surcharge. */
   handling: Readonly<Record<CareClass, Money>>;
   /** What is added to the handling fee on a festival day. */
@@ -86,6 +95,7 @@ export const ZONE: ZoneSettings = {
     rainExtra: money(300),
     max: money(3_000),
   },
+  tip: { options: [money(1_000), money(2_000), money(3_000)], max: money(10_000) },
   quick: {
     baseMinutes: 6,
     perKm: 3,

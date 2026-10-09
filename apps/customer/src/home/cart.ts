@@ -1,4 +1,4 @@
-import { formatRupees, money, multiplyByQuantity, subtract } from '@quibo/contracts';
+import { formatRupees, money, multiplyByQuantity, subtract, type Money } from '@quibo/contracts';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { readSetting, writeSetting } from '@/storage';
@@ -6,11 +6,12 @@ import { computeBill, type Bill } from './bill';
 import { careOf } from './care';
 import { summariseCart, type CartEntry } from './cartMath';
 import { restoreCart, serialiseCart, type PackLimit } from './cartStore';
-import { FREE_DELIVERY_FROM, SAMPLE_DISTANCE_KM } from './delivery';
+import { FREE_DELIVERY_FROM, SAMPLE_DISTANCE_KM, ZONE } from './delivery';
 import { useConditions } from './conditions';
 import { capQuantity } from './packs';
 import { quickEta, type QuickEta } from './quick';
 import { useCoupon, type CouponState } from './useCoupon';
+import { useInstructions, type InstructionsState } from './useInstructions';
 import { useSlotChoice, type SlotState } from './useSlotChoice';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
@@ -69,6 +70,16 @@ export interface DraftCart {
   bill: Bill;
   /** The coupon: what is on offer, which one is applied, and what it takes off. */
   coupon: CouponState;
+  /** The tip for the rider: nothing by default, easy to add and to take away. */
+  tip: {
+    amount: Money;
+    set: (amount: Money) => void;
+    /** The ready-made amounts, and the most a tip may be. */
+    options: readonly Money[];
+    max: Money;
+  };
+  /** What the shopper wants the rider to know: quick choices and a note. */
+  instructions: InstructionsState;
   /** When the order arrives: quick delivery (the default) or a window the shopper picked, kept on the phone. */
   delivery: DeliveryState;
   /** What is in the cart, latest first: for the little pictures in the cart bar. */
@@ -118,6 +129,8 @@ export function useDraftCart(): DraftCart {
   const conditions = useConditions();
   const dark = conditions.store === 'dark';
   const delivery = useSlotChoice();
+  const instructions = useInstructions();
+  const [tipAmount, setTipAmount] = useState<Money>(money(0));
   const [quantities, setQuantities] = useState<Readonly<Record<string, number>>>({});
   // The order packs were first added in, so "latest first" is known.
   const [order, setOrder] = useState<readonly string[]>([]);
@@ -195,6 +208,8 @@ export function useDraftCart(): DraftCart {
   }));
   const sum = summariseCart(entries);
   const coupon = useCoupon(sum.total, loaded);
+  // A cart emptied of everything has no tip either: it was for that order's rider.
+  if (loaded && sum.count === 0 && tipAmount > 0) setTipAmount(money(0));
   const bill = computeBill({
     itemTotal: sum.total,
     saved: sum.saved,
@@ -211,6 +226,7 @@ export function useDraftCart(): DraftCart {
     ...(coupon.applied !== undefined && coupon.discount > 0
       ? { coupon: { code: coupon.applied.offer.code, discount: coupon.discount } }
       : {}),
+    tip: tipAmount,
   });
 
   const lineTotals = new Map(
@@ -260,6 +276,8 @@ export function useDraftCart(): DraftCart {
     progress: Math.min(Number(sum.total) / Number(FREE_DELIVERY_FROM), 1),
     bill,
     coupon,
+    tip: { amount: tipAmount, set: setTipAmount, options: ZONE.tip.options, max: ZONE.tip.max },
+    instructions,
     delivery: {
       ...delivery,
       eta: quickEta({
@@ -279,7 +297,7 @@ export function useDraftCart(): DraftCart {
       emoji: item.emoji,
       category: item.category,
     })),
-    ready: loaded && coupon.loaded && delivery.loaded,
+    ready: loaded && coupon.loaded && delivery.loaded && instructions.loaded,
     restored,
     dismissRestored: () => {
       setRestored(null);

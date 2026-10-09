@@ -32,6 +32,7 @@ import {
   countRule,
   radius,
   space,
+  useKeyboardVisible,
   useReduceMotion,
   useScreenFocused,
   type BillRow,
@@ -40,6 +41,7 @@ import { UndoToast } from './CartLayer';
 import { useCart } from './CartProvider';
 import { CartSkeleton, LINE_HEIGHT, THUMB } from './CartSkeleton';
 import { useTintOf } from './categories';
+import { TipAndNotes, AlsoLike } from './CartExtras';
 import { SAMPLE_DISTANCE_KM } from './delivery';
 import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
 import { useSlotText } from './slotText';
@@ -216,7 +218,9 @@ export function CartView() {
   const tintOf = useTintOf();
   const online = useOnline();
   const slotText = useSlotText();
-  const room = insets.bottom + BOTTOM_BAR_HEIGHT;
+  // While the keyboard is up the bottom menu steps aside, and so does the checkout bar: they would only ride on top of it.
+  const keyboard = useKeyboardVisible();
+  const room = keyboard ? insets.bottom : insets.bottom + BOTTOM_BAR_HEIGHT;
   // How tall the checkout bar really is, so the list's end and the undo note clear it at any text size.
   const [dockHeight, setDockHeight] = useState(DOCK);
   const [pillWidth, setPillWidth] = useState(0);
@@ -306,12 +310,18 @@ export function CartView() {
       info: <HandlingDetails bill={bill} />,
       infoLabel: t('cart.whyTitle'),
     },
+    ...(bill.tip > 0 ? [{ label: t('extras.tipRow'), amount: bill.tip }] : []),
   ];
 
   return (
     <PopoverHost style={styles.page}>
       <ScrollView
-        contentContainerStyle={[styles.content, { paddingBottom: room + dockHeight + space[6] }]}
+        contentContainerStyle={[
+          styles.content,
+          { paddingBottom: room + (keyboard ? 0 : dockHeight) + space[6] },
+        ]}
+        keyboardShouldPersistTaps="handled"
+        automaticallyAdjustKeyboardInsets
         showsVerticalScrollIndicator={false}
       >
         {notices}
@@ -601,6 +611,7 @@ export function CartView() {
             </Text>
           </Pressable>
         </View>
+        <TipAndNotes />
         <View style={[styles.card, styles.bill]}>
           <View style={styles.billHead}>
             <Icon name="receipt" color={colors.accentInk} size={20} />
@@ -647,46 +658,49 @@ export function CartView() {
             {t('cart.taxes')}
           </Text>
         </View>
+        <AlsoLike />
       </ScrollView>
-      <View
-        style={[styles.dock, { bottom: room }]}
-        onLayout={(event) => {
-          setDockHeight(Math.round(event.nativeEvent.layout.height));
-        }}
-      >
-        <View style={styles.dockTotal} accessible>
-          <View style={styles.dockPrice}>
-            <PopOnChange value={bill.toPay}>
-              <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
-            </PopOnChange>
-            {bill.totalSaved > 0 ? (
-              <Text variant="small" color="inkMuted" strike>
-                {formatRupees(add(bill.toPay, bill.totalSaved))}
+      {keyboard ? null : (
+        <View
+          style={[styles.dock, { bottom: room }]}
+          onLayout={(event) => {
+            setDockHeight(Math.round(event.nativeEvent.layout.height));
+          }}
+        >
+          <View style={styles.dockTotal} accessible>
+            <View style={styles.dockPrice}>
+              <PopOnChange value={bill.toPay}>
+                <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
+              </PopOnChange>
+              {bill.totalSaved > 0 ? (
+                <Text variant="small" color="inkMuted" strike>
+                  {formatRupees(add(bill.toPay, bill.totalSaved))}
+                </Text>
+              ) : null}
+            </View>
+            <View style={styles.dockCaption}>
+              <Text variant="caption" color="inkMuted">
+                {t('cart.toPay')}
               </Text>
-            ) : null}
+              {bill.totalSaved > 0 ? (
+                <Text variant="caption" color="success">
+                  {`· ${t('cart.savedShort', { amount: formatRupees(bill.totalSaved) })}`}
+                </Text>
+              ) : null}
+            </View>
           </View>
-          <View style={styles.dockCaption}>
-            <Text variant="caption" color="inkMuted">
-              {t('cart.toPay')}
-            </Text>
-            {bill.totalSaved > 0 ? (
-              <Text variant="caption" color="success">
-                {`· ${t('cart.savedShort', { amount: formatRupees(bill.totalSaved) })}`}
-              </Text>
-            ) : null}
+          <View style={styles.dockButton}>
+            <Button
+              label={t('cart.continue')}
+              shine
+              onPress={() => {
+                router.push('/checkout');
+              }}
+            />
           </View>
         </View>
-        <View style={styles.dockButton}>
-          <Button
-            label={t('cart.continue')}
-            shine
-            onPress={() => {
-              router.push('/checkout');
-            }}
-          />
-        </View>
-      </View>
-      <UndoToast bottom={room + dockHeight} />
+      )}
+      <UndoToast bottom={room + (keyboard ? 0 : dockHeight)} />
     </PopoverHost>
   );
 }

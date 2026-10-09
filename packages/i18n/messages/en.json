@@ -641,5 +641,29 @@
     "better": "Save {amount} more with {code}",
     "switch": "Switch",
     "bestBadge": "Best saving"
+  },
+  "extras": {
+    "tabTip": "Tip",
+    "tabNotes": "Instructions",
+    "tipTitle": "Tip your rider",
+    "tipBody": "Help them earn a little extra for their effort. 100% of this tip goes to them.",
+    "tipOther": "Other",
+    "tipRemove": "Remove tip",
+    "tipThanks": "Thank you! {amount} goes to your rider.",
+    "tipRow": "Rider tip",
+    "tipInputLabel": "Your tip, in rupees",
+    "tipInputHint": "A whole number up to {max}",
+    "tipAdd": "Add tip",
+    "tipInvalid": "Enter a whole number from ₹1 up to {max}.",
+    "notesTitle": "Tell your rider",
+    "notesBody": "Pick what helps, and add a note if you like.",
+    "leaveAtDoor": "Leave at the door",
+    "noBell": "Don't ring the bell",
+    "callOnArrival": "Call on arrival",
+    "pets": "Beware of pets",
+    "noteLabel": "Note for the rider",
+    "notePlaceholder": "For example: green gate, second floor",
+    "noteCount": "{count} of {max} characters",
+    "alsoTitle": "You might also like"
   }
 }

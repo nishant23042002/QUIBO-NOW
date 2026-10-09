@@ -91,9 +91,23 @@ describe('computeBill', () => {
     expect(bill.toPay).toBe(12_000 + 2_000 + 1_000);
   });
 
-  it('is all zero for an empty cart', () => {
+  it('adds a tip to what is paid, and leaves it out of the savings and of free delivery', () => {
+    const bill = computeBill(input({ tip: money(2_000) }));
+    expect(bill.tip).toBe(2_000);
+    expect(bill.toPay).toBe(12_000 + 2_000 + 1_000 + 2_000);
+    expect(bill.totalSaved).toBe(500);
+    // 199 rupees of items are free delivery however large the tip is, and a tip never helps reach it.
+    expect(computeBill(input({ itemTotal: money(19_000), tip: money(10_000) })).delivery.free).toBe(
+      false,
+    );
+  });
+
+  it('is all zero for an empty cart, tip included', () => {
     const bill = computeBill(
-      input({ itemTotal: money(0), saved: money(0), cares: [] }, { festival: true }),
+      input(
+        { itemTotal: money(0), saved: money(0), cares: [], tip: money(2_000) },
+        { festival: true },
+      ),
     );
     expect(bill.toPay).toBe(0);
     expect(bill.delivery.free).toBe(false);

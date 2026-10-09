@@ -13,6 +13,8 @@ export interface BillInput {
   trip: TripConditions;
   /** The coupon applied, and what it takes off the items. Leave out when there is none or it takes off nothing. */
   coupon?: { code: string; discount: Money };
+  /** What the shopper tips the rider. It is the rider's in full: it is no saving, and no part of the delivery fee. */
+  tip?: Money;
 }
 
 export interface Bill {
@@ -39,6 +41,8 @@ export interface Bill {
     /** Whether a festival day added to it. */
     festival: boolean;
   };
+  /** The tip for the rider, nothing when there is none. */
+  tip: Money;
   /** Everything the customer pays. */
   toPay: Money;
   /** Everything the order saves: the printed-price discount, the coupon, and the delivery fee waived. */
@@ -58,6 +62,7 @@ export function computeBill(input: BillInput, zone: ZoneSettings = ZONE): Bill {
   const { itemTotal, saved, cares, trip } = input;
   const couponOff = input.coupon?.discount ?? ZERO;
   const empty = cares.length === 0;
+  const tip = empty ? ZERO : (input.tip ?? ZERO);
 
   const parts = deliveryFee(trip, zone.delivery);
   const free = !empty && itemTotal >= zone.freeDeliveryFrom;
@@ -87,7 +92,8 @@ export function computeBill(input: BillInput, zone: ZoneSettings = ZONE): Bill {
       ...(reason !== undefined ? { reason } : {}),
       festival: surcharged,
     },
-    toPay: add(add(subtract(itemTotal, couponOff), charged), handlingFee),
+    tip,
+    toPay: add(add(add(subtract(itemTotal, couponOff), charged), handlingFee), tip),
     totalSaved: add(add(saved, couponOff), waived),
   };
 }
