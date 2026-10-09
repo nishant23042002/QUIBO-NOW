@@ -1,24 +1,27 @@
-import { useEffect, useRef, useState, type ReactNode, type RefObject } from 'react';
+import {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+  type RefObject,
+} from 'react';
 import {
   Animated,
+  BackHandler,
   Easing,
-  Modal,
+  Platform,
   Pressable,
   StyleSheet,
   View,
-  useWindowDimensions,
+  type StyleProp,
+  type ViewStyle,
 } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, type ThemeColors } from '@/theme';
 import { radius, space } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
-
-/** What the trigger needs to open the popover and sit under it. */
-export interface PopoverTrigger {
-  /** Put this on the pressable that opens the popover: the popover is placed against it. */
-  anchor: RefObject<View | null>;
-  onPress: () => void;
-}
 
 export interface PopoverProps {
   /** What the popover says. Keep it short: it is a small bubble, not a page. */
@@ -27,8 +30,14 @@ export interface PopoverProps {
   label: string;
   /** Name of the tap-anywhere-else-to-close area for screen readers, for example "Close". */
   closeLabel: string;
-  /** Draws the thing that opens it, given what it needs. */
-  children: (trigger: PopoverTrigger) => ReactNode;
+  /** What a screen reader calls the thing that opens it, when it has no readable text of its own (an icon). */
+  triggerLabel?: string;
+  /** What is drawn inside the thing that opens it: an icon, or some text. */
+  children: ReactNode;
+  /** How the thing that opens it looks. */
+  style?: StyleProp<ViewStyle>;
+  /** How far outside its look a tap still counts, for a small icon. */
+  hitSlop?: number;
 }
 
 interface Rect {
@@ -38,11 +47,25 @@ interface Rect {
   height: number;
 }
 
-/** The least room kept between the bubble and the screen's edge, and the gap between the bubble and its trigger. */
+interface Shown {
+  /** Where the trigger is, measured from the host's top left corner. */
+  rect: Rect;
+  content: ReactNode;
+  label: string;
+  closeLabel: string;
+}
+
+interface PopoverApi {
+  show: (anchor: RefObject<View | null>, what: Omit<Shown, 'rect'>) => void;
+}
+
+const PopoverContext = createContext<PopoverApi | null>(null);
+
+/** The least room kept between the bubble and the host's edge, and the gap between the bubble and its trigger. */
 const MARGIN = space[3];
-const GAP = space[2];
-const MAX_WIDTH = 320;
-const ARROW = 12;
+const GAP = space[1] + 2;
+const MAX_WIDTH = 264;
+const ARROW = 10;
 const FADE_MS = 140;
 
 const makeStyles = (c: ThemeColors) =>
@@ -50,15 +73,16 @@ const makeStyles = (c: ThemeColors) =>
     backdrop: { position: 'absolute', top: 0, right: 0, bottom: 0, left: 0 },
     bubble: {
       position: 'absolute',
-      gap: space[2],
-      padding: space[4],
-      borderRadius: radius.lg,
+      gap: space[1],
+      paddingHorizontal: space[3],
+      paddingVertical: space[3],
+      borderRadius: radius.md,
       borderWidth: 1,
       borderColor: c.line,
       backgroundColor: c.surface,
       shadowColor: c.scrim,
       shadowOpacity: 0.4,
-      shadowRadius: 14,
+      shadowRadius: 12,
       shadowOffset: { width: 0, height: 4 },
       elevation: 8,
     },
@@ -80,28 +104,54 @@ const clamp = (value: number, low: number, high: number) =>
   Math.min(Math.max(value, low), Math.max(low, high));
 
 /**
- * A small bubble that opens against the thing that was tapped, on top of everything and without moving the page: for the
- * (i) beside a charge, say. It sits under the trigger, or above it when there is no room below, stays inside the screen,
- * points at the trigger, and closes with a tap anywhere else or the phone's back button. Tapping the trigger again
- * opens it again rather than stacking.
+ * The place popovers open in. Wrap a screen's content in it and every `Popover` inside draws its bubble here, on top of
+ * the screen's other content. Because the trigger and the bubble are measured in the same window and placed relative to
+ * the host, the bubble lands exactly under its trigger, whatever the phone's status bar or navigation bar do (a separate
+ * window would not share their coordinates). The bubble stays inside the host, points at the trigger, opens above it
+ * when there is no room below, and closes with a tap anywhere else or the phone's back button.
  */
-export function Popover({ content, label, closeLabel, children }: PopoverProps) {
+export function PopoverHost({
+  children,
+  style,
+}: {
+  children: ReactNode;
+  style?: StyleProp<ViewStyle>;
+}) {
   const styles = useStyles(makeStyles);
-  const insets = useSafeAreaInsets();
-  const { width: screenW, height: screenH } = useWindowDimensions();
   const reduceMotion = useReduceMotion();
-  const anchor = useRef<View>(null);
-  const [rect, setRect] = useState<Rect | null>(null);
+  const host = useRef<View>(null);
+  const [hostSize, setHostSize] = useState({ width: 0, height: 0 });
+  const [shown, setShown] = useState<Shown | null>(null);
   // The bubble's own size, known only once it has been drawn; until then it is drawn invisible.
   const [size, setSize] = useState<{ width: number; height: number } | null>(null);
   const [fade] = useState(() => new Animated.Value(0));
 
-  const open = () => {
-    anchor.current?.measureInWindow((x, y, width, height) => {
-      setSize(null);
-      setRect({ x, y, width, height });
+  const api = useMemo<PopoverApi>(
+    () => ({
+      show: (anchor, what) => {
+        host.current?.measureInWindow((hostX, hostY) => {
+          anchor.current?.measureInWindow((x, y, width, height) => {
+            setSize(null);
+            setShown({ rect: { x: x - hostX, y: y - hostY, width, height }, ...what });
+          });
+        });
+      },
+    }),
+    [],
+  );
+
+  const open = shown !== null;
+  useEffect(() => {
+    // The phone's back button exists on Android only (the web has none, and BackHandler throws there).
+    if (!open || Platform.OS !== 'android') return undefined;
+    const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
+      setShown(null);
+      return true;
     });
-  };
+    return () => {
+      subscription.remove();
+    };
+  }, [open]);
 
   useEffect(() => {
     if (size === null) {
@@ -124,74 +174,105 @@ export function Popover({ content, label, closeLabel, children }: PopoverProps) 
     };
   }, [size, reduceMotion, fade]);
 
-  const width = Math.min(MAX_WIDTH, screenW - MARGIN * 2);
+  const width = Math.min(MAX_WIDTH, hostSize.width - MARGIN * 2);
   let left: number = MARGIN;
   let top: number = 0;
   let above = false;
   let arrowAt: number = ARROW;
-  if (rect !== null) {
+  if (shown !== null) {
+    const { rect } = shown;
     const centre = rect.x + rect.width / 2;
-    left = clamp(centre - width / 2, MARGIN, screenW - MARGIN - width);
-    arrowAt = clamp(centre - left - ARROW / 2, space[4], width - space[4] - ARROW);
+    left = clamp(centre - width / 2, MARGIN, hostSize.width - MARGIN - width);
+    arrowAt = clamp(centre - left - ARROW / 2, space[3], width - space[3] - ARROW);
     const below = rect.y + rect.height + GAP;
     top = below;
     if (size !== null) {
       // Not enough room under the trigger: open above it instead.
-      above = below + size.height > screenH - insets.bottom - MARGIN;
-      if (above) top = Math.max(insets.top + MARGIN, rect.y - GAP - size.height);
+      above = below + size.height > hostSize.height - MARGIN;
+      if (above) top = Math.max(MARGIN, rect.y - GAP - size.height);
     }
   }
 
   return (
-    <>
-      {children({ anchor, onPress: open })}
-      <Modal
-        visible={rect !== null}
-        transparent
-        animationType="none"
-        statusBarTranslucent
-        navigationBarTranslucent
-        onRequestClose={() => {
-          setRect(null);
+    <PopoverContext.Provider value={api}>
+      <View
+        ref={host}
+        collapsable={false}
+        style={style}
+        onLayout={(event) => {
+          const { width: w, height: h } = event.nativeEvent.layout;
+          setHostSize((current) =>
+            current.width === w && current.height === h ? current : { width: w, height: h },
+          );
         }}
       >
-        <Pressable
-          role="button"
-          aria-label={closeLabel}
-          style={styles.backdrop}
-          onPress={() => {
-            setRect(null);
-          }}
-        />
-        <Animated.View
-          aria-label={label}
-          aria-modal
-          onLayout={(event) => {
-            const { width: w, height: h } = event.nativeEvent.layout;
-            setSize((current) =>
-              current !== null && current.width === w && current.height === h
-                ? current
-                : { width: w, height: h },
-            );
-          }}
-          style={[
-            styles.bubble,
-            {
-              left,
-              top,
-              width,
-              opacity: size === null ? 0 : fade,
-            },
-          ]}
-        >
-          {content}
-          <View
-            pointerEvents="none"
-            style={[styles.arrow, above ? styles.arrowDown : styles.arrowUp, { left: arrowAt }]}
-            aria-hidden
-          />
-        </Animated.View>
-      </Modal>
-    </>
+        {children}
+        {shown !== null ? (
+          <>
+            <Pressable
+              role="button"
+              aria-label={shown.closeLabel}
+              style={styles.backdrop}
+              onPress={() => {
+                setShown(null);
+              }}
+            />
+            <Animated.View
+              aria-label={shown.label}
+              onLayout={(event) => {
+                const { width: w, height: h } = event.nativeEvent.layout;
+                setSize((current) =>
+                  current !== null && current.width === w && current.height === h
+                    ? current
+                    : { width: w, height: h },
+                );
+              }}
+              style={[styles.bubble, { left, top, width, opacity: size === null ? 0 : fade }]}
+            >
+              {shown.content}
+              <View
+                pointerEvents="none"
+                style={[styles.arrow, above ? styles.arrowDown : styles.arrowUp, { left: arrowAt }]}
+                aria-hidden
+              />
+            </Animated.View>
+          </>
+        ) : null}
+      </View>
+    </PopoverContext.Provider>
+  );
+}
+
+/**
+ * A small bubble that opens against the thing that was tapped, on top of the page and without moving it: for the (i)
+ * beside a charge, say. The thing that opens it is drawn here (a pressable around `children`), so the bubble can be placed
+ * against it. It needs a `PopoverHost` around the screen. Tapping again opens it again rather than stacking.
+ */
+export function Popover({
+  content,
+  label,
+  closeLabel,
+  triggerLabel,
+  children,
+  style,
+  hitSlop,
+}: PopoverProps) {
+  const api = useContext(PopoverContext);
+  if (api === null) throw new Error('Popover must be used inside PopoverHost');
+  const anchor = useRef<View>(null);
+
+  return (
+    <Pressable
+      ref={anchor}
+      role="button"
+      {...(triggerLabel !== undefined ? { 'aria-label': triggerLabel } : {})}
+      {...(hitSlop !== undefined ? { hitSlop } : {})}
+      onPress={() => {
+        api.show(anchor, { content, label, closeLabel });
+      }}
+      style={({ pressed }) => [style, pressed && { opacity: 0.6 }]}
+    >
+      {children}
+    </Pressable>
   );
 }

@@ -1,6 +1,6 @@
 import { formatRupees, type Money } from '@quibo/contracts';
 import type { ReactNode } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
 import { freeDeliveryProgress } from './logic/money';
@@ -55,7 +55,6 @@ const makeStyles = (c: ThemeColors) =>
     },
     rowLabel: { flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: space[1] },
     info: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
-    pressed: { opacity: 0.6 },
     total: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -112,19 +111,15 @@ export function BillSummary({
               {row.label}
             </Text>
             {row.info !== undefined && row.infoLabel !== undefined ? (
-              <Popover content={row.info} label={row.infoLabel} closeLabel={closeLabel}>
-                {(trigger) => (
-                  <Pressable
-                    ref={trigger.anchor}
-                    role="button"
-                    aria-label={row.infoLabel}
-                    onPress={trigger.onPress}
-                    hitSlop={8}
-                    style={({ pressed }) => [styles.info, pressed && styles.pressed]}
-                  >
-                    <Icon name="info" color={colors.inkMuted} size={18} />
-                  </Pressable>
-                )}
+              <Popover
+                content={row.info}
+                label={row.infoLabel}
+                triggerLabel={row.infoLabel}
+                closeLabel={closeLabel}
+                hitSlop={8}
+                style={styles.info}
+              >
+                <Icon name="info" color={colors.inkMuted} size={18} />
               </Popover>
             ) : null}
           </View>

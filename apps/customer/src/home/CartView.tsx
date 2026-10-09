@@ -12,6 +12,7 @@ import {
   Icon,
   Notice,
   Popover,
+  PopoverHost,
   StatePanel,
   Stepper,
   Text,
@@ -203,7 +204,7 @@ export function CartView() {
   ];
 
   return (
-    <View style={styles.page}>
+    <PopoverHost style={styles.page}>
       <ScrollView
         contentContainerStyle={[styles.content, { paddingBottom: room + DOCK + space[6] }]}
         showsVerticalScrollIndicator={false}
@@ -313,20 +314,12 @@ export function CartView() {
               content={<SavingsDetails bill={bill} />}
               label={t('cart.savingsTitle')}
               closeLabel={t('common.close')}
+              style={styles.save}
             >
-              {(trigger) => (
-                <Pressable
-                  ref={trigger.anchor}
-                  role="button"
-                  onPress={trigger.onPress}
-                  style={styles.save}
-                >
-                  <Text variant="strong" color="accentInk" numberOfLines={1}>
-                    {t('cart.saveLine', { amount: formatRupees(bill.totalSaved) })}
-                  </Text>
-                  <Icon name="chevron" color={colors.accentInk} size={16} />
-                </Pressable>
-              )}
+              <Text variant="strong" color="accentInk" numberOfLines={1}>
+                {t('cart.saveLine', { amount: formatRupees(bill.totalSaved) })}
+              </Text>
+              <Icon name="chevron" color={colors.accentInk} size={16} />
             </Popover>
           ) : null}
           <Text variant="small" color="inkMuted">
@@ -358,6 +351,6 @@ export function CartView() {
         </View>
       </View>
       <UndoToast bottom={room + DOCK} />
-    </View>
+    </PopoverHost>
   );
 }
