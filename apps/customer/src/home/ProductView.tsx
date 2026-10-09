@@ -108,6 +108,8 @@ const makeStyles = (c: ThemeColors) =>
       borderTopColor: c.line,
       backgroundColor: c.surface,
     },
+    // The price block takes what the control leaves, but not less than a readable line.
+    actionInfo: { flexGrow: 1, flexShrink: 1, flexBasis: 120, minWidth: 0 },
     add: { minWidth: 140 },
     rail: { paddingBottom: space[2] },
     more: {
@@ -676,7 +678,22 @@ export function ProductView({
             setActionHeight(Math.round(event.nativeEvent.layout.height));
           }}
         >
-          <PriceBadge amount={pack.price} {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})} />
+          {/* What it is, in one quiet line over the price: the size and how many are in the cart come first, so a long name is the part that gets cut. */}
+          <View style={styles.actionInfo}>
+            <Text variant="fine" color="inkMuted" numberOfLines={1}>
+              {[
+                pack.label,
+                ...(quantity > 0 && pack.loose !== true
+                  ? [t('product.inCart', { count: quantity })]
+                  : []),
+                item.name,
+              ].join(' · ')}
+            </Text>
+            <PriceBadge
+              amount={pack.price}
+              {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
+            />
+          </View>
           {out ? (
             <Text variant="strong" color="inkMuted">
               {pack.stock?.label}
