@@ -1,4 +1,4 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Text as NativeText, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { PopOnChange } from './ChangeCue';
@@ -25,7 +25,10 @@ export interface BottomBarProps {
 
 const PILL_WIDTH = 56;
 const PILL_HEIGHT = 30;
-const BADGE_SIZE = 20;
+/** The badge is a circle this wide and tall, ring included; its digit is 14, the smallest size anywhere in the app. */
+const BADGE_SIZE = 22;
+const BADGE_RING = 2;
+const BADGE_INNER = BADGE_SIZE - BADGE_RING * 2;
 /** The bar is a fixed height, so its names grow with the phone's text size only this far. */
 const LABEL_SCALE_MAX = 1.2;
 /** The most a count shows before it reads "99+". */
@@ -60,7 +63,7 @@ const makeStyles = (c: ThemeColors) =>
     },
     pillOn: { backgroundColor: c.accentSubtle },
     // The count sits on the icon's upper right corner, with a ring of the bar's colour so it never runs into the icon.
-    badgeSlot: { position: 'absolute', top: -6, right: 4 },
+    badgeSlot: { position: 'absolute', top: -7, right: 3 },
     badge: {
       minWidth: BADGE_SIZE,
       height: BADGE_SIZE,
@@ -68,9 +71,20 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.full,
-      borderWidth: 2,
+      borderWidth: BADGE_RING,
       borderColor: c.surface,
       backgroundColor: c.action,
+    },
+    // The digit's line is exactly as tall as the room inside the ring, and the phone's extra padding above the letters is off, so
+    // the digit sits in the middle on Android as it does on the web.
+    badgeText: {
+      fontSize: 14,
+      lineHeight: BADGE_INNER,
+      fontWeight: '600',
+      textAlign: 'center',
+      textAlignVertical: 'center',
+      includeFontPadding: false,
+      color: c.onAction,
     },
     pressed: { opacity: 0.7 },
   });
@@ -119,9 +133,9 @@ export function BottomBar({ tabs, activeKey, onSelect }: BottomBarProps) {
                 <View style={styles.badgeSlot} aria-hidden>
                   <PopOnChange value={tab.badge}>
                     <View style={styles.badge}>
-                      <Text variant="caption" color="onAction" maxFontSizeMultiplier={1}>
+                      <NativeText allowFontScaling={false} style={styles.badgeText}>
                         {tab.badge > BADGE_MAX ? `${BADGE_MAX}+` : String(tab.badge)}
-                      </Text>
+                      </NativeText>
                     </View>
                   </PopOnChange>
                 </View>
