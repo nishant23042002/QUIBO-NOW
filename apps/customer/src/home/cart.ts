@@ -9,6 +9,7 @@ import { restoreCart, serialiseCart, type PackLimit } from './cartStore';
 import { FREE_DELIVERY_FROM, SAMPLE_DISTANCE_KM } from './delivery';
 import { useConditions } from './conditions';
 import { capQuantity } from './packs';
+import { quickEta, type QuickEta } from './quick';
 import { useSlotChoice, type SlotState } from './useSlotChoice';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
@@ -30,6 +31,12 @@ export interface CartItem {
   mrpLabel?: string;
   /** The partner shop that sells it. Absent when the town has one dark store, where there is nothing to tell apart. */
   soldBy?: string;
+}
+
+/** When and how the order arrives: the shopper's choice, how it resolves now, and the quick-delivery estimate. */
+export interface DeliveryState extends SlotState {
+  /** The estimated minutes for quick delivery, as a range. An estimate, never a promise. */
+  eta: QuickEta;
 }
 
 export interface DraftCart {
@@ -59,8 +66,8 @@ export interface DraftCart {
   savedLabel?: string;
   /** What the order comes to: items, delivery, handling, and what is saved. All integer paise. */
   bill: Bill;
-  /** When the order arrives: the earliest window or one the shopper picked, kept on the phone. */
-  delivery: SlotState;
+  /** When the order arrives: quick delivery (the default) or a window the shopper picked, kept on the phone. */
+  delivery: DeliveryState;
   /** What is in the cart, latest first: for the little pictures in the cart bar. */
   lines: readonly { id: string; emoji: string; category: ItemCategory }[];
   /** False until the cart saved on the phone has been read back. Until then it looks empty only because it is still loading. */
@@ -190,7 +197,8 @@ export function useDraftCart(): DraftCart {
     trip: {
       distanceKm: SAMPLE_DISTANCE_KM,
       // The window the order is delivered in sets the hour, so a quieter window can cost less.
-      hour: delivery.slot?.hour ?? delivery.now.getHours(),
+      hour:
+        delivery.current?.kind === 'slot' ? delivery.current.slot.hour : delivery.now.getHours(),
       festival: conditions.festival,
       rain: conditions.rain,
       rush: conditions.rush,
@@ -243,7 +251,17 @@ export function useDraftCart(): DraftCart {
       : t('home.cart.freeNeed', { amount: formatRupees(remaining) }),
     progress: Math.min(Number(sum.total) / Number(FREE_DELIVERY_FROM), 1),
     bill,
-    delivery,
+    delivery: {
+      ...delivery,
+      eta: quickEta({
+        distanceKm: SAMPLE_DISTANCE_KM,
+        hour: delivery.now.getHours(),
+        festival: conditions.festival,
+        rain: conditions.rain,
+        rush: conditions.rush,
+        items: sum.count,
+      }),
+    },
     ...(sum.saved > 0
       ? { savedLabel: t('home.cart.saved', { amount: formatRupees(sum.saved) }) }
       : {}),

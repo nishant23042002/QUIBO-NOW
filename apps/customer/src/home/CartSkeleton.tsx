@@ -56,12 +56,12 @@ export function CartSkeleton() {
         </View>
         <View style={styles.card}>
           <View style={styles.arrive}>
-            <Skeleton width={20} height={20} rounded={radius.full} />
+            <Skeleton width={40} height={40} rounded={radius.md} />
             <View style={styles.arriveText}>
               <Skeleton width="65%" height={16} />
               <Skeleton width="80%" height={14} />
             </View>
-            <Skeleton width={72} height={36} rounded={radius.md} />
+            <Skeleton width={104} height={36} rounded={radius.md} />
           </View>
           {Array.from({ length: LINES }, (_, index) => (
             <View key={index} style={[styles.line, index > 0 && styles.divided]}>

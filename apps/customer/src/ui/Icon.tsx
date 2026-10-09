@@ -32,6 +32,8 @@ const SHAPES = {
     path('M18 2.8l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z'),
   ],
   close: [path('M6 6l12 12M18 6L6 18')],
+  bolt: [path('M13 3L5.5 13.5H11L10 21l7.5-10.5H12z')],
+  calendar: [path('M5 6.5h14V20H5z'), path('M5 10.5h14'), path('M8.5 4v4M15.5 4v4')],
   clock: [ring(12, 12, 9), path('M12 7v5.5l3.5 2')],
   sun: [
     ring(12, 12, 4.2),

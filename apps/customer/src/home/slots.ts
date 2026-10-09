@@ -20,11 +20,17 @@ export interface Slot {
   group: SlotGroup;
 }
 
-/** What the shopper chose: the earliest window there is (whichever that is as time passes), or one particular window. */
+/**
+ * What the shopper chose: quick delivery (the default: packed and sent right away), or one particular one-hour window
+ * today or tomorrow.
+ */
 export type SlotChoice =
-  | { mode: 'earliest' }
+  | { mode: 'quick' }
   /** `date` is for example "2026-10-09". */
   | { mode: 'slot'; date: string; hour: number };
+
+/** How the order will actually be delivered: right away, or in a window. */
+export type Delivery = { kind: 'quick' } | { kind: 'slot'; slot: Slot };
 
 const pad = (value: number) => String(value).padStart(2, '0');
 
@@ -101,25 +107,33 @@ export function earliestSlot(now: Date, rules: SlotRules = ZONE.slots): Slot | u
   );
 }
 
+/** Whether quick delivery is running: the shops pack and the riders ride between the first and last hour of the day. */
+export function quickAvailable(now: Date, rules: SlotRules = ZONE.slots): boolean {
+  const hour = now.getHours();
+  return hour >= rules.firstHour && hour < rules.lastEndHour;
+}
+
 /**
- * The window a choice means right now, and whether it is the earliest one. A particular window that has since gone
- * (it is past, or it filled up) falls back to the earliest, so an order is never left waiting on a window that cannot
- * happen.
+ * How a choice will be delivered right now. Quick delivery is the default, and it holds while quick delivery is running.
+ * A particular window that has since gone (it is past, or it filled up) falls back to quick delivery, or, when that is
+ * not running (late at night), to the earliest window, so an order is never left waiting on something that cannot happen.
  */
 export function resolveChoice(
   choice: SlotChoice,
   now: Date,
   rules: SlotRules = ZONE.slots,
-): { slot: Slot | undefined; earliest: boolean } {
+): Delivery | undefined {
   if (choice.mode === 'slot') {
     for (const day of ['today', 'tomorrow'] as const) {
       const found = slotsFor(day, now, rules).find(
         (slot) => dateKey(slot.date) === choice.date && slot.hour === choice.hour && !slot.full,
       );
-      if (found !== undefined) return { slot: found, earliest: false };
+      if (found !== undefined) return { kind: 'slot', slot: found };
     }
   }
-  return { slot: earliestSlot(now, rules), earliest: true };
+  if (quickAvailable(now, rules)) return { kind: 'quick' };
+  const slot = earliestSlot(now, rules);
+  return slot === undefined ? undefined : { kind: 'slot', slot };
 }
 
 /** A choice as text for the phone's storage. */
@@ -127,10 +141,10 @@ export function serialiseChoice(choice: SlotChoice): string {
   return JSON.stringify(choice);
 }
 
-/** A choice read back from storage. Anything unreadable is the earliest window, never a crash. */
+/** A choice read back from storage. Anything unreadable (or the older "earliest" choice) is quick delivery, never a crash. */
 export function parseChoice(saved: string | null): SlotChoice {
-  const earliest: SlotChoice = { mode: 'earliest' };
-  if (saved === null) return earliest;
+  const quick: SlotChoice = { mode: 'quick' };
+  if (saved === null) return quick;
   try {
     const parsed = JSON.parse(saved) as Record<string, unknown> | null;
     if (
@@ -145,9 +159,9 @@ export function parseChoice(saved: string | null): SlotChoice {
       return { mode: 'slot', date: parsed.date, hour: parsed.hour };
     }
   } catch {
-    // Not valid text: fall through to the earliest window.
+    // Not valid text: fall through to quick delivery.
   }
-  return earliest;
+  return quick;
 }
 
 /** The choice that means one particular window. */

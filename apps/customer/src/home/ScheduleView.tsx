@@ -9,6 +9,7 @@ import {
   BOTTOM_BAR_HEIGHT,
   Button,
   Icon,
+  Sheet,
   SlotPicker,
   Text,
   radius,
@@ -36,7 +37,7 @@ const DOCK = 124;
 const GROUPS: readonly SlotGroup[] = ['morning', 'afternoon', 'evening'];
 const GROUP_ICON = { morning: 'sun', afternoon: 'sun', evening: 'moon' } as const;
 const THUMB = 36;
-const SHOWN = 5;
+const SHOWN = 4;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -61,11 +62,12 @@ const makeStyles = (c: ThemeColors) =>
       justifyContent: 'center',
     },
     orderText: { flex: 1, minWidth: 0 },
+    link: { minHeight: 36, justifyContent: 'center' },
     options: { flexDirection: 'row', gap: space[3] },
     option: {
       flex: 1,
-      minHeight: 72,
-      gap: space[1],
+      minHeight: 76,
+      gap: 2,
       padding: space[3],
       borderWidth: 1.5,
       borderRadius: radius.lg,
@@ -73,10 +75,23 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     optionOn: { borderColor: c.action, backgroundColor: c.accentSubtle },
-    optionHead: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    optionOff: { opacity: 0.55, borderColor: c.line },
+    optionHead: { flexDirection: 'row', alignItems: 'flex-start', justifyContent: 'space-between' },
+    optionTitle: { flex: 1, minWidth: 0 },
     pressed: { opacity: 0.85 },
+    quickNote: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3], padding: space[4] },
+    quickNoteText: { flex: 1, minWidth: 0 },
     picker: { paddingHorizontal: space[4], paddingBottom: space[4] },
     hint: { paddingHorizontal: space[4], paddingTop: space[3] },
+    itemRow: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    itemThumb: {
+      width: 44,
+      height: 44,
+      borderRadius: radius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    itemText: { flex: 1, minWidth: 0 },
     dock: {
       position: 'absolute',
       left: 0,
@@ -92,10 +107,11 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /**
- * The page where the shopper picks when the order arrives. It is one order with one delivery, so there is one choice:
- * the earliest window, or a particular one-hour window today or tomorrow. Windows that are too soon to pack are gone,
- * full ones are shown but cannot be picked, and each window says what delivery costs then, so a quieter time that costs
- * less is easy to see. Nothing changes until "Confirm"; then the cart shows the new window and bill.
+ * The page where the shopper picks how the order arrives. Quick delivery, packed and sent right away with an estimate
+ * in minutes, is the default; "Schedule delivery" lets them pick a one-hour window today or tomorrow instead. It is one
+ * order with one delivery. Windows that are too soon to pack are gone, full ones are shown but cannot be picked, and each
+ * option says what delivery costs then, so a quieter time that costs less is easy to see. Nothing changes until
+ * "Confirm"; then the cart shows the new time and bill.
  */
 export function ScheduleView() {
   const { t } = useLanguage();
@@ -107,20 +123,22 @@ export function ScheduleView() {
   const tintOf = useTintOf();
   const conditions = useConditions();
   const text = useSlotText();
-  const { now } = cart.delivery;
+  const { now, eta, quickOpen } = cart.delivery;
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
 
   // What is picked here, until it is confirmed.
   const [draft, setDraft] = useState<SlotChoice>(cart.delivery.choice);
-  const [day, setDay] = useState<SlotDay>(cart.delivery.slot?.day ?? 'today');
-
   const resolved = resolveChoice(draft, now);
+  const [day, setDay] = useState<SlotDay>(resolved?.kind === 'slot' ? resolved.slot.day : 'today');
+  const [itemsOpen, setItemsOpen] = useState(false);
+
   const earliest = earliestSlot(now);
   const todaySlots = slotsFor('today', now);
   const tomorrowSlots = slotsFor('tomorrow', now);
   const daySlots = day === 'today' ? todaySlots : tomorrowSlots;
+  const quick = resolved?.kind === 'quick';
 
-  // What delivery costs in each window: nothing shown when delivery is free anyway.
+  // What delivery costs at each hour: nothing shown when delivery is free anyway.
   const free = cart.bill.delivery.free;
   const feeAt = (hour: number) =>
     deliveryFee({
@@ -132,7 +150,7 @@ export function ScheduleView() {
     }).fee;
   const open = [...todaySlots, ...tomorrowSlots]
     .filter((slot) => !slot.full)
-    .map((s) => feeAt(s.hour));
+    .map((slot) => feeAt(slot.hour));
   const lowest = Math.min(...open);
   const varies = !free && open.length > 0 && lowest < Math.max(...open);
 
@@ -161,7 +179,7 @@ export function ScheduleView() {
               }),
           state: slot.full
             ? ('full' as const)
-            : resolved.slot?.id === slot.id
+            : resolved?.kind === 'slot' && resolved.slot.id === slot.id
               ? ('selected' as const)
               : ('idle' as const),
         };
@@ -180,6 +198,7 @@ export function ScheduleView() {
   };
 
   const thumbs = cart.lines.slice(0, SHOWN);
+  const quickFee = free ? undefined : formatRupees(feeAt(now.getHours()));
 
   return (
     <View style={styles.page}>
@@ -209,95 +228,125 @@ export function ScheduleView() {
             </View>
             <View style={styles.orderText}>
               <Text variant="strong">{cart.itemsLabel}</Text>
-              <Text variant="small" color="inkMuted">
-                {t('cart.arrivingNote')}
-              </Text>
             </View>
+            <Pressable
+              role="link"
+              hitSlop={6}
+              onPress={() => {
+                setItemsOpen(true);
+              }}
+              style={styles.link}
+            >
+              <Text variant="strong" color="accentInk">
+                {t('cart.viewItems')}
+              </Text>
+            </Pressable>
           </View>
         ) : null}
         <View style={styles.options} role="radiogroup">
           <Pressable
             role="radio"
-            aria-checked={draft.mode === 'earliest'}
+            aria-checked={quick}
+            aria-disabled={!quickOpen}
+            disabled={!quickOpen}
             onPress={() => {
-              setDraft({ mode: 'earliest' });
-              if (earliest !== undefined) setDay(earliest.day);
+              setDraft({ mode: 'quick' });
             }}
             style={({ pressed }) => [
               styles.option,
-              draft.mode === 'earliest' && styles.optionOn,
+              quick && styles.optionOn,
+              !quickOpen && styles.optionOff,
               pressed && styles.pressed,
             ]}
           >
             <View style={styles.optionHead}>
-              <Text variant="label">{t('cart.earliest')}</Text>
-              {draft.mode === 'earliest' ? (
-                <Icon name="check" color={colors.accentInk} size={18} />
-              ) : null}
+              <View style={styles.optionTitle}>
+                <Text variant="label">{t('cart.quickCard')}</Text>
+              </View>
+              <Icon name="bolt" color={colors.success} size={18} />
             </View>
             <Text variant="small" color="inkMuted" numberOfLines={2}>
-              {earliest !== undefined ? text.dayWindow(earliest) : ''}
+              {quickOpen
+                ? t('cart.quickSub', { from: eta.from, to: eta.to })
+                : t('cart.quickClosed')}
             </Text>
+            {quickOpen && quickFee !== undefined ? (
+              <Text variant="caption" color="inkMuted">
+                {t('cart.feeLine', { amount: quickFee })}
+              </Text>
+            ) : null}
           </Pressable>
           <Pressable
             role="radio"
-            aria-checked={draft.mode === 'slot'}
+            aria-checked={!quick}
             onPress={() => {
-              if (draft.mode === 'slot') return;
-              if (earliest !== undefined) setDraft(choiceFor(earliest));
+              if (!quick) return;
+              if (earliest !== undefined) {
+                setDraft(choiceFor(earliest));
+                setDay(earliest.day);
+              }
             }}
             style={({ pressed }) => [
               styles.option,
-              draft.mode === 'slot' && styles.optionOn,
+              !quick && styles.optionOn,
               pressed && styles.pressed,
             ]}
           >
             <View style={styles.optionHead}>
-              <Text variant="label">{t('cart.pickTime')}</Text>
-              {draft.mode === 'slot' ? (
-                <Icon name="check" color={colors.accentInk} size={18} />
-              ) : null}
+              <View style={styles.optionTitle}>
+                <Text variant="label">{t('cart.scheduleCard')}</Text>
+              </View>
+              <Icon name="calendar" color={colors.warning} size={18} />
             </View>
             <Text variant="small" color="inkMuted" numberOfLines={2}>
-              {draft.mode === 'slot' && resolved.slot !== undefined
-                ? text.dayWindow(resolved.slot)
-                : t('cart.pickSub')}
+              {resolved?.kind === 'slot' ? text.dayWindow(resolved.slot) : t('cart.scheduleSub')}
             </Text>
           </Pressable>
         </View>
-        <View style={styles.card}>
-          {varies ? (
-            <View style={styles.hint}>
+        {quick ? (
+          <View style={[styles.card, styles.quickNote]}>
+            <Icon name="info" color={colors.inkMuted} size={20} />
+            <View style={styles.quickNoteText}>
               <Text variant="small" color="inkMuted">
-                {t('cart.quieter')}
+                {t('cart.quickNote', { from: eta.from, to: eta.to })}
               </Text>
             </View>
-          ) : null}
-          <View style={styles.picker}>
-            <SlotPicker
-              days={[
-                {
-                  key: 'today',
-                  label: text.dayLabel('today'),
-                  sub: `${text.dateLabel(now)} · ${t('cart.slotsCount', { count: todaySlots.length })}`,
-                },
-                {
-                  key: 'tomorrow',
-                  label: text.dayLabel('tomorrow'),
-                  sub: `${text.dateLabel(tomorrowSlots[0]?.date ?? now)} · ${t('cart.slotsCount', { count: tomorrowSlots.length })}`,
-                },
-              ]}
-              activeDay={day}
-              onDay={(key) => {
-                setDay(key === 'tomorrow' ? 'tomorrow' : 'today');
-              }}
-              groups={groups}
-              onSelect={pick}
-              fullLabel={t('cart.full')}
-              emptyLabel={t('cart.noSlotsToday')}
-            />
           </View>
-        </View>
+        ) : (
+          <View style={styles.card}>
+            {varies ? (
+              <View style={styles.hint}>
+                <Text variant="small" color="inkMuted">
+                  {t('cart.quieter')}
+                </Text>
+              </View>
+            ) : null}
+            <View style={styles.picker}>
+              <SlotPicker
+                days={[
+                  {
+                    key: 'today',
+                    label: text.dayLabel('today'),
+                    sub: `${text.dateLabel(now)} · ${t('cart.slotsCount', { count: todaySlots.length })}`,
+                  },
+                  {
+                    key: 'tomorrow',
+                    label: text.dayLabel('tomorrow'),
+                    sub: `${text.dateLabel(tomorrowSlots[0]?.date ?? now)} · ${t('cart.slotsCount', { count: tomorrowSlots.length })}`,
+                  },
+                ]}
+                activeDay={day}
+                onDay={(key) => {
+                  setDay(key === 'tomorrow' ? 'tomorrow' : 'today');
+                }}
+                groups={groups}
+                onSelect={pick}
+                fullLabel={t('cart.full')}
+                emptyLabel={t('cart.noSlotsToday')}
+              />
+            </View>
+          </View>
+        )}
       </ScrollView>
       <View style={[styles.dock, { bottom: room }]}>
         <Text variant="small" color="inkMuted" align="center">
@@ -305,14 +354,45 @@ export function ScheduleView() {
         </Text>
         <Button
           label={
-            resolved.slot !== undefined
-              ? t('cart.confirm', { when: text.dayWindow(resolved.slot) })
-              : t('cart.pickTime')
+            resolved === undefined
+              ? t('cart.scheduleCard')
+              : resolved.kind === 'quick'
+                ? t('cart.confirmQuick')
+                : t('cart.confirm', { when: text.dayWindow(resolved.slot) })
           }
-          disabled={resolved.slot === undefined}
+          disabled={resolved === undefined}
           onPress={confirm}
         />
       </View>
+      <Sheet
+        open={itemsOpen}
+        onClose={() => {
+          setItemsOpen(false);
+        }}
+        title={t('cart.yourItems')}
+        closeLabel={t('common.close')}
+      >
+        {cart.items.map((line) => (
+          <View key={line.id} style={styles.itemRow}>
+            <View
+              style={[styles.itemThumb, { backgroundColor: tintOf(line.category) }]}
+              aria-hidden
+            >
+              <NativeText allowFontScaling={false} style={{ fontSize: 24, lineHeight: 30 }}>
+                {line.emoji}
+              </NativeText>
+            </View>
+            <View style={styles.itemText}>
+              <Text variant="strong" numberOfLines={2}>
+                {line.name}
+              </Text>
+              <Text variant="small" color="inkMuted" numberOfLines={1}>
+                {`${line.pack} × ${line.quantity}`}
+              </Text>
+            </View>
+          </View>
+        ))}
+      </Sheet>
     </View>
   );
 }

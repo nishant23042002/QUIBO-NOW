@@ -576,9 +576,6 @@
     "arrivingNote": "All items arrive together.",
     "change": "Change",
     "scheduleTitle": "Choose delivery time",
-    "earliest": "Earliest",
-    "pickTime": "Pick a time",
-    "pickSub": "Today or tomorrow",
     "today": "Today",
     "tomorrow": "Tomorrow",
     "slotsCount": "{count} slots",
@@ -599,6 +596,18 @@
     "chip": "{from}–{to} {period}",
     "chipCross": "{from} AM–{to} PM",
     "chipAm": "AM",
-    "chipPm": "PM"
+    "chipPm": "PM",
+    "quickTitle": "Delivering in {from}⁠–⁠{to} mins",
+    "schedule": "Schedule",
+    "quickCard": "Quick delivery",
+    "quickSub": "{from}⁠–⁠{to} mins",
+    "quickClosed": "Closed for now",
+    "quickNote": "We pack and send it right away. Usually {from}⁠–⁠{to} mins, a little longer in rush hour or rain.",
+    "confirmQuick": "Confirm · Quick delivery",
+    "scheduleCard": "Schedule delivery",
+    "scheduleSub": "Select a slot",
+    "viewItems": "View items",
+    "yourItems": "Your items",
+    "feeLine": "Delivery {amount}"
   }
 }

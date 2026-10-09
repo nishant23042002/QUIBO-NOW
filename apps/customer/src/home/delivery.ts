@@ -19,6 +19,27 @@ export interface DeliveryRules {
   max: Money;
 }
 
+/**
+ * How long quick delivery is estimated to take. It is an estimate shown as a range, never a promise: the minutes come from
+ * packing, the distance, the items and how busy or wet the day is.
+ */
+export interface QuickRules {
+  /** Packing and pickup. */
+  baseMinutes: number;
+  /** Riding time for each kilometre. */
+  perKm: number;
+  rushExtra: number;
+  rainExtra: number;
+  festivalExtra: number;
+  /** Extra packing time for each four items after the first four, and the most that can add. */
+  extraPerFourItems: number;
+  maxItemExtra: number;
+  /** The estimate is rounded down to a multiple of this many minutes, and shown as a range this wide. */
+  step: number;
+  /** However slow things get, the estimate never goes above this. */
+  maxMinutes: number;
+}
+
 /** When orders can be delivered, in one-hour windows. */
 export interface SlotRules {
   /** The first hour a window can start, on a 24-hour clock. */
@@ -37,6 +58,7 @@ export interface ZoneSettings {
   freeDeliveryFrom: Money;
   delivery: DeliveryRules;
   slots: SlotRules;
+  quick: QuickRules;
   /** The handling fee for each class of care, before any festival surcharge. */
   handling: Readonly<Record<CareClass, Money>>;
   /** What is added to the handling fee on a festival day. */
@@ -63,6 +85,17 @@ export const ZONE: ZoneSettings = {
     festivalExtra: money(400),
     rainExtra: money(300),
     max: money(3_000),
+  },
+  quick: {
+    baseMinutes: 6,
+    perKm: 3,
+    rushExtra: 5,
+    rainExtra: 4,
+    festivalExtra: 3,
+    extraPerFourItems: 1,
+    maxItemExtra: 4,
+    step: 5,
+    maxMinutes: 40,
   },
   slots: {
     firstHour: 7,

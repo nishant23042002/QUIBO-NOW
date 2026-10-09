@@ -1,4 +1,4 @@
-import { formatRupees } from '@quibo/contracts';
+import { add, formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
 import { Text as NativeText, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -66,12 +66,23 @@ const makeStyles = (c: ThemeColors) =>
       borderBottomWidth: 1,
       borderBottomColor: c.line,
     },
+    arriveIcon: {
+      width: 40,
+      height: 40,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: c.line,
+    },
     arriveText: { flex: 1, minWidth: 0 },
     change: {
       minHeight: 36,
-      paddingHorizontal: space[3],
+      flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
+      gap: space[1],
+      paddingHorizontal: space[3],
       borderWidth: 1.5,
       borderRadius: radius.md,
       borderColor: c.action,
@@ -135,6 +146,7 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     dockTotal: { flexShrink: 0 },
+    dockPrice: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
     dockCaption: { flexDirection: 'row', gap: space[1] },
     dockButton: { flex: 1 },
     empty: { flex: 1 },
@@ -161,6 +173,8 @@ export function CartView() {
   const slotText = useSlotText();
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
   const { bill } = cart;
+  const current = cart.delivery.current;
+  const quick = current?.kind === 'quick';
 
   const notices = (
     <>
@@ -242,13 +256,22 @@ export function CartView() {
         </View>
         <View style={styles.card}>
           <View style={styles.arrive}>
-            <Icon name="clock" color={colors.accentInk} size={20} />
+            <View style={styles.arriveIcon} aria-hidden>
+              <Icon name={quick ? 'bolt' : 'clock'} color={colors.accentInk} size={20} />
+            </View>
             <View style={styles.arriveText}>
               <Text variant="strong" numberOfLines={2}>
-                {cart.delivery.slot !== undefined ? slotText.arriving(cart.delivery.slot) : ''}
+                {current === undefined
+                  ? ''
+                  : current.kind === 'quick'
+                    ? t('cart.quickTitle', {
+                        from: cart.delivery.eta.from,
+                        to: cart.delivery.eta.to,
+                      })
+                    : slotText.arriving(current.slot)}
               </Text>
               <Text variant="small" color="inkMuted">
-                {t('cart.arrivingNote')}
+                {cart.itemsLabel}
               </Text>
             </View>
             <Pressable
@@ -259,8 +282,9 @@ export function CartView() {
               }}
               style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
             >
+              <Icon name="calendar" color={colors.accentInk} size={16} />
               <Text variant="strong" color="accentInk">
-                {t('cart.change')}
+                {quick ? t('cart.schedule') : t('cart.change')}
               </Text>
             </Pressable>
           </View>
@@ -374,7 +398,14 @@ export function CartView() {
       </ScrollView>
       <View style={[styles.dock, { bottom: room }]}>
         <View style={styles.dockTotal} accessible>
-          <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
+          <View style={styles.dockPrice}>
+            <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
+            {bill.totalSaved > 0 ? (
+              <Text variant="small" color="inkMuted" strike>
+                {formatRupees(add(bill.toPay, bill.totalSaved))}
+              </Text>
+            ) : null}
+          </View>
           <View style={styles.dockCaption}>
             <Text variant="caption" color="inkMuted">
               {t('cart.toPay')}

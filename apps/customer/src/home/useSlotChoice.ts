@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { readSetting, writeSetting } from '@/storage';
-import { parseChoice, resolveChoice, serialiseChoice, type Slot, type SlotChoice } from './slots';
+import {
+  parseChoice,
+  quickAvailable,
+  resolveChoice,
+  serialiseChoice,
+  type Delivery,
+  type SlotChoice,
+} from './slots';
 
 /** Where the phone keeps the chosen delivery time, so it is still there after the app is closed. */
 const SLOT_KEY = 'quibo.slot';
@@ -10,22 +17,22 @@ const TICK_MS = 60_000;
 export interface SlotState {
   /** The time it is now, refreshed every minute. */
   now: Date;
-  /** What the shopper picked: the earliest window, or one particular one. */
+  /** What the shopper picked: quick delivery, or one particular window. */
   choice: SlotChoice;
   setChoice: (next: SlotChoice) => void;
-  /** The window that choice means right now. A particular window that has gone falls back to the earliest. */
-  slot: Slot | undefined;
-  /** Whether `slot` is the earliest window (chosen so, or fallen back to). */
-  earliest: boolean;
+  /** How the order will be delivered right now. A particular window that has gone falls back to quick delivery. */
+  current: Delivery | undefined;
+  /** Whether quick delivery is running now (it is not late at night). */
+  quickOpen: boolean;
 }
 
 /**
- * The delivery time for the order: the shopper's choice, kept on the phone, and the window it means at this moment.
- * The earliest window moves on as the day goes by; a particular window stays until it has passed or filled up.
+ * The delivery time for the order: the shopper's choice, kept on the phone, and how it will be delivered at this moment.
+ * Quick delivery is the default; a particular window stays until it has passed or filled up.
  */
 export function useSlotChoice(): SlotState {
   const [now, setNow] = useState(() => new Date());
-  const [choice, setChoiceState] = useState<SlotChoice>({ mode: 'earliest' });
+  const [choice, setChoiceState] = useState<SlotChoice>({ mode: 'quick' });
   // A choice made before the saved one has been read back must not be written over by it.
   const touched = useRef(false);
 
@@ -54,6 +61,11 @@ export function useSlotChoice(): SlotState {
     void writeSetting(SLOT_KEY, serialiseChoice(next));
   }, []);
 
-  const { slot, earliest } = resolveChoice(choice, now);
-  return { now, choice, setChoice, slot, earliest };
+  return {
+    now,
+    choice,
+    setChoice,
+    current: resolveChoice(choice, now),
+    quickOpen: quickAvailable(now),
+  };
 }

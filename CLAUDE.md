@@ -1,7 +1,7 @@
 # Project: hyperlocal grocery delivery for tier 3 and 4 Indian towns
 
 ## What we are building
-A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. Partner stores by default; a single company dark store per town is an allowed alternative. We promise a delivery window, never minutes. One pilot town first; multi-town ready through town_id. Each town runs in a fulfilment mode (partner, dark or hybrid) that can be switched by configuration at any time.
+A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. Partner stores by default; a single company dark store per town is an allowed alternative. Delivery is quick by default: the app shows an estimated time in minutes as a range, never a guarantee (ADR 0012), and the customer can instead schedule a one-hour window today or tomorrow. One pilot town first; multi-town ready through town_id. Each town runs in a fulfilment mode (partner, dark or hybrid) that can be switched by configuration at any time.
 Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 
 ## How we work: UI first, phase-gated
@@ -29,7 +29,7 @@ Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 - Every business table has town_id. Zones, fees, slots and limits live in the database, not in code.
 - No hard-coded UI strings: use message keys for en, hi, mr.
 - Collect minimal personal data, log consent, never log Aadhaar numbers or OTPs.
-- No 10-minute copy. No rider penalties for lateness.
+- Minutes are an estimate shown as a range, never a guarantee or a fixed "10-minute" brand claim (ADR 0012). No countdown timers. No rider penalties for lateness.
 - Every screen has loading, empty, error and offline states and works on a low-end Android phone (2 GB RAM) on a weak network.
 
 ## Commands

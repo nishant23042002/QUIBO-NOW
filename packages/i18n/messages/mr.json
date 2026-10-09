@@ -576,9 +576,6 @@
     "arrivingNote": "सर्व वस्तू एकत्र येतील.",
     "change": "बदला",
     "scheduleTitle": "डिलिव्हरीची वेळ निवडा",
-    "earliest": "सर्वात लवकर",
-    "pickTime": "वेळ निवडा",
-    "pickSub": "आज किंवा उद्या",
     "today": "आज",
     "tomorrow": "उद्या",
     "slotsCount": "{count} स्लॉट",
@@ -599,6 +596,18 @@
     "chip": "{from} ते {to} {period}",
     "chipCross": "{from} ते {to} वाजता",
     "chipAm": "वाजता",
-    "chipPm": "वाजता"
+    "chipPm": "वाजता",
+    "quickTitle": "{from}⁠–⁠{to} मिनिटांत डिलिव्हरी",
+    "schedule": "शेड्यूल करा",
+    "quickCard": "जलद डिलिव्हरी",
+    "quickSub": "{from}⁠–⁠{to} मिनिटे",
+    "quickClosed": "सध्या बंद आहे",
+    "quickNote": "आम्ही लगेच पॅक करून पाठवतो. साधारणपणे {from}⁠–⁠{to} मिनिटे, गर्दी किंवा पावसात थोडे जास्त.",
+    "confirmQuick": "निश्चित करा · जलद डिलिव्हरी",
+    "scheduleCard": "डिलिव्हरी शेड्यूल करा",
+    "scheduleSub": "वेळ निवडा",
+    "viewItems": "वस्तू पहा",
+    "yourItems": "तुमच्या वस्तू",
+    "feeLine": "डिलिव्हरी {amount}"
   }
 }

@@ -7,6 +7,7 @@ import {
   groupOf,
   parseChoice,
   periodOf,
+  quickAvailable,
   resolveChoice,
   serialiseChoice,
   slotsFor,
@@ -104,38 +105,55 @@ describe('earliestSlot', () => {
   });
 });
 
+describe('quickAvailable', () => {
+  it('runs from the first hour of the day until the last window ends', () => {
+    expect(quickAvailable(at(6, 59), rules)).toBe(false);
+    expect(quickAvailable(at(7), rules)).toBe(true);
+    expect(quickAvailable(at(20, 59), rules)).toBe(true);
+    expect(quickAvailable(at(21), rules)).toBe(false);
+  });
+});
+
 describe('resolveChoice', () => {
-  it('follows the earliest window as time passes', () => {
-    expect(resolveChoice({ mode: 'earliest' }, at(10), rules).slot?.hour).toBe(11);
-    expect(resolveChoice({ mode: 'earliest' }, at(13), rules).slot?.hour).toBe(14);
+  it('is quick delivery by default while it is running', () => {
+    expect(resolveChoice({ mode: 'quick' }, at(10), rules)).toEqual({ kind: 'quick' });
+  });
+
+  it('moves a quick choice to the earliest window when quick delivery is not running', () => {
+    const late = resolveChoice({ mode: 'quick' }, at(22), rules);
+    expect(late?.kind).toBe('slot');
+    if (late?.kind === 'slot') expect(late.slot).toMatchObject({ day: 'tomorrow', hour: 7 });
   });
 
   it('keeps a window that is still open', () => {
     const resolved = resolveChoice({ mode: 'slot', date: '2026-10-10', hour: 9 }, at(15), rules);
-    expect(resolved.earliest).toBe(false);
-    expect(resolved.slot).toMatchObject({ day: 'tomorrow', hour: 9 });
+    expect(resolved?.kind).toBe('slot');
+    if (resolved?.kind === 'slot')
+      expect(resolved.slot).toMatchObject({ day: 'tomorrow', hour: 9 });
   });
 
-  it('falls back to the earliest when the chosen window has passed, filled up, or never existed', () => {
+  it('falls back to quick delivery when the chosen window has passed, filled up or never existed', () => {
     const passed = resolveChoice({ mode: 'slot', date: '2026-10-09', hour: 9 }, at(15), rules);
-    expect(passed.earliest).toBe(true);
-    expect(passed.slot?.hour).toBe(16);
-    const full = resolveChoice({ mode: 'slot', date: '2026-10-10', hour: 8 }, at(15), rules);
-    expect(full.earliest).toBe(true);
-    const never = resolveChoice({ mode: 'slot', date: '2026-10-20', hour: 9 }, at(15), rules);
-    expect(never.earliest).toBe(true);
+    expect(passed).toEqual({ kind: 'quick' });
+    expect(resolveChoice({ mode: 'slot', date: '2026-10-10', hour: 8 }, at(15), rules)).toEqual({
+      kind: 'quick',
+    });
+    expect(resolveChoice({ mode: 'slot', date: '2026-10-20', hour: 9 }, at(15), rules)).toEqual({
+      kind: 'quick',
+    });
   });
 
   it('meets a window chosen as tomorrow, once it is today, by the date and not the word', () => {
     const next = new Date(2026, 9, 10, 6, 0);
     const resolved = resolveChoice({ mode: 'slot', date: '2026-10-10', hour: 9 }, next, rules);
-    expect(resolved.slot).toMatchObject({ day: 'today', hour: 9 });
+    expect(resolved?.kind).toBe('slot');
+    if (resolved?.kind === 'slot') expect(resolved.slot).toMatchObject({ day: 'today', hour: 9 });
   });
 });
 
 describe('saving a choice', () => {
   it('round-trips both kinds', () => {
-    expect(parseChoice(serialiseChoice({ mode: 'earliest' }))).toEqual({ mode: 'earliest' });
+    expect(parseChoice(serialiseChoice({ mode: 'quick' }))).toEqual({ mode: 'quick' });
     const slot = slotsFor('tomorrow', at(15), rules)[3];
     expect(slot).toBeDefined();
     if (slot === undefined) return;
@@ -146,15 +164,16 @@ describe('saving a choice', () => {
     });
   });
 
-  it('reads anything unreadable as the earliest window', () => {
+  it('reads anything unreadable, and the older earliest choice, as quick delivery', () => {
     const bad = [
       null,
       'nope',
       '{}',
       '[1]',
+      '{"mode":"earliest"}',
       '{"mode":"slot","date":"x","hour":9}',
       '{"mode":"slot","date":"2026-10-10","hour":9.5}',
     ];
-    for (const saved of bad) expect(parseChoice(saved)).toEqual({ mode: 'earliest' });
+    for (const saved of bad) expect(parseChoice(saved)).toEqual({ mode: 'quick' });
   });
 });
