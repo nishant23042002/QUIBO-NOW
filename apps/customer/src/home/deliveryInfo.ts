@@ -1,4 +1,6 @@
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { useAddresses } from './AddressProvider';
+import { formatAddress } from './addresses';
 import { useCart } from './CartProvider';
 import { useSlotText } from './slotText';
 
@@ -41,11 +43,22 @@ export function useDeliveryWhen(): DeliveryWhen {
   };
 }
 
+/** What an address is called, in the app's language: "Home", "Work" or "Other". */
+export function useAddressLabel(): (label: 'home' | 'work' | 'other') => string {
+  const { t } = useLanguage();
+  return (label) => t(`address.labels.${label}`);
+}
+
 /**
- * The address the order goes to, in one line. There is one sample address until the address screens are built (1e); Home's
- * header, the product page and the cart all read it here, so choosing an address will change all of them at once.
+ * The address the order goes to, in one line: the one chosen in the saved addresses. Home's header, the product page and the
+ * cart all read it here, so choosing another address changes all of them at once. With none saved it asks for one.
  */
 export function useDeliveryAddress(): string {
   const { t } = useLanguage();
-  return t('home.header.fullAddress');
+  const { selected, loaded } = useAddresses();
+  const labelText = useAddressLabel();
+  if (!loaded) return '';
+  return selected === undefined
+    ? t('address.none')
+    : formatAddress(selected, labelText(selected.label));
 }

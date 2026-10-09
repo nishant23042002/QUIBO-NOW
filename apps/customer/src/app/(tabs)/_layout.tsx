@@ -16,7 +16,10 @@ const TABS = [
 ] as const;
 
 /** The steps after the cart are reached from it, so the Cart tab stays lit while they show. */
-const STEP_OF_CART: readonly string[] = ['checkout', 'schedule', 'coupons', 'address'];
+const STEP_OF_CART: readonly string[] = ['checkout', 'schedule', 'coupons'];
+
+/** The address pages are reached from Home and from the cart alike, so no tab is lit for them. */
+const NEUTRAL: readonly string[] = ['address', 'address-edit'];
 
 function Bar({ state, navigation }: TabBarProps) {
   const { t } = useLanguage();
@@ -29,7 +32,9 @@ function Bar({ state, navigation }: TabBarProps) {
     ? current
     : STEP_OF_CART.includes(current)
       ? 'cart'
-      : 'index';
+      : NEUTRAL.includes(current)
+        ? 'none'
+        : 'index';
 
   // While the keyboard is up the bar would only ride on top of it, so it steps aside.
   if (keyboard) return null;
@@ -88,6 +93,8 @@ export default function TabsLayout() {
       <Tabs.Screen name="coupons" options={{ href: null }} />
       {/* The address page is opened from the cart the same way. */}
       <Tabs.Screen name="address" options={{ href: null }} />
+      {/* Adding or changing one is a step of it. */}
+      <Tabs.Screen name="address-edit" options={{ href: null }} />
     </Tabs>
   );
 }

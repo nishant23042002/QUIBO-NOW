@@ -3,6 +3,7 @@ import { NavigationBar } from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
 import { StatusBar as NativeStatusBar, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AddressProvider } from '@/home/AddressProvider';
 import { CartProvider } from '@/home/CartProvider';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
 import { ThemeProvider, useTheme } from '@/theme';
@@ -82,9 +83,11 @@ export default function RootLayout() {
     <ThemeProvider>
       <LanguageProvider>
         <SystemBars />
-        <CartProvider>
-          <Gate />
-        </CartProvider>
+        <AddressProvider>
+          <CartProvider>
+            <Gate />
+          </CartProvider>
+        </AddressProvider>
       </LanguageProvider>
     </ThemeProvider>
   );

@@ -57,6 +57,7 @@ export { LoadGate, type LoadGateProps } from './LoadGate';
 export { useScreenLoad, type ScreenLoad, type ScreenLoadOptions } from './useScreenLoad';
 export type { LoadPolicy } from './logic/screenLoad';
 export { ProfileSkeleton } from './ProfileSkeleton';
+export { MockMap, type MapBounds, type MapPoint, type MockMapProps } from './MockMap';
 export { ScreenStatusBar } from './ScreenStatusBar';
 export { ProductInsight, type InsightPage, type ProductInsightProps } from './ProductInsight';
 export { PackPicker, type PackOption, type PackPickerProps } from './PackPicker';

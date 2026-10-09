@@ -176,6 +176,13 @@ _Goal: Home runs on mock data through the same path the live API will use._
 
 ### 1e. First run and address: language, phone OTP, address
 
+**Progress.** The address half is built (the first-run language, phone and OTP screens come next). The saved addresses are kept on
+the phone and the chosen one feeds Home's header, the product page and the cart through `useDeliveryAddress`, so choosing one
+changes all of them. The address list lets the shopper choose, change or remove an address (removal asks once, in place); the form takes a name
+(Home, Work, Other), house, street, ward, an optional landmark and second number, and a pin on a drawn map of the delivery area.
+The pin is checked against mock zone shapes: an address outside shows "we do not deliver here yet" and cannot be saved or chosen
+(ADR 0016). Phone validation and the zone check are plain logic with tests.
+
 - **Build:** **language** screen (en, hi, mr), **phone and OTP** (mock: one fixed test OTP in the dev fixtures, a
   resend timer, wrong-code and expired-code errors; consent text and log, never logs the OTP), and the **address**
   screens (saved addresses, add and edit: landmark text, ward or mohalla, alternate phone, a **serviceability check

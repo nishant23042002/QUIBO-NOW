@@ -11,8 +11,7 @@
     "header": {
       "addressCaption": "Deliver to",
       "profile": "Profile",
-      "shopsOpen": "{count} local shops open now",
-      "fullAddress": "Home - Station Road, Roha, Raigad, Maharashtra 402109"
+      "shopsOpen": "{count} local shops open now"
     },
     "shopsSheet": {
       "title": "Verified local shops in Roha",
@@ -705,5 +704,49 @@
     "sameForAll": "Use one choice for all",
     "customised": "Some items have their own choice",
     "itemLabel": "If {name} is unavailable"
+  },
+  "address": {
+    "title": "Delivery address",
+    "none": "Add a delivery address",
+    "add": "Add new address",
+    "emptyTitle": "No saved addresses",
+    "emptyBody": "Add the place you want your order delivered to.",
+    "deliveringHere": "Delivering here",
+    "deliverHere": "Deliver here",
+    "notServed": "We do not deliver here yet",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteAsk": "Remove this address?",
+    "deleteYes": "Remove",
+    "deleteNo": "Keep",
+    "editTitle": "Edit address",
+    "addTitle": "Add address",
+    "saveAs": "Save as",
+    "labels": {
+      "home": "Home",
+      "work": "Work",
+      "other": "Other"
+    },
+    "house": "House or flat",
+    "houseHint": "For example 12, Shanti Apartments",
+    "street": "Street or area",
+    "ward": "Ward or mohalla",
+    "landmark": "Landmark (optional)",
+    "landmarkHint": "Near the temple, opposite the school",
+    "phone": "Another phone number (optional)",
+    "phoneHint": "Someone the rider can call at this address",
+    "mapTitle": "Pin your location",
+    "mapHint": "Tap the map to place the pin. We deliver inside the shaded area.",
+    "mapLabel": "Map of the delivery area. The pin is {state}.",
+    "pinSet": "placed",
+    "pinNotSet": "not placed yet",
+    "useCentre": "Use the town centre",
+    "pinOutside": "We do not deliver here yet. Move the pin inside the shaded area.",
+    "save": "Save address",
+    "required": "Please fill this in",
+    "badPhone": "Enter a 10-digit mobile number",
+    "pinMissing": "Place the pin on the map",
+    "selectedNote": "Your order will be delivered to this address.",
+    "savedNote": "Address saved"
   }
 }

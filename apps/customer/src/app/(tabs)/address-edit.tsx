@@ -1,27 +1,28 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { AddressesView } from '@/home/AddressesView';
+import { AddressEditView } from '@/home/AddressEditView';
 import { CartHeader } from '@/home/CartHeader';
 import { useLanguage } from '@/i18n/LanguageProvider';
 
 const styles = StyleSheet.create({ page: { flex: 1 } });
 
-/** The saved addresses, opened from Home's header and from the cart. It lives in the tab group so the bottom bar stays. */
-export default function AddressScreen() {
+/** Adding an address, or changing the one named in the link. */
+export default function AddressEditScreen() {
   const { t } = useLanguage();
   const router = useRouter();
+  const { id } = useLocalSearchParams<{ id?: string }>();
 
   return (
     <View style={styles.page}>
       <CartHeader
-        title={t('address.title')}
+        title={t(id === undefined ? 'address.addTitle' : 'address.editTitle')}
         backLabel={t('common.back')}
         onBack={() => {
           if (router.canGoBack()) router.back();
-          else router.replace('/');
+          else router.replace('/address');
         }}
       />
-      <AddressesView />
+      <AddressEditView id={id} />
     </View>
   );
 }
