@@ -1,6 +1,7 @@
 import { formatRupees, type Money } from '@quibo/contracts';
-import { StyleSheet, View } from 'react-native';
-import { useStyles, type ThemeColors } from '@/theme';
+import { Pressable, StyleSheet, View } from 'react-native';
+import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { Icon } from './Icon';
 import { freeDeliveryProgress } from './logic/money';
 import { Text } from './Text';
 import { radius, space } from './tokens';
@@ -11,12 +12,12 @@ export interface BillRow {
   amount: Money;
   /** Shown instead of the amount, for example "Free". Pass a translated string. */
   valueLabel?: string;
-  /** A struck-through earlier amount before the value, for example the printed price. */
-  was?: Money;
-  /** A small line under the label that says why, for example "Extra care for eggs". */
-  note?: string;
   /** The value is good news (free, or a saving), so it is shown in the success colour. */
   positive?: boolean;
+  /** Gives the row a small (i) button that explains the amount. Needs `infoLabel`. */
+  onInfo?: () => void;
+  /** Name of the (i) button for screen readers, for example "Why this price?". Pass a translated string. */
+  infoLabel?: string;
 }
 
 export interface FreeDeliveryHint {
@@ -34,22 +35,28 @@ export interface BillSummaryProps {
   rows: readonly BillRow[];
   totalLabel: string;
   total: Money;
-  /** A struck-through earlier total before the real one, for example what the order would cost at printed prices. */
-  totalWas?: Money;
   freeDelivery?: FreeDeliveryHint;
 }
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    box: { gap: space[2] },
-    row: { flexDirection: 'row', justifyContent: 'space-between', gap: space[3] },
-    rowLabel: { flexShrink: 1, gap: 2 },
-    value: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
+    box: { gap: space[1] },
+    // One line per charge: the name on the left, the amount on the right, and nothing in between to read.
+    row: {
+      minHeight: 36,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: space[3],
+    },
+    rowLabel: { flexShrink: 1, flexDirection: 'row', alignItems: 'center', gap: space[1] },
+    info: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
+    pressed: { opacity: 0.6 },
     total: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       gap: space[3],
-      marginTop: space[1],
+      marginTop: space[2],
       paddingTop: space[3],
       borderTopWidth: 1,
       borderTopColor: c.line,
@@ -59,9 +66,10 @@ const makeStyles = (c: ThemeColors) =>
     fill: { height: '100%', borderRadius: radius.full, backgroundColor: c.action },
   });
 
-/** The bill at checkout and in the cart: each charge, the total, and progress to free delivery. */
-export function BillSummary({ rows, totalLabel, total, totalWas, freeDelivery }: BillSummaryProps) {
+/** The bill at checkout and in the cart: each charge on its own line, the total, and progress to free delivery. */
+export function BillSummary({ rows, totalLabel, total, freeDelivery }: BillSummaryProps) {
   const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
   const progress =
     freeDelivery === undefined
       ? null
@@ -93,34 +101,26 @@ export function BillSummary({ rows, totalLabel, total, totalWas, freeDelivery }:
             <Text variant="body" color="inkMuted">
               {row.label}
             </Text>
-            {row.note !== undefined ? (
-              <Text variant="small" color="inkMuted">
-                {row.note}
-              </Text>
+            {row.onInfo !== undefined && row.infoLabel !== undefined ? (
+              <Pressable
+                role="button"
+                aria-label={row.infoLabel}
+                onPress={row.onInfo}
+                hitSlop={8}
+                style={({ pressed }) => [styles.info, pressed && styles.pressed]}
+              >
+                <Icon name="info" color={colors.inkMuted} size={18} />
+              </Pressable>
             ) : null}
           </View>
-          <View style={styles.value}>
-            {row.was !== undefined ? (
-              <Text variant="small" color="inkMuted" strike>
-                {formatRupees(row.was)}
-              </Text>
-            ) : null}
-            <Text variant="body" color={row.positive === true ? 'success' : 'ink'}>
-              {row.valueLabel ?? formatRupees(row.amount)}
-            </Text>
-          </View>
+          <Text variant="body" color={row.positive === true ? 'success' : 'ink'}>
+            {row.valueLabel ?? formatRupees(row.amount)}
+          </Text>
         </View>
       ))}
       <View style={styles.total}>
         <Text variant="heading">{totalLabel}</Text>
-        <View style={styles.value}>
-          {totalWas !== undefined ? (
-            <Text variant="body" color="inkMuted" strike>
-              {formatRupees(totalWas)}
-            </Text>
-          ) : null}
-          <Text variant="heading">{formatRupees(total)}</Text>
-        </View>
+        <Text variant="heading">{formatRupees(total)}</Text>
       </View>
     </View>
   );

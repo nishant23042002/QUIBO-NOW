@@ -6,13 +6,13 @@ import { computeBill, type Bill } from './bill';
 import { careOf } from './care';
 import { summariseCart, type CartEntry } from './cartMath';
 import { restoreCart, serialiseCart, type PackLimit } from './cartStore';
-import { FREE_DELIVERY_FROM } from './delivery';
-import { useFestival } from './festival';
+import { FREE_DELIVERY_FROM, SAMPLE_DISTANCE_KM } from './delivery';
+import { useConditions } from './conditions';
 import { capQuantity } from './packs';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
-/** One pack of an item in a shop's basket. */
-export interface BasketLine {
+/** One pack of an item in the cart. The cart is one flat list: it is one order, however many stores it comes from. */
+export interface CartItem {
   /** The pack's id, for example "milk:500ml". The cart counts by pack. */
   id: string;
   name: string;
@@ -25,20 +25,8 @@ export interface BasketLine {
   maxQuantity?: number;
   /** What this line comes to, for example "₹58". */
   totalLabel: string;
-}
-
-/**
- * Everything in the cart that comes from one shop: the part that shop packs. All the baskets are one order,
- * collected by one rider on one trip and delivered together. Free delivery counts the whole cart (see
- * `DraftCart.free`).
- */
-export interface ShopBasket {
-  id: string;
-  name: string;
-  count: number;
-  /** For example "₹64". */
-  totalLabel: string;
-  lines: readonly BasketLine[];
+  /** The partner shop that sells it. Absent when the town has one dark store, where there is nothing to tell apart. */
+  soldBy?: string;
 }
 
 export interface DraftCart {
@@ -52,14 +40,13 @@ export interface DraftCart {
   itemsLabel: string;
   /** The whole cart's total, from all shops, for example "₹126". */
   totalLabel: string;
-  /** One basket for each shop that has something in the cart, the shop touched most recently first. */
-  baskets: readonly ShopBasket[];
-  /** For the cart bar: the shop's name, or "2 shops" when the cart comes from more than one. */
+  /** Everything in the cart, the item added most recently first. */
+  items: readonly CartItem[];
+  /** How many different stores the cart comes from: 1 in a dark-store town, and often 1 in a partner one. */
+  storeCount: number;
+  /** For the cart bar: the store's name, or "2 shops" when the cart comes from more than one. */
   shopLabel: string;
-  /**
-   * Free delivery counts the whole cart's value, whichever shops it comes from: once the total reaches the
-   * line, every basket's delivery is free.
-   */
+  /** Free delivery counts the whole cart's value, whichever stores it comes from. */
   free: boolean;
   /** How far the whole cart is from free delivery, or that it is unlocked. */
   hint: string;
@@ -106,21 +93,22 @@ function packIndex(items: readonly HomeItem[]) {
 
 /**
  * The cart, kept on the phone: it is read back when the app opens and checked against what the shops have now. A
- * cart can hold items from several shops: they are grouped into one basket per shop for packing, but the whole cart
- * is a single order with one delivery. The cart counts by pack, so a product's two sizes are two lines. Money is
+ * cart can hold items from several shops, or from the town's one dark store, but it is a single order with one
+ * delivery, shown as one flat list. The cart counts by pack, so a product's two sizes are two lines. Money is
  * added up in integer paise.
  */
 export function useDraftCart(): DraftCart {
   const { t } = useLanguage();
-  const items = useHomeItems();
-  const festival = useFestival();
+  const homeItems = useHomeItems();
+  const conditions = useConditions();
+  const dark = conditions.store === 'dark';
   const [quantities, setQuantities] = useState<Readonly<Record<string, number>>>({});
   // The order packs were first added in, so "latest first" is known.
   const [order, setOrder] = useState<readonly string[]>([]);
   const [removal, setRemoval] = useState<Removal | null>(null);
   const [ready, setReady] = useState(false);
   const [restored, setRestored] = useState<{ gone: number; lowered: number } | null>(null);
-  const packs = packIndex(items);
+  const packs = packIndex(homeItems);
 
   // The catalogue as it is when the app opens, for the read-back below to check the saved cart against.
   const [limits] = useState<ReadonlyMap<string, PackLimit>>(
@@ -182,8 +170,8 @@ export function useDraftCart(): DraftCart {
   const entries: CartEntry[] = inCart.map(([packId, { item, pack }]) => ({
     packId,
     productId: item.id,
-    shopId: item.shop,
-    shopName: item.shopName,
+    shopId: dark ? 'quibo' : item.shop,
+    shopName: dark ? t('cart.darkStore') : item.shopName,
     price: pack.price,
     ...(pack.mrp !== undefined ? { mrp: pack.mrp } : {}),
     quantity: quantities[packId] ?? 0,
@@ -193,34 +181,37 @@ export function useDraftCart(): DraftCart {
     itemTotal: sum.total,
     saved: sum.saved,
     cares: inCart.map(([, { item }]) => careOf(item.id, item.category)),
-    festival,
+    trip: {
+      distanceKm: SAMPLE_DISTANCE_KM,
+      hour: new Date().getHours(),
+      festival: conditions.festival,
+      rain: conditions.rain,
+      rush: conditions.rush,
+    },
   });
 
-  const baskets: ShopBasket[] = sum.baskets.map((basket) => ({
-    id: basket.shopId,
-    name: basket.shopName,
-    count: basket.count,
-    totalLabel: formatRupees(basket.total),
-    lines: basket.lines.map(({ entry, lineTotal }) => {
-      const found = packs.get(entry.packId);
-      return {
-        id: entry.packId,
-        name: found?.item.name ?? '',
-        pack: found?.pack.label ?? '',
-        emoji: found?.item.emoji ?? '',
-        category: found?.item.category ?? 'dairy',
-        quantity: entry.quantity,
-        ...(found?.pack.maxQuantity !== undefined ? { maxQuantity: found.pack.maxQuantity } : {}),
-        totalLabel: formatRupees(lineTotal),
-      };
-    }),
+  const lineTotals = new Map(
+    sum.baskets.flatMap((basket) =>
+      basket.lines.map((line) => [line.entry.packId, line.lineTotal] as const),
+    ),
+  );
+  const items: CartItem[] = inCart.map(([packId, { item, pack }]) => ({
+    id: packId,
+    name: item.name,
+    pack: pack.label,
+    emoji: item.emoji,
+    category: item.category,
+    quantity: quantities[packId] ?? 0,
+    ...(pack.maxQuantity !== undefined ? { maxQuantity: pack.maxQuantity } : {}),
+    totalLabel: formatRupees(lineTotals.get(packId) ?? money(0)),
+    ...(dark ? {} : { soldBy: item.shopName }),
   }));
 
-  // Free delivery is worked out on the whole cart, so a few things from each of two shops can add up to it.
+  // Free delivery is worked out on the whole cart, so a few things from each of two stores can add up to it.
   const free = sum.total >= FREE_DELIVERY_FROM;
   const remaining = free ? money(0) : subtract(FREE_DELIVERY_FROM, sum.total);
 
-  const focus = baskets[0];
+  const focus = sum.baskets[0];
 
   return {
     quantities,
@@ -230,11 +221,12 @@ export function useDraftCart(): DraftCart {
       count: sum.count,
     }),
     totalLabel: formatRupees(sum.total),
-    baskets,
+    items,
+    storeCount: sum.baskets.length,
     shopLabel:
-      baskets.length > 1
-        ? t('home.cart.shopsMany', { count: baskets.length })
-        : (focus?.name ?? ''),
+      sum.baskets.length > 1
+        ? t('home.cart.shopsMany', { count: sum.baskets.length })
+        : (focus?.shopName ?? ''),
     free,
     hint: free
       ? t('home.cart.freeReached')

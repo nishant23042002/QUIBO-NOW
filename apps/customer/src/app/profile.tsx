@@ -1,6 +1,6 @@
 import { LOCALES, messages } from '@quibo/i18n';
 import { useRouter } from 'expo-router';
-import { setFestival, useFestival } from '@/home/festival';
+import { setConditions, useConditions } from '@/home/conditions';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme, type Mode } from '@/theme';
 import { armFailNext, setSimulatedOffline, useFailNextArmed, useSimulatedOffline } from '@/network';
@@ -15,7 +15,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const offline = useSimulatedOffline();
   const failArmed = useFailNextArmed();
-  const festival = useFestival();
+  const conditions = useConditions();
 
   return (
     <Screen>
@@ -51,9 +51,42 @@ export default function ProfileScreen() {
               { value: 'off', label: t('profile.dev.festivalOff') },
               { value: 'on', label: t('profile.dev.festivalOn') },
             ]}
-            value={festival ? 'on' : 'off'}
+            value={conditions.festival ? 'on' : 'off'}
             onChange={(value) => {
-              setFestival(value === 'on');
+              setConditions({ festival: value === 'on' });
+            }}
+          />
+          <OptionGroup
+            title={t('profile.dev.rain')}
+            options={[
+              { value: 'dry', label: t('profile.dev.dry') },
+              { value: 'rain', label: t('profile.dev.raining') },
+            ]}
+            value={conditions.rain ? 'rain' : 'dry'}
+            onChange={(value) => {
+              setConditions({ rain: value === 'rain' });
+            }}
+          />
+          <OptionGroup
+            title={t('profile.dev.rush')}
+            options={[
+              { value: 'clock', label: t('profile.dev.byClock') },
+              { value: 'rush', label: t('profile.dev.rushNow') },
+            ]}
+            value={conditions.rush ? 'rush' : 'clock'}
+            onChange={(value) => {
+              setConditions({ rush: value === 'rush' });
+            }}
+          />
+          <OptionGroup
+            title={t('profile.dev.store')}
+            options={[
+              { value: 'partner', label: t('profile.dev.partnerShops') },
+              { value: 'dark', label: t('profile.dev.darkStore') },
+            ]}
+            value={conditions.store}
+            onChange={(value) => {
+              setConditions({ store: value });
             }}
           />
           <Button

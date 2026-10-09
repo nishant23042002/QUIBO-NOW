@@ -7,7 +7,7 @@ import { Skeleton, SkeletonScope, radius, space } from '@/ui';
 export const THUMB = 56;
 export const LINE_HEIGHT = 80;
 
-const LINES = 2;
+const LINES = 3;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -20,36 +20,19 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     free: { gap: space[2], padding: space[4] },
-    head: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: space[4],
-      paddingVertical: space[3],
-    },
     line: {
       height: LINE_HEIGHT,
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[3],
       paddingHorizontal: space[4],
-      borderTopWidth: 1,
-      borderTopColor: c.line,
     },
+    divided: { borderTopWidth: 1, borderTopColor: c.line },
     name: { flex: 1, gap: space[1] },
     side: { alignItems: 'flex-end', gap: space[1] },
-    foot: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: space[4],
-      paddingVertical: space[3],
-      borderTopWidth: 1,
-      borderTopColor: c.line,
-    },
   });
 
-/** Grey blocks in the shape of the cart page: the free-delivery card, then one shop's card with two lines. */
+/** Grey blocks in the shape of the cart page: the free-delivery card, then the list of items. */
 export function CartSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
@@ -62,16 +45,12 @@ export function CartSkeleton() {
           <Skeleton width="60%" height={16} />
         </View>
         <View style={styles.card}>
-          <View style={styles.head}>
-            <Skeleton width="45%" height={18} />
-            <Skeleton width={56} height={14} />
-          </View>
           {Array.from({ length: LINES }, (_, index) => (
-            <View key={index} style={styles.line}>
+            <View key={index} style={[styles.line, index > 0 && styles.divided]}>
               <Skeleton width={THUMB} height={THUMB} rounded={radius.md} />
               <View style={styles.name}>
                 <Skeleton width="70%" height={16} />
-                <Skeleton width="35%" height={14} />
+                <Skeleton width="45%" height={14} />
               </View>
               <View style={styles.side}>
                 <Skeleton width={84} height={32} rounded={radius.md} />
@@ -79,10 +58,6 @@ export function CartSkeleton() {
               </View>
             </View>
           ))}
-          <View style={styles.foot}>
-            <Skeleton width={64} height={14} />
-            <Skeleton width={48} height={16} />
-          </View>
         </View>
       </View>
     </SkeletonScope>
