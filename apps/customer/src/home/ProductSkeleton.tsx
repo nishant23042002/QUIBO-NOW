@@ -19,9 +19,6 @@ import { makePageStyles } from './productLayout';
 
 const THUMB = 52;
 const THUMBS = 3;
-const TILE_ICON = 36;
-const TILE_PAD = space[3];
-const TILE_GAP = space[1];
 const OPTION_MIN = 104;
 const SHOP_ICON = 40;
 const PILL = 40;
@@ -109,10 +106,6 @@ export function ProductSkeleton({
   // The picture is as wide as the gallery card's inside: the screen less the gutters and the card's two border lines.
   const picture = Math.round((width - space[3] * 2 - 2) / GALLERY_RATIO);
   const optionHeight = space[3] + space[2] + 3 + small * 2 + body + 4;
-  const tileRows = [
-    { title: 2, body: 2 },
-    { title: 2, body: 3 },
-  ];
 
   return (
     // Only the first screenful is ever seen (the page cannot be scrolled while it loads), so the rest is cut off.
@@ -187,6 +180,9 @@ export function ProductSkeleton({
                   <View style={{ flex: 1 }}>{paragraph('v', lines, body)}</View>
                 </View>
               ))}
+              <View style={styles.pillRow}>
+                <Skeleton width={120} height={PILL} rounded={radius.full} />
+              </View>
             </View>
           </View>
 
@@ -220,25 +216,9 @@ export function ProductSkeleton({
             <View style={[styles.card, styles.section]}>
               {bar('promises', line(fontSize.lg, 'tight'), '40%')}
               <View style={styles.tiles}>
-                {tileRows.slice(0, 1).flatMap((rowSpec, index) =>
-                  [0, 1].map((side) => (
-                    <View key={`${index}-${side}`} style={styles.tile}>
-                      <Skeleton
-                        height={
-                          TILE_PAD * 2 +
-                          TILE_ICON +
-                          TILE_GAP * 2 +
-                          small * rowSpec.title +
-                          small * rowSpec.body
-                        }
-                        rounded={radius.lg}
-                      />
-                    </View>
-                  )),
-                )}
-              </View>
-              <View style={styles.pillRow}>
-                <Skeleton width={120} height={PILL} rounded={radius.full} />
+                {[0, 1].map((slide) => (
+                  <Skeleton key={slide} width={176} height={92} rounded={radius.lg} />
+                ))}
               </View>
             </View>
           </View>

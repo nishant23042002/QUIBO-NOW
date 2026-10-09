@@ -57,6 +57,8 @@ import { useShop } from './sampleShops';
 
 /** How long the loading skeleton shows when the page opens, as real data would take to arrive. */
 const LOAD_MS = 400;
+/** How many rows of the information card show before "View more". */
+const INFORMATION_SHOWN = 3;
 /** How long the grey skeleton takes to fade into the real page. */
 const FADE_MS = 200;
 
@@ -163,8 +165,8 @@ export function ProductView({
   const [reveal] = useState(() => new Animated.Value(0));
   const [skeletonOn, setSkeletonOn] = useState(true);
   const [expanded, setExpanded] = useState(false);
-  // The promises under the rails show two of the four until opened, like the highlights.
-  const [trustOpen, setTrustOpen] = useState(false);
+  // The information card shows its first rows until opened, like the highlights.
+  const [infoOpen, setInfoOpen] = useState(false);
   // How tall the price and ADD bar really is, so the page's end and the cart bar clear it at any text size.
   const [actionHeight, setActionHeight] = useState(ACTION_HEIGHT);
   // The insight card covers most of the picture while it is open, so the saving ribbon steps aside.
@@ -224,6 +226,7 @@ export function ProductView({
   const quantity = cart.quantities[pack.id] ?? 0;
   const out = pack.stock?.kind === 'out';
   const more = moreFromShop(items, item);
+  const allInformation = [...details.information, ...details.seller];
   const similar = similarItems(items, item);
   const saved =
     pack.mrp !== undefined && pack.mrp > pack.price ? subtract(pack.mrp, pack.price) : undefined;
@@ -527,7 +530,27 @@ export function ProductView({
               <View style={styles.gutter}>
                 <View style={[styles.card, styles.section]}>
                   <CardTitle>{t('product.information')}</CardTitle>
-                  <FactTable rows={[...details.information, ...details.seller]} />
+                  <FactTable
+                    rows={infoOpen ? allInformation : allInformation.slice(0, INFORMATION_SHOWN)}
+                  />
+                  {allInformation.length > INFORMATION_SHOWN ? (
+                    <Pressable
+                      role="button"
+                      aria-expanded={infoOpen}
+                      aria-label={infoOpen ? t('product.viewLess') : t('product.viewMore')}
+                      onPress={() => {
+                        setInfoOpen((current) => !current);
+                      }}
+                      style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+                    >
+                      <Text variant="strong" color="accentInk">
+                        {infoOpen ? t('product.viewLess') : t('product.viewMore')}
+                      </Text>
+                      <View style={infoOpen ? styles.flipped : undefined}>
+                        <Icon name="chevron" color={colors.accentInk} size={16} />
+                      </View>
+                    </Pressable>
+                  ) : null}
                 </View>
               </View>
               <View style={styles.gutter}>
@@ -596,6 +619,8 @@ export function ProductView({
                 <View style={[styles.card, styles.section]}>
                   <CardTitle>{t('product.trust.title')}</CardTitle>
                   <TrustTiles
+                    scroll
+                    bleed={space[4]}
                     tiles={[
                       {
                         key: 'verified',
@@ -609,40 +634,20 @@ export function ProductView({
                         title: t('product.trust.packed.title'),
                         body: t('product.trust.packed.body', { shop: item.shopName }),
                       },
-                      ...(trustOpen
-                        ? [
-                            {
-                              key: 'window',
-                              icon: 'clock' as const,
-                              title: t('product.trust.window.title'),
-                              body: t('product.trust.window.body'),
-                            },
-                            {
-                              key: 'replace',
-                              icon: 'repeat' as const,
-                              title: t('product.trust.replace.title'),
-                              body: t('product.trust.replace.body'),
-                            },
-                          ]
-                        : []),
+                      {
+                        key: 'window',
+                        icon: 'clock',
+                        title: t('product.trust.window.title'),
+                        body: t('product.trust.window.body'),
+                      },
+                      {
+                        key: 'replace',
+                        icon: 'repeat',
+                        title: t('product.trust.replace.title'),
+                        body: t('product.trust.replace.body'),
+                      },
                     ]}
                   />
-                  <Pressable
-                    role="button"
-                    aria-expanded={trustOpen}
-                    aria-label={trustOpen ? t('product.viewLess') : t('product.viewMore')}
-                    onPress={() => {
-                      setTrustOpen((current) => !current);
-                    }}
-                    style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-                  >
-                    <Text variant="strong" color="accentInk">
-                      {trustOpen ? t('product.viewLess') : t('product.viewMore')}
-                    </Text>
-                    <View style={trustOpen ? styles.flipped : undefined}>
-                      <Icon name="chevron" color={colors.accentInk} size={16} />
-                    </View>
-                  </Pressable>
                 </View>
               </View>
             </Animated.ScrollView>
