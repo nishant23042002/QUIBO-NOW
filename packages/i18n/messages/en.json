@@ -765,7 +765,42 @@
     "place": "Place order",
     "changeTime": "Change delivery time",
     "changeAddress": "Change delivery address",
-    "noAddress": "Add a delivery address to place your order."
+    "noAddress": "Add a delivery address to place your order.",
+    "placing": "Placing order…",
+    "paying": "Paying…",
+    "payAmount": "Pay {amount}",
+    "upiSheetTitle": "Pay {amount} with UPI",
+    "testNote": "Test payment. No real money moves.",
+    "testIdLabel": "Test UPI ID",
+    "declineButton": "Make this payment fail",
+    "failedCash": "That payment did not go through. Try again, or pay with cash.",
+    "failedUpi": "That payment did not go through. Try again.",
+    "close": "Close payment"
+  },
+  "placed": {
+    "title": "Order placed",
+    "number": "Order {number}",
+    "body": "We will keep you posted here."
+  },
+  "orders": {
+    "title": "Orders",
+    "emptyTitle": "No orders yet",
+    "emptyBody": "Your orders will show up here once you place one.",
+    "emptyAction": "Start shopping",
+    "card": "Order {number}",
+    "items": "From {shops}",
+    "payCod": "Pay {amount} to the rider at the door",
+    "payUpi": "Paid {amount} by UPI",
+    "status": {
+      "placed": "Placed",
+      "accepted": "Shop confirmed",
+      "ready": "Packed and ready",
+      "picked_up": "On the way",
+      "delivered": "Delivered",
+      "rejected": "The shop could not take it",
+      "cancelled": "Cancelled",
+      "undelivered": "Could not be delivered"
+    }
   },
   "firstRun": {
     "progress": "Step {n} of {total}",

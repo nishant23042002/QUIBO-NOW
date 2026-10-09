@@ -9,6 +9,8 @@ import { Welcome } from '@/account/Welcome';
 import { AddressProvider } from '@/home/AddressProvider';
 import { CartProvider } from '@/home/CartProvider';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
+import { OrderPlaced } from '@/orders/OrderPlaced';
+import { OrdersProvider, useOrders } from '@/orders/OrdersProvider';
 import { ThemeProvider, useTheme } from '@/theme';
 import { AppHeader, AppSplash } from '@/ui';
 
@@ -61,6 +63,7 @@ function Gate() {
   const theme = useTheme();
   const language = useLanguage();
   const account = useAccount();
+  const orders = useOrders();
   const ready = theme.ready && language.ready && account.loaded;
 
   // Until the shopper has chosen a language and checked their number, the first-run steps are the whole app.
@@ -72,6 +75,10 @@ function Gate() {
             <Screens />
             {/* Home is drawn underneath from the first frame; the welcome covers it until it has loaded. */}
             {account.welcoming ? <Welcome onDone={account.finishWelcome} /> : null}
+            {/* Covers the app for a moment when an order is placed, and opens the Orders tab under it. */}
+            {orders.justPlaced !== null ? (
+              <OrderPlaced order={orders.justPlaced} onDone={orders.dismissPlaced} />
+            ) : null}
           </>
         ) : (
           <FirstRun />
@@ -105,7 +112,9 @@ export default function RootLayout() {
         <AccountProvider>
           <AddressProvider>
             <CartProvider>
-              <Gate />
+              <OrdersProvider>
+                <Gate />
+              </OrdersProvider>
             </CartProvider>
           </AddressProvider>
         </AccountProvider>

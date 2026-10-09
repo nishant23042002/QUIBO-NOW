@@ -41,7 +41,8 @@ export function transition(
 }
 
 /** How an order is going to end. Chosen when it is placed; normally it arrives. */
-export type Ending = 'delivered' | 'rejected' | 'cancelled' | 'undelivered';
+export const ENDINGS = ['delivered', 'rejected', 'cancelled', 'undelivered'] as const;
+export type Ending = (typeof ENDINGS)[number];
 
 /** The moves after `placed`, in order, for an order that ends this way. */
 export function pathFor(acceptance: Acceptance, ending: Ending): readonly OrderStatus[] {
@@ -78,7 +79,8 @@ const REASON: Partial<Record<OrderStatus, string>> = {
 };
 
 /** The mock order clock's pace. `fast` lets a whole order be watched in a minute or two. */
-export type ClockSpeed = 'fast' | 'slow';
+export const SPEEDS = ['fast', 'slow'] as const;
+export type ClockSpeed = (typeof SPEEDS)[number];
 
 const SLOW_FACTOR = 6;
 

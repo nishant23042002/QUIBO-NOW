@@ -133,6 +133,11 @@ export interface DraftCart {
   removed: { name: string } | null;
   undoRemove: () => void;
   clearRemoved: () => void;
+  /**
+   * The order was placed: what was bought leaves the cart, with the coupon, the tip and the delivery time chosen for it (back to quick
+   * delivery). What is saved for later stays, and so do the rider instructions, which are kept to save saying them again.
+   */
+  clearAfterOrder: () => void;
 }
 
 /** The most of one pack that one order may hold, whatever the stock. */
@@ -466,6 +471,14 @@ export function useDraftCart(): DraftCart {
     },
     clearRemoved: () => {
       setRemoval(null);
+    },
+    clearAfterOrder: () => {
+      setQuantities({});
+      setOrder([]);
+      setRemoval(null);
+      setTipAmount(money(0));
+      coupon.remove();
+      delivery.setChoice({ mode: 'quick' });
     },
   };
 }

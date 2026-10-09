@@ -212,7 +212,7 @@ and has not been run, because the tool is not installed here.
 
 - [x] 1f-1. Order model and the mock order clock (logic and tests only; ADR 0018)
 - [x] 1f-2. Checkout screen (when and where, shops, payment with the cash limit, the bill; Place order waits for 1f-3)
-- [ ] 1f-3. Place order (idempotency key, test UPI sheet, cart clears)
+- [x] 1f-3. Place order (idempotency key, test UPI sheet, cart clears, "Order placed" screen, orders kept on the phone)
 - [ ] 1f-4. Tracking screen and the active order on the Orders tab
 - [ ] 1f-5. The exits (rejected, cancelled, undelivered) and cancelling
 - [ ] 1f-6. Maestro flow, ADR 0019 for payment, Hindi and Marathi drafts

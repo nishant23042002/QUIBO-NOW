@@ -1,11 +1,16 @@
 import { formatRupees, type PaymentMethod } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useOnline } from '@/network';
 import { effectivePayment, paymentOptions, shopLines } from '@/orders/checkout';
+import { newUuid } from '@/orders/ids';
+import { useOrders } from '@/orders/OrdersProvider';
+import { IDLE, isBusy, nextFlow } from '@/orders/placeFlow';
+import { PAY_MS, PLACE_MS } from '@/orders/timing';
+import { towns } from '@quibo/mocks';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
@@ -17,6 +22,7 @@ import {
   PopOnChange,
   PopoverHost,
   QTile,
+  Sheet,
   StatePanel,
   Text,
   radius,
@@ -25,12 +31,16 @@ import {
   useScreenLoad,
 } from '@/ui';
 import { useAddresses } from './AddressProvider';
+import { useConditions } from './conditions';
 import { useBillRows } from './billRows';
 import { useCart } from './CartProvider';
 import { CHECKOUT_DOCK, CheckoutSkeleton } from './CheckoutSkeleton';
 import { ZONE } from './delivery';
 import { useDeliveryAddress, useDeliveryWhen } from './deliveryInfo';
 import { STEP_LOAD_MS, STEP_POLICY } from './loading';
+
+/** The made-up UPI id the test payment sheet shows. */
+const TEST_UPI_ID = 'test@quibo';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -150,10 +160,24 @@ function CheckoutPage() {
   const address = useDeliveryAddress();
   const rows = useBillRows();
   const large = useLargeText();
+  const orders = useOrders();
+  const conditions = useConditions();
   const [chosen, setChosen] = useState<PaymentMethod | null>(null);
+  const [flow, dispatch] = useReducer(nextFlow, IDLE);
+  // Made when checkout opens: asking to place the same order twice (a double tap, a retry) gives back the one order.
+  const [orderKey] = useState(newUuid);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
   const [dockHeight, setDockHeight] = useState(CHECKOUT_DOCK);
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
   const { bill } = cart;
+
+  // Whatever is still waiting when the page goes away is dropped.
+  useEffect(() => {
+    const waiting = timers.current;
+    return () => {
+      waiting.forEach(clearTimeout);
+    };
+  }, []);
 
   if (!cart.ready) return null;
 
@@ -181,6 +205,47 @@ function CheckoutPage() {
   const hasAddress = addresses.selected !== undefined;
   const quick = when.quick;
   const methodTitle = method === 'cod' ? t('checkout.codTitle') : t('checkout.upiTitle');
+  const busy = isBusy(flow);
+  const codAllowed = options.some((option) => option.method === 'cod' && option.allowed);
+
+  const later = (run: () => void, ms: number) => {
+    timers.current.push(setTimeout(run, ms));
+  };
+
+  // Saving the order takes a moment, as it will with a server. What is bought leaves the cart only once it is saved.
+  const save = () => {
+    const mode = conditions.store;
+    later(() => {
+      orders.place({
+        key: orderKey,
+        id: newUuid(),
+        townId: towns[mode].id,
+        mode,
+        shops: cart.stores,
+        method,
+        total: bill.toPay,
+        now: new Date(),
+      });
+      cart.clearAfterOrder();
+      dispatch({ type: 'saved' });
+    }, PLACE_MS);
+  };
+
+  const place = () => {
+    if (flow.step !== 'idle') return;
+    dispatch({ type: 'place', method });
+    if (method === 'cod') save();
+  };
+
+  // The test payment: it ends the way the shopper chose, after a pause. A good one goes on to place the order.
+  const pay = (ok: boolean) => {
+    if (flow.step !== 'sheet' && flow.step !== 'failed') return;
+    dispatch({ type: ok ? 'pay' : 'decline' });
+    later(() => {
+      dispatch({ type: 'settled' });
+      if (ok) save();
+    }, PAY_MS);
+  };
 
   return (
     <PopoverHost style={styles.page}>
@@ -375,10 +440,65 @@ function CheckoutPage() {
           </View>
         </View>
         <View style={styles.dockButton}>
-          {/* Placing the order is the next piece of work (1f-3): until then the button has nothing to do. */}
-          <Button label={t('checkout.place')} disabled={!online || !hasAddress} shine />
+          <Button
+            label={flow.step === 'placing' ? t('checkout.placing') : t('checkout.place')}
+            loading={flow.step === 'placing'}
+            disabled={!online || !hasAddress || busy}
+            shine
+            onPress={place}
+          />
         </View>
       </View>
+      {/* The test UPI payment. It never moves real money: the shopper chooses how it ends. */}
+      <Sheet
+        open={flow.step === 'sheet' || flow.step === 'paying' || flow.step === 'failed'}
+        onClose={() => {
+          dispatch({ type: 'close' });
+        }}
+        title={t('checkout.upiSheetTitle', { amount: formatRupees(bill.toPay) })}
+        closeLabel={t('checkout.close')}
+        busy={flow.step === 'paying'}
+        error={
+          flow.step === 'failed'
+            ? t(codAllowed ? 'checkout.failedCash' : 'checkout.failedUpi')
+            : undefined
+        }
+        footer={
+          <View style={{ gap: space[2] }}>
+            <Button
+              label={
+                flow.step === 'paying' && flow.outcome === 'ok'
+                  ? t('checkout.paying')
+                  : t('checkout.payAmount', { amount: formatRupees(bill.toPay) })
+              }
+              loading={flow.step === 'paying' && flow.outcome === 'ok'}
+              disabled={flow.step === 'paying' && flow.outcome === 'fail'}
+              onPress={() => {
+                pay(true);
+              }}
+            />
+            <Button
+              label={t('checkout.declineButton')}
+              variant="secondary"
+              loading={flow.step === 'paying' && flow.outcome === 'fail'}
+              disabled={flow.step === 'paying' && flow.outcome === 'ok'}
+              onPress={() => {
+                pay(false);
+              }}
+            />
+          </View>
+        }
+      >
+        <View style={{ gap: space[3] }}>
+          <Notice tone="info" icon="info" message={t('checkout.testNote')} />
+          <View>
+            <Text variant="small" color="inkMuted">
+              {t('checkout.testIdLabel')}
+            </Text>
+            <Text>{TEST_UPI_ID}</Text>
+          </View>
+        </View>
+      </Sheet>
     </PopoverHost>
   );
 }

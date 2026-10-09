@@ -1,8 +1,18 @@
+import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { ComingSoon } from '@/ui';
+import { OrdersView } from '@/orders/OrdersView';
+import { AppHeader } from '@/ui';
 
-// Built in a later section of Phase 1.
+const styles = StyleSheet.create({ page: { flex: 1 } });
+
+/** The shopper's orders. It is one of the four tabs, so it has no back button. */
 export default function OrdersScreen() {
   const { t } = useLanguage();
-  return <ComingSoon title={t('nav.orders')} />;
+
+  return (
+    <View style={styles.page}>
+      <AppHeader title={t('orders.title')} />
+      <OrdersView />
+    </View>
+  );
 }
