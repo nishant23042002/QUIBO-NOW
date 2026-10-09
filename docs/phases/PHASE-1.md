@@ -208,6 +208,18 @@ and has not been run, because the tool is not installed here.
 
 ### 1f. Checkout and tracking
 
+**Progress.** Built in six pieces, one at a time, each tested before the next:
+
+- [x] 1f-1. Order model and the mock order clock (logic and tests only; ADR 0018)
+- [ ] 1f-2. Checkout screen
+- [ ] 1f-3. Place order (idempotency key, test UPI sheet, cart clears)
+- [ ] 1f-4. Tracking screen and the active order on the Orders tab
+- [ ] 1f-5. The exits (rejected, cancelled, undelivered) and cancelling
+- [ ] 1f-6. Maestro flow, ADR 0019 for payment, Hindi and Marathi drafts
+
+Choices made with the owner: new-customer COD cap of 1,000 rupees held as a setting; a development-only mode switch in Profile;
+a fast order clock with a slow switch; the active order kept on the phone.
+
 - **Build:** **checkout** (address, delivery-window picker with full windows struck through, payment choice with a
   COD cap for new customers and UPI in test form, order summary, place order with an idempotency key kept in the
   mock) and **order tracking** (`StatusTimeline` through placed, accepted, ready, picked up, delivered, plus the
