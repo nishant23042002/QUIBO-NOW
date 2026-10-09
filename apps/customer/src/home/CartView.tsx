@@ -1,7 +1,14 @@
 import { add, formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Text as NativeText, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  LayoutAnimation,
+  Text as NativeText,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useOnline } from '@/network';
@@ -15,6 +22,9 @@ import {
   OfferBadge,
   Popover,
   PopoverHost,
+  PopOnChange,
+  ProgressBar,
+  ShineSweep,
   QTile,
   StatePanel,
   Stepper,
@@ -22,6 +32,8 @@ import {
   countRule,
   radius,
   space,
+  useReduceMotion,
+  useScreenFocused,
   type BillRow,
 } from '@/ui';
 import { UndoToast } from './CartLayer';
@@ -49,8 +61,6 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     free: { gap: space[2], padding: space[4] },
-    track: { height: 4, borderRadius: radius.full, backgroundColor: c.line },
-    fill: { height: 4, borderRadius: radius.full, backgroundColor: c.accentEdge },
     line: {
       minHeight: LINE_HEIGHT,
       paddingVertical: space[2],
@@ -147,6 +157,16 @@ const makeStyles = (c: ThemeColors) =>
     bill: { gap: space[3], padding: space[4] },
     billHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     // "You save ₹8": the good news in one green line, which opens where it comes from.
+    // Clips the band of light that crosses the saving to the saving's own rounded shape.
+    pillShine: {
+      position: 'absolute',
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+      overflow: 'hidden',
+      borderRadius: radius.md,
+    },
     save: {
       minHeight: 40,
       flexDirection: 'row',
@@ -199,9 +219,18 @@ export function CartView() {
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
   // How tall the checkout bar really is, so the list's end and the undo note clear it at any text size.
   const [dockHeight, setDockHeight] = useState(DOCK);
+  const [pillWidth, setPillWidth] = useState(0);
+  const reduceMotion = useReduceMotion();
+  const focused = useScreenFocused();
   const { bill, coupon } = cart;
   const current = cart.delivery.current;
   const quick = current?.kind === 'quick';
+
+  // Rows moving to make room, or closing the gap, glide instead of jumping. (Reduced motion: they jump, as before.)
+  const glide = () => {
+    if (!reduceMotion)
+      LayoutAnimation.configureNext(LayoutAnimation.create(220, 'easeInEaseOut', 'opacity'));
+  };
 
   const notices = (
     <>
@@ -284,9 +313,7 @@ export function CartView() {
       >
         {notices}
         <View style={[styles.card, styles.free]} accessible aria-label={cart.hint}>
-          <View style={styles.track} aria-hidden>
-            <View style={[styles.fill, { width: `${Math.round(cart.progress * 100)}%` }]} />
-          </View>
+          <ProgressBar progress={cart.progress} done={cart.free} label={cart.hint} />
           <Text variant="strong" color={cart.free ? 'accentInk' : 'inkMuted'}>
             {cart.hint}
           </Text>
@@ -345,7 +372,10 @@ export function CartView() {
               <Pressable
                 role="button"
                 hitSlop={6}
-                onPress={coupon.remove}
+                onPress={() => {
+                  glide();
+                  coupon.remove();
+                }}
                 style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
               >
                 <Text variant="strong" color="accentInk">
@@ -368,7 +398,9 @@ export function CartView() {
                 hitSlop={6}
                 onPress={() => {
                   const best = coupon.best;
-                  if (best !== undefined) coupon.apply(best.offer.code);
+                  if (best === undefined) return;
+                  glide();
+                  coupon.apply(best.offer.code);
                 }}
                 style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
               >
@@ -450,6 +482,8 @@ export function CartView() {
                 <Stepper
                   value={line.quantity}
                   onChange={(next) => {
+                    // A line that goes away lets the ones below it glide up, instead of jumping.
+                    if (next === 0) glide();
                     cart.setQuantity(line.id, next);
                   }}
                   addLabel={t('home.rails.add')}
@@ -520,6 +554,22 @@ export function CartView() {
                 {t('cart.saveLine', { amount: formatRupees(bill.totalSaved) })}
               </Text>
               <Icon name="chevron" color={colors.accentInk} size={16} />
+              {/* A band of light crosses the saving each time it changes, so a saving that just grew is noticed. */}
+              <View
+                pointerEvents="none"
+                style={styles.pillShine}
+                onLayout={(event) => {
+                  setPillWidth(Math.round(event.nativeEvent.layout.width));
+                }}
+              >
+                <ShineSweep
+                  width={pillWidth}
+                  color={colors.surface}
+                  active={focused}
+                  trigger={bill.totalSaved}
+                  intensity={0.8}
+                />
+              </View>
             </Popover>
           ) : null}
           <Text variant="small" color="inkMuted">
@@ -535,7 +585,9 @@ export function CartView() {
       >
         <View style={styles.dockTotal} accessible>
           <View style={styles.dockPrice}>
-            <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
+            <PopOnChange value={bill.toPay}>
+              <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
+            </PopOnChange>
             {bill.totalSaved > 0 ? (
               <Text variant="small" color="inkMuted" strike>
                 {formatRupees(add(bill.toPay, bill.totalSaved))}
@@ -556,6 +608,7 @@ export function CartView() {
         <View style={styles.dockButton}>
           <Button
             label={t('cart.continue')}
+            shine
             onPress={() => {
               router.push('/checkout');
             }}

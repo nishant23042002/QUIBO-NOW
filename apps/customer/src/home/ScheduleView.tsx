@@ -389,6 +389,10 @@ export function ScheduleView() {
                 : t('cart.confirm', { when: text.dayWindow(resolved.slot) })
           }
           disabled={resolved === undefined}
+          shine
+          shineKey={
+            resolved === undefined ? '' : resolved.kind === 'quick' ? 'quick' : resolved.slot.id
+          }
           onPress={confirm}
         />
       </View>

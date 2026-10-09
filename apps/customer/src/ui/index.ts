@@ -28,6 +28,7 @@ export { QTile, type QTileProps } from './QTile';
 export { gridCardWidth } from './logic/grid';
 export { COUNT_RULE, WEIGHT_RULE, countRule, type QuantityRule } from './logic/quantity';
 export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
+export { FlashOnChange, PopOnChange } from './ChangeCue';
 export { Notice, type NoticeProps } from './Notice';
 export { OfferBadge, type OfferBadgeProps } from './OfferBadge';
 export {
@@ -70,6 +71,10 @@ export { ShopInfoCard, type ShopInfoCardProps } from './ShopInfoCard';
 export { ShopsPanel, type ShopsPanelProps } from './ShopsPanel';
 export { ShopsChip, type ShopsChipProps } from './ShopsChip';
 export { Popover, PopoverHost, type PopoverProps } from './Popover';
+export { ProgressBar, type ProgressBarProps } from './ProgressBar';
+export { ShineSweep, type ShineSweepProps } from './ShineSweep';
+export { useReduceMotion } from './useReduceMotion';
+export { useScreenFocused } from './useScreenFocused';
 export { Sheet, type SheetProps } from './Sheet';
 export {
   SlotPicker,

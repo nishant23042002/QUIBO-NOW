@@ -2,6 +2,7 @@ import { formatRupees, type Money } from '@quibo/contracts';
 import type { ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { FlashOnChange } from './ChangeCue';
 import { Icon } from './Icon';
 import { freeDeliveryProgress } from './logic/money';
 import { Popover } from './Popover';
@@ -123,14 +124,18 @@ export function BillSummary({
               </Popover>
             ) : null}
           </View>
-          <Text variant="body" color={row.positive === true ? 'success' : 'ink'}>
-            {row.valueLabel ?? formatRupees(row.amount)}
-          </Text>
+          <FlashOnChange value={row.valueLabel ?? row.amount}>
+            <Text variant="body" color={row.positive === true ? 'success' : 'ink'}>
+              {row.valueLabel ?? formatRupees(row.amount)}
+            </Text>
+          </FlashOnChange>
         </View>
       ))}
       <View style={styles.total}>
         <Text variant="heading">{totalLabel}</Text>
-        <Text variant="heading">{formatRupees(total)}</Text>
+        <FlashOnChange value={total}>
+          <Text variant="heading">{formatRupees(total)}</Text>
+        </FlashOnChange>
       </View>
     </View>
   );

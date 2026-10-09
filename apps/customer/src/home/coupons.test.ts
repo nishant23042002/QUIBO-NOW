@@ -20,10 +20,12 @@ const save30: Coupon = { code: 'SAVE30', kind: 'flat', value: 3_000, minOrder: m
 const small15: Coupon = { code: 'SMALL15', kind: 'flat', value: 1_500, minOrder: money(9_900) };
 
 describe('couponDiscount', () => {
-  it('takes a percentage off, rounded down to whole paise', () => {
+  it('takes a percentage off, rounded down to a whole rupee', () => {
     expect(couponDiscount(welcome, money(20_000))).toBe(4_000);
-    // 20% of 15,001 paise is 3,000.2: the shop is never short by a rounded-up paisa.
+    // 20% of 15,001 paise is 3,000.2 paise: 30 rupees, never rounded up.
     expect(couponDiscount(welcome, money(15_001))).toBe(3_000);
+    // 20% of 18,200 paise is 3,640 paise: 36 rupees, not 36.40.
+    expect(couponDiscount(welcome, money(18_200))).toBe(3_600);
   });
 
   it('stops a percentage coupon at its limit', () => {
@@ -38,7 +40,7 @@ describe('couponDiscount', () => {
 
   it('takes nothing off until the items reach the minimum, and works exactly at it', () => {
     expect(couponDiscount(welcome, money(14_899))).toBe(0);
-    expect(couponDiscount(welcome, money(14_900))).toBe(2_980);
+    expect(couponDiscount(welcome, money(14_900))).toBe(2_900);
   });
 });
 

@@ -4,6 +4,7 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
 import { radius } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
+import { useScreenFocused } from './useScreenFocused';
 
 export interface OfferBadgeProps {
   /**
@@ -51,6 +52,7 @@ export function OfferBadge({ state, pressed = false, size = 40 }: OfferBadgeProp
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
   const reduceMotion = useReduceMotion();
+  const focused = useScreenFocused();
   const [ring] = useState(() => new Animated.Value(0));
   const [wiggle] = useState(() => new Animated.Value(0));
   const [blink] = useState(() => new Animated.Value(0));
@@ -60,7 +62,7 @@ export function OfferBadge({ state, pressed = false, size = 40 }: OfferBadgeProp
 
   // The attention loop, only while there is something to save.
   useEffect(() => {
-    if (state !== 'offer' || reduceMotion) {
+    if (state !== 'offer' || reduceMotion || !focused) {
       ring.setValue(0);
       wiggle.setValue(0);
       blink.setValue(0);
@@ -106,7 +108,7 @@ export function OfferBadge({ state, pressed = false, size = 40 }: OfferBadgeProp
     return () => {
       loop.stop();
     };
-  }, [state, reduceMotion, ring, wiggle, blink]);
+  }, [state, reduceMotion, focused, ring, wiggle, blink]);
 
   // Applying a coupon pops the badge once. Starting out applied (the cart was reopened) does not.
   useEffect(() => {

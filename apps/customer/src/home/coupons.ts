@@ -26,13 +26,16 @@ export function shortBy(coupon: Coupon, itemTotal: Money): Money {
 }
 
 /**
- * What a coupon takes off the items, in whole paise, rounded down so the shop is never short. A percentage coupon stops
+ * What a coupon takes off the items, rounded down to a whole rupee (prices in the app are whole rupees, and the shop is
+ * never short by a rounded-up amount). A percentage coupon stops
  * at its limit; no coupon ever takes off more than the items cost. It takes off nothing when the items are not enough.
  */
 export function couponDiscount(coupon: Coupon, itemTotal: Money): Money {
   if (!isEligible(coupon, itemTotal)) return ZERO;
   const raw =
-    coupon.kind === 'percent' ? Math.floor((itemTotal * coupon.value) / 100) : coupon.value;
+    coupon.kind === 'percent'
+      ? Math.floor((itemTotal * coupon.value) / 10_000) * 100
+      : coupon.value;
   const capped =
     coupon.maxDiscount !== undefined && coupon.kind === 'percent'
       ? Math.min(raw, coupon.maxDiscount)
