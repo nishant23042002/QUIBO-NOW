@@ -2,7 +2,7 @@ import { money } from '@quibo/contracts';
 import { describe, expect, it } from 'vitest';
 import { gridCardWidth } from './grid';
 import { initialOf } from './initial';
-import { freeDeliveryProgress, savings } from './money';
+import { freeDeliveryProgress } from './money';
 import { COUNT_RULE, WEIGHT_RULE, countRule, formatQuantity, stepQuantity } from './quantity';
 import { SPLASH_FADE_MS, splashMinimumMs, splashPhase } from './splash';
 
@@ -45,17 +45,6 @@ describe('formatQuantity', () => {
     expect(formatQuantity(0.5)).toBe('0.5');
     expect(formatQuantity(2.25)).toBe('2.25');
     expect(formatQuantity(0.1 + 0.2)).toBe('0.3');
-  });
-});
-
-describe('savings', () => {
-  it('is the gap between the printed price and the price', () => {
-    expect(savings(money(2900), money(3500))).toBe(600);
-  });
-
-  it('is null when the price is not lower', () => {
-    expect(savings(money(3500), money(3500))).toBeNull();
-    expect(savings(money(4000), money(3500))).toBeNull();
   });
 });
 

@@ -1,4 +1,3 @@
-export { AddressPill, type AddressPillProps } from './AddressPill';
 export { AppHeader, type AppHeaderProps } from './AppHeader';
 export { AppSplash, type AppSplashProps } from './AppSplash';
 export { Badge, type BadgeProps } from './Badge';
@@ -11,7 +10,6 @@ export {
 export { BottomBar, type BottomBarProps, type BottomBarTab } from './BottomBar';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
-export { CartBar, type CartBarProps } from './CartBar';
 export { CategoryTabs, type CategoryTab, type CategoryTabsProps } from './CategoryTabs';
 export { CategoryTile, type CategoryTileProps } from './CategoryTile';
 export { ComingSoon } from './ComingSoon';
@@ -21,7 +19,6 @@ export { HomeScrollContext, useHomeScroll, type HomeScrollValue } from './HomeSc
 export { Icon, type IconName } from './Icon';
 export { IconButton, type IconButtonProps } from './IconButton';
 export { Input, type InputProps } from './Input';
-export { ItemCard, type ItemCardProps } from './ItemCard';
 export { HeaderLogo } from './brand/HeaderLogo';
 export { LogoStacked, QMark, type LogoGround } from './brand/Logo';
 export { QTile, type QTileProps } from './QTile';
@@ -98,7 +95,6 @@ export {
 export { ShopCard, type ShopCardProps } from './ShopCard';
 export { Stepper, type StepperProps } from './Stepper';
 export { Text, type TextColor, type TextProps, type TextVariant } from './Text';
-export { WindowPicker, type DeliveryWindowOption, type WindowPickerProps } from './WindowPicker';
 export {
   BOTTOM_BAR_HEIGHT,
   HEADER_HEIGHT,

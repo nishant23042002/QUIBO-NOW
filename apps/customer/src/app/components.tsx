@@ -6,19 +6,16 @@ import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
-  AddressPill,
   Badge,
   BillSummary,
   Button,
   Card,
-  CartBar,
   CategoryTile,
   Chip,
   COUNT_RULE,
   Icon,
   IconButton,
   Input,
-  ItemCard,
   LogoStacked,
   Notice,
   Price,
@@ -33,8 +30,6 @@ import {
   Stepper,
   Text,
   WEIGHT_RULE,
-  WindowPicker,
-  type DeliveryWindowOption,
   type IconName,
 } from '@/ui';
 
@@ -131,9 +126,6 @@ export default function ComponentsScreen() {
   const [addQty, setAddQty] = useState(0);
   const [countQty, setCountQty] = useState(2);
   const [weightQty, setWeightQty] = useState(1.5);
-  const [milkQty, setMilkQty] = useState(0);
-  const [tomatoQty, setTomatoQty] = useState(1.5);
-  const [windowId, setWindowId] = useState<string | null>('w3');
 
   const action = t('components.sampleAction');
   const badge = t('components.sampleBadge');
@@ -143,8 +135,6 @@ export default function ComponentsScreen() {
   // Hindi and Marathi show English.
   const otherScript = (key: Sample) =>
     translate(messages[locale === 'en' ? 'hi' : 'en'], `components.sample.${key}`);
-  const count = (n: number) =>
-    t(n === 1 ? 'components.sample.itemCountOne' : 'components.sample.itemCountMany', { count: n });
 
   const stepperText = {
     addLabel: sample('add'),
@@ -152,12 +142,6 @@ export default function ComponentsScreen() {
     increaseLabel: sample('addOne'),
   };
   const weightText = { ...stepperText, rule: WEIGHT_RULE, unitLabel: sample('kg') };
-  const windows: DeliveryWindowOption[] = [
-    { id: 'w1', label: sample('window1'), available: true },
-    { id: 'w2', label: sample('window2'), available: false },
-    { id: 'w3', label: sample('window3'), available: true },
-    { id: 'w4', label: sample('window4'), available: true },
-  ];
   const freeNeed = (remaining: Money) =>
     t('components.sample.freeNeed', { amount: formatRupees(remaining) });
 
@@ -382,22 +366,6 @@ export default function ComponentsScreen() {
         </Demo>
       </Section>
 
-      <Section name="AddressPill">
-        <Demo name="on the header colour">
-          <OnChrome>
-            <AddressPill caption={sample('deliverTo')} address={sample('address')} onPress={noop} />
-          </OnChrome>
-        </Demo>
-        <Demo name="on the page">
-          <AddressPill
-            caption={sample('deliverTo')}
-            address={sample('address')}
-            onPress={noop}
-            ground="page"
-          />
-        </Demo>
-      </Section>
-
       <Section name="Stepper">
         <Demo name="ADD (nothing in the cart)">
           <View style={styles.row}>
@@ -493,71 +461,6 @@ export default function ComponentsScreen() {
               onPress={noop}
             />
           </View>
-        </Demo>
-      </Section>
-
-      <Section name="ItemCard">
-        <Demo name="count with an offer tag, loose weight">
-          <View style={styles.row}>
-            <ItemCard
-              name={sample('itemMilk')}
-              otherName={otherScript('itemMilk')}
-              pack={sample('itemMilkPack')}
-              price={money(2800)}
-              mrp={money(3000)}
-              tagLabel={sample('offerTag')}
-              quantity={milkQty}
-              onQuantityChange={setMilkQty}
-              stepper={stepperText}
-            />
-            <ItemCard
-              name={sample('itemTomato')}
-              otherName={otherScript('itemTomato')}
-              pack={sample('itemTomatoPack')}
-              price={money(3200)}
-              quantity={tomatoQty}
-              onQuantityChange={setTomatoQty}
-              stepper={weightText}
-            />
-          </View>
-        </Demo>
-        <Demo name="out of stock">
-          <View style={styles.row}>
-            <ItemCard
-              name={sample('itemMilk')}
-              pack={sample('itemMilkPack')}
-              price={money(2800)}
-              unavailableLabel={sample('outOfStock')}
-              quantity={0}
-              onQuantityChange={noop}
-              stepper={stepperText}
-            />
-            <View style={styles.spacer} />
-          </View>
-        </Demo>
-      </Section>
-
-      <Section name="WindowPicker">
-        <Demo name="one window is full">
-          <WindowPicker
-            options={windows}
-            selectedId={windowId}
-            onSelect={setWindowId}
-            unavailableLabel={sample('windowFull')}
-            groupLabel={t('components.sheetTitle')}
-          />
-        </Demo>
-      </Section>
-
-      <Section name="CartBar">
-        <Demo name="always on the header colour">
-          <CartBar
-            itemsLabel={count(3)}
-            total={money(14_500)}
-            shopName={sample('shopName')}
-            actionLabel={sample('viewCart')}
-            onPress={noop}
-          />
         </Demo>
       </Section>
 

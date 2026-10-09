@@ -116,7 +116,7 @@ _Goal: Home runs on mock data through the same path the live API will use._
 - **Build:** the **cart screen** (lines, steppers, weights in 0.5 kg steps for loose items, remove with undo, the
   `BillSummary`, the free-delivery progress line, the minimum-basket notice, a substitution choice per item, the
   estimated-weight tolerance note), the permanent cart store (kept across app restarts), and the floating
-  `CartBar` wired to it. Money is integer paise throughout; weights go through `multiplyByQuantity` in
+  floating cart bar (`CartFloat`) wired to it. Money is integer paise throughout; weights go through `multiplyByQuantity` in
   `@quibo/contracts`.
 - **One cart, one order (ADR 0009):** the cart can hold several shops. It shows each shop's items as that shop's
   part, with one total, one free-delivery line on the whole cart, and one delivery window set by the slowest shop.
@@ -155,7 +155,10 @@ _Goal: Home runs on mock data through the same path the live API will use._
   item cards and the cart all say when and where the order goes through one source (`useDeliveryWhen` and
   `useDeliveryAddress`), so they cannot disagree: quick delivery with its estimate in minutes, or the window the shopper picked,
   and the one delivery address. The address on Home opens the address page; choosing an address in 1e will change all of them
-  at once. G (done, apart from what only a phone can show): with no network, Continue waits (with "No internet" under the
+  at once. Cleanup (done): the 0c building blocks `ItemCard`, `CartBar`, `WindowPicker` and `AddressPill` were replaced by
+  `ProductCard`, `CartFloat`, `SlotPicker` and the Home header's address row, and were removed with their gallery sections,
+  along with the unused `LanguageSwitcher`, the `savings` helper and some message keys nothing read. `Card`, `CategoryTile` and
+  `ShopCard` are not used by a screen yet and were kept for the Categories and Orders screens. G (done, apart from what only a phone can show): with no network, Continue waits (with "No internet" under the
   total) while the cart itself still works; headers grow with the text instead of clipping it; rows that held a button beside text
   (the delivery line, the items, the checkout bar, the price bar on a product page, coupon cards) wrap the button under the text
   at large sizes; the delivery choices stack; compact controls and the bars that stay on screen (stepper, bottom bar, cart bar,

@@ -1,10 +1,5 @@
 import { money, subtract, type Money } from '@quibo/contracts';
 
-/** How much cheaper the price is than the printed price (MRP), or null when it is not cheaper. */
-export function savings(price: Money, mrp: Money): Money | null {
-  return mrp > price ? subtract(mrp, price) : null;
-}
-
 export interface FreeDeliveryProgress {
   /** 0 to 1, for the progress bar. */
   ratio: number;
