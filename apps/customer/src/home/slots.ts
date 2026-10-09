@@ -136,6 +136,31 @@ export function resolveChoice(
   return slot === undefined ? undefined : { kind: 'slot', slot };
 }
 
+/** Why the order is not being delivered the way the shopper chose. */
+export type DeliveryNote =
+  /** The window they picked has passed or filled up. */
+  | 'slotGone'
+  /** They chose quick delivery, but it is not running now (late at night), so the order waits for a window. */
+  | 'quickClosed';
+
+/**
+ * Whether what the shopper chose is what will happen, and if not, why. The cart shows this, so a change they did not make
+ * is never silent.
+ */
+export function deliveryNote(
+  choice: SlotChoice,
+  delivery: Delivery | undefined,
+): DeliveryNote | undefined {
+  if (choice.mode === 'slot') {
+    const same =
+      delivery?.kind === 'slot' &&
+      dateKey(delivery.slot.date) === choice.date &&
+      delivery.slot.hour === choice.hour;
+    return same ? undefined : 'slotGone';
+  }
+  return delivery?.kind === 'slot' ? 'quickClosed' : undefined;
+}
+
 /** A choice as text for the phone's storage. */
 export function serialiseChoice(choice: SlotChoice): string {
   return JSON.stringify(choice);

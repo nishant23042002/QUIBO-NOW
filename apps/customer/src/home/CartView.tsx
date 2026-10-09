@@ -225,6 +225,9 @@ export function CartView() {
   const { bill, coupon } = cart;
   const current = cart.delivery.current;
   const quick = current?.kind === 'quick';
+  // The way the order goes now, in words, for the notes that say it changed.
+  const deliveryWhen =
+    current?.kind === 'slot' ? slotText.dayWindow(current.slot) : t('cart.nowQuick');
 
   // Rows moving to make room, or closing the gap, glide instead of jumping. (Reduced motion: they jump, as before.)
   const glide = () => {
@@ -312,6 +315,21 @@ export function CartView() {
         showsVerticalScrollIndicator={false}
       >
         {notices}
+        {cart.delivery.note === 'slotGone' ? (
+          <Notice
+            tone="warning"
+            icon="clock"
+            message={t('cart.slotGone', { when: deliveryWhen })}
+            actionLabel={t('cart.gotIt')}
+            onAction={cart.delivery.dismissNote}
+          />
+        ) : cart.delivery.note === 'quickClosed' ? (
+          <Notice
+            tone="info"
+            icon="clock"
+            message={t('cart.quickClosedNote', { when: deliveryWhen })}
+          />
+        ) : null}
         <View style={[styles.card, styles.free]} accessible aria-label={cart.hint}>
           <ProgressBar progress={cart.progress} done={cart.free} label={cart.hint} />
           <Text variant="strong" color={cart.free ? 'accentInk' : 'inkMuted'}>
@@ -380,6 +398,30 @@ export function CartView() {
               >
                 <Text variant="strong" color="accentInk">
                   {t('coupons.remove')}
+                </Text>
+              </Pressable>
+            </View>
+          ) : coupon.dropped !== undefined ? (
+            <View style={[styles.couponNote, { backgroundColor: colors.warningBg }]}>
+              <View style={styles.couponNoteText}>
+                <Text variant="strong" color="warning">
+                  {t('coupons.dropped', {
+                    code: coupon.dropped.offer.code,
+                    amount: formatRupees(coupon.dropped.shortBy),
+                  })}
+                </Text>
+              </View>
+              <Pressable
+                role="button"
+                hitSlop={6}
+                onPress={() => {
+                  glide();
+                  coupon.dismissDropped();
+                }}
+                style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
+              >
+                <Text variant="strong" color="warning">
+                  {t('cart.gotIt')}
                 </Text>
               </Pressable>
             </View>

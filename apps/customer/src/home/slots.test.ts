@@ -3,6 +3,7 @@ import type { SlotRules } from './delivery';
 import {
   choiceFor,
   dateKey,
+  deliveryNote,
   earliestSlot,
   groupOf,
   parseChoice,
@@ -175,5 +176,28 @@ describe('saving a choice', () => {
       '{"mode":"slot","date":"2026-10-10","hour":9.5}',
     ];
     for (const saved of bad) expect(parseChoice(saved)).toEqual({ mode: 'quick' });
+  });
+});
+
+describe('deliveryNote', () => {
+  it('says nothing while the order goes the way the shopper chose', () => {
+    expect(deliveryNote({ mode: 'quick' }, { kind: 'quick' })).toBeUndefined();
+    const slot = slotsFor('tomorrow', at(15), rules)[2];
+    expect(slot).toBeDefined();
+    if (slot === undefined) return;
+    expect(deliveryNote(choiceFor(slot), { kind: 'slot', slot })).toBeUndefined();
+  });
+
+  it('says a chosen window is gone when the order is delivered some other way', () => {
+    const choice = { mode: 'slot', date: '2026-10-09', hour: 9 } as const;
+    expect(deliveryNote(choice, resolveChoice(choice, at(15), rules))).toBe('slotGone');
+    const other = slotsFor('tomorrow', at(15), rules)[5];
+    if (other === undefined) return;
+    expect(deliveryNote(choice, { kind: 'slot', slot: other })).toBe('slotGone');
+  });
+
+  it('says quick delivery is closed when a quick choice has to wait for a window', () => {
+    const delivery = resolveChoice({ mode: 'quick' }, at(22), rules);
+    expect(deliveryNote({ mode: 'quick' }, delivery)).toBe('quickClosed');
   });
 });

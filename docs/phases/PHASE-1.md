@@ -131,7 +131,9 @@ _Goal: Home runs on mock data through the same path the live API will use._
   its delivery fee; the choice is kept on the phone and feeds the delivery fee). C (done):
   coupons and offers as placeholders: a coupon card on the cart that suggests the best coupon, a coupons page with a code field and
   three sample coupons (percent with a limit, flat, small-order), applying and removing, a coupon row in the bill and in the
-  savings, kept on the phone; free delivery is judged before the coupon. D: tip, delivery instructions, "You might also like". E: trust extras (one-trip strip,
+  savings, kept on the phone; free delivery is judged before the coupon; a coupon the cart no longer qualifies for is taken
+  off at once with a note saying why, and an emptied cart keeps no coupon. The cart also says when the chosen delivery window
+  has gone or quick delivery has closed, instead of changing the delivery silently. D: tip, delivery instructions, "You might also like". E: trust extras (one-trip strip,
   verified shops, price promise, refund for lighter weight, easy problems, safe handover code, save for later and
   share, delivering-to strip). F: loose items sold by weight and the "if unavailable" choice. G: offline and error
   states, accessibility, large text, Hindi and Marathi review.

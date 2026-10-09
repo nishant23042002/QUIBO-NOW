@@ -5,7 +5,9 @@ import {
   quickAvailable,
   resolveChoice,
   serialiseChoice,
+  deliveryNote,
   type Delivery,
+  type DeliveryNote,
   type SlotChoice,
 } from './slots';
 
@@ -24,6 +26,10 @@ export interface SlotState {
   current: Delivery | undefined;
   /** Whether quick delivery is running now (it is not late at night). */
   quickOpen: boolean;
+  /** Set when the order is not delivered the way the shopper chose (their window passed, or quick delivery has closed). */
+  note: DeliveryNote | undefined;
+  /** Accepts a change the shopper did not make: their old window is forgotten, and the order follows quick delivery. */
+  dismissNote: () => void;
 }
 
 /**
@@ -61,11 +67,16 @@ export function useSlotChoice(): SlotState {
     void writeSetting(SLOT_KEY, serialiseChoice(next));
   }, []);
 
+  const current = resolveChoice(choice, now);
   return {
     now,
     choice,
     setChoice,
-    current: resolveChoice(choice, now),
+    current,
     quickOpen: quickAvailable(now),
+    note: deliveryNote(choice, current),
+    dismissNote: () => {
+      setChoice({ mode: 'quick' });
+    },
   };
 }

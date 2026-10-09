@@ -23,11 +23,13 @@ export type ApplyResult = 'ok' | 'invalid' | 'short';
 export interface CouponState {
   /** Every coupon on offer, as worked out for the cart. */
   offers: readonly OfferView[];
-  /** The coupon that is applied, whether or not the items are enough for it right now. */
+  /** The coupon that is applied. It always works on the cart: one that stops working is taken off at once. */
   applied: OfferView | undefined;
   /** The best coupon that works on these items and is not applied yet, to suggest. */
   best: { offer: Offer; discount: Money } | undefined;
-  /** What the applied coupon takes off the items now. Nothing when none is applied or the items are short of it. */
+  /** The coupon that was just taken off because the items no longer reach its minimum, and what they would need. */
+  dropped: { offer: Offer; shortBy: Money } | undefined;
+  /** What the applied coupon takes off the items now. Nothing when none is applied. */
   discount: Money;
   /**
    * Applies a coupon by its code, however it was typed. It is "invalid" for a code that does not exist, and "short" when
@@ -35,49 +37,78 @@ export interface CouponState {
    */
   apply: (typed: string) => ApplyResult;
   remove: () => void;
+  /** Stops showing the note about a coupon that was taken off. */
+  dismissDropped: () => void;
 }
 
 /**
  * The coupon for the order: which one is applied (kept on the phone), what it takes off, and what else is on offer. A
- * coupon stays applied if the cart shrinks below its minimum; it simply takes off nothing until the items are enough again.
+ * coupon that the cart no longer qualifies for, because items were taken out, is taken off straight away, and the cart is
+ * told so it can say why. An empty cart has no coupon. Nothing is judged until the saved cart has been read back
+ * (`cartReady`), so a cart that is only still loading never costs the shopper their coupon.
  */
-export function useCoupon(itemTotal: Money): CouponState {
+export function useCoupon(itemTotal: Money, cartReady: boolean): CouponState {
   const [code, setCode] = useState<string | null>(null);
+  // The coupon that was last taken off because the cart shrank, for the note about it.
+  const [droppedCode, setDroppedCode] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState(false);
   // A coupon applied before the saved one has been read back must not be written over by it.
   const touched = useRef(false);
 
   useEffect(() => {
     let live = true;
     void readSetting(COUPON_KEY).then((saved) => {
-      if (!live || touched.current) return;
-      const found = saved === null ? undefined : findCoupon(SAMPLE_COUPONS, saved);
-      setCode(found?.code ?? null);
+      if (!live) return;
+      if (!touched.current) {
+        const found = saved === null ? undefined : findCoupon(SAMPLE_COUPONS, saved);
+        setCode(found?.code ?? null);
+      }
+      setLoaded(true);
     });
     return () => {
       live = false;
     };
   }, []);
 
-  const remember = useCallback((next: string | null) => {
-    touched.current = true;
-    setCode(next);
-    void writeSetting(COUPON_KEY, next ?? '');
-  }, []);
+  // Keep the phone's copy up to date, but never write over the saved coupon before it has been read.
+  useEffect(() => {
+    if (!loaded) return;
+    void writeSetting(COUPON_KEY, code ?? '');
+  }, [loaded, code]);
+
+  // The coupon no longer fits the cart: take it off now, in the same pass, so it is never drawn as if it still counted. (An
+  // empty cart just loses its coupon quietly; a cart that shrank gets a note saying which coupon went and why.)
+  const settled = loaded && cartReady;
+  const current = code === null ? undefined : findCoupon(SAMPLE_COUPONS, code);
+  if (settled && code !== null && (current === undefined || !isEligible(current, itemTotal))) {
+    setCode(null);
+    setDroppedCode(current !== undefined && itemTotal > 0 ? current.code : null);
+  }
+  // A cart emptied of everything forgets the note too.
+  if (settled && droppedCode !== null && itemTotal === 0) setDroppedCode(null);
 
   const apply = useCallback(
     (typed: string): ApplyResult => {
       const found = findCoupon(SAMPLE_COUPONS, typed);
       if (found === undefined) return 'invalid';
       if (!isEligible(found, itemTotal)) return 'short';
-      remember(found.code);
+      touched.current = true;
+      setDroppedCode(null);
+      setCode(found.code);
       return 'ok';
     },
-    [itemTotal, remember],
+    [itemTotal],
   );
 
   const remove = useCallback(() => {
-    remember(null);
-  }, [remember]);
+    touched.current = true;
+    setDroppedCode(null);
+    setCode(null);
+  }, []);
+
+  const dismissDropped = useCallback(() => {
+    setDroppedCode(null);
+  }, []);
 
   const offers: OfferView[] = SAMPLE_COUPONS.map((offer) => ({
     offer,
@@ -91,13 +122,22 @@ export function useCoupon(itemTotal: Money): CouponState {
     SAMPLE_COUPONS.filter((offer) => offer.code !== code),
     itemTotal,
   );
+  // The note is for a coupon that is still short of its minimum; once the items reach it again the suggestion takes over.
+  const droppedOffer =
+    droppedCode === null ? undefined : SAMPLE_COUPONS.find((offer) => offer.code === droppedCode);
+  const dropped =
+    droppedOffer !== undefined && applied === undefined && !isEligible(droppedOffer, itemTotal)
+      ? { offer: droppedOffer, shortBy: shortBy(droppedOffer, itemTotal) }
+      : undefined;
 
   return {
     offers,
     applied,
     best: best === undefined ? undefined : { offer: best.coupon, discount: best.discount },
+    dropped,
     discount: applied?.discount ?? money(0),
     apply,
     remove,
+    dismissDropped,
   };
 }

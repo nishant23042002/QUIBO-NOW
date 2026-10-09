@@ -609,7 +609,10 @@
     "viewItems": "View items",
     "yourItems": "Your items",
     "feeLine": "Delivery {amount}",
-    "couponRow": "Coupon {code}"
+    "couponRow": "Coupon {code}",
+    "slotGone": "The time you picked is no longer available, so your order is set for {when}.",
+    "quickClosedNote": "Quick delivery is closed for now, so your order is set for {when}.",
+    "nowQuick": "quick delivery"
   },
   "coupons": {
     "title": "Coupons & offers",
@@ -633,6 +636,7 @@
     "descSave": "Bigger baskets save more",
     "descSmall": "Even a small order can save",
     "emptyTitle": "No offers right now",
-    "emptyBody": "Check back soon."
+    "emptyBody": "Check back soon.",
+    "dropped": "{code} was taken off. Add {amount} more to use it again."
   }
 }

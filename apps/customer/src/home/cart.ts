@@ -193,7 +193,7 @@ export function useDraftCart(): DraftCart {
     quantity: quantities[packId] ?? 0,
   }));
   const sum = summariseCart(entries);
-  const coupon = useCoupon(sum.total);
+  const coupon = useCoupon(sum.total, ready);
   const bill = computeBill({
     itemTotal: sum.total,
     saved: sum.saved,
