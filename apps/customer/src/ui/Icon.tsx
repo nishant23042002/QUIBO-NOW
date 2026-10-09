@@ -33,6 +33,12 @@ const SHAPES = {
     path('M18 2.8l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z'),
   ],
   close: [path('M6 6l12 12M18 6L6 18')],
+  // A padlock.
+  lock: [path('M7.5 11V8a4.5 4.5 0 0 1 9 0v3'), path('M5.5 11h13v9h-13z'), dot(12, 15.5, 1.3)],
+  // An arrow curling back on itself: take it back, make it right.
+  undo: [path('M4 12a8 8 0 1 0 2.4-5.7'), path('M4 4.2v4.6h4.6')],
+  // A bookmark ribbon: keep this for later.
+  bookmark: [path('M7 4h10v16l-5-3.6L7 20z')],
   // A person inside a shield: leave it with the building's security.
   shieldUser: [
     path('M12 3l7 3v5.5c0 4.4-3 7.7-7 9.5-4-1.8-7-5.1-7-9.5V6z'),

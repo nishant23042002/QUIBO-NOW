@@ -12,6 +12,7 @@ import {
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
+  Badge,
   Button,
   Chip,
   Icon,
@@ -19,15 +20,18 @@ import {
   PopOnChange,
   Segmented,
   Text,
+  TrustTiles,
   radius,
   space,
   useReduceMotion,
   type IconName,
 } from '@/ui';
 import { useCart } from './CartProvider';
+import { useTintOf } from './categories';
 import { INSTRUCTIONS, NOTE_MAX, type InstructionKey } from './instructions';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { useHomeItems } from './items';
+import { licenceOf } from './sampleShops';
 import { suggestItems } from './suggestions';
 import { isPreset, parseTip } from './tip';
 
@@ -126,6 +130,59 @@ const makeStyles = (c: ThemeColors) =>
     },
     noteText: { flex: 1, minWidth: 0, gap: space[1] },
     noteActions: { flexDirection: 'row', gap: space[4] },
+    // Things put aside for later: a list with a line between rows.
+    plain: {
+      overflow: 'hidden',
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: c.line,
+      backgroundColor: c.surface,
+    },
+    sectionHead: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[2],
+      paddingHorizontal: space[4],
+      paddingTop: space[4],
+      paddingBottom: space[2],
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+    },
+    rowDivided: { borderTopWidth: 1, borderTopColor: c.line },
+    rowThumb: {
+      width: 44,
+      height: 44,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radius.md,
+    },
+    rowText: { flex: 1, minWidth: 0 },
+    move: {
+      alignSelf: 'flex-start',
+      marginTop: space[2],
+      minHeight: 36,
+      paddingHorizontal: space[3],
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1.5,
+      borderRadius: radius.md,
+      borderColor: c.action,
+    },
+    discard: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+    shield: {
+      width: 36,
+      height: 36,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radius.full,
+      backgroundColor: c.accentSubtle,
+    },
+    promises: { gap: space[3] },
     rail: { gap: space[3] },
     railRow: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[3] },
   });
@@ -491,6 +548,142 @@ export function AlsoLike() {
           <ItemTile key={item.id} item={item} width={RAIL_CARD_WIDTH} />
         ))}
       </ScrollView>
+    </View>
+  );
+}
+
+/**
+ * What the shopper put aside for later, newest first, each with the way back into the cart (greyed while it is out of
+ * stock) and a way to let it go. Nothing here is in the bill. It shows nothing when nothing is saved.
+ */
+export function SavedForLater() {
+  const { t } = useLanguage();
+  const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
+  const tintOf = useTintOf();
+  const { saved } = useCart();
+  if (saved.items.length === 0) return null;
+
+  return (
+    <View style={styles.plain}>
+      <View style={styles.sectionHead}>
+        <Icon name="bookmark" color={colors.accentInk} size={20} />
+        <Text variant="subheading" role="heading">
+          {`${t('trust.savedTitle')} \u00B7 ${saved.items.length}`}
+        </Text>
+      </View>
+      {saved.items.map((item, index) => (
+        <View key={item.id} style={[styles.row, index > 0 && styles.rowDivided]}>
+          <View style={[styles.rowThumb, { backgroundColor: tintOf(item.category) }]} aria-hidden>
+            <NativeText allowFontScaling={false} style={{ fontSize: 24, lineHeight: 30 }}>
+              {item.emoji}
+            </NativeText>
+          </View>
+          <View style={styles.rowText}>
+            <Text variant="strong" numberOfLines={2}>
+              {item.name}
+            </Text>
+            <Text variant="small" color="inkMuted" numberOfLines={1}>
+              {`${item.pack} × ${item.quantity} · ${item.totalLabel}`}
+            </Text>
+            <Pressable
+              role="button"
+              aria-disabled={!item.available}
+              disabled={!item.available}
+              hitSlop={6}
+              onPress={() => {
+                saved.restore(item.id);
+              }}
+              style={({ pressed }) => [
+                styles.move,
+                !item.available && { opacity: 0.4 },
+                pressed && { opacity: 0.7 },
+              ]}
+            >
+              <Text variant="strong" color="accentInk">
+                {item.available ? t('trust.moveToCart') : t('home.rails.outOfStock')}
+              </Text>
+            </Pressable>
+          </View>
+          <Pressable
+            role="button"
+            aria-label={t('trust.savedRemove')}
+            hitSlop={6}
+            onPress={() => {
+              saved.discard(item.id);
+            }}
+            style={styles.discard}
+          >
+            <Icon name="close" color={colors.inkMuted} size={18} />
+          </Pressable>
+        </View>
+      ))}
+    </View>
+  );
+}
+
+/**
+ * Who packs the order: each store in the cart with its shield, its name, a "Verified" mark and its food licence number
+ * (a sample, marked as one, until the real numbers are on file). In a dark-store town it is the one Quibo store.
+ */
+export function VerifiedShops() {
+  const { t } = useLanguage();
+  const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
+  const { stores } = useCart();
+  if (stores.length === 0) return null;
+  const dark = stores.every((store) => store.id === 'quibo');
+
+  return (
+    <View style={styles.plain}>
+      <View style={styles.sectionHead}>
+        <Icon name="shield" color={colors.accentInk} size={20} />
+        <Text variant="subheading" role="heading">
+          {t(dark ? 'trust.packedAt' : 'trust.packedBy')}
+        </Text>
+      </View>
+      {stores.map((store, index) => (
+        <View key={store.id} style={[styles.row, index > 0 && styles.rowDivided]}>
+          <View style={styles.shield} aria-hidden>
+            <Icon name="store" color={colors.accentInk} size={18} />
+          </View>
+          <View style={styles.rowText}>
+            <Text variant="strong" numberOfLines={1}>
+              {store.name}
+            </Text>
+            <Text variant="small" color="inkMuted" numberOfLines={2}>
+              {t('trust.licence', { number: licenceOf(store.id) })}
+            </Text>
+          </View>
+          <Badge label={t('trust.verified')} tone="success" />
+        </View>
+      ))}
+    </View>
+  );
+}
+
+/**
+ * Four short promises under the order, each with its own picture: the price you see is the price you pay, a code to hand
+ * over safely, an easy fix if something is wrong, and one trip for everything. (A fifth, about being refunded when a
+ * weighed item comes out lighter, joins them when loose items sold by weight do.)
+ */
+export function TrustPromises() {
+  const { t } = useLanguage();
+  const styles = useStyles(makeStyles);
+
+  return (
+    <View style={styles.promises}>
+      <Text variant="subheading" role="heading">
+        {t('trust.title')}
+      </Text>
+      <TrustTiles
+        tiles={[
+          { key: 'price', icon: 'tag', title: t('trust.priceTitle'), body: t('trust.priceBody') },
+          { key: 'safe', icon: 'lock', title: t('trust.safeTitle'), body: t('trust.safeBody') },
+          { key: 'fix', icon: 'undo', title: t('trust.fixTitle'), body: t('trust.fixBody') },
+          { key: 'trip', icon: 'bag', title: t('trust.tripTitle'), body: t('trust.tripBody') },
+        ]}
+      />
     </View>
   );
 }

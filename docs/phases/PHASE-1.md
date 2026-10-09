@@ -135,9 +135,11 @@ _Goal: Home runs on mock data through the same path the live API will use._
   off at once with a note saying why, and an emptied cart keeps no coupon. The cart also says when the chosen delivery window
   has gone or quick delivery has closed, instead of changing the delivery silently. D (done): a tip and delivery instructions card (a Tip view with ₹10, ₹20, ₹30 and a typed amount up to ₹100, nothing chosen by
   default and one tap to take it away, all of it for the rider; an Instructions view with a row of icon tiles to slide through and a note that is saved with a button and shown back, kept on the
-  phone), placed after the bill, a rider-tip line in the bill, and "You might also like", a row of items that go with the cart, each with ADD. E: trust extras (one-trip strip,
-  verified shops, price promise, refund for lighter weight, easy problems, safe handover code, save for later and
-  share, delivering-to strip). F: loose items sold by weight and the "if unavailable" choice. G: offline and error
+  phone), placed after the bill, a rider-tip line in the bill, and "You might also like", a row of items that go with the cart, each with ADD. E (done, apart from the refund for lighter weighed items, which comes with F): a "Delivering to" row in the
+  delivery card with a Change link (the address screens are built in 1e), a "Packed by verified shops" card (shield,
+  name, Verified mark and food licence number for each store, or the one Quibo store), four promises (price, safe
+  handover, easy fix, one trip), a bookmark on each item to put it aside for later with a "Saved for later" list that is
+  kept on the phone and shown even when the cart is empty, and a share button for the cart. F: loose items sold by weight and the "if unavailable" choice. G: offline and error
   states, accessibility, large text, Hindi and Marathi review.
 
 ### 1e. First run and address: language, phone OTP, address

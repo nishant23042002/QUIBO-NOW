@@ -42,6 +42,15 @@ const makeStyles = (c: ThemeColors) =>
       borderBottomColor: c.line,
     },
     arriveText: { flex: 1, gap: space[1] },
+    address: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+      borderBottomWidth: 1,
+      borderBottomColor: c.line,
+    },
     coupon: {
       minHeight: 64,
       flexDirection: 'row',
@@ -81,6 +90,14 @@ export function CartSkeleton() {
               <Skeleton width="80%" height={14} />
             </View>
             <Skeleton width={104} height={36} rounded={radius.md} />
+          </View>
+          <View style={styles.address}>
+            <Skeleton width={20} height={20} rounded={radius.full} />
+            <View style={styles.arriveText}>
+              <Skeleton width="30%" height={14} />
+              <Skeleton width="75%" height={16} />
+            </View>
+            <Skeleton width={56} height={16} />
           </View>
           {Array.from({ length: LINES }, (_, index) => (
             <View key={index} style={[styles.line, index > 0 && styles.divided]}>

@@ -41,6 +41,21 @@ export interface DeliveryState extends SlotState {
   eta: QuickEta;
 }
 
+/** Something the shopper put aside for later: it is not in the cart, and not in the bill, until it is moved back. */
+export interface SavedItem {
+  /** The pack's id, for example "milk:500ml". */
+  id: string;
+  name: string;
+  pack: string;
+  emoji: string;
+  category: ItemCategory;
+  quantity: number;
+  /** What it comes to at today's price, for example "₹58". */
+  totalLabel: string;
+  /** False when the pack is out of stock now, so it cannot be moved back yet. */
+  available: boolean;
+}
+
 export interface DraftCart {
   /** How many of each pack, by pack id. */
   quantities: Readonly<Record<string, number>>;
@@ -70,6 +85,15 @@ export interface DraftCart {
   bill: Bill;
   /** The coupon: what is on offer, which one is applied, and what it takes off. */
   coupon: CouponState;
+  /** The stores the cart comes from (a dark-store town has the one), for the verified-shop card. */
+  stores: readonly { id: string; name: string }[];
+  /** Things put aside for later, the latest first, and how to put one aside, bring one back, or let one go. */
+  saved: {
+    items: readonly SavedItem[];
+    save: (packId: string) => void;
+    restore: (packId: string) => void;
+    discard: (packId: string) => void;
+  };
   /** The tip for the rider: nothing by default, easy to add and to take away. */
   tip: {
     amount: Money;
@@ -104,6 +128,9 @@ const COUNT_MAX = 20;
 /** Where the phone keeps the cart, so it is still there after the app is closed. */
 const CART_KEY = 'quibo.cart';
 
+/** Where the phone keeps what the shopper put aside for later. */
+const SAVED_KEY = 'quibo.saved';
+
 interface Removal {
   packId: string;
   name: string;
@@ -137,6 +164,11 @@ export function useDraftCart(): DraftCart {
   const [removal, setRemoval] = useState<Removal | null>(null);
   // The saved cart has been read back. (The cart as a whole is `ready` once its coupon and delivery choice are too.)
   const [loaded, setLoaded] = useState(false);
+  const [saved, setSaved] = useState<{
+    order: readonly string[];
+    quantities: Readonly<Record<string, number>>;
+  }>({ order: [], quantities: {} });
+  const [savedLoaded, setSavedLoaded] = useState(false);
   const [restored, setRestored] = useState<{ gone: number; lowered: number } | null>(null);
   const packs = packIndex(homeItems);
 
@@ -171,6 +203,27 @@ export function useDraftCart(): DraftCart {
     };
   }, [limits]);
 
+  // The things put aside for later: read back once (anything gone or out of stock is quietly dropped), then kept up to date.
+  useEffect(() => {
+    let live = true;
+    void readSetting(SAVED_KEY).then((text) => {
+      if (!live) return;
+      const back = restoreCart(text, limits, COUNT_MAX);
+      setSaved((current) =>
+        current.order.length > 0 ? current : { order: back.order, quantities: back.quantities },
+      );
+      setSavedLoaded(true);
+    });
+    return () => {
+      live = false;
+    };
+  }, [limits]);
+
+  useEffect(() => {
+    if (!savedLoaded) return;
+    void writeSetting(SAVED_KEY, serialiseCart(saved.order, saved.quantities));
+  }, [savedLoaded, saved]);
+
   // Keep the phone's copy up to date, but never write over the saved cart before it has been read.
   useEffect(() => {
     if (!loaded) return;
@@ -190,6 +243,37 @@ export function useDraftCart(): DraftCart {
     apply(packId, allowed);
     if (allowed === 0 && previous > 0) setRemoval({ packId, name: found.item.name, previous });
     else if (allowed > previous) setRemoval(null);
+  };
+
+  const discard = (packId: string) => {
+    setSaved((current) => {
+      const { [packId]: _gone, ...quantities } = current.quantities;
+      return { order: current.order.filter((id) => id !== packId), quantities };
+    });
+  };
+
+  // Puts a line aside: out of the cart without the "removed" note, because it is not gone, only waiting.
+  const save = (packId: string) => {
+    const quantity = quantities[packId] ?? 0;
+    if (quantity <= 0) return;
+    apply(packId, 0);
+    setSaved((current) => ({
+      order: current.order.includes(packId) ? current.order : [...current.order, packId],
+      quantities: { ...current.quantities, [packId]: (current.quantities[packId] ?? 0) + quantity },
+    }));
+  };
+
+  // Brings a saved line back into the cart, never past what is in stock or what one order may hold.
+  const restore = (packId: string) => {
+    const found = packs.get(packId);
+    const quantity = saved.quantities[packId] ?? 0;
+    if (found === undefined || quantity <= 0 || !found.pack.available) return;
+    apply(
+      packId,
+      capQuantity((quantities[packId] ?? 0) + quantity, found.pack.maxQuantity, COUNT_MAX),
+    );
+    setRemoval(null);
+    discard(packId);
   };
 
   // The packs in the cart, the latest-added first.
@@ -276,6 +360,29 @@ export function useDraftCart(): DraftCart {
     progress: Math.min(Number(sum.total) / Number(FREE_DELIVERY_FROM), 1),
     bill,
     coupon,
+    stores: sum.baskets.map((basket) => ({ id: basket.shopId, name: basket.shopName })),
+    saved: {
+      items: [...saved.order].reverse().flatMap((packId): SavedItem[] => {
+        const found = packs.get(packId);
+        const quantity = saved.quantities[packId] ?? 0;
+        if (found === undefined || quantity <= 0) return [];
+        return [
+          {
+            id: packId,
+            name: found.item.name,
+            pack: found.pack.label,
+            emoji: found.item.emoji,
+            category: found.item.category,
+            quantity,
+            totalLabel: formatRupees(multiplyByQuantity(found.pack.price, quantity)),
+            available: found.pack.available,
+          },
+        ];
+      }),
+      save,
+      restore,
+      discard,
+    },
     tip: { amount: tipAmount, set: setTipAmount, options: ZONE.tip.options, max: ZONE.tip.max },
     instructions,
     delivery: {
@@ -297,7 +404,7 @@ export function useDraftCart(): DraftCart {
       emoji: item.emoji,
       category: item.category,
     })),
-    ready: loaded && coupon.loaded && delivery.loaded && instructions.loaded,
+    ready: loaded && coupon.loaded && delivery.loaded && instructions.loaded && savedLoaded,
     restored,
     dismissRestored: () => {
       setRestored(null);

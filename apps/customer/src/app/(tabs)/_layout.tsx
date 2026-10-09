@@ -68,6 +68,8 @@ export default function TabsLayout() {
       <Tabs.Screen name="schedule" options={{ href: null }} />
       {/* Coupons are opened from the cart the same way. */}
       <Tabs.Screen name="coupons" options={{ href: null }} />
+      {/* The address page is opened from the cart the same way. */}
+      <Tabs.Screen name="address" options={{ href: null }} />
     </Tabs>
   );
 }

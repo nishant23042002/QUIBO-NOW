@@ -670,5 +670,28 @@
     "noteSaved": "Note added for your rider",
     "editNote": "Edit",
     "removeNote": "Remove"
+  },
+  "trust": {
+    "title": "You are covered",
+    "packedBy": "Packed by verified shops",
+    "packedAt": "Packed at the Quibo Store",
+    "verified": "Verified",
+    "licence": "Food licence {number}",
+    "priceTitle": "Price promise",
+    "priceBody": "What you see is what you pay. Taxes included, no hidden charges.",
+    "safeTitle": "Safe handover",
+    "safeBody": "You get a 4-digit code. Share it only when your order is in your hands.",
+    "fixTitle": "Easy fix",
+    "fixBody": "Something not right? Tell us after delivery and we will make it right.",
+    "tripTitle": "One trip, one rider",
+    "tripBody": "Everything arrives together, packed with care.",
+    "deliveringTo": "Delivering to",
+    "addressTitle": "Delivery address",
+    "saveForLater": "Save {name} for later",
+    "savedTitle": "Saved for later",
+    "moveToCart": "Move to cart",
+    "savedRemove": "Remove from saved",
+    "share": "Share cart",
+    "shareMessage": "My Quibo Now cart: {items}. Total {total}."
   }
 }

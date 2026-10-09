@@ -9,6 +9,9 @@ export interface CartHeaderProps {
   subtitle?: string;
   backLabel: string;
   onBack: () => void;
+  /** Gives the header a share button at its end. Both are needed. */
+  shareLabel?: string;
+  onShare?: () => void;
 }
 
 /** An icon button's circle is 38 dp inside a 48 dp touch area, so the circle sits this far in from the area's edge. */
@@ -35,10 +38,18 @@ const makeStyles = (_c: ThemeColors) =>
     // Pulled out by the circle's inset, so the circle's outer edge lines up with the page's cards.
     back: { marginLeft: -CIRCLE_INSET },
     title: { flex: 1, minWidth: 0 },
+    end: { marginRight: -CIRCLE_INSET },
   });
 
 /** The cart page's header: the Home tint, a back button, "Cart" and how many items are in it. */
-export function CartHeader({ title, subtitle, backLabel, onBack }: CartHeaderProps) {
+export function CartHeader({
+  title,
+  subtitle,
+  backLabel,
+  onBack,
+  shareLabel,
+  onShare,
+}: CartHeaderProps) {
   const styles = useStyles(makeStyles);
   const { colors, scheme } = useTheme();
   const insets = useSafeAreaInsets();
@@ -77,6 +88,11 @@ export function CartHeader({ title, subtitle, backLabel, onBack }: CartHeaderPro
             </Text>
           ) : null}
         </View>
+        {shareLabel !== undefined && onShare !== undefined ? (
+          <View style={styles.end}>
+            <IconButton icon="share" label={shareLabel} onPress={onShare} ground="header" />
+          </View>
+        ) : null}
       </View>
     </View>
   );

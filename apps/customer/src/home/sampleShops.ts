@@ -54,6 +54,14 @@ const SAMPLE_LICENCE: Readonly<Record<string, string>> = {
 };
 const SAMPLE_CARE = 'care@quibo.example';
 
+/** The company's own dark store has its own sample licence, marked as a sample like the shops'. */
+const DARK_STORE_LICENCE = 'SAMPLE-FSSAI-0000';
+
+/** A shop's food-safety licence number by its id (the dark store's included), or nothing when there is none on file. */
+export function licenceOf(id: string): string {
+  return id === 'quibo' ? DARK_STORE_LICENCE : (SAMPLE_LICENCE[id] ?? '');
+}
+
 /** One shop by its id, with what its own page shows besides the card, or undefined when there is no such shop. */
 export function useShop(id: string | undefined): ShopDetails | undefined {
   const { t } = useLanguage();

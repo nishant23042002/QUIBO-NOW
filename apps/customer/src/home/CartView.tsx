@@ -41,7 +41,7 @@ import { UndoToast } from './CartLayer';
 import { useCart } from './CartProvider';
 import { CartSkeleton, LINE_HEIGHT, THUMB } from './CartSkeleton';
 import { useTintOf } from './categories';
-import { TipAndNotes, AlsoLike } from './CartExtras';
+import { AlsoLike, SavedForLater, TipAndNotes, TrustPromises, VerifiedShops } from './CartExtras';
 import { SAMPLE_DISTANCE_KM } from './delivery';
 import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
 import { useSlotText } from './slotText';
@@ -102,6 +102,31 @@ const makeStyles = (c: ThemeColors) =>
       borderWidth: 1.5,
       borderRadius: radius.md,
       borderColor: c.action,
+    },
+    thumbBox: { width: THUMB, height: THUMB },
+    // The little bookmark on a picture's corner: put this one aside for later.
+    saveBadge: {
+      position: 'absolute',
+      top: -6,
+      left: -6,
+      width: 24,
+      height: 24,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radius.full,
+      borderWidth: 1,
+      borderColor: c.line,
+      backgroundColor: c.surface,
+    },
+    // Where the order goes, as a row of its own in the delivery card, with a way to change it.
+    address: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+      borderBottomWidth: 1,
+      borderBottomColor: c.line,
     },
     thumb: {
       width: THUMB,
@@ -196,7 +221,9 @@ const makeStyles = (c: ThemeColors) =>
     dockPrice: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
     dockCaption: { flexDirection: 'row', gap: space[1] },
     dockButton: { flex: 1 },
-    empty: { flex: 1 },
+    empty: { flex: 1, minHeight: 300 },
+    emptyPage: { flexGrow: 1 },
+    savedGutter: { paddingHorizontal: space[3] },
   });
 
 /**
@@ -268,18 +295,26 @@ export function CartView() {
   if (cart.count === 0) {
     return (
       <View style={styles.page}>
-        <View style={styles.gutter}>{notices}</View>
-        <View style={[styles.empty, { paddingBottom: room }]}>
-          <StatePanel
-            icon="bag"
-            title={t('cart.emptyTitle')}
-            body={t('cart.emptyBody')}
-            actionLabel={t('cart.emptyAction')}
-            onAction={() => {
-              router.navigate('/');
-            }}
-          />
-        </View>
+        <ScrollView
+          contentContainerStyle={[styles.emptyPage, { paddingBottom: room + space[6] }]}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.gutter}>{notices}</View>
+          <View style={styles.empty}>
+            <StatePanel
+              icon="bag"
+              title={t('cart.emptyTitle')}
+              body={t('cart.emptyBody')}
+              actionLabel={t('cart.emptyAction')}
+              onAction={() => {
+                router.navigate('/');
+              }}
+            />
+          </View>
+          <View style={styles.savedGutter}>
+            <SavedForLater />
+          </View>
+        </ScrollView>
         <UndoToast bottom={room} />
       </View>
     );
@@ -532,12 +567,52 @@ export function CartView() {
               </Text>
             </Pressable>
           </View>
+          <View style={styles.address}>
+            <Icon name="pin" color={colors.accentInk} size={20} />
+            <View style={styles.arriveText}>
+              <Text variant="caption" color="inkMuted">
+                {t('trust.deliveringTo')}
+              </Text>
+              <Text variant="small" numberOfLines={1}>
+                {t('home.header.fullAddress')}
+              </Text>
+            </View>
+            <Pressable
+              role="link"
+              hitSlop={8}
+              onPress={() => {
+                router.push('/address');
+              }}
+            >
+              <Text variant="strong" color="accentInk">
+                {t('cart.change')}
+              </Text>
+            </Pressable>
+          </View>
           {cart.items.map((line, index) => (
             <View key={line.id} style={[styles.line, index > 0 && styles.divided]}>
-              <View style={[styles.thumb, { backgroundColor: tintOf(line.category) }]} aria-hidden>
-                <NativeText allowFontScaling={false} style={{ fontSize: 30, lineHeight: 38 }}>
-                  {line.emoji}
-                </NativeText>
+              <View style={styles.thumbBox}>
+                <View
+                  style={[styles.thumb, { backgroundColor: tintOf(line.category) }]}
+                  aria-hidden
+                >
+                  <NativeText allowFontScaling={false} style={{ fontSize: 30, lineHeight: 38 }}>
+                    {line.emoji}
+                  </NativeText>
+                </View>
+                {/* Puts this line aside for later: out of the cart and the bill, kept in "Saved for later". */}
+                <Pressable
+                  role="button"
+                  aria-label={t('trust.saveForLater', { name: line.name })}
+                  hitSlop={10}
+                  onPress={() => {
+                    glide();
+                    cart.saved.save(line.id);
+                  }}
+                  style={({ pressed }) => [styles.saveBadge, pressed && { opacity: 0.7 }]}
+                >
+                  <Icon name="bookmark" color={colors.inkMuted} size={14} />
+                </Pressable>
               </View>
               <View style={styles.name}>
                 <Text variant="strong" numberOfLines={line.soldBy === undefined ? 2 : 1}>
@@ -595,6 +670,7 @@ export function CartView() {
             </View>
           ) : null}
         </View>
+        <SavedForLater />
         <View style={styles.forgot}>
           <Text variant="small" color="inkMuted">
             {t('cart.forgot')}
@@ -658,6 +734,8 @@ export function CartView() {
           </Text>
         </View>
         <TipAndNotes />
+        <VerifiedShops />
+        <TrustPromises />
         <AlsoLike />
       </ScrollView>
       {keyboard ? null : (
