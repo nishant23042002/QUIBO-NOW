@@ -270,8 +270,8 @@ export interface HomePack {
   mrp?: Money;
   /** The saving in rupees, for the ribbon: for example "₹1" and "OFF". Absent when there is none. */
   ribbon?: { amount: string; offLabel: string };
-  /** For packs that can come in the next window: for example "Today 4–6 PM". */
-  quickLabel?: string;
+  /** Can come in the next delivery: its card says when, in the words the cart uses for the order's delivery. */
+  quick?: true;
   stock?: { kind: 'out' | 'low'; label: string };
   /** The price per litre, kilogram or piece, for example "₹58/L". Only on products with more than one pack. */
   unitPriceLabel?: string;
@@ -311,7 +311,7 @@ export interface HomeItem {
   price: Money;
   mrp?: Money;
   ribbon?: { amount: string; offLabel: string };
-  quickLabel?: string;
+  quick?: true;
   stock?: { kind: 'out' | 'low'; label: string };
   /** The default pack's stock limit, as on `HomePack`. */
   maxQuantity?: number;
@@ -356,9 +356,7 @@ export function useHomeItems(): readonly HomeItem[] {
         ...(saving !== undefined
           ? { ribbon: { amount: formatRupees(saving), offLabel: t('home.rails.off') } }
           : {}),
-        ...(pack.quick === true
-          ? { quickLabel: t('home.rails.today', { window: t('home.header.sampleWindow') }) }
-          : {}),
+        ...(pack.quick === true ? { quick: true as const } : {}),
         ...(pack.stock === 0
           ? { stock: { kind: 'out' as const, label: t('home.rails.outOfStock') } }
           : pack.stock !== undefined
@@ -411,7 +409,7 @@ export function useHomeItems(): readonly HomeItem[] {
       price: first.price,
       ...(first.mrp !== undefined ? { mrp: first.mrp } : {}),
       ...(first.ribbon !== undefined ? { ribbon: first.ribbon } : {}),
-      ...(first.quickLabel !== undefined ? { quickLabel: first.quickLabel } : {}),
+      ...(first.quick === true ? { quick: true as const } : {}),
       ...(first.stock !== undefined ? { stock: first.stock } : {}),
       ...(first.maxQuantity !== undefined ? { maxQuantity: first.maxQuantity } : {}),
       ...(first.loose === true ? { loose: true as const } : {}),

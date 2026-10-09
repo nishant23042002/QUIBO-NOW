@@ -151,7 +151,11 @@ _Goal: Home runs on mock data through the same path the live API will use._
   each coupon, the settings groups), then the page fades in over it. Each open loads again, except coming back to the cart from
   its own steps. With no network the cart still shows, with its notice, while the delivery-time and coupons pages show the
   offline screen; a failed load shows a message with Try again; the profile never blocks, because the switch that brings the
-  network back is on it. Checkout and the address pages get theirs when they are built (1e). G: offline and error
+  network back is on it. Checkout and the address pages get theirs when they are built (1e). Wiring (done): Home's header, the product page's header, the
+  item cards and the cart all say when and where the order goes through one source (`useDeliveryWhen` and
+  `useDeliveryAddress`), so they cannot disagree: quick delivery with its estimate in minutes, or the window the shopper picked,
+  and the one delivery address. The address on Home opens the address page; choosing an address in 1e will change all of them
+  at once. G: offline and error
   states, accessibility, large text, Hindi and Marathi review.
 
 ### 1e. First run and address: language, phone OTP, address

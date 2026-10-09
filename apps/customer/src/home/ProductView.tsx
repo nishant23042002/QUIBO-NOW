@@ -45,6 +45,7 @@ import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
 import { ZONE } from './delivery';
+import { useDeliveryAddress, useDeliveryWhen } from './deliveryInfo';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { ProductHeader } from './ProductHeader';
 import { ProductSkeleton } from './ProductSkeleton';
@@ -142,6 +143,8 @@ export function ProductView({
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const cart = useCart();
+  const when = useDeliveryWhen();
+  const address = useDeliveryAddress();
   const tintOf = useTintOf();
   const items = useHomeItems();
   const { width } = useWindowDimensions();
@@ -316,8 +319,8 @@ export function ProductView({
         tint={tintOf(item.category)}
         price={pack.price}
         {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
-        deliveryLabel={t('home.rails.today', { window: t('home.header.sampleWindow') })}
-        addressLabel={t('home.header.fullAddress')}
+        deliveryLabel={when.short}
+        addressLabel={address}
         backLabel={t('common.back')}
         searchLabel={t('home.search.hintLabel')}
         shareLabel={t('product.share')}
@@ -446,10 +449,10 @@ export function ProductView({
                         : pack.stock.label}
                     </Text>
                   ) : null}
-                  {pack.quickLabel !== undefined && !out ? (
+                  {pack.quick === true && !out ? (
                     <View style={styles.fact}>
                       <Icon name="clock" color={colors.accentInk} size={18} />
-                      <Text variant="strong">{pack.quickLabel}</Text>
+                      <Text variant="strong">{when.short}</Text>
                     </View>
                   ) : null}
                 </View>

@@ -144,7 +144,7 @@ export function ProductSkeleton({
               {item.mrp !== undefined && item.mrp > item.price ? bar('save', small, '36%') : null}
               {bar('taxes', small, '42%')}
               {item.stock?.kind === 'low' ? bar('stock', small, '40%') : null}
-              {item.quickLabel !== undefined ? bar('quick', small, '55%') : null}
+              {item.quick === true ? bar('quick', small, '55%') : null}
             </View>
           </View>
 

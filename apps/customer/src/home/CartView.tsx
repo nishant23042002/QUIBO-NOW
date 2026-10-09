@@ -55,6 +55,7 @@ import {
   VerifiedShops,
 } from './CartExtras';
 import { SAMPLE_DISTANCE_KM } from './delivery';
+import { useDeliveryAddress, useDeliveryWhen } from './deliveryInfo';
 import { CART_LOAD_MS, CART_POLICY } from './loading';
 import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
 import { rememberCartShape, rememberedCartShape, cartShape } from './skeletonShape';
@@ -261,6 +262,8 @@ function CartPage() {
   const tintOf = useTintOf();
   const online = useOnline();
   const slotText = useSlotText();
+  const when = useDeliveryWhen();
+  const address = useDeliveryAddress();
   // While the keyboard is up the bottom menu steps aside, and so does the checkout bar: they would only ride on top of it.
   const keyboard = useKeyboardVisible();
   const room = keyboard ? insets.bottom : insets.bottom + BOTTOM_BAR_HEIGHT;
@@ -557,14 +560,7 @@ function CartPage() {
             </View>
             <View style={styles.arriveText}>
               <Text variant="strong" numberOfLines={2}>
-                {current === undefined
-                  ? ''
-                  : current.kind === 'quick'
-                    ? t('cart.quickTitle', {
-                        from: cart.delivery.eta.from,
-                        to: cart.delivery.eta.to,
-                      })
-                    : slotText.arriving(current.slot)}
+                {when.headline}
               </Text>
               <Text variant="small" color="inkMuted">
                 {cart.itemsLabel}
@@ -591,7 +587,7 @@ function CartPage() {
                 {t('trust.deliveringTo')}
               </Text>
               <Text variant="small" numberOfLines={1}>
-                {t('home.header.fullAddress')}
+                {address}
               </Text>
             </View>
             <Pressable

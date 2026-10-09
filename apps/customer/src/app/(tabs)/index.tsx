@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { CART_ROOM, CartLayer } from '@/home/CartLayer';
 import { useCart } from '@/home/CartProvider';
+import { useDeliveryAddress, useDeliveryWhen } from '@/home/deliveryInfo';
 import { useHomeCategories } from '@/home/categories';
 import { HomeFeed } from '@/home/HomeFeed';
 import { useHomeOffers } from '@/home/offers';
@@ -33,14 +34,16 @@ export default function HomeScreen() {
   const offers = useHomeOffers();
   const [category, setCategory] = useState('all');
   const cart = useCart();
+  const when = useDeliveryWhen();
+  const address = useDeliveryAddress();
   const insets = useSafeAreaInsets();
   const openCount = shops.filter((shop) => shop.open).length;
 
   return (
     <View style={styles.page}>
       <HomeHeader
-        deliveryLine={t('home.header.deliveryToday', { window: t('home.header.sampleWindow') })}
-        address={t('home.header.sampleAddress')}
+        deliveryLine={when.headline}
+        address={address}
         addressCaption={t('home.header.addressCaption')}
         shops={shops}
         shopsLabel={t('home.header.shopsOpen', { count: openCount })}
@@ -61,7 +64,9 @@ export default function HomeScreen() {
         onSearchPress={() => {
           router.push({ pathname: '/search', params: { fresh: String(Date.now()) } });
         }}
-        onAddressPress={() => undefined}
+        onAddressPress={() => {
+          router.push('/address');
+        }}
         onShopPress={(id) => {
           router.push({ pathname: '/shop/[id]', params: { id } });
         }}

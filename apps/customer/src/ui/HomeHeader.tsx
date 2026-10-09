@@ -345,7 +345,7 @@ export function HomeHeader({
                   >
                     <Icon name="pin" color={colors.onHeader} size={16} />
                     <View style={styles.addressText}>
-                      <Text variant="strong" color="onHeader" numberOfLines={2}>
+                      <Text variant="strong" color="onHeader" numberOfLines={1}>
                         {address}
                       </Text>
                     </View>
