@@ -113,6 +113,9 @@ export function Button({
   );
 }
 
+/** How long a button rests between glints: often enough to be noticed, rarely enough never to nag. */
+const SHINE_REST_MS = 1500;
+
 /** The shine, as its own piece so only a button that asks for it needs to know which screen is in front. */
 function ButtonShine({
   width,
@@ -130,7 +133,9 @@ function ButtonShine({
       color={color}
       active={focused}
       intensity={0.4}
-      {...(shineKey === undefined ? { loopPauseMs: 4200 } : { trigger: shineKey, onAppear: true })}
+      {...(shineKey === undefined
+        ? { loopPauseMs: SHINE_REST_MS }
+        : { trigger: shineKey, onAppear: true })}
     />
   );
 }

@@ -19,8 +19,10 @@ export interface ShineSweepProps {
   intensity?: number;
 }
 
-const SWEEP_MS = 850;
-const FIRST_DELAY_MS = 700;
+/** How long the band takes to cross: quick enough to feel lively, slow enough to read as a glint and not a flash. */
+const SWEEP_MS = 720;
+/** The wait before the first sweep, once, so it does not fire the instant a screen opens. */
+const FIRST_DELAY_MS = 350;
 
 const styles = StyleSheet.create({
   // Taller than what it crosses, and turned a little, so the band is a slant and never shows a top or bottom edge.
@@ -52,22 +54,25 @@ export function ShineSweep({
   useEffect(() => {
     if (!looping || !ready) return undefined;
     sweep.setValue(0);
-    const loop = Animated.loop(
-      Animated.sequence([
-        Animated.delay(FIRST_DELAY_MS),
-        Animated.timing(sweep, {
-          toValue: 1,
-          duration: SWEEP_MS,
-          easing: Easing.inOut(Easing.quad),
-          useNativeDriver: true,
-        }),
-        Animated.delay(loopPauseMs),
-        Animated.timing(sweep, { toValue: 0, duration: 0, useNativeDriver: true }),
-      ]),
-    );
-    loop.start();
+    // The short wait comes once, up front; every round after that is only the sweep and its rest.
+    const run = Animated.sequence([
+      Animated.delay(FIRST_DELAY_MS),
+      Animated.loop(
+        Animated.sequence([
+          Animated.timing(sweep, {
+            toValue: 1,
+            duration: SWEEP_MS,
+            easing: Easing.inOut(Easing.quad),
+            useNativeDriver: true,
+          }),
+          Animated.delay(loopPauseMs),
+          Animated.timing(sweep, { toValue: 0, duration: 0, useNativeDriver: true }),
+        ]),
+      ),
+    ]);
+    run.start();
     return () => {
-      loop.stop();
+      run.stop();
     };
   }, [looping, ready, loopPauseMs, sweep]);
 
