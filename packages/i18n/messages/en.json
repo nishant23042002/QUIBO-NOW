@@ -208,7 +208,10 @@
       "online": "Online",
       "offline": "Pretend offline",
       "fail": "Make the next page load fail",
-      "failArmed": "The next page load will fail"
+      "failArmed": "The next page load will fail",
+      "festival": "Festival rush (testing)",
+      "festivalOff": "Normal day",
+      "festivalOn": "Festival rush"
     }
   },
   "nav": {
@@ -527,6 +530,29 @@
     "freeNote": "Free delivery counts everything in your cart, from every shop together.",
     "oneTrip": "From {count} shops. One rider collects it all and delivers it together.",
     "subtotal": "Subtotal",
-    "itemTotal": "Item total"
+    "itemTotal": "Item total",
+    "billTitle": "Bill summary",
+    "deliveryFee": "Delivery fee",
+    "free": "Free",
+    "deliveryNote": "Free above {amount}",
+    "handlingFee": "Handling fee",
+    "careStandard": "Careful packing",
+    "careFresh": "Fresh produce, packed with care",
+    "careChilled": "Keeps chilled items cold",
+    "careHeavy": "Extra hands for heavy items",
+    "careFragile": "Extra care so fragile items, like eggs, arrive whole",
+    "festival": "festival rush",
+    "toPay": "To pay",
+    "taxes": "Prices include all taxes. There are no other charges.",
+    "savingsTitle": "Savings on this order",
+    "savingsPrinted": "Discount on printed price",
+    "savingsDelivery": "Free delivery",
+    "strip": "Yay! You saved {amount} on this order",
+    "minOrder": "The minimum order is {min}. Add {amount} more to order.",
+    "addMore": "Add {amount} more",
+    "continue": "Continue",
+    "checkout": "Checkout",
+    "forgot": "Forgot something?",
+    "addItems": "Add more items"
   }
 }

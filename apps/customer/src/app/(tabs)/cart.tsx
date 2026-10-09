@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
+import { CartHeader } from '@/home/CartHeader';
+import { useCart } from '@/home/CartProvider';
 import { CartView } from '@/home/CartView';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
@@ -12,11 +13,13 @@ const styles = StyleSheet.create({
 export default function CartScreen() {
   const { t } = useLanguage();
   const router = useRouter();
+  const cart = useCart();
 
   return (
     <View style={styles.page}>
-      <AppHeader
+      <CartHeader
         title={t('cart.title')}
+        {...(cart.count > 0 ? { subtitle: cart.itemsLabel } : {})}
         backLabel={t('common.back')}
         onBack={() => {
           if (router.canGoBack()) router.back();

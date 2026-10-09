@@ -2,9 +2,12 @@ import { formatRupees, money, subtract } from '@quibo/contracts';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { readSetting, writeSetting } from '@/storage';
+import { computeBill, type Bill } from './bill';
+import { careOf } from './care';
 import { summariseCart, type CartEntry } from './cartMath';
 import { restoreCart, serialiseCart, type PackLimit } from './cartStore';
 import { FREE_DELIVERY_FROM } from './delivery';
+import { useFestival } from './festival';
 import { capQuantity } from './packs';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
@@ -64,6 +67,8 @@ export interface DraftCart {
   progress: number;
   /** What the whole cart saves against the printed prices, for example "You saved ₹7". Absent when it saves nothing. */
   savedLabel?: string;
+  /** What the order comes to: items, delivery, handling, and what is saved. All integer paise. */
+  bill: Bill;
   /** What is in the cart, latest first: for the little pictures in the cart bar. */
   lines: readonly { id: string; emoji: string; category: ItemCategory }[];
   /** False until the cart saved on the phone has been read back. Until then it looks empty only because it is still loading. */
@@ -108,6 +113,7 @@ function packIndex(items: readonly HomeItem[]) {
 export function useDraftCart(): DraftCart {
   const { t } = useLanguage();
   const items = useHomeItems();
+  const festival = useFestival();
   const [quantities, setQuantities] = useState<Readonly<Record<string, number>>>({});
   // The order packs were first added in, so "latest first" is known.
   const [order, setOrder] = useState<readonly string[]>([]);
@@ -183,6 +189,12 @@ export function useDraftCart(): DraftCart {
     quantity: quantities[packId] ?? 0,
   }));
   const sum = summariseCart(entries);
+  const bill = computeBill({
+    itemTotal: sum.total,
+    saved: sum.saved,
+    cares: inCart.map(([, { item }]) => careOf(item.id, item.category)),
+    festival,
+  });
 
   const baskets: ShopBasket[] = sum.baskets.map((basket) => ({
     id: basket.shopId,
@@ -228,6 +240,7 @@ export function useDraftCart(): DraftCart {
       ? t('home.cart.freeReached')
       : t('home.cart.freeNeed', { amount: formatRupees(remaining) }),
     progress: Math.min(Number(sum.total) / Number(FREE_DELIVERY_FROM), 1),
+    bill,
     ...(sum.saved > 0
       ? { savedLabel: t('home.cart.saved', { amount: formatRupees(sum.saved) }) }
       : {}),

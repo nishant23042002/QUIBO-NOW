@@ -1,5 +1,6 @@
 import { LOCALES, messages } from '@quibo/i18n';
 import { useRouter } from 'expo-router';
+import { setFestival, useFestival } from '@/home/festival';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme, type Mode } from '@/theme';
 import { armFailNext, setSimulatedOffline, useFailNextArmed, useSimulatedOffline } from '@/network';
@@ -14,6 +15,7 @@ export default function ProfileScreen() {
   const router = useRouter();
   const offline = useSimulatedOffline();
   const failArmed = useFailNextArmed();
+  const festival = useFestival();
 
   return (
     <Screen>
@@ -41,6 +43,17 @@ export default function ProfileScreen() {
             value={offline ? 'offline' : 'online'}
             onChange={(value) => {
               setSimulatedOffline(value === 'offline');
+            }}
+          />
+          <OptionGroup
+            title={t('profile.dev.festival')}
+            options={[
+              { value: 'off', label: t('profile.dev.festivalOff') },
+              { value: 'on', label: t('profile.dev.festivalOn') },
+            ]}
+            value={festival ? 'on' : 'off'}
+            onChange={(value) => {
+              setFestival(value === 'on');
             }}
           />
           <Button

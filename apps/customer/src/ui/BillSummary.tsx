@@ -11,6 +11,12 @@ export interface BillRow {
   amount: Money;
   /** Shown instead of the amount, for example "Free". Pass a translated string. */
   valueLabel?: string;
+  /** A struck-through earlier amount before the value, for example the printed price. */
+  was?: Money;
+  /** A small line under the label that says why, for example "Extra care for eggs". */
+  note?: string;
+  /** The value is good news (free, or a saving), so it is shown in the success colour. */
+  positive?: boolean;
 }
 
 export interface FreeDeliveryHint {
@@ -28,6 +34,8 @@ export interface BillSummaryProps {
   rows: readonly BillRow[];
   totalLabel: string;
   total: Money;
+  /** A struck-through earlier total before the real one, for example what the order would cost at printed prices. */
+  totalWas?: Money;
   freeDelivery?: FreeDeliveryHint;
 }
 
@@ -35,7 +43,8 @@ const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     box: { gap: space[2] },
     row: { flexDirection: 'row', justifyContent: 'space-between', gap: space[3] },
-    rowLabel: { flexShrink: 1 },
+    rowLabel: { flexShrink: 1, gap: 2 },
+    value: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
     total: {
       flexDirection: 'row',
       justifyContent: 'space-between',
@@ -51,7 +60,7 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /** The bill at checkout and in the cart: each charge, the total, and progress to free delivery. */
-export function BillSummary({ rows, totalLabel, total, freeDelivery }: BillSummaryProps) {
+export function BillSummary({ rows, totalLabel, total, totalWas, freeDelivery }: BillSummaryProps) {
   const styles = useStyles(makeStyles);
   const progress =
     freeDelivery === undefined
@@ -84,13 +93,34 @@ export function BillSummary({ rows, totalLabel, total, freeDelivery }: BillSumma
             <Text variant="body" color="inkMuted">
               {row.label}
             </Text>
+            {row.note !== undefined ? (
+              <Text variant="small" color="inkMuted">
+                {row.note}
+              </Text>
+            ) : null}
           </View>
-          <Text variant="body">{row.valueLabel ?? formatRupees(row.amount)}</Text>
+          <View style={styles.value}>
+            {row.was !== undefined ? (
+              <Text variant="small" color="inkMuted" strike>
+                {formatRupees(row.was)}
+              </Text>
+            ) : null}
+            <Text variant="body" color={row.positive === true ? 'success' : 'ink'}>
+              {row.valueLabel ?? formatRupees(row.amount)}
+            </Text>
+          </View>
         </View>
       ))}
       <View style={styles.total}>
         <Text variant="heading">{totalLabel}</Text>
-        <Text variant="heading">{formatRupees(total)}</Text>
+        <View style={styles.value}>
+          {totalWas !== undefined ? (
+            <Text variant="body" color="inkMuted" strike>
+              {formatRupees(totalWas)}
+            </Text>
+          ) : null}
+          <Text variant="heading">{formatRupees(total)}</Text>
+        </View>
       </View>
     </View>
   );

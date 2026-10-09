@@ -10,13 +10,19 @@ const styles = StyleSheet.create({
   body: { gap: space[2], paddingBottom: BOTTOM_BAR_HEIGHT },
 });
 
-/** A stand-in for a main screen that is built in a later section: its header and one line saying so. */
-export function ComingSoon({ title }: { title: string }) {
+/**
+ * A stand-in for a screen that is built in a later section: its header and one line saying so. Give `onBack` for a
+ * screen that is opened from another one, so it can be left.
+ */
+export function ComingSoon({ title, onBack }: { title: string; onBack?: () => void }) {
   const { t } = useLanguage();
 
   return (
     <View style={styles.page}>
-      <AppHeader title={title} />
+      <AppHeader
+        title={title}
+        {...(onBack !== undefined ? { onBack, backLabel: t('common.back') } : {})}
+      />
       <Screen>
         <View style={styles.body}>
           <Text variant="heading">{title}</Text>

@@ -123,11 +123,14 @@ _Goal: Home runs on mock data through the same path the live API will use._
 - **Tests:** Vitest for totals, fee bands, free-delivery threshold, rounding and weight conversion (these are
   the bugs that cost real money later); Maestro flow: add items, change a quantity, remove an item.
 - **Your check:** bill numbers add up by hand; weights and rupees look right; empty cart is helpful.
-- **Built in four stops.** Stop 1 (done): the cart is a full page in the tab group (the cart bar opens it; it replaces
-  the old cart sheet), grouped by shop with steppers and undo, the free-delivery line for the whole cart, the
-  one-rider note, an empty state, a loading skeleton, an offline note, and a cart kept on the phone and checked
-  against stock when it is read back. Stop 2: the bill, delivery fee, minimum-order notice and checkout button. Stop 3:
-  the "if unavailable" choice and loose items sold by weight. Stop 4: offline and error states, accessibility pass.
+- **Built in phases (the cart follows the design the user chose from reference screenshots).** A: page frame and
+  bill (done: pale header, savings strip, bill with delivery fee and a handling fee of 6 to 18 rupees that follows the
+  most delicate item and festival rushes, savings card, minimum-order notice, checkout bar; fees and limits live in
+  `ZONE` in `home/delivery.ts`). B: delivery card and the schedule page (1-hour slots, today and tomorrow). C: coupons
+  and offers (placeholders). D: tip, delivery instructions, "You might also like". E: trust extras (one-trip strip,
+  verified shops, price promise, refund for lighter weight, easy problems, safe handover code, save for later and
+  share, delivering-to strip). F: loose items sold by weight and the "if unavailable" choice. G: offline and error
+  states, accessibility, large text, Hindi and Marathi review.
 
 ### 1e. First run and address: language, phone OTP, address
 
