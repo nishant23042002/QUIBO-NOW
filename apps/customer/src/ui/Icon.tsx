@@ -32,7 +32,16 @@ const SHAPES = {
     path('M18 2.8l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z'),
   ],
   close: [path('M6 6l12 12M18 6L6 18')],
-  percent: [path('M19 5L5 19'), ring(7.5, 7.5, 2.6), ring(16.5, 16.5, 2.6)],
+  // A price tag with its hole, and a percent sign inside.
+  tag: [
+    path(
+      'M3.5 5A1.5 1.5 0 0 1 5 3.5h7.1a1.5 1.5 0 0 1 1.06.44l7.9 7.9a1.5 1.5 0 0 1 0 2.12l-7.1 7.1a1.5 1.5 0 0 1-2.12 0l-7.9-7.9A1.5 1.5 0 0 1 3.5 12.1z',
+    ),
+    dot(7.6, 7.6, 1.4),
+    path('M10.4 14.2l3.2-3.2'),
+    dot(10.6, 11, 0.9),
+    dot(13.4, 14, 0.9),
+  ],
   calendar: [path('M5 6.5h14V20H5z'), path('M5 10.5h14'), path('M8.5 4v4M15.5 4v4')],
   clock: [ring(12, 12, 9), path('M12 7v5.5l3.5 2')],
   sun: [

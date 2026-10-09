@@ -29,6 +29,7 @@ export { gridCardWidth } from './logic/grid';
 export { COUNT_RULE, WEIGHT_RULE, countRule, type QuantityRule } from './logic/quantity';
 export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
 export { Notice, type NoticeProps } from './Notice';
+export { OfferBadge, type OfferBadgeProps } from './OfferBadge';
 export {
   PromoCarousel,
   type PromoCarouselProps,

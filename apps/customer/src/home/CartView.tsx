@@ -12,6 +12,7 @@ import {
   Button,
   Icon,
   Notice,
+  OfferBadge,
   Popover,
   PopoverHost,
   QTile,
@@ -296,18 +297,29 @@ export function CartView() {
             onPress={() => {
               router.push('/coupons');
             }}
-            style={({ pressed }) => [styles.couponRow, pressed && { opacity: 0.8 }]}
+            style={styles.couponRow}
           >
-            <View style={styles.arriveIcon} aria-hidden>
-              <Icon name="percent" color={colors.accentInk} size={20} />
-            </View>
-            <View style={styles.arriveText}>
-              <Text variant="strong">{t('coupons.viewCoupons')}</Text>
-              <Text variant="small" color="inkMuted">
-                {t('coupons.title')}
-              </Text>
-            </View>
-            <Icon name="chevronRight" color={colors.inkMuted} size={18} />
+            {({ pressed }) => (
+              <>
+                <OfferBadge
+                  state={
+                    coupon.applied !== undefined && coupon.applied.discount > 0
+                      ? 'applied'
+                      : coupon.applied === undefined && coupon.best !== undefined
+                        ? 'offer'
+                        : 'idle'
+                  }
+                  pressed={pressed}
+                />
+                <View style={styles.arriveText}>
+                  <Text variant="strong">{t('coupons.viewCoupons')}</Text>
+                  <Text variant="small" color="inkMuted">
+                    {t('coupons.title')}
+                  </Text>
+                </View>
+                <Icon name="chevronRight" color={colors.inkMuted} size={18} />
+              </>
+            )}
           </Pressable>
           {coupon.applied !== undefined ? (
             <View style={styles.couponNote}>
