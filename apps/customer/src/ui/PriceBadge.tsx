@@ -16,8 +16,9 @@ const EDGE = 3;
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     row: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-    // Room for the edge, so the badge and its edge together are what the row measures.
-    wrap: { marginRight: EDGE, marginBottom: EDGE },
+    // Room for the edge, so the badge and its edge together are what the row measures. The room is the same above and below, so
+    // the badge's face sits on the row's centre line and lines up with whatever is beside it.
+    wrap: { marginRight: EDGE, marginVertical: EDGE },
     edge: {
       position: 'absolute',
       top: EDGE,

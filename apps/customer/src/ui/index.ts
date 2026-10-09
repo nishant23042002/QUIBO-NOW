@@ -67,7 +67,14 @@ export { ProductRail, type ProductRailProps } from './ProductRail';
 export { ProductImage, type ProductImageProps } from './ProductImage';
 export { useKeyboardVisible } from './useKeyboardVisible';
 export { Toast, type ToastProps } from './Toast';
-export { Skeleton, SkeletonScope, type SkeletonProps, type SkeletonScopeProps } from './Skeleton';
+export {
+  Skeleton,
+  SkeletonLine,
+  SkeletonScope,
+  type SkeletonLineProps,
+  type SkeletonProps,
+  type SkeletonScopeProps,
+} from './Skeleton';
 export { SectionDivider } from './SectionDivider';
 export { Screen } from './Screen';
 export { SearchBar, type SearchBarProps, type SearchHint } from './SearchBar';

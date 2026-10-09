@@ -8,6 +8,8 @@
 export const CART_LINES_MAX = 5;
 export const SAVED_MAX = 2;
 export const COUPONS_MAX = 4;
+/** Items, delivery and handling: the bill lines every cart has. */
+export const BILL_ROWS_BASE = 3;
 
 export const clampCount = (count: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, Math.floor(count)));
@@ -21,20 +23,40 @@ export interface CartShape {
   saved: number;
   /** The cart comes from more than one shop, so the "one rider collects it all" note is drawn. */
   trip: boolean;
+  /** How many lines the bill has: items, delivery and handling, plus a coupon and a tip when there are some. */
+  billRows: number;
+  /** The cart holds a loose item, so the bill has the note about weighing. */
+  weighed: boolean;
 }
 
 /** The cart's shape from what is in it: its lines, its saved items and its shops. */
-export function cartShape(facts: { lines: number; saved: number; shops: number }): CartShape {
+export function cartShape(facts: {
+  lines: number;
+  saved: number;
+  shops: number;
+  coupon?: boolean;
+  tip?: boolean;
+  weighed?: boolean;
+}): CartShape {
   return {
     empty: facts.lines === 0,
     lines: clampCount(facts.lines, 0, CART_LINES_MAX),
     saved: clampCount(facts.saved, 0, SAVED_MAX),
     trip: facts.shops > 1,
+    billRows: BILL_ROWS_BASE + (facts.coupon === true ? 1 : 0) + (facts.tip === true ? 1 : 0),
+    weighed: facts.weighed === true,
   };
 }
 
 /** Before anything is known (the first open after the app starts), a small cart is the likeliest. */
-export const FIRST_CART_SHAPE: CartShape = { empty: false, lines: 2, saved: 0, trip: false };
+export const FIRST_CART_SHAPE: CartShape = {
+  empty: false,
+  lines: 2,
+  saved: 0,
+  trip: false,
+  billRows: BILL_ROWS_BASE,
+  weighed: false,
+};
 
 let remembered: CartShape = FIRST_CART_SHAPE;
 

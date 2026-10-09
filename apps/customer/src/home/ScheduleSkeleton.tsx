@@ -1,16 +1,19 @@
 import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
-import { Skeleton, SkeletonScope, radius, space } from '@/ui';
+import { Skeleton, SkeletonLine, SkeletonScope, radius, space } from '@/ui';
 
 /** The confirm bar's least height, as in `ScheduleView`. */
 const DOCK = 124;
 const THUMB = 36;
 const CHIPS_PER_ROW = 3;
+const CHIP_ROWS = 2;
+const GROUPS = 3;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     fill: { flex: 1, overflow: 'hidden' },
+    // The page's own gutters and gaps, as in `ScheduleView`.
     page: { gap: space[3], paddingHorizontal: space[3], paddingTop: space[3] },
     card: {
       overflow: 'hidden',
@@ -21,7 +24,7 @@ const makeStyles = (c: ThemeColors) =>
     },
     order: { flexDirection: 'row', alignItems: 'center', gap: space[3], padding: space[4] },
     thumbs: { flexDirection: 'row' },
-    grow: { flex: 1, gap: space[1] },
+    grow: { flex: 1, minWidth: 0 },
     options: { flexDirection: 'row', gap: space[3] },
     option: {
       flex: 1,
@@ -32,12 +35,19 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.line,
       backgroundColor: c.surface,
     },
-    optionRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    optionRow: { flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    optionText: { flex: 1, minWidth: 0, gap: space[1] },
     note: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3], padding: space[4] },
-    picker: { gap: space[4], padding: space[4] },
-    days: { flexDirection: 'row', gap: space[3] },
+    noteText: { flex: 1, minWidth: 0, gap: space[1] },
+    hint: { paddingHorizontal: space[4], paddingTop: space[3] },
+    picker: { paddingHorizontal: space[4], paddingBottom: space[4] },
+    days: { flexDirection: 'row', minHeight: 57, borderBottomWidth: 1, borderBottomColor: c.line },
+    day: { flex: 1, minHeight: 56, alignItems: 'center', justifyContent: 'center', gap: 0 },
+    body: { gap: space[4], paddingTop: space[4] },
     group: { gap: space[2] },
-    chips: { flexDirection: 'row', gap: space[2] },
+    groupHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+    chip: { flexGrow: 1, flexBasis: '30%' },
     dock: {
       position: 'absolute',
       left: 0,
@@ -46,7 +56,6 @@ const makeStyles = (c: ThemeColors) =>
       paddingVertical: space[3],
       gap: space[2],
       justifyContent: 'center',
-      alignItems: 'center',
       paddingHorizontal: space[4],
       borderTopWidth: 1,
       borderTopColor: c.line,
@@ -55,18 +64,22 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /**
- * Grey blocks in the shape of the delivery-time page: the strip of what is being delivered (only when the cart has
- * something), the two choices, then what the chosen one shows: the quick-delivery note, or the days and the windows to pick
- * from. `mode` is what is chosen now, so the page does not change shape when it loads. `bottom` is how far up the confirm
- * bar sits, above the bottom menu.
+ * Grey blocks in the shape of the delivery-time page, built from lines of text the same height as the real ones so that each card
+ * is as tall as the one that replaces it: the strip of what is being delivered (only when the cart has something), the two
+ * choices, then what the chosen one shows: the quick-delivery note (with the delivery fee line unless delivery is free), or the
+ * days and the windows to pick from. `mode` is what is chosen now, so the page does not change shape when it loads. `bottom` is
+ * how far up the confirm bar sits, above the bottom menu.
  */
 export function ScheduleSkeleton({
   items,
   mode,
+  fee = true,
   bottom,
 }: {
   items: boolean;
   mode: 'quick' | 'slot';
+  /** Quick delivery has a line saying what delivery costs, unless it is free. */
+  fee?: boolean;
   bottom: number;
 }) {
   const { t } = useLanguage();
@@ -85,7 +98,7 @@ export function ScheduleSkeleton({
               ))}
             </View>
             <View style={styles.grow}>
-              <Skeleton width="35%" height={16} />
+              <SkeletonLine size="sm" width="35%" />
             </View>
             <Skeleton width={72} height={16} />
           </View>
@@ -94,9 +107,17 @@ export function ScheduleSkeleton({
           {[0, 1].map((index) => (
             <View key={index} style={styles.option}>
               <View style={styles.optionRow}>
-                <View style={styles.grow}>
-                  <Skeleton width="70%" height={18} />
-                  <Skeleton width="50%" height={14} />
+                <View style={styles.optionText}>
+                  {/* The title takes two lines and the line under it one or two: each is one text, so no gap inside. */}
+                  <View>
+                    <SkeletonLine size="base" width="70%" />
+                    <SkeletonLine size="base" width="50%" />
+                  </View>
+                  <View>
+                    <SkeletonLine size="sm" width="60%" />
+                    {/* The picked window ("Tomorrow, 5–6 PM") takes two lines under the Schedule choice. */}
+                    {index === 1 && mode === 'slot' ? <SkeletonLine size="sm" width="40%" /> : null}
+                  </View>
                 </View>
                 <Skeleton width={36} height={36} rounded={radius.md} />
               </View>
@@ -106,39 +127,53 @@ export function ScheduleSkeleton({
         {mode === 'quick' ? (
           <View style={[styles.card, styles.note]}>
             <Skeleton width={20} height={20} rounded={radius.full} />
-            <View style={styles.grow}>
-              <Skeleton height={14} />
-              <Skeleton width="85%" height={14} />
-              <Skeleton width="40%" height={16} />
+            <View style={styles.noteText}>
+              <View>
+                <SkeletonLine size="sm" />
+                <SkeletonLine size="sm" width="85%" />
+                <SkeletonLine size="sm" width="40%" />
+              </View>
+              {fee ? <SkeletonLine size="sm" width="35%" /> : null}
             </View>
           </View>
         ) : (
-          <View style={[styles.card, styles.picker]}>
-            <View style={styles.days}>
-              <View style={styles.grow}>
-                <Skeleton height={56} rounded={radius.md} />
+          <View style={styles.card}>
+            <View style={styles.hint}>
+              <SkeletonLine size="sm" width="70%" />
+            </View>
+            <View style={styles.picker}>
+              <View style={styles.days}>
+                {[0, 1].map((index) => (
+                  <View key={index} style={styles.day}>
+                    <SkeletonLine size="base" width={64} align="center" />
+                    <SkeletonLine size="xs" width={92} align="center" />
+                  </View>
+                ))}
               </View>
-              <View style={styles.grow}>
-                <Skeleton height={56} rounded={radius.md} />
+              <View style={styles.body}>
+                {Array.from({ length: GROUPS }, (_, group) => (
+                  <View key={group} style={styles.group}>
+                    <View style={styles.groupHead}>
+                      <Skeleton width={16} height={16} rounded={radius.full} />
+                      <SkeletonLine size="xs" width={72} />
+                    </View>
+                    <View style={styles.chips}>
+                      {Array.from({ length: CHIPS_PER_ROW * CHIP_ROWS }, (_, chip) => (
+                        <View key={chip} style={styles.chip}>
+                          <Skeleton height={56} rounded={radius.md} />
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+                ))}
               </View>
             </View>
-            {[0, 1].map((group) => (
-              <View key={group} style={styles.group}>
-                <Skeleton width={96} height={14} />
-                <View style={styles.chips}>
-                  {Array.from({ length: CHIPS_PER_ROW }, (_, chip) => (
-                    <View key={chip} style={styles.grow}>
-                      <Skeleton height={56} rounded={radius.md} />
-                    </View>
-                  ))}
-                </View>
-              </View>
-            ))}
           </View>
         )}
       </View>
       <View style={[styles.dock, { bottom }]}>
-        <Skeleton width="62%" height={14} />
+        <SkeletonLine size="sm" width="90%" align="center" />
+        <SkeletonLine size="sm" width="55%" align="center" />
         <Skeleton height={48} rounded={radius.md} />
       </View>
     </SkeletonScope>

@@ -85,6 +85,8 @@ const makeStyles = (c: ThemeColors) =>
       flexDirection: 'row',
       flexWrap: 'wrap',
       alignItems: 'center',
+      // A wrapping row puts its lines at the top of the room it has: this keeps a single line in the middle.
+      alignContent: 'center',
       rowGap: space[2],
       gap: space[3],
       paddingHorizontal: space[4],
@@ -201,6 +203,7 @@ const makeStyles = (c: ThemeColors) =>
       flexDirection: 'row',
       flexWrap: 'wrap',
       alignItems: 'center',
+      alignContent: 'center',
       justifyContent: 'center',
       gap: space[1],
       minHeight: 40,
@@ -233,9 +236,11 @@ const makeStyles = (c: ThemeColors) =>
       left: 0,
       right: 0,
       minHeight: DOCK,
+      paddingVertical: space[3],
       flexDirection: 'row',
       flexWrap: 'wrap',
       alignItems: 'center',
+      alignContent: 'center',
       rowGap: space[2],
       gap: space[4],
       paddingHorizontal: space[4],
@@ -855,14 +860,17 @@ export function CartView() {
     lines: cart.items.length,
     saved: cart.saved.items.length,
     shops: cart.storeCount,
+    coupon: cart.bill.coupon !== undefined,
+    tip: cart.bill.tip > 0,
+    weighed: cart.hasWeighed,
   });
   const shape = ready ? known : rememberedCartShape();
 
   // What the cart looked like, to draw the next skeleton from.
-  const { empty, lines, saved, trip } = known;
+  const { empty, lines, saved, trip, billRows, weighed } = known;
   useEffect(() => {
-    if (ready) rememberCartShape({ empty, lines, saved, trip });
-  }, [ready, empty, lines, saved, trip]);
+    if (ready) rememberCartShape({ empty, lines, saved, trip, billRows, weighed });
+  }, [ready, empty, lines, saved, trip, billRows, weighed]);
 
   return (
     <LoadGate

@@ -1,7 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
-import { Skeleton, SkeletonScope } from './Skeleton';
+import { Skeleton, SkeletonLine, SkeletonScope } from './Skeleton';
 import { TAP_MIN, radius, space } from './tokens';
 
 /** A choice row is as tall as in `OptionGroup`. */
@@ -29,7 +29,8 @@ const makeStyles = (c: ThemeColors) =>
       gap: space[3],
       paddingHorizontal: space[4],
     },
-    divided: { borderTopWidth: 1, borderTopColor: c.line },
+    // A line between two rows is a row of its own, as in `OptionGroup`.
+    divider: { height: 1, marginLeft: space[4], backgroundColor: c.line },
   });
 
 /** How wide each row's label is, so a group's rows do not all look alike. */
@@ -56,15 +57,18 @@ export function ProfileSkeleton({
         <View style={styles.column}>
           {groups.map((rows, group) => (
             <View key={group} style={styles.group}>
-              <Skeleton width={`${28 + ((group * 7) % 18)}%`} height={16} />
+              <SkeletonLine size="sm" width={`${28 + ((group * 7) % 18)}%`} />
               <View style={styles.card}>
                 {Array.from({ length: rows }, (_, row) => (
-                  <View key={row} style={[styles.row, row > 0 && styles.divided]}>
-                    <Skeleton
-                      width={`${LABELS[(group + row) % LABELS.length] ?? 46}%`}
-                      height={18}
-                    />
-                    <Skeleton width={20} height={20} rounded={radius.full} />
+                  <View key={row}>
+                    {row > 0 ? <View style={styles.divider} /> : null}
+                    <View style={styles.row}>
+                      <SkeletonLine
+                        size="base"
+                        width={`${LABELS[(group + row) % LABELS.length] ?? 46}%`}
+                      />
+                      <Skeleton width={20} height={20} rounded={radius.full} />
+                    </View>
                   </View>
                 ))}
               </View>

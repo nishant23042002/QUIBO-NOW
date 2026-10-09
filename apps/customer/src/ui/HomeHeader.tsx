@@ -256,6 +256,9 @@ export function HomeHeader({
     <View style={styles.frame}>
       <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <Animated.ScrollView
+        // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit
+        // at the top and then drop; held back, it appears where it belongs.
+        style={{ opacity: topHeight > 0 && lowerHeight > 0 ? 1 : 0 }}
         showsVerticalScrollIndicator={false}
         overScrollMode="never"
         scrollEventThrottle={16}
@@ -291,7 +294,12 @@ export function HomeHeader({
         pointerEvents={shopsOpen ? 'box-none' : 'none'}
         style={[
           styles.overlay,
-          { top: insets.top + topHeight, transform: [{ translateY: riseWithPage }] },
+          {
+            top: insets.top + topHeight,
+            transform: [{ translateY: riseWithPage }],
+            // Held back until the upper part has been measured, so it never shows at the top of the screen and then drops.
+            opacity: topHeight > 0 ? 1 : 0,
+          },
         ]}
       >
         <ShopsPanel
@@ -382,7 +390,15 @@ export function HomeHeader({
       {/* The search bar and the tabs: they rise with the page until they meet the status bar, then stay. */}
       <Animated.View
         pointerEvents="box-none"
-        style={[styles.overlay, { top: lowerTop, transform: [{ translateY: slideLower }] }]}
+        style={[
+          styles.overlay,
+          {
+            top: lowerTop,
+            transform: [{ translateY: slideLower }],
+            // The same: it is placed below the upper part, whose height is measured a moment after the first draw.
+            opacity: topHeight > 0 ? 1 : 0,
+          },
+        ]}
       >
         <Animated.View
           style={{ backgroundColor: background }}

@@ -9,7 +9,8 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { useStyles, type ThemeColors } from '@/theme';
-import { radius } from './tokens';
+import { useLanguage } from '@/i18n/LanguageProvider';
+import { fontSize, leading, radius } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
 
 const PulseContext = createContext<Animated.Value | null>(null);
@@ -89,5 +90,44 @@ export function Skeleton({ width = '100%', height, rounded = radius.sm }: Skelet
       aria-hidden
       style={[styles.block, { width, height, borderRadius: rounded, opacity: pulse ?? 1 }]}
     />
+  );
+}
+
+export interface SkeletonLineProps {
+  /** The text size it stands in for, from the same scale `Text` uses. */
+  size: keyof typeof fontSize;
+  /** Headings are set tighter than body text. */
+  tight?: boolean;
+  width?: DimensionValue;
+  /** Where the bar sits in the line: the end, for an amount on the right of a row. */
+  align?: 'start' | 'end' | 'center';
+}
+
+/**
+ * A line of text that is still loading: a box as tall as that line really is (the same size and line spacing as `Text`, in
+ * the language shown, so Hindi and Marathi get their taller lines) with a bar a little shorter than the letters in the middle.
+ * Because the heights agree, a skeleton built from these is the same height as the page that replaces it, and nothing moves
+ * when it does.
+ */
+export function SkeletonLine({
+  size,
+  tight = false,
+  width = '100%',
+  align = 'start',
+}: SkeletonLineProps) {
+  const { locale } = useLanguage();
+  const script = locale === 'en' ? 'latin' : 'devanagari';
+  const line = Math.round(fontSize[size] * leading[script][tight ? 'tight' : 'normal']);
+  const bar = Math.round(fontSize[size] * 0.8);
+  return (
+    <View
+      style={{
+        height: line,
+        justifyContent: 'center',
+        alignItems: align === 'end' ? 'flex-end' : align === 'center' ? 'center' : 'flex-start',
+      }}
+    >
+      <Skeleton width={width} height={bar} />
+    </View>
   );
 }

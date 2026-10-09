@@ -167,7 +167,12 @@ _Goal: Home runs on mock data through the same path the live API will use._
   have a full 48 dp touch area. A Maestro flow for the cart is written (`apps/customer/.maestro/cart.yaml`) and has not been run
   because the tool is not installed here. Still open: a native speaker for the Hindi and Marathi wording; the real text-size
   setting on a phone (here it was tried by scaling the text up to 2 times); and `@react-native-community/netinfo`, so a real
-  phone knows when it is offline.
+  phone knows when it is offline. Alignment pass (done): a row that wraps keeps its single line in the middle of its box
+  (the checkout bar, the price bar on a product page, the item lines had slipped to the top when they were made to wrap); the
+  price stamp now sits on its row's centre line; the bottom bar's names have one weight so choosing a tab moves nothing; Home
+  holds its feed and search bar back until the header has been measured instead of drawing them at the top and dropping them; and
+  the cart, delivery-time and coupons skeletons are built from lines the height of the real text, so each card is the height of
+  the one that replaces it (measured: the same tops and heights on the cart, coupons and delivery-time pages).
 
 ### 1e. First run and address: language, phone OTP, address
 

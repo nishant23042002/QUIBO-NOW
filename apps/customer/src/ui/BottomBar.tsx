@@ -128,7 +128,7 @@ export function BottomBar({ tabs, activeKey, onSelect }: BottomBarProps) {
               ) : null}
             </View>
             <Text
-              variant={active ? 'caption' : 'fine'}
+              variant="caption"
               color={active ? 'action' : 'inkMuted'}
               numberOfLines={1}
               maxFontSizeMultiplier={LABEL_SCALE_MAX}

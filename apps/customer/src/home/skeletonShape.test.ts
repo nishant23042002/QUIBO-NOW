@@ -22,6 +22,8 @@ describe('cartShape', () => {
       lines: 0,
       saved: 0,
       trip: false,
+      billRows: 3,
+      weighed: false,
     });
     expect(cartShape({ lines: 1, saved: 0, shops: 1 }).empty).toBe(false);
   });
@@ -31,6 +33,19 @@ describe('cartShape', () => {
     expect(cartShape({ lines: 2, saved: 5, shops: 1 }).saved).toBe(SAVED_MAX);
     expect(cartShape({ lines: 2, saved: 1, shops: 1 }).trip).toBe(false);
     expect(cartShape({ lines: 2, saved: 1, shops: 2 }).trip).toBe(true);
+  });
+});
+
+describe('the bill in the shape', () => {
+  it('has a line for a coupon and a line for a tip only when there are some', () => {
+    expect(cartShape({ lines: 1, saved: 0, shops: 1 }).billRows).toBe(3);
+    expect(cartShape({ lines: 1, saved: 0, shops: 1, coupon: true }).billRows).toBe(4);
+    expect(cartShape({ lines: 1, saved: 0, shops: 1, coupon: true, tip: true }).billRows).toBe(5);
+  });
+
+  it('has the weighing note only for loose items', () => {
+    expect(cartShape({ lines: 1, saved: 0, shops: 1 }).weighed).toBe(false);
+    expect(cartShape({ lines: 1, saved: 0, shops: 1, weighed: true }).weighed).toBe(true);
   });
 });
 

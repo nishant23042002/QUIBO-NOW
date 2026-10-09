@@ -466,6 +466,7 @@ export function ScheduleView() {
         <ScheduleSkeleton
           items={cart.count > 0}
           mode={cart.delivery.choice.mode === 'slot' ? 'slot' : 'quick'}
+          fee={!cart.bill.delivery.free}
           bottom={insets.bottom + BOTTOM_BAR_HEIGHT}
         />
       }

@@ -97,6 +97,7 @@ const makeStyles = (c: ThemeColors) =>
       flexDirection: 'row',
       flexWrap: 'wrap',
       alignItems: 'center',
+      alignContent: 'center',
       justifyContent: 'space-between',
       gap: space[3],
       paddingHorizontal: space[3],
