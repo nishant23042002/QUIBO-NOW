@@ -52,6 +52,12 @@ export interface SlotRules {
   full: readonly string[];
 }
 
+/** Loose items sold by weight. */
+export interface WeightRules {
+  /** How far the packed weight may run over what was asked for and still be billed, in percent. */
+  tolerancePercent: number;
+}
+
 /** Tips for the rider. */
 export interface TipRules {
   /** The ready-made amounts, smallest first. */
@@ -68,6 +74,7 @@ export interface ZoneSettings {
   slots: SlotRules;
   quick: QuickRules;
   tip: TipRules;
+  weights: WeightRules;
   /** The handling fee for each class of care, before any festival surcharge. */
   handling: Readonly<Record<CareClass, Money>>;
   /** What is added to the handling fee on a festival day. */
@@ -95,6 +102,7 @@ export const ZONE: ZoneSettings = {
     rainExtra: money(300),
     max: money(3_000),
   },
+  weights: { tolerancePercent: 5 },
   tip: { options: [money(1_000), money(2_000), money(3_000)], max: money(10_000) },
   quick: {
     baseMinutes: 6,

@@ -35,6 +35,7 @@ import {
   Stepper,
   Text,
   TrustTiles,
+  WEIGHT_RULE,
   countRule,
   radius,
   space,
@@ -43,6 +44,7 @@ import {
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
+import { ZONE } from './delivery';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { ProductHeader } from './ProductHeader';
 import { ProductSkeleton } from './ProductSkeleton';
@@ -221,7 +223,8 @@ export function ProductView({
     decreaseLabel: t('home.rails.removeOne'),
     increaseLabel: t('home.rails.addOne'),
     maxLabel: t('home.rails.noMore'),
-    rule: countRule(pack.maxQuantity),
+    rule: pack.loose === true ? WEIGHT_RULE : countRule(pack.maxQuantity),
+    ...(pack.loose === true ? { unitLabel: t('weights.kg') } : {}),
   };
 
   // The picture's insight card: only the facts that apply to this product and size.
@@ -399,7 +402,11 @@ export function ProductView({
                     </Text>
                   </View>
                   <Text variant="title">{item.name}</Text>
-                  <Text color="inkMuted">{t('product.netQuantity', { pack: pack.label })}</Text>
+                  <Text color="inkMuted">
+                    {pack.loose === true
+                      ? t('weights.netLine')
+                      : t('product.netQuantity', { pack: pack.label })}
+                  </Text>
                   <View style={styles.priceRow}>
                     <PriceBadge
                       amount={pack.price}
@@ -427,6 +434,11 @@ export function ProductView({
                   <Text variant="small" color="inkMuted">
                     {t('product.taxes')}
                   </Text>
+                  {pack.loose === true ? (
+                    <Text variant="small" color="inkMuted">
+                      {t('weights.pdpNote', { percent: ZONE.weights.tolerancePercent })}
+                    </Text>
+                  ) : null}
                   {pack.stock?.kind === 'low' ? (
                     <Text variant="strong" color="warning">
                       {pack.maxQuantity !== undefined && quantity >= pack.maxQuantity
@@ -632,7 +644,7 @@ export function ProductView({
               <Button
                 label={t('home.rails.add')}
                 onPress={() => {
-                  cart.setQuantity(pack.id, 1);
+                  cart.setQuantity(pack.id, stepper.rule.min);
                 }}
               />
             </View>

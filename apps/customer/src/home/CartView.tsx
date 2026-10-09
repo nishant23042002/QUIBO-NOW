@@ -30,6 +30,7 @@ import {
   StatePanel,
   Stepper,
   Text,
+  WEIGHT_RULE,
   countRule,
   radius,
   space,
@@ -42,7 +43,14 @@ import { UndoToast } from './CartLayer';
 import { useCart } from './CartProvider';
 import { CartSkeleton, LINE_HEIGHT, THUMB } from './CartSkeleton';
 import { useTintOf } from './categories';
-import { AlsoLike, SavedForLater, TipAndNotes, TrustPromises, VerifiedShops } from './CartExtras';
+import {
+  AlsoLike,
+  SavedForLater,
+  SubstitutionCard,
+  TipAndNotes,
+  TrustPromises,
+  VerifiedShops,
+} from './CartExtras';
 import { SAMPLE_DISTANCE_KM } from './delivery';
 import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
 import { useSlotText } from './slotText';
@@ -649,7 +657,8 @@ export function CartView() {
                   decreaseLabel={t('home.rails.removeOne')}
                   increaseLabel={t('home.rails.addOne')}
                   maxLabel={t('home.rails.noMore')}
-                  rule={countRule(line.maxQuantity)}
+                  rule={line.loose === true ? WEIGHT_RULE : countRule(line.maxQuantity)}
+                  {...(line.loose === true ? { unitLabel: t('weights.kg') } : {})}
                 />
                 <View style={styles.price}>
                   {line.mrpLabel !== undefined ? (
@@ -732,11 +741,17 @@ export function CartView() {
               </View>
             </Popover>
           ) : null}
+          {cart.hasWeighed ? (
+            <Text variant="small" color="inkMuted">
+              {t('weights.billNote')}
+            </Text>
+          ) : null}
           <Text variant="small" color="inkMuted">
             {t('cart.taxes')}
           </Text>
         </View>
         <TipAndNotes />
+        <SubstitutionCard />
         <AlsoLike />
         {/* The page ends on what makes it safe to order: the promises, then who packs it. */}
         <View style={styles.closing}>

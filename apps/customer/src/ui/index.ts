@@ -26,7 +26,13 @@ export { HeaderLogo } from './brand/HeaderLogo';
 export { LogoStacked, QMark, type LogoGround } from './brand/Logo';
 export { QTile, type QTileProps } from './QTile';
 export { gridCardWidth } from './logic/grid';
-export { COUNT_RULE, WEIGHT_RULE, countRule, type QuantityRule } from './logic/quantity';
+export {
+  COUNT_RULE,
+  WEIGHT_RULE,
+  countRule,
+  formatQuantity,
+  type QuantityRule,
+} from './logic/quantity';
 export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
 export { FlashOnChange, PopOnChange } from './ChangeCue';
 export { Notice, type NoticeProps } from './Notice';

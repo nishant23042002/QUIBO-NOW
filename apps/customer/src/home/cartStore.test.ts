@@ -6,6 +6,7 @@ const limits = new Map<string, PackLimit>([
   ['milk:1l', { available: true, maxQuantity: 3 }],
   ['curd:400g', { available: false }],
   ['eggs:6pcs', { available: true }],
+  ['tomato:loose', { available: true, mostPerOrder: 10 }],
 ]);
 
 describe('serialiseCart', () => {
@@ -55,6 +56,15 @@ describe('restoreCart', () => {
     expect(restored.gone).toBe(0);
   });
 
+  it('keeps half kilograms of a loose item, and limits it by its own most per order', () => {
+    const saved = serialiseCart(['tomato:loose'], { 'tomato:loose': 1.5 });
+    expect(restoreCart(saved, limits, 20).quantities).toEqual({ 'tomato:loose': 1.5 });
+    const big = serialiseCart(['tomato:loose'], { 'tomato:loose': 14 });
+    const restored = restoreCart(big, limits, 20);
+    expect(restored.quantities).toEqual({ 'tomato:loose': 10 });
+    expect(restored.lowered).toBe(1);
+  });
+
   it('is an empty cart when nothing, or something unreadable, was saved', () => {
     const empty = { order: [], quantities: {}, gone: 0, lowered: 0 };
     expect(restoreCart(null, limits, 20)).toEqual(empty);
@@ -63,13 +73,13 @@ describe('restoreCart', () => {
     expect(restoreCart('[1,2]', limits, 20)).toEqual(empty);
   });
 
-  it('skips damaged lines, repeated packs and quantities that are not whole numbers', () => {
+  it('skips damaged lines, repeated packs and quantities that are not whole or half numbers', () => {
     const saved = JSON.stringify({
       v: 1,
       lines: [
         ['milk:500ml', 1],
         ['milk:500ml', 5],
-        ['eggs:6pcs', 1.5],
+        ['eggs:6pcs', 1.3],
         ['eggs:6pcs', -1],
         [7, 2],
         'junk',

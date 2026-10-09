@@ -419,7 +419,7 @@ export function ScheduleView() {
                 {line.name}
               </Text>
               <Text variant="small" color="inkMuted" numberOfLines={1}>
-                {`${line.pack} × ${line.quantity}`}
+                {line.quantityLine}
               </Text>
             </View>
           </View>

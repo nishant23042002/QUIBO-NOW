@@ -32,6 +32,24 @@ describe('summariseCart', () => {
     expect(sum.baskets[0]?.lines.map((line) => line.lineTotal)).toEqual([money(5800), money(5600)]);
   });
 
+  it('counts a loose item as one item however many kilograms, and prices it by the kilogram', () => {
+    const sum = summariseCart([
+      entry({
+        packId: 'tomato:loose',
+        productId: 'tomato',
+        price: money(4200),
+        mrp: money(4600),
+        quantity: 1.5,
+        loose: true,
+      }),
+      entry({ packId: 'milk:500ml', quantity: 2 }),
+    ]);
+    expect(sum.count).toBe(3);
+    expect(sum.total).toBe(money(6300 + 5800));
+    expect(sum.saved).toBe(money(600));
+    expect(sum.baskets[0]?.count).toBe(3);
+  });
+
   it('groups by shop, in the order the shops first appear, and adds the baskets to the cart total', () => {
     const sum = summariseCart([
       entry({ packId: 'milk:500ml', quantity: 1 }),

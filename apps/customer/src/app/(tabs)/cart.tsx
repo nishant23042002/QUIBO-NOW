@@ -22,9 +22,7 @@ export default function CartScreen() {
     try {
       await Share.share({
         message: t('trust.shareMessage', {
-          items: cart.items
-            .map((line) => `${line.name} (${line.pack}) \u00D7 ${line.quantity}`)
-            .join(', '),
+          items: cart.items.map((line) => `${line.name} (${line.quantityLine})`).join(', '),
           total: formatRupees(cart.bill.toPay),
         }),
       });

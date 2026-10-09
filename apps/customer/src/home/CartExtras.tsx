@@ -3,6 +3,7 @@ import type { MessageKey } from '@quibo/i18n';
 import { useEffect, useRef, useState } from 'react';
 import {
   Animated,
+  LayoutAnimation,
   Text as NativeText,
   Pressable,
   ScrollView,
@@ -33,6 +34,7 @@ import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { useHomeItems } from './items';
 import { licenceOf } from './sampleShops';
 import { suggestItems } from './suggestions';
+import { SUBSTITUTE_CHOICES, type SubstituteChoice } from './substitution';
 import { isPreset, parseTip } from './tip';
 
 const INSTRUCTION_TEXT: Readonly<Record<InstructionKey, MessageKey>> = {
@@ -50,6 +52,13 @@ const INSTRUCTION_ICON: Readonly<Record<InstructionKey, IconName>> = {
   callOnArrival: 'phone',
   pets: 'paw',
 };
+
+const SUBSTITUTE_TEXT: Readonly<Record<SubstituteChoice, { label: MessageKey; help: MessageKey }>> =
+  {
+    swap: { label: 'substitute.swap', help: 'substitute.swapHelp' },
+    remove: { label: 'substitute.remove', help: 'substitute.removeHelp' },
+    call: { label: 'substitute.call', help: 'substitute.callHelp' },
+  };
 
 /** The rider on a scooter, a stand-in for an illustration until the brand has one. */
 const RIDER = '\u{1F6F5}';
@@ -181,6 +190,20 @@ const makeStyles = (c: ThemeColors) =>
       justifyContent: 'center',
       borderRadius: radius.full,
       backgroundColor: c.accentSubtle,
+    },
+    // "If something is unavailable": the way into the per-item choices, and one row for each item.
+    expand: {
+      alignSelf: 'flex-start',
+      minHeight: 36,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[1],
+    },
+    choiceRow: {
+      gap: space[2],
+      paddingTop: space[3],
+      borderTopWidth: 1,
+      borderTopColor: c.line,
     },
     promises: { gap: space[3] },
     rail: { gap: space[3] },
@@ -499,6 +522,106 @@ export function TipAndNotes() {
 }
 
 /**
+ * "If something is unavailable": shops sometimes run out, so the shopper says in advance what should happen: swap it for the
+ * closest match (never at a higher price), leave it out and refund it, or call first. One choice covers the whole order, and
+ * "Choose for each item" opens a row per item to give any of them a choice of its own. Kept on the phone.
+ */
+export function SubstitutionCard() {
+  const { t } = useLanguage();
+  const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
+  const reduceMotion = useReduceMotion();
+  const { items, count, substitution } = useCart();
+  const [perItem, setPerItem] = useState(false);
+  if (count === 0) return null;
+
+  const own = items.filter((line) => substitution.choiceFor(line.id) !== substitution.fallback);
+
+  const toggle = () => {
+    if (!reduceMotion)
+      LayoutAnimation.configureNext(LayoutAnimation.create(220, 'easeInEaseOut', 'opacity'));
+    setPerItem((open) => !open);
+  };
+
+  return (
+    <View style={styles.card}>
+      <View style={styles.intro}>
+        <View style={styles.introText}>
+          <Text variant="label" role="heading">
+            {t('substitute.title')}
+          </Text>
+          <Text variant="small" color="inkMuted">
+            {t('substitute.body')}
+          </Text>
+        </View>
+        <View style={styles.shield} aria-hidden>
+          <Icon name="repeat" color={colors.accentInk} size={18} />
+        </View>
+      </View>
+      <Segmented
+        options={SUBSTITUTE_CHOICES.map((choice) => ({
+          key: choice,
+          label: t(SUBSTITUTE_TEXT[choice].label),
+        }))}
+        value={substitution.fallback}
+        onChange={(key) => {
+          const choice = SUBSTITUTE_CHOICES.find((candidate) => candidate === key);
+          if (choice !== undefined) substitution.setFallback(choice);
+        }}
+      />
+      <Text variant="small" color="inkMuted">
+        {t(SUBSTITUTE_TEXT[substitution.fallback].help)}
+      </Text>
+      <Pressable
+        role="button"
+        aria-expanded={perItem}
+        hitSlop={6}
+        onPress={toggle}
+        style={styles.expand}
+      >
+        <Text variant="strong" color="accentInk">
+          {t(perItem ? 'substitute.sameForAll' : 'substitute.perItem')}
+        </Text>
+        <View style={{ transform: [{ rotate: perItem ? '-90deg' : '90deg' }] }}>
+          <Icon name="chevronRight" color={colors.accentInk} size={16} />
+        </View>
+      </Pressable>
+      {!perItem && own.length > 0 ? (
+        <Text variant="small" color="accentInk">
+          {t('substitute.customised')}
+        </Text>
+      ) : null}
+      {perItem
+        ? items.map((line) => (
+            <View
+              key={line.id}
+              style={styles.choiceRow}
+              role="radiogroup"
+              aria-label={t('substitute.itemLabel', { name: line.name })}
+            >
+              <Text variant="strong" numberOfLines={1}>
+                {line.name}
+              </Text>
+              <View style={styles.chips}>
+                {SUBSTITUTE_CHOICES.map((choice) => (
+                  <Chip
+                    key={choice}
+                    label={t(SUBSTITUTE_TEXT[choice].label)}
+                    selected={substitution.choiceFor(line.id) === choice}
+                    onPress={() => {
+                      substitution.setFor(line.id, choice);
+                    }}
+                  />
+                ))}
+              </View>
+            </View>
+          ))
+        : null}
+    </View>
+  );
+}
+
+/**
  * "You might also like": a row of items that go with what is in the cart, each with its own ADD. The row is chosen once
  * when the cart is first seen and then kept, so an item added from it stays put (and shows its stepper) instead of
  * vanishing from under the shopper's thumb; it is chosen afresh the next time the cart is filled.
@@ -584,7 +707,7 @@ export function SavedForLater() {
               {item.name}
             </Text>
             <Text variant="small" color="inkMuted" numberOfLines={1}>
-              {`${item.pack} × ${item.quantity} · ${item.totalLabel}`}
+              {item.detail}
             </Text>
             <Pressable
               role="button"
@@ -665,12 +788,13 @@ export function VerifiedShops() {
 /**
  * Four short promises, each with its own picture: the price you see is the price you pay, a rider who follows your
  * instructions and hands the order over with care (there is no code to read out), an easy fix if something is wrong, and
- * one trip for everything. (A fifth, about being refunded when a
- * weighed item comes out lighter, joins them when loose items sold by weight do.)
+ * one trip for everything. A fifth joins them when the cart holds a loose item sold by weight: you pay for what you get,
+ * and are refunded when it comes out lighter.
  */
 export function TrustPromises() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
+  const { hasWeighed } = useCart();
 
   return (
     <View style={styles.promises}>
@@ -689,6 +813,16 @@ export function TrustPromises() {
           },
           { key: 'fix', icon: 'undo', title: t('trust.fixTitle'), body: t('trust.fixBody') },
           { key: 'trip', icon: 'bag', title: t('trust.tripTitle'), body: t('trust.tripBody') },
+          ...(hasWeighed
+            ? [
+                {
+                  key: 'weigh',
+                  icon: 'receipt' as const,
+                  title: t('weights.tileTitle'),
+                  body: t('weights.tileBody'),
+                },
+              ]
+            : []),
         ]}
       />
     </View>

@@ -9,6 +9,8 @@ export interface PackLimit {
   available: boolean;
   /** The most that can be bought, when there is a stock limit. */
   maxQuantity?: number;
+  /** The most one order may hold of this pack, when that differs from the usual (kilograms of a loose item). */
+  mostPerOrder?: number;
 }
 
 export interface RestoredCart {
@@ -49,7 +51,8 @@ function parseLines(raw: string): [string, number][] | null {
     if (!Array.isArray(line) || line.length !== 2) continue;
     const [packId, quantity] = line as [unknown, unknown];
     if (typeof packId !== 'string' || typeof quantity !== 'number') continue;
-    if (!Number.isInteger(quantity) || quantity <= 0) continue;
+    // Whole numbers, or halves for a loose item sold by the half kilogram.
+    if (!Number.isInteger(quantity * 2) || quantity <= 0) continue;
     result.push([packId, quantity]);
   }
   return result;
@@ -80,7 +83,7 @@ export function restoreCart(
       gone += 1;
       continue;
     }
-    const allowed = capQuantity(quantity, limit.maxQuantity, mostPerOrder);
+    const allowed = capQuantity(quantity, limit.maxQuantity, limit.mostPerOrder ?? mostPerOrder);
     if (allowed === 0) {
       gone += 1;
       continue;

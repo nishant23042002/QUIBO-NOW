@@ -693,5 +693,29 @@
     "savedRemove": "Remove from saved",
     "share": "Share cart",
     "shareMessage": "My Quibo Now cart: {items}. Total {total}."
+  },
+  "weights": {
+    "perKg": "per kg",
+    "kg": "kg",
+    "cartLine": "{price}/kg",
+    "netLine": "Sold loose, by weight · price per kg",
+    "pdpNote": "We weigh it when packing and bill the actual weight, never more than {percent}% over what you ordered. If it comes out lighter, the difference is refunded.",
+    "billNote": "Loose items are weighed when packed. You pay for the actual weight, and any difference comes back to you.",
+    "tileTitle": "Pay for what you get",
+    "tileBody": "Loose items are weighed when packed. Lighter than ordered? The difference comes back to you."
+  },
+  "substitute": {
+    "title": "If something is unavailable",
+    "body": "Shops sometimes run out. Choose what we should do.",
+    "swap": "Swap",
+    "swapHelp": "We send the closest match. You never pay more than for the item you chose.",
+    "remove": "Leave out",
+    "removeHelp": "We skip it and refund that item.",
+    "call": "Call me",
+    "callHelp": "We ring you first and you decide.",
+    "perItem": "Choose for each item",
+    "sameForAll": "Use one choice for all",
+    "customised": "Some items have their own choice",
+    "itemLabel": "If {name} is unavailable"
   }
 }

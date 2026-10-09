@@ -10,7 +10,10 @@ export interface CartEntry {
   price: Money;
   /** The printed price, when it is higher than `price`. */
   mrp?: Money;
+  /** How many, or for a loose item how many kilograms: `price` is per piece, or per kilogram. */
   quantity: number;
+  /** Sold by weight: however many kilograms, it counts as one item. */
+  loose?: boolean;
 }
 
 export interface CartLineSum {
@@ -48,7 +51,8 @@ export function summariseCart(entries: readonly CartEntry[]): CartSum {
   for (const entry of entries) {
     if (entry.quantity <= 0) continue;
     const lineTotal = multiplyByQuantity(entry.price, entry.quantity);
-    count += entry.quantity;
+    const items = entry.loose === true ? 1 : entry.quantity;
+    count += items;
     total = add(total, lineTotal);
     if (entry.mrp !== undefined && entry.mrp > entry.price) {
       saved = add(saved, multiplyByQuantity(subtract(entry.mrp, entry.price), entry.quantity));
@@ -62,7 +66,7 @@ export function summariseCart(entries: readonly CartEntry[]): CartSum {
     };
     basket.lines.push({ entry, lineTotal });
     basket.total = add(basket.total, lineTotal);
-    basket.count += entry.quantity;
+    basket.count += items;
     baskets.set(entry.shopId, basket);
   }
 

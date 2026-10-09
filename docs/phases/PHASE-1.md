@@ -135,11 +135,17 @@ _Goal: Home runs on mock data through the same path the live API will use._
   off at once with a note saying why, and an emptied cart keeps no coupon. The cart also says when the chosen delivery window
   has gone or quick delivery has closed, instead of changing the delivery silently. D (done): a tip and delivery instructions card (a Tip view with ₹10, ₹20, ₹30 and a typed amount up to ₹100, nothing chosen by
   default and one tap to take it away, all of it for the rider; an Instructions view with a row of icon tiles to slide through and a note that is saved with a button and shown back, kept on the
-  phone), placed after the bill, a rider-tip line in the bill, and "You might also like", a row of items that go with the cart, each with ADD. E (done, apart from the refund for lighter weighed items, which comes with F): a "Delivering to" row in the
+  phone), placed after the bill, a rider-tip line in the bill, and "You might also like", a row of items that go with the cart, each with ADD. E (done): a "Delivering to" row in the
   delivery card with a Change link (the address screens are built in 1e), a "Packed by verified shops" card (shield,
   name, Verified mark and food licence number for each store, or the one Quibo store), four promises (price, safe
   careful handover, easy fix, one trip), a bookmark on each item to put it aside for later with a "Saved for later" list that is
-  kept on the phone and shown even when the cart is empty, and a share button for the cart. F: loose items sold by weight and the "if unavailable" choice. G: offline and error
+  kept on the phone and shown even when the cart is empty, and a share button for the cart. F (done): loose items sold by weight (tomato, potato, carrot, brinjal, orange and grapes, priced per
+  kilogram, added by the half kilogram up to 10 kg, counted as one item and shown as an estimate with a note that they are
+  weighed when packed; the bill is by the actual weight, never more than 5% over what was ordered, and a lighter pack is
+  refunded; a fifth cart promise, "Pay for what you get", appears when the cart holds one) and an "If something is
+  unavailable" card (swap for the closest match at no higher price, leave it out and refund, or call me; one choice for
+  the order and a choice of its own for any item, kept on the phone). The settlement and the choices are plain logic with
+  tests (ADR 0014); the order's real weighing comes with the store portal and the driver app. G: offline and error
   states, accessibility, large text, Hindi and Marathi review.
 
 ### 1e. First run and address: language, phone OTP, address

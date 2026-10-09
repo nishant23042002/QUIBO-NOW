@@ -1,6 +1,6 @@
 import { formatRupees, money, subtract, type Money } from '@quibo/contracts';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import type { GalleryImage } from '@/ui';
+import { WEIGHT_RULE, type GalleryImage } from '@/ui';
 import {
   bestValueIndex,
   baseAmount,
@@ -47,6 +47,8 @@ interface Sample {
   quick?: true;
   /** Not vegetarian. Everything else is. */
   nonVeg?: true;
+  /** Sold loose, by the half kilogram: `price` and `mrp` are per kilogram and there is one pack, weighed when packed. */
+  loose?: true;
   /** Units left, when it is a count worth showing. 0 means out of stock. */
   stock?: number;
 }
@@ -100,14 +102,17 @@ const SAMPLES: readonly Sample[] = [
   {
     id: 'tomato',
     quick: true,
+    loose: true,
     category: 'vegetables',
     emoji: '\u{1F345}',
-    amount: 500,
-    unit: 'g',
-    price: 2200,
+    amount: 1,
+    unit: 'kg',
+    price: 4200,
+    mrp: 4600,
   },
   {
     id: 'potato',
+    loose: true,
     category: 'vegetables',
     emoji: '\u{1F954}',
     amount: 1,
@@ -115,14 +120,23 @@ const SAMPLES: readonly Sample[] = [
     price: 3400,
     mrp: 4000,
   },
-  { id: 'carrot', category: 'vegetables', emoji: '\u{1F955}', amount: 500, unit: 'g', price: 3000 },
+  {
+    id: 'carrot',
+    loose: true,
+    category: 'vegetables',
+    emoji: '\u{1F955}',
+    amount: 1,
+    unit: 'kg',
+    price: 5600,
+  },
   {
     id: 'brinjal',
+    loose: true,
     category: 'vegetables',
     emoji: '\u{1F346}',
-    amount: 500,
-    unit: 'g',
-    price: 2800,
+    amount: 1,
+    unit: 'kg',
+    price: 5200,
   },
   {
     id: 'banana',
@@ -143,15 +157,24 @@ const SAMPLES: readonly Sample[] = [
     price: 12000,
     mrp: 14000,
   },
-  { id: 'orange', category: 'fruits', emoji: '\u{1F34A}', amount: 500, unit: 'g', price: 7000 },
+  {
+    id: 'orange',
+    loose: true,
+    category: 'fruits',
+    emoji: '\u{1F34A}',
+    amount: 1,
+    unit: 'kg',
+    price: 14000,
+  },
   {
     id: 'grapes',
+    loose: true,
     category: 'fruits',
     emoji: '\u{1F347}',
-    amount: 500,
-    unit: 'g',
-    price: 8500,
-    mrp: 9500,
+    amount: 1,
+    unit: 'kg',
+    price: 17000,
+    mrp: 19000,
   },
   {
     id: 'atta',
@@ -231,8 +254,6 @@ const EXTRA_PACKS: Readonly<Record<string, readonly SamplePack[]>> = {
   curd: [{ amount: 1, unit: 'kg', price: 8200, mrp: 9000, quick: true }],
   paneer: [{ amount: 500, unit: 'g', price: 21000, mrp: 24000 }],
   eggs: [{ amount: 12, unit: 'pcs', price: 9200, mrp: 10400 }],
-  tomato: [{ amount: 1, unit: 'kg', price: 4200, mrp: 4600, quick: true }],
-  potato: [{ amount: 2, unit: 'kg', price: 6400, mrp: 7600 }],
   atta: [{ amount: 5, unit: 'kg', price: 24500, mrp: 27000 }],
   rice: [{ amount: 5, unit: 'kg', price: 32000, mrp: 34500 }],
   oil: [{ amount: 500, unit: 'ml', price: 7200, mrp: 7800 }],
@@ -260,6 +281,10 @@ export interface HomePack {
   available: boolean;
   /** How many can be bought: the number in stock, when that is a figure worth limiting by. Absent when there is no limit. */
   maxQuantity?: number;
+  /** Sold loose by weight: the price is per kilogram, the amount in the cart is in kilograms (halves), and it is weighed when packed. */
+  loose?: true;
+  /** The most one order may hold of this pack, when that is not the usual count (kilograms of a loose item). */
+  mostPerOrder?: number;
 }
 
 /**
@@ -290,6 +315,8 @@ export interface HomeItem {
   stock?: { kind: 'out' | 'low'; label: string };
   /** The default pack's stock limit, as on `HomePack`. */
   maxQuantity?: number;
+  /** Sold loose by weight, as on `HomePack`. */
+  loose?: true;
 }
 
 export function useHomeItems(): readonly HomeItem[] {
@@ -321,8 +348,9 @@ export function useHomeItems(): readonly HomeItem[] {
       const saving = mrp !== undefined && mrp > price ? subtract(mrp, price) : undefined;
       const unit = raw.length > 1 ? unitPrice(pack.price, pack) : undefined;
       return {
-        id: `${sample.id}:${pack.amount}${pack.unit}`,
-        label: label(pack),
+        id:
+          sample.loose === true ? `${sample.id}:loose` : `${sample.id}:${pack.amount}${pack.unit}`,
+        label: sample.loose === true ? t('weights.perKg') : label(pack),
         price,
         ...(mrp !== undefined ? { mrp } : {}),
         ...(saving !== undefined
@@ -351,6 +379,7 @@ export function useHomeItems(): readonly HomeItem[] {
         bestValue: best === index,
         available: pack.stock !== 0,
         ...(pack.stock !== undefined && pack.stock > 0 ? { maxQuantity: pack.stock } : {}),
+        ...(sample.loose === true ? { loose: true as const, mostPerOrder: WEIGHT_RULE.max } : {}),
       };
     });
 
@@ -385,6 +414,7 @@ export function useHomeItems(): readonly HomeItem[] {
       ...(first.quickLabel !== undefined ? { quickLabel: first.quickLabel } : {}),
       ...(first.stock !== undefined ? { stock: first.stock } : {}),
       ...(first.maxQuantity !== undefined ? { maxQuantity: first.maxQuantity } : {}),
+      ...(first.loose === true ? { loose: true as const } : {}),
     };
   });
 }

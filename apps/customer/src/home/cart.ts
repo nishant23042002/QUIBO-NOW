@@ -13,7 +13,9 @@ import { quickEta, type QuickEta } from './quick';
 import { useCoupon, type CouponState } from './useCoupon';
 import { useInstructions, type InstructionsState } from './useInstructions';
 import { useSlotChoice, type SlotState } from './useSlotChoice';
+import { useSubstitution, type SubstitutionState } from './useSubstitution';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
+import { formatQuantity } from '@/ui';
 
 /** One pack of an item in the cart. The cart is one flat list: it is one order, however many stores it comes from. */
 export interface CartItem {
@@ -24,10 +26,15 @@ export interface CartItem {
   pack: string;
   emoji: string;
   category: ItemCategory;
+  /** How many, or for a loose item how many kilograms. */
   quantity: number;
   /** The most that can be bought, when there is a stock limit. */
   maxQuantity?: number;
-  /** What this line comes to, for example "₹58". */
+  /** Sold loose by weight: `quantity` is in kilograms and the line is an estimate until the item is weighed. */
+  loose?: true;
+  /** How much of it, for a list: for example "500 ml × 2", or "1.5 kg" for a loose item. */
+  quantityLine: string;
+  /** What this line comes to, for example "₹58", or "≈ ₹63" when it is an estimate. */
   totalLabel: string;
   /** What the same line would cost at the printed price, for example "₹64", when that is more. Shown struck through. */
   mrpLabel?: string;
@@ -52,6 +59,8 @@ export interface SavedItem {
   quantity: number;
   /** What it comes to at today's price, for example "₹58". */
   totalLabel: string;
+  /** The pack, how many and what it comes to, in one line, for example "500 ml × 2 · ₹58". */
+  detail: string;
   /** False when the pack is out of stock now, so it cannot be moved back yet. */
   available: boolean;
 }
@@ -104,6 +113,10 @@ export interface DraftCart {
   };
   /** What the shopper wants the rider to know: quick choices and a note. */
   instructions: InstructionsState;
+  /** What to do when an item is unavailable: one choice for the order, and a choice of its own for any item. */
+  substitution: SubstitutionState;
+  /** Something in the cart is sold loose by weight, so its price is an estimate until it is weighed. */
+  hasWeighed: boolean;
   /** When the order arrives: quick delivery (the default) or a window the shopper picked, kept on the phone. */
   delivery: DeliveryState;
   /** What is in the cart, latest first: for the little pictures in the cart bar. */
@@ -157,6 +170,7 @@ export function useDraftCart(): DraftCart {
   const dark = conditions.store === 'dark';
   const delivery = useSlotChoice();
   const instructions = useInstructions();
+  const substitution = useSubstitution();
   const [tipAmount, setTipAmount] = useState<Money>(money(0));
   const [quantities, setQuantities] = useState<Readonly<Record<string, number>>>({});
   // The order packs were first added in, so "latest first" is known.
@@ -181,6 +195,7 @@ export function useDraftCart(): DraftCart {
           {
             available: pack.available,
             ...(pack.maxQuantity !== undefined ? { maxQuantity: pack.maxQuantity } : {}),
+            ...(pack.mostPerOrder !== undefined ? { mostPerOrder: pack.mostPerOrder } : {}),
           },
         ]),
       ),
@@ -239,7 +254,7 @@ export function useDraftCart(): DraftCart {
     const found = packs.get(packId);
     if (found === undefined) return;
     const previous = quantities[packId] ?? 0;
-    const allowed = capQuantity(next, found.pack.maxQuantity, COUNT_MAX);
+    const allowed = capQuantity(next, found.pack.maxQuantity, found.pack.mostPerOrder ?? COUNT_MAX);
     apply(packId, allowed);
     if (allowed === 0 && previous > 0) setRemoval({ packId, name: found.item.name, previous });
     else if (allowed > previous) setRemoval(null);
@@ -270,7 +285,11 @@ export function useDraftCart(): DraftCart {
     if (found === undefined || quantity <= 0 || !found.pack.available) return;
     apply(
       packId,
-      capQuantity((quantities[packId] ?? 0) + quantity, found.pack.maxQuantity, COUNT_MAX),
+      capQuantity(
+        (quantities[packId] ?? 0) + quantity,
+        found.pack.maxQuantity,
+        found.pack.mostPerOrder ?? COUNT_MAX,
+      ),
     );
     setRemoval(null);
     discard(packId);
@@ -289,11 +308,17 @@ export function useDraftCart(): DraftCart {
     price: pack.price,
     ...(pack.mrp !== undefined ? { mrp: pack.mrp } : {}),
     quantity: quantities[packId] ?? 0,
+    ...(pack.loose === true ? { loose: true } : {}),
   }));
   const sum = summariseCart(entries);
   const coupon = useCoupon(sum.total, loaded);
   // A cart emptied of everything has no tip either: it was for that order's rider.
   if (loaded && sum.count === 0 && tipAmount > 0) setTipAmount(money(0));
+  // Nor does it keep the choices made for single items: they were for the things in that order.
+  const { clearOverrides } = substitution;
+  useEffect(() => {
+    if (loaded && sum.count === 0) clearOverrides();
+  }, [loaded, sum.count, clearOverrides]);
   const bill = computeBill({
     itemTotal: sum.total,
     saved: sum.saved,
@@ -318,20 +343,31 @@ export function useDraftCart(): DraftCart {
       basket.lines.map((line) => [line.entry.packId, line.lineTotal] as const),
     ),
   );
-  const items: CartItem[] = inCart.map(([packId, { item, pack }]) => ({
-    id: packId,
-    name: item.name,
-    pack: pack.label,
-    emoji: item.emoji,
-    category: item.category,
-    quantity: quantities[packId] ?? 0,
-    ...(pack.maxQuantity !== undefined ? { maxQuantity: pack.maxQuantity } : {}),
-    totalLabel: formatRupees(lineTotals.get(packId) ?? money(0)),
-    ...(pack.mrp !== undefined && pack.mrp > pack.price
-      ? { mrpLabel: formatRupees(multiplyByQuantity(pack.mrp, quantities[packId] ?? 0)) }
-      : {}),
-    ...(dark ? {} : { soldBy: item.shopName }),
-  }));
+  // A loose item is priced by the kilogram and weighed when packed, so what it comes to is marked as an estimate.
+  const worth = (amount: Money, loose: boolean) =>
+    loose ? `≈ ${formatRupees(amount)}` : formatRupees(amount);
+  const items: CartItem[] = inCart.map(([packId, { item, pack }]) => {
+    const quantity = quantities[packId] ?? 0;
+    const loose = pack.loose === true;
+    return {
+      id: packId,
+      name: item.name,
+      pack: loose ? t('weights.cartLine', { price: formatRupees(pack.price) }) : pack.label,
+      emoji: item.emoji,
+      category: item.category,
+      quantity,
+      ...(pack.maxQuantity !== undefined ? { maxQuantity: pack.maxQuantity } : {}),
+      ...(loose ? { loose: true as const } : {}),
+      quantityLine: loose
+        ? `${formatQuantity(quantity)} ${t('weights.kg')}`
+        : `${pack.label} \u00D7 ${quantity}`,
+      totalLabel: worth(lineTotals.get(packId) ?? money(0), loose),
+      ...(pack.mrp !== undefined && pack.mrp > pack.price
+        ? { mrpLabel: formatRupees(multiplyByQuantity(pack.mrp, quantity)) }
+        : {}),
+      ...(dark ? {} : { soldBy: item.shopName }),
+    };
+  });
 
   // Free delivery is worked out on the whole cart, so a few things from each of two stores can add up to it.
   const free = sum.total >= FREE_DELIVERY_FROM;
@@ -366,6 +402,8 @@ export function useDraftCart(): DraftCart {
         const found = packs.get(packId);
         const quantity = saved.quantities[packId] ?? 0;
         if (found === undefined || quantity <= 0) return [];
+        const loose = found.pack.loose === true;
+        const total = worth(multiplyByQuantity(found.pack.price, quantity), loose);
         return [
           {
             id: packId,
@@ -374,7 +412,10 @@ export function useDraftCart(): DraftCart {
             emoji: found.item.emoji,
             category: found.item.category,
             quantity,
-            totalLabel: formatRupees(multiplyByQuantity(found.pack.price, quantity)),
+            totalLabel: total,
+            detail: loose
+              ? `${formatQuantity(quantity)} ${t('weights.kg')} \u00B7 ${total}`
+              : `${found.pack.label} \u00D7 ${quantity} \u00B7 ${total}`,
             available: found.pack.available,
           },
         ];
@@ -385,6 +426,8 @@ export function useDraftCart(): DraftCart {
     },
     tip: { amount: tipAmount, set: setTipAmount, options: ZONE.tip.options, max: ZONE.tip.max },
     instructions,
+    substitution,
+    hasWeighed: inCart.some(([, { pack }]) => pack.loose === true),
     delivery: {
       ...delivery,
       eta: quickEta({
@@ -404,7 +447,13 @@ export function useDraftCart(): DraftCart {
       emoji: item.emoji,
       category: item.category,
     })),
-    ready: loaded && coupon.loaded && delivery.loaded && instructions.loaded && savedLoaded,
+    ready:
+      loaded &&
+      coupon.loaded &&
+      delivery.loaded &&
+      instructions.loaded &&
+      substitution.loaded &&
+      savedLoaded,
     restored,
     dismissRestored: () => {
       setRestored(null);
