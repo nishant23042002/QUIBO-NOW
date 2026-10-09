@@ -30,6 +30,9 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
   shineKey?: string;
 }
 
+/** How far a button shrinks while it is pressed. */
+const PRESS_SCALE = 0.98;
+
 type Paint = keyof ThemeColors | 'transparent';
 
 interface Look {
@@ -95,6 +98,8 @@ export function Button({
           backgroundColor: paint(pressed && !loading ? look.pressed : look.background),
           borderColor: paint(look.border),
           opacity: pressed && !loading && variant === 'primary' && !isDisabled ? 0.85 : 1,
+          // A small press into the page, so the button answers the thumb at once.
+          transform: [{ scale: pressed && !loading && !isDisabled ? PRESS_SCALE : 1 }],
         },
       ]}
     >

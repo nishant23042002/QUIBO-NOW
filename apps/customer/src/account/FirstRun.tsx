@@ -1,9 +1,10 @@
 import { LOCALES, messages } from '@quibo/i18n';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { isMobile, phoneDigits, formatPhone } from '@/home/phone';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { loadOutcome } from '@/network';
 import { useStyles, type ThemeColors } from '@/theme';
 import {
   Button,
@@ -26,6 +27,7 @@ import {
   type OtpResult,
   type OtpState,
 } from './otp';
+import { CHECK_MS, SEND_MS, VERIFIED_MS } from './timing';
 
 const STEPS = 3;
 
@@ -149,13 +151,35 @@ function PhoneStep() {
   const styles = useStyles(makeStyles);
   const { requestCode } = useAccount();
   const [typed, setTyped] = useState('');
+  const [sending, setSending] = useState(false);
+  const [failure, setFailure] = useState<'offline' | 'failed' | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const digits = phoneDigits(typed);
   const valid = isMobile(typed);
   // Say what is wrong only once there are enough digits for it to be a number.
   const error = digits.length >= 10 && !valid ? t('firstRun.badPhone') : undefined;
 
+  useEffect(
+    () => () => {
+      clearTimeout(timer.current);
+    },
+    [],
+  );
+
+  // Asking for the code takes a moment, as it will with a server: the button shows it, and the field waits.
   const send = () => {
-    if (valid) requestCode(digits);
+    if (!valid || sending) return;
+    setFailure(null);
+    setSending(true);
+    timer.current = setTimeout(() => {
+      const outcome = loadOutcome();
+      if (outcome !== 'ok') {
+        setSending(false);
+        setFailure(outcome);
+        return;
+      }
+      requestCode(digits);
+    }, SEND_MS);
   };
 
   return (
@@ -167,8 +191,10 @@ function PhoneStep() {
           value={typed}
           onChangeText={(text) => {
             setTyped(text.replace(/[^\d+ -]/g, ''));
+            setFailure(null);
           }}
           error={error}
+          disabled={sending}
           keyboardType="phone-pad"
           autoComplete="tel"
           textContentType="telephoneNumber"
@@ -176,16 +202,31 @@ function PhoneStep() {
           returnKeyType="done"
           onSubmitEditing={send}
         />
+        {failure !== null ? (
+          <Notice
+            tone="warning"
+            icon={failure === 'offline' ? 'wifiOff' : 'info'}
+            message={t(failure === 'offline' ? 'firstRun.offline' : 'firstRun.failed')}
+          />
+        ) : null}
         <View style={styles.consent}>
           <Text variant="fine" color="inkMuted">
             {t('firstRun.consent')}
           </Text>
         </View>
-        <Button label={t('firstRun.sendCode')} disabled={!valid} onPress={send} />
+        <Button
+          label={sending ? t('firstRun.sending') : t('firstRun.sendCode')}
+          loading={sending}
+          disabled={!valid}
+          onPress={send}
+        />
       </View>
     </Frame>
   );
 }
+
+/** Where the code step is: waiting for a code, checking one, or showing that it was right. */
+type CodeStatus = 'idle' | 'checking' | 'right';
 
 /** Step 3: the code. Five wrong tries, five minutes, and a new code after a short wait, as the real thing will have. */
 function CodeStep({ phone }: { phone: string }) {
@@ -197,29 +238,49 @@ function CodeStep({ phone }: { phone: string }) {
   const [typed, setTyped] = useState('');
   const [problem, setProblem] = useState<OtpResult | null>(null);
   const [resent, setResent] = useState(false);
+  const [status, setStatus] = useState<CodeStatus>('idle');
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   // The clock for the wait before a new code, ticking once a second while this step shows.
   useEffect(() => {
-    const timer = setInterval(() => {
+    const tick = setInterval(() => {
       setNow(Date.now());
     }, 1000);
+    const waiting = timers.current;
     return () => {
-      clearInterval(timer);
+      clearInterval(tick);
+      waiting.forEach(clearTimeout);
     };
   }, []);
 
-  const submit = (code: string) => {
-    if (codeDigits(code).length !== CODE_LENGTH) return;
-    const { result, state } = checkCode(otp, code, Date.now());
-    setOtp(state);
-    if (result.kind === 'ok') {
-      verify(phone);
-      return;
-    }
-    setProblem(result);
-    setResent(false);
+  const later = (run: () => void, ms: number) => {
+    timers.current.push(setTimeout(run, ms));
   };
 
+  // Checking takes a moment, as it will with a server. A wrong code is counted and shown when the check ends; the right one
+  // turns the button into "Verified" for a beat before the welcome takes over, so the success is seen.
+  const submit = (code: string) => {
+    if (status !== 'idle' || codeDigits(code).length !== CODE_LENGTH) return;
+    const { result, state } = checkCode(otp, code, Date.now());
+    setStatus('checking');
+    setProblem(null);
+    setResent(false);
+    later(() => {
+      if (result.kind === 'ok') {
+        setStatus('right');
+        later(() => {
+          verify(phone);
+        }, VERIFIED_MS);
+        return;
+      }
+      setOtp(state);
+      setProblem(result);
+      setTyped('');
+      setStatus('idle');
+    }, CHECK_MS);
+  };
+
+  const busy = status !== 'idle';
   const wait = resendInSeconds(otp, now);
   const resend = () => {
     setOtp(sendCode(Date.now()));
@@ -245,7 +306,7 @@ function CodeStep({ phone }: { phone: string }) {
       step={3}
       title={t('firstRun.codeTitle')}
       body={t('firstRun.codeBody', { phone: formatPhone(phone) })}
-      onBack={cancelCode}
+      {...(busy ? {} : { onBack: cancelCode })}
     >
       <View style={styles.stack}>
         <Input
@@ -259,6 +320,7 @@ function CodeStep({ phone }: { phone: string }) {
             submit(code);
           }}
           error={message}
+          disabled={busy}
           keyboardType="number-pad"
           autoComplete="sms-otp"
           textContentType="oneTimeCode"
@@ -269,8 +331,16 @@ function CodeStep({ phone }: { phone: string }) {
           <Notice tone="info" icon="check" message={t('firstRun.resent')} />
         ) : null}
         <Button
-          label={t('firstRun.verify')}
-          disabled={codeDigits(typed).length !== CODE_LENGTH}
+          label={
+            status === 'checking'
+              ? t('firstRun.verifying')
+              : status === 'right'
+                ? t('firstRun.verified')
+                : t('firstRun.verify')
+          }
+          variant={status === 'right' ? 'accent' : 'primary'}
+          loading={status === 'checking'}
+          disabled={codeDigits(typed).length !== CODE_LENGTH && status === 'idle'}
           onPress={() => {
             submit(typed);
           }}
@@ -278,9 +348,11 @@ function CodeStep({ phone }: { phone: string }) {
         <View style={styles.row}>
           <Pressable
             role="button"
+            aria-disabled={busy}
+            disabled={busy}
             onPress={cancelCode}
             hitSlop={8}
-            style={styles.link}
+            style={[styles.link, busy && { opacity: 0.6 }]}
             aria-label={t('firstRun.changeNumber')}
           >
             <Text variant="strong" color="accentInk">
@@ -289,13 +361,13 @@ function CodeStep({ phone }: { phone: string }) {
           </Pressable>
           <Pressable
             role="button"
-            aria-disabled={wait > 0}
-            disabled={wait > 0}
+            aria-disabled={wait > 0 || busy}
+            disabled={wait > 0 || busy}
             onPress={resend}
             hitSlop={8}
-            style={[styles.link, wait > 0 && { opacity: 0.6 }]}
+            style={[styles.link, (wait > 0 || busy) && { opacity: 0.6 }]}
           >
-            <Text variant="strong" color={wait > 0 ? 'inkMuted' : 'accentInk'}>
+            <Text variant="strong" color={wait > 0 || busy ? 'inkMuted' : 'accentInk'}>
               {wait > 0 ? t('firstRun.resendIn', { seconds: wait }) : t('firstRun.resend')}
             </Text>
           </Pressable>

@@ -38,8 +38,12 @@ export interface Account {
   requestCode: (phone: string) => void;
   /** Back to the phone step, to change the number. */
   cancelCode: () => void;
-  /** The code was right: signed in, and the agreement logged with the time. */
+  /** The code was right: signed in, and the agreement logged with the time. The welcome screen shows over Home. */
   verify: (phone: string) => void;
+  /** The welcome screen is on, over Home. */
+  welcoming: boolean;
+  /** The welcome screen has faded away. */
+  finishWelcome: () => void;
   /** Passing the sign-in by hand, for testing (development builds). */
   skip: () => void;
   logOut: () => void;
@@ -52,6 +56,7 @@ export function AccountProvider({ children }: { children: ReactNode }) {
   const [data, setData] = useState<AccountData>(NEW_ACCOUNT);
   const [pendingPhone, setPendingPhone] = useState<string | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [welcoming, setWelcoming] = useState(false);
   // A change made before what is saved has been read back must not be written over by it.
   const touched = useRef(false);
 
@@ -77,6 +82,10 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     setData(next);
   }, []);
 
+  const finishWelcome = useCallback(() => {
+    setWelcoming(false);
+  }, []);
+
   const value: Account = {
     loaded,
     stage: stageOf(data, pendingPhone),
@@ -89,8 +98,11 @@ export function AccountProvider({ children }: { children: ReactNode }) {
     cancelCode: () => {
       setPendingPhone(null);
     },
+    welcoming,
+    finishWelcome,
     verify: (phone) => {
       setPendingPhone(null);
+      setWelcoming(true);
       change((current) => signIn(current, phone, new Date()));
     },
     skip: () => {

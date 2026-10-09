@@ -776,6 +776,13 @@
     "resend": "Send a new code",
     "changeNumber": "Change number",
     "resent": "A new code was sent.",
-    "devSkip": "Skip sign-in (testing)"
+    "devSkip": "Skip sign-in (testing)",
+    "sending": "Sending…",
+    "verifying": "Verifying…",
+    "verified": "Verified",
+    "offline": "No internet. Connect and try again.",
+    "failed": "Something went wrong. Please try again.",
+    "welcome": "Welcome to Quibo",
+    "welcomeBody": "Finding the shops near you…"
   }
 }

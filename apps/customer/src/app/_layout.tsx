@@ -5,6 +5,7 @@ import { StatusBar as NativeStatusBar, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccountProvider, useAccount } from '@/account/AccountProvider';
 import { FirstRun } from '@/account/FirstRun';
+import { Welcome } from '@/account/Welcome';
 import { AddressProvider } from '@/home/AddressProvider';
 import { CartProvider } from '@/home/CartProvider';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
@@ -65,7 +66,17 @@ function Gate() {
   // Until the shopper has chosen a language and checked their number, the first-run steps are the whole app.
   return (
     <AppSplash ready={ready}>
-      {ready ? account.stage === 'done' ? <Screens /> : <FirstRun /> : null}
+      {ready ? (
+        account.stage === 'done' ? (
+          <>
+            <Screens />
+            {/* Home is drawn underneath from the first frame; the welcome covers it until it has loaded. */}
+            {account.welcoming ? <Welcome onDone={account.finishWelcome} /> : null}
+          </>
+        ) : (
+          <FirstRun />
+        )
+      ) : null}
     </AppSplash>
   );
 }

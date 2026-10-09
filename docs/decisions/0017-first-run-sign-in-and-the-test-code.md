@@ -24,6 +24,12 @@ is a mock; it must still behave the way the real one will, and must not become a
 6. **Testers can skip.** Development builds only show "Skip sign-in (testing)" on each step. A skipped sign-in has no number, and
    Log out undoes it.
 
+7. **Waiting is shown.** The mock has no network, so short pauses stand in for it (`src/account/timing.ts`): "Send code" and
+   "Verify" show a spinner and a changed label ("Sending…", "Verifying…") and the field waits; a right code turns the button
+   into "Verified" for a beat. Sending can fail or be offline, with a notice, as the real one will.
+8. **A welcome screen, not a flash.** After "Verified" the aubergine welcome (logo, a line, a thin bar) covers Home while it loads,
+   then fades away onto the finished page. With "reduce motion" on it only covers Home briefly and does not move.
+
 ## Consequences
 
 - The number is not yet tied to an account on a server; Phase 2 replaces the mock code check and stores the account there.
