@@ -114,6 +114,27 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.muted,
     },
     tripText: { flex: 1 },
+    // The coupon card: a way into the coupons page, and what is applied or could be.
+    coupons: { overflow: 'hidden' },
+    couponRow: {
+      minHeight: 64,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+    },
+    couponNote: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+      borderTopWidth: 1,
+      borderTopColor: c.line,
+      backgroundColor: c.accentSubtle,
+    },
+    couponNoteText: { flex: 1, minWidth: 0 },
     forgot: {
       flexDirection: 'row',
       flexWrap: 'wrap',
@@ -177,7 +198,7 @@ export function CartView() {
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
   // How tall the checkout bar really is, so the list's end and the undo note clear it at any text size.
   const [dockHeight, setDockHeight] = useState(DOCK);
-  const { bill } = cart;
+  const { bill, coupon } = cart;
   const current = cart.delivery.current;
   const quick = current?.kind === 'quick';
 
@@ -229,6 +250,16 @@ export function CartView() {
 
   const rows: BillRow[] = [
     { label: t('cart.itemsRow', { count: cart.count }), amount: bill.itemTotal },
+    ...(bill.coupon !== undefined
+      ? [
+          {
+            label: t('cart.couponRow', { code: bill.coupon.code }),
+            amount: bill.coupon.discount,
+            valueLabel: `\u2212${formatRupees(bill.coupon.discount)}`,
+            positive: true,
+          },
+        ]
+      : []),
     {
       label: t('cart.deliveryKm', { km: kmLabel(SAMPLE_DISTANCE_KM) }),
       amount: bill.delivery.fee,
@@ -258,6 +289,83 @@ export function CartView() {
           <Text variant="strong" color={cart.free ? 'accentInk' : 'inkMuted'}>
             {cart.hint}
           </Text>
+        </View>
+        <View style={[styles.card, styles.coupons]}>
+          <Pressable
+            role="button"
+            onPress={() => {
+              router.push('/coupons');
+            }}
+            style={({ pressed }) => [styles.couponRow, pressed && { opacity: 0.8 }]}
+          >
+            <View style={styles.arriveIcon} aria-hidden>
+              <Icon name="percent" color={colors.accentInk} size={20} />
+            </View>
+            <View style={styles.arriveText}>
+              <Text variant="strong">{t('coupons.viewCoupons')}</Text>
+              <Text variant="small" color="inkMuted">
+                {t('coupons.title')}
+              </Text>
+            </View>
+            <Icon name="chevronRight" color={colors.inkMuted} size={18} />
+          </Pressable>
+          {coupon.applied !== undefined ? (
+            <View style={styles.couponNote}>
+              <View style={styles.couponNoteText}>
+                {coupon.applied.discount > 0 ? (
+                  <>
+                    <Text variant="strong" color="accentInk">
+                      {t('coupons.applied', { code: coupon.applied.offer.code })}
+                    </Text>
+                    <Text variant="small" color="inkMuted">
+                      {t('coupons.youSave', { amount: formatRupees(coupon.applied.discount) })}
+                    </Text>
+                  </>
+                ) : (
+                  <Text variant="strong" color="warning">
+                    {t('coupons.shortApplied', {
+                      amount: formatRupees(coupon.applied.shortBy),
+                      code: coupon.applied.offer.code,
+                    })}
+                  </Text>
+                )}
+              </View>
+              <Pressable
+                role="button"
+                hitSlop={6}
+                onPress={coupon.remove}
+                style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
+              >
+                <Text variant="strong" color="accentInk">
+                  {t('coupons.remove')}
+                </Text>
+              </Pressable>
+            </View>
+          ) : coupon.best !== undefined ? (
+            <View style={styles.couponNote}>
+              <View style={styles.couponNoteText}>
+                <Text variant="strong" color="accentInk">
+                  {t('coupons.bestFor', {
+                    amount: formatRupees(coupon.best.discount),
+                    code: coupon.best.offer.code,
+                  })}
+                </Text>
+              </View>
+              <Pressable
+                role="button"
+                hitSlop={6}
+                onPress={() => {
+                  const best = coupon.best;
+                  if (best !== undefined) coupon.apply(best.offer.code);
+                }}
+                style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
+              >
+                <Text variant="strong" color="accentInk">
+                  {t('coupons.apply')}
+                </Text>
+              </Pressable>
+            </View>
+          ) : null}
         </View>
         <View style={styles.card}>
           <View style={styles.arrive}>

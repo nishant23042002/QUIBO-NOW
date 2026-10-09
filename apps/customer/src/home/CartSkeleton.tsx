@@ -42,6 +42,14 @@ const makeStyles = (c: ThemeColors) =>
       borderBottomColor: c.line,
     },
     arriveText: { flex: 1, gap: space[1] },
+    coupon: {
+      minHeight: 64,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+    },
     name: { flex: 1, gap: space[1] },
     side: { alignItems: 'flex-end', gap: space[1] },
   });
@@ -57,6 +65,13 @@ export function CartSkeleton() {
         <View style={[styles.card, styles.free]}>
           <Skeleton height={4} rounded={radius.full} />
           <Skeleton width="60%" height={16} />
+        </View>
+        <View style={[styles.card, styles.coupon]}>
+          <Skeleton width={40} height={40} rounded={radius.md} />
+          <View style={styles.arriveText}>
+            <Skeleton width="45%" height={16} />
+            <Skeleton width="30%" height={14} />
+          </View>
         </View>
         <View style={styles.card}>
           <View style={styles.arrive}>

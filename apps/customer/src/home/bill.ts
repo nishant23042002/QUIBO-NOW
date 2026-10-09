@@ -1,4 +1,4 @@
-import { add, money, type Money } from '@quibo/contracts';
+import { add, money, subtract, type Money } from '@quibo/contracts';
 import { ZONE, type CareClass, type ZoneSettings } from './delivery';
 import { deliveryFee, type DeliveryFee, type TripConditions } from './deliveryFee';
 
@@ -11,6 +11,8 @@ export interface BillInput {
   cares: readonly CareClass[];
   /** How far, when and in what weather the order is delivered, which sets the delivery fee. */
   trip: TripConditions;
+  /** The coupon applied, and what it takes off the items. Leave out when there is none or it takes off nothing. */
+  coupon?: { code: string; discount: Money };
 }
 
 export interface Bill {
@@ -19,6 +21,8 @@ export interface Bill {
   printedTotal: Money;
   /** What the items save against their printed prices. */
   saved: Money;
+  /** The coupon taken off the items, when there is one. */
+  coupon?: { code: string; discount: Money };
   delivery: {
     /** What is charged: nothing when delivery is free. */
     fee: Money;
@@ -37,20 +41,22 @@ export interface Bill {
   };
   /** Everything the customer pays. */
   toPay: Money;
-  /** Everything the order saves: the printed-price discount plus the delivery fee waived. */
+  /** Everything the order saves: the printed-price discount, the coupon, and the delivery fee waived. */
   totalSaved: Money;
 }
 
 const ZERO = money(0);
 
 /**
- * The bill for one order. There is no minimum order: any total can be placed. Delivery costs what the trip costs (see
- * `deliveryFee`) and is free once the items reach the zone's line. The handling fee pays for care in carrying: the cart
+ * The bill for one order. There is no minimum order: any total can be placed. A coupon comes off the items. Delivery
+ * costs what the trip costs (see `deliveryFee`) and is free once the items reach the zone's line; that line is judged on
+ * the items before the coupon, so a coupon never takes free delivery away. The handling fee pays for care in carrying: the cart
  * pays for its most delicate item, plus a small surcharge on a festival day, and never more than the zone's top fee.
  * All of it is integer paise.
  */
 export function computeBill(input: BillInput, zone: ZoneSettings = ZONE): Bill {
   const { itemTotal, saved, cares, trip } = input;
+  const couponOff = input.coupon?.discount ?? ZERO;
   const empty = cares.length === 0;
 
   const parts = deliveryFee(trip, zone.delivery);
@@ -74,13 +80,14 @@ export function computeBill(input: BillInput, zone: ZoneSettings = ZONE): Bill {
     itemTotal,
     printedTotal: add(itemTotal, saved),
     saved,
+    ...(input.coupon !== undefined && couponOff > 0 ? { coupon: input.coupon } : {}),
     delivery: { fee: charged, free, waived, parts },
     handling: {
       fee: handlingFee,
       ...(reason !== undefined ? { reason } : {}),
       festival: surcharged,
     },
-    toPay: add(add(itemTotal, charged), handlingFee),
-    totalSaved: add(saved, waived),
+    toPay: add(add(subtract(itemTotal, couponOff), charged), handlingFee),
+    totalSaved: add(add(saved, couponOff), waived),
   };
 }

@@ -128,8 +128,10 @@ _Goal: Home runs on mock data through the same path the live API will use._
   trip and is capped at 30 rupees, a handling fee under 18 rupees set by the most delicate item, a plain bill with
   "Why this price?", the savings strip, the checkout bar; fees and limits live in `ZONE` in `home/delivery.ts`). B (done, then reshaped by ADR 0012: quick delivery is the default with an estimate in minutes, and "Schedule" opens
   the page for one-hour windows today and tomorrow; windows too soon to pack removed, full ones locked, each window shows
-  its delivery fee; the choice is kept on the phone and feeds the delivery fee). C: coupons
-  and offers (placeholders). D: tip, delivery instructions, "You might also like". E: trust extras (one-trip strip,
+  its delivery fee; the choice is kept on the phone and feeds the delivery fee). C (done):
+  coupons and offers as placeholders: a coupon card on the cart that suggests the best coupon, a coupons page with a code field and
+  three sample coupons (percent with a limit, flat, small-order), applying and removing, a coupon row in the bill and in the
+  savings, kept on the phone; free delivery is judged before the coupon. D: tip, delivery instructions, "You might also like". E: trust extras (one-trip strip,
   verified shops, price promise, refund for lighter weight, easy problems, safe handover code, save for later and
   share, delivering-to strip). F: loose items sold by weight and the "if unavailable" choice. G: offline and error
   states, accessibility, large text, Hindi and Marathi review.

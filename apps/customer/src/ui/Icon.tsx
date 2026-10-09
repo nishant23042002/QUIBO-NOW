@@ -32,6 +32,7 @@ const SHAPES = {
     path('M18 2.8l.8 2.4 2.4.8-2.4.8-.8 2.4-.8-2.4-2.4-.8 2.4-.8z'),
   ],
   close: [path('M6 6l12 12M18 6L6 18')],
+  percent: [path('M19 5L5 19'), ring(7.5, 7.5, 2.6), ring(16.5, 16.5, 2.6)],
   calendar: [path('M5 6.5h14V20H5z'), path('M5 10.5h14'), path('M8.5 4v4M15.5 4v4')],
   clock: [ring(12, 12, 9), path('M12 7v5.5l3.5 2')],
   sun: [

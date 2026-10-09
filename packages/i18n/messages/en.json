@@ -608,6 +608,31 @@
     "scheduleSub": "Select a slot",
     "viewItems": "View items",
     "yourItems": "Your items",
-    "feeLine": "Delivery {amount}"
+    "feeLine": "Delivery {amount}",
+    "couponRow": "Coupon {code}"
+  },
+  "coupons": {
+    "title": "Coupons & offers",
+    "viewCoupons": "View coupons",
+    "applied": "{code} applied",
+    "youSave": "You save {amount}",
+    "remove": "Remove",
+    "apply": "Apply",
+    "appliedBadge": "Applied",
+    "bestFor": "Save {amount} with {code}",
+    "shortApplied": "Add {amount} more to use {code}",
+    "addMore": "Add {amount} more",
+    "codeLabel": "Coupon code",
+    "codePlaceholder": "For example SAVE30",
+    "invalid": "This code is not valid.",
+    "sample": "These are sample offers while the app is being built. Real offers come later.",
+    "percentOff": "{percent}% off up to {max}",
+    "flatOff": "{amount} off",
+    "minOrder": "On orders of {amount} or more",
+    "descWelcome": "A treat for your first orders",
+    "descSave": "Bigger baskets save more",
+    "descSmall": "Even a small order can save",
+    "emptyTitle": "No offers right now",
+    "emptyBody": "Check back soon."
   }
 }

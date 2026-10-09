@@ -131,6 +131,12 @@ export function SavingsDetails({ bill }: { bill: Bill }) {
         </Text>
       </View>
       {bill.saved > 0 ? <Line label={t('cart.savingsPrinted')} amount={bill.saved} /> : null}
+      {bill.coupon !== undefined ? (
+        <Line
+          label={t('cart.couponRow', { code: bill.coupon.code })}
+          amount={bill.coupon.discount}
+        />
+      ) : null}
       {bill.delivery.free ? (
         <Line label={t('cart.savingsDelivery')} amount={bill.delivery.waived} />
       ) : null}

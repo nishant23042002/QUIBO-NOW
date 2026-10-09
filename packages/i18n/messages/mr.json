@@ -608,6 +608,31 @@
     "scheduleSub": "वेळ निवडा",
     "viewItems": "वस्तू पहा",
     "yourItems": "तुमच्या वस्तू",
-    "feeLine": "डिलिव्हरी {amount}"
+    "feeLine": "डिलिव्हरी {amount}",
+    "couponRow": "कूपन {code}"
+  },
+  "coupons": {
+    "title": "कूपन आणि ऑफर",
+    "viewCoupons": "कूपन पहा",
+    "applied": "{code} लागू झाला",
+    "youSave": "तुम्ही {amount} वाचवाल",
+    "remove": "काढा",
+    "apply": "लावा",
+    "appliedBadge": "लागू",
+    "bestFor": "{code} वापरून {amount} वाचवा",
+    "shortApplied": "{code} साठी आणखी {amount} जोडा",
+    "addMore": "आणखी {amount} जोडा",
+    "codeLabel": "कूपन कोड",
+    "codePlaceholder": "उदा. SAVE30",
+    "invalid": "हा कोड बरोबर नाही.",
+    "sample": "हे सध्या नमुना ऑफर आहेत. खऱ्या ऑफर नंतर येतील.",
+    "percentOff": "{max} पर्यंत {percent}% सूट",
+    "flatOff": "{amount} सूट",
+    "minOrder": "{amount} किंवा जास्तीच्या ऑर्डरवर",
+    "descWelcome": "तुमच्या पहिल्या ऑर्डरसाठी भेट",
+    "descSave": "मोठ्या ऑर्डरवर जास्त बचत",
+    "descSmall": "छोट्या ऑर्डरवरही बचत",
+    "emptyTitle": "सध्या कोणतीही ऑफर नाही",
+    "emptyBody": "थोड्या वेळाने पहा."
   }
 }

@@ -10,6 +10,7 @@ import { FREE_DELIVERY_FROM, SAMPLE_DISTANCE_KM } from './delivery';
 import { useConditions } from './conditions';
 import { capQuantity } from './packs';
 import { quickEta, type QuickEta } from './quick';
+import { useCoupon, type CouponState } from './useCoupon';
 import { useSlotChoice, type SlotState } from './useSlotChoice';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
@@ -66,6 +67,8 @@ export interface DraftCart {
   savedLabel?: string;
   /** What the order comes to: items, delivery, handling, and what is saved. All integer paise. */
   bill: Bill;
+  /** The coupon: what is on offer, which one is applied, and what it takes off. */
+  coupon: CouponState;
   /** When the order arrives: quick delivery (the default) or a window the shopper picked, kept on the phone. */
   delivery: DeliveryState;
   /** What is in the cart, latest first: for the little pictures in the cart bar. */
@@ -190,6 +193,7 @@ export function useDraftCart(): DraftCart {
     quantity: quantities[packId] ?? 0,
   }));
   const sum = summariseCart(entries);
+  const coupon = useCoupon(sum.total);
   const bill = computeBill({
     itemTotal: sum.total,
     saved: sum.saved,
@@ -203,6 +207,9 @@ export function useDraftCart(): DraftCart {
       rain: conditions.rain,
       rush: conditions.rush,
     },
+    ...(coupon.applied !== undefined && coupon.discount > 0
+      ? { coupon: { code: coupon.applied.offer.code, discount: coupon.discount } }
+      : {}),
   });
 
   const lineTotals = new Map(
@@ -251,6 +258,7 @@ export function useDraftCart(): DraftCart {
       : t('home.cart.freeNeed', { amount: formatRupees(remaining) }),
     progress: Math.min(Number(sum.total) / Number(FREE_DELIVERY_FROM), 1),
     bill,
+    coupon,
     delivery: {
       ...delivery,
       eta: quickEta({

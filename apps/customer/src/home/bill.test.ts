@@ -70,6 +70,27 @@ describe('computeBill', () => {
     }
   });
 
+  it('takes a coupon off the items, counts it as a saving, and never touches free delivery', () => {
+    const bill = computeBill(input({ coupon: { code: 'SAVE30', discount: money(3_000) } }));
+    expect(bill.coupon).toEqual({ code: 'SAVE30', discount: 3_000 });
+    expect(bill.toPay).toBe(12_000 - 3_000 + 2_000 + 1_000);
+    expect(bill.totalSaved).toBe(500 + 3_000);
+    // The price with no offers at all is what the bill would be with the coupon and the printed-price discounts undone.
+    expect(bill.toPay + bill.totalSaved).toBe(12_000 + 500 + 2_000 + 1_000);
+    // Items of 199 rupees are free delivery; a coupon that brings them below that does not take it away.
+    const free = computeBill(
+      input({ itemTotal: money(19_900), coupon: { code: 'SAVE30', discount: money(3_000) } }),
+    );
+    expect(free.delivery.free).toBe(true);
+    expect(free.toPay).toBe(19_900 - 3_000 + 1_000);
+  });
+
+  it('leaves the coupon out when it takes off nothing', () => {
+    const bill = computeBill(input({ coupon: { code: 'SAVE30', discount: money(0) } }));
+    expect(bill.coupon).toBeUndefined();
+    expect(bill.toPay).toBe(12_000 + 2_000 + 1_000);
+  });
+
   it('is all zero for an empty cart', () => {
     const bill = computeBill(
       input({ itemTotal: money(0), saved: money(0), cares: [] }, { festival: true }),
