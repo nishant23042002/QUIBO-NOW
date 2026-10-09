@@ -204,7 +204,10 @@
       "rushNow": "Rush hour now",
       "partnerShops": "Partner shops",
       "darkStore": "One dark store"
-    }
+    },
+    "account": "Your account",
+    "signedIn": "Signed in as {phone}",
+    "logout": "Log out"
   },
   "nav": {
     "home": "Home",
@@ -748,5 +751,31 @@
     "pinMissing": "Place the pin on the map",
     "selectedNote": "Your order will be delivered to this address.",
     "savedNote": "Address saved"
+  },
+  "firstRun": {
+    "progress": "Step {n} of {total}",
+    "continue": "Continue",
+    "languageTitle": "Choose your language",
+    "languageBody": "You can change it any time in your profile.",
+    "phoneTitle": "Enter your mobile number",
+    "phoneBody": "We will send you a code to check it is you.",
+    "phoneLabel": "Mobile number",
+    "phoneHint": "Ten digits, for example 98765 43210",
+    "badPhone": "Enter a 10-digit mobile number",
+    "consent": "By continuing you agree to the Quibo terms and privacy notice. We keep only what we need to deliver your order.",
+    "sendCode": "Send code",
+    "codeTitle": "Enter the code",
+    "codeBody": "We sent a 6-digit code to {phone}.",
+    "codeLabel": "6-digit code",
+    "verify": "Verify",
+    "wrongMany": "That code is not right. {left} tries left.",
+    "wrongOne": "That code is not right. 1 try left.",
+    "expired": "This code has expired. Send a new one.",
+    "locked": "Too many wrong tries. Send a new code.",
+    "resendIn": "Send a new code in {seconds} s",
+    "resend": "Send a new code",
+    "changeNumber": "Change number",
+    "resent": "A new code was sent.",
+    "devSkip": "Skip sign-in (testing)"
   }
 }

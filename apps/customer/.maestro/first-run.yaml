@@ -1,0 +1,58 @@
+# First launch to a saved address: choose a language, check a phone number with the test code, then add an address and have it chosen.
+#
+# Run it against the app open in Expo Go, on a fresh install so nothing is saved:
+#   maestro test apps/customer/.maestro/first-run.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (first run and address, 1e). It has not been run yet: the Maestro tool is not installed on the machine this was
+# written on. The test code is the one fixture the mock sign-in accepts (see src/account/otp.ts).
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+
+# The language, in the three languages, English first.
+- assertVisible: 'Choose your language'
+- tapOn: 'Continue'
+
+# The mobile number: a wrong one cannot be sent.
+- assertVisible: 'Enter your mobile number'
+- tapOn: 'Mobile number'
+- inputText: '5876543210'
+- assertVisible: 'Enter a 10-digit mobile number'
+- eraseText: 10
+- inputText: '9876543210'
+- tapOn: 'Send code'
+
+# The code: a wrong one is refused and counted, the right one signs in.
+- assertVisible: 'Enter the code'
+- tapOn: '6-digit code'
+- inputText: '000000'
+- assertVisible: 'That code is not right.*'
+- eraseText: 6
+- inputText: '123456'
+
+# Home, then the address list from the header.
+- assertVisible: 'Delivering in.*|Arriving.*'
+- tapOn: 'Deliver to.*'
+- assertVisible: 'Delivery address'
+- tapOn: 'Add new address'
+
+# The form: nothing can be saved until the required fields and the pin are there.
+- tapOn: 'Save address'
+- assertVisible: 'Please fill this in'
+- tapOn: 'House or flat'
+- inputText: '7B'
+- tapOn: 'Street or area'
+- inputText: 'Market Road'
+- tapOn: 'Ward or mohalla'
+- inputText: 'Ward 2'
+- hideKeyboard
+- scrollUntilVisible:
+    element: 'Use the town centre'
+- tapOn: 'Use the town centre'
+- tapOn: 'Save address'
+
+# Saved, chosen, and the list says so.
+- assertVisible: 'Delivering here'
+- assertVisible: '7B, Market Road'

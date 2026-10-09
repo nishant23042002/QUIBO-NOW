@@ -176,12 +176,20 @@ _Goal: Home runs on mock data through the same path the live API will use._
 
 ### 1e. First run and address: language, phone OTP, address
 
-**Progress.** The address half is built (the first-run language, phone and OTP screens come next). The saved addresses are kept on
+**Progress.** Both halves are built: the first-run flow (language, mobile number, code; ADR 0017) and the addresses. The saved addresses are kept on
 the phone and the chosen one feeds Home's header, the product page and the cart through `useDeliveryAddress`, so choosing one
 changes all of them. The address list lets the shopper choose, change or remove an address (removal asks once, in place); the form takes a name
 (Home, Work, Other), house, street, ward, an optional landmark and second number, and a pin on a drawn map of the delivery area.
 The pin is checked against mock zone shapes: an address outside shows "we do not deliver here yet" and cannot be saved or chosen
 (ADR 0016). Phone validation and the zone check are plain logic with tests.
+
+The first run is three steps before anything else shows: the language (choosing one changes the words at once), a mobile number
+(ten digits, checked as it is typed, with the agreement under it), and a six-digit code. The mock accepts one fixed test code, kept in
+`src/account/otp.ts` and never shown on a screen or written to a log; a code lasts five minutes, five wrong tries are allowed, and a
+new one can be asked for after thirty seconds. Signing in logs when the shopper agreed and to which wording. Profile shows the
+number and has Log out, which forgets the number and the agreement but keeps the language. Development builds have a "Skip
+sign-in (testing)" link on each step. The Maestro flow `first-run.yaml` goes from first launch to a saved address; it is written
+and has not been run, because the tool is not installed here.
 
 - **Build:** **language** screen (en, hi, mr), **phone and OTP** (mock: one fixed test OTP in the dev fixtures, a
   resend timer, wrong-code and expired-code errors; consent text and log, never logs the OTP), and the **address**

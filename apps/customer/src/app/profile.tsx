@@ -1,11 +1,23 @@
 import { LOCALES, messages } from '@quibo/i18n';
 import { useRouter } from 'expo-router';
+import { View } from 'react-native';
 import { setConditions, useConditions } from '@/home/conditions';
 import { SETTINGS_LOAD_MS, SETTINGS_POLICY } from '@/home/loading';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme, type Mode } from '@/theme';
 import { armFailNext, setSimulatedOffline, useFailNextArmed, useSimulatedOffline } from '@/network';
-import { Button, LoadGate, OptionGroup, ProfileSkeleton, Screen, useScreenLoad } from '@/ui';
+import { useAccount } from '@/account/AccountProvider';
+import { formatPhone } from '@/home/phone';
+import {
+  Button,
+  LoadGate,
+  OptionGroup,
+  ProfileSkeleton,
+  Screen,
+  Text,
+  space,
+  useScreenLoad,
+} from '@/ui';
 
 const MODES: readonly Mode[] = ['system', 'light', 'dark'];
 
@@ -35,10 +47,21 @@ function Settings() {
   const router = useRouter();
   const offline = useSimulatedOffline();
   const failArmed = useFailNextArmed();
+  const account = useAccount();
   const conditions = useConditions();
 
   return (
     <Screen>
+      {/* Who is signed in, and a way out. A tester who skipped the sign-in has no number to show but can still sign out. */}
+      <View style={{ gap: space[2] }}>
+        <Text variant="strong" color="inkMuted">
+          {t('profile.account')}
+        </Text>
+        {account.phone !== null ? (
+          <Text>{t('profile.signedIn', { phone: formatPhone(account.phone) })}</Text>
+        ) : null}
+        <Button label={t('profile.logout')} variant="secondary" onPress={account.logOut} />
+      </View>
       <OptionGroup
         title={t('language.label')}
         options={LOCALES.map((value) => ({ value, label: messages[value].language[value] }))}

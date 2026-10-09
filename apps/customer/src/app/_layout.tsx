@@ -3,6 +3,8 @@ import { NavigationBar } from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
 import { StatusBar as NativeStatusBar, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { AccountProvider, useAccount } from '@/account/AccountProvider';
+import { FirstRun } from '@/account/FirstRun';
 import { AddressProvider } from '@/home/AddressProvider';
 import { CartProvider } from '@/home/CartProvider';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
@@ -57,9 +59,15 @@ const styles = StyleSheet.create({
 function Gate() {
   const theme = useTheme();
   const language = useLanguage();
-  const ready = theme.ready && language.ready;
+  const account = useAccount();
+  const ready = theme.ready && language.ready && account.loaded;
 
-  return <AppSplash ready={ready}>{ready ? <Screens /> : null}</AppSplash>;
+  // Until the shopper has chosen a language and checked their number, the first-run steps are the whole app.
+  return (
+    <AppSplash ready={ready}>
+      {ready ? account.stage === 'done' ? <Screens /> : <FirstRun /> : null}
+    </AppSplash>
+  );
 }
 
 /** The status bar and the navigation buttons stay readable on whatever is drawn behind them. */
@@ -83,11 +91,13 @@ export default function RootLayout() {
     <ThemeProvider>
       <LanguageProvider>
         <SystemBars />
-        <AddressProvider>
-          <CartProvider>
-            <Gate />
-          </CartProvider>
-        </AddressProvider>
+        <AccountProvider>
+          <AddressProvider>
+            <CartProvider>
+              <Gate />
+            </CartProvider>
+          </AddressProvider>
+        </AccountProvider>
       </LanguageProvider>
     </ThemeProvider>
   );
