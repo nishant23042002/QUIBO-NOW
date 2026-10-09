@@ -102,6 +102,9 @@
       "add": "ADD",
       "removeOne": "Remove one",
       "addOne": "Add one",
+      "addNamed": "Add {name}",
+      "removeOneOf": "Remove one {name}",
+      "addOneOf": "Add one {name}",
       "off": "OFF",
       "outOfStock": "Out of stock",
       "onlyLeft": "Only {count} left",
@@ -567,6 +570,7 @@
     "whyFree": "Your items come to {amount} or more, so delivery is free. It would have cost {fee}.",
     "whyTrim": "Kept at our top fee",
     "savedShort": "saved {amount}",
+    "offlineShort": "No internet",
     "arrivingToday": "Arriving today, {window}",
     "arrivingTomorrow": "Arriving tomorrow, {window}",
     "arrivingNote": "All items arrive together.",
@@ -608,7 +612,8 @@
     "couponRow": "Coupon {code}",
     "slotGone": "The time you picked is no longer available, so your order is set for {when}.",
     "quickClosedNote": "Quick delivery is closed for now, so your order is set for {when}.",
-    "nowQuick": "quick delivery"
+    "nowQuick": "quick delivery",
+    "changeTimeLabel": "Change delivery time"
   },
   "coupons": {
     "title": "Coupons & offers",
@@ -636,7 +641,10 @@
     "dropped": "{code} was taken off. Add {amount} more to use it again.",
     "better": "Save {amount} more with {code}",
     "switch": "Switch",
-    "bestBadge": "Best saving"
+    "bestBadge": "Best saving",
+    "removeNamed": "Remove coupon {code}",
+    "switchTo": "Switch to {code}",
+    "applyNamed": "Apply coupon {code}"
   },
   "extras": {
     "tabTip": "Tip",
@@ -688,7 +696,8 @@
     "moveToCart": "Move to cart",
     "savedRemove": "Remove from saved",
     "share": "Share cart",
-    "shareMessage": "My Quibo Now cart: {items}. Total {total}."
+    "shareMessage": "My Quibo Now cart: {items}. Total {total}.",
+    "changeAddress": "Change delivery address"
   },
   "weights": {
     "perKg": "per kg",

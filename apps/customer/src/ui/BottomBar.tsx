@@ -26,6 +26,8 @@ export interface BottomBarProps {
 const PILL_WIDTH = 56;
 const PILL_HEIGHT = 30;
 const BADGE_SIZE = 20;
+/** The bar is a fixed height, so its names grow with the phone's text size only this far. */
+const LABEL_SCALE_MAX = 1.2;
 /** The most a count shows before it reads "99+". */
 const BADGE_MAX = 99;
 
@@ -129,6 +131,7 @@ export function BottomBar({ tabs, activeKey, onSelect }: BottomBarProps) {
               variant={active ? 'caption' : 'fine'}
               color={active ? 'action' : 'inkMuted'}
               numberOfLines={1}
+              maxFontSizeMultiplier={LABEL_SCALE_MAX}
             >
               {tab.label}
             </Text>

@@ -40,7 +40,13 @@ export interface ProductCardProps {
   onPress?: () => void;
   stepper: Pick<
     StepperProps,
-    'addLabel' | 'decreaseLabel' | 'increaseLabel' | 'maxLabel' | 'rule' | 'unitLabel'
+    | 'addLabel'
+    | 'addAriaLabel'
+    | 'decreaseLabel'
+    | 'increaseLabel'
+    | 'maxLabel'
+    | 'rule'
+    | 'unitLabel'
   >;
 }
 

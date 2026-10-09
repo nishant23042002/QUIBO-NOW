@@ -44,6 +44,9 @@ export interface CartFloatProps {
   bottom: number;
 }
 
+/** The bar stays on screen over every page, so its text grows with the phone's text size only this far. */
+const SCALE_MAX = 1.3;
+
 const HIDDEN_BY = 140;
 const FILL = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const;
 const THUMB = 34;
@@ -249,13 +252,23 @@ export function CartFloat({
         <View style={styles.strip} aria-hidden>
           <View style={styles.stripBg} />
           <View style={styles.stripHint}>
-            <Text variant="caption" color="onChrome" numberOfLines={1}>
+            <Text
+              variant="caption"
+              color="onChrome"
+              numberOfLines={1}
+              maxFontSizeMultiplier={SCALE_MAX}
+            >
               {hint}
             </Text>
           </View>
           {savedLabel !== undefined ? (
             <View style={styles.saved}>
-              <Text variant="caption" color="accent" numberOfLines={1}>
+              <Text
+                variant="caption"
+                color="accent"
+                numberOfLines={1}
+                maxFontSizeMultiplier={SCALE_MAX}
+              >
                 {savedLabel}
               </Text>
             </View>
@@ -282,13 +295,23 @@ export function CartFloat({
             ) : null}
           </View>
           <View style={styles.text}>
-            <Text variant="label" color="onChrome" numberOfLines={1}>
+            <Text
+              variant="label"
+              color="onChrome"
+              numberOfLines={1}
+              maxFontSizeMultiplier={SCALE_MAX}
+            >
               {`${itemsLabel} · ${totalLabel}`}
             </Text>
             <View style={styles.shopRow}>
               <Icon name="store" color={colors.onChromeMuted} size={14} />
               <View style={styles.stripHint}>
-                <Text variant="small" color="onChromeMuted" numberOfLines={1}>
+                <Text
+                  variant="small"
+                  color="onChromeMuted"
+                  numberOfLines={1}
+                  maxFontSizeMultiplier={SCALE_MAX}
+                >
                   {shopLabel}
                 </Text>
               </View>
@@ -315,7 +338,12 @@ export function CartFloat({
                 setButtonWidth(event.nativeEvent.layout.width);
               }}
             >
-              <Text variant="strong" color="onAccent" numberOfLines={1}>
+              <Text
+                variant="strong"
+                color="onAccent"
+                numberOfLines={1}
+                maxFontSizeMultiplier={SCALE_MAX}
+              >
                 {actionLabel}
               </Text>
               {reduceMotion || buttonWidth === 0 ? null : (

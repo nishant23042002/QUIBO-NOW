@@ -34,7 +34,7 @@ const makeStyles = (_c: ThemeColors) =>
       borderBottomRightRadius: radius.lg,
       opacity: 0.15,
     },
-    row: { height: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    row: { minHeight: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center', gap: space[2] },
     // Pulled out by the circle's inset, so the circle's outer edge lines up with the page's cards.
     back: { marginLeft: -CIRCLE_INSET },
     title: { flex: 1, minWidth: 0 },
@@ -79,7 +79,7 @@ export function CartHeader({
           <IconButton icon="back" label={backLabel} onPress={onBack} ground="header" />
         </View>
         <View style={styles.title}>
-          <Text variant="label" color="onHeader" numberOfLines={1} role="heading">
+          <Text variant="label" color="onHeader" numberOfLines={2} role="heading">
             {title}
           </Text>
           {subtitle !== undefined ? (

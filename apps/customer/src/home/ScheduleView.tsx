@@ -16,6 +16,7 @@ import {
   Text,
   radius,
   space,
+  useLargeText,
   useScreenLoad,
   type SlotGroupData,
 } from '@/ui';
@@ -56,7 +57,13 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.line,
       backgroundColor: c.surface,
     },
-    order: { flexDirection: 'row', alignItems: 'center', gap: space[3], padding: space[4] },
+    order: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      gap: space[3],
+      padding: space[4],
+    },
     thumbs: { flexDirection: 'row' },
     thumb: {
       width: THUMB,
@@ -67,11 +74,15 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    orderText: { flex: 1, minWidth: 0 },
+    // Takes what is left, but not less than a readable word: with large text "View items" drops under it.
+    orderText: { flexGrow: 1, flexShrink: 1, flexBasis: 80, minWidth: 0 },
     link: { minHeight: 36, justifyContent: 'center' },
     options: { flexDirection: 'row', gap: space[3] },
+    // With large text the two choices are stacked, each as wide as the page, instead of squeezed side by side.
+    optionsStacked: { flexDirection: 'column' },
+    // Side by side, the two choices share the width equally.
+    optionHalf: { flex: 1 },
     option: {
-      flex: 1,
       minHeight: 88,
       padding: space[3],
       borderWidth: 1.5,
@@ -82,7 +93,7 @@ const makeStyles = (c: ThemeColors) =>
     optionOn: { borderColor: c.action, backgroundColor: c.accentSubtle },
     optionOff: { opacity: 0.55, borderColor: c.line },
     // The text on the left, and the icon centred on the right, so the icon never depends on how many lines the title takes.
-    optionRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    optionRow: { flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: space[2] },
     optionText: { flex: 1, minWidth: 0, gap: space[1] },
     // The calendar gets a tile the size of the Q tile on the other card, so the two cards match.
     optionIcon: {
@@ -141,6 +152,7 @@ function SchedulePage() {
   const tintOf = useTintOf();
   const conditions = useConditions();
   const text = useSlotText();
+  const large = useLargeText();
   const { now, eta, quickOpen } = cart.delivery;
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
 
@@ -264,7 +276,7 @@ function SchedulePage() {
             </Pressable>
           </View>
         ) : null}
-        <View style={styles.options} role="radiogroup">
+        <View style={[styles.options, large && styles.optionsStacked]} role="radiogroup">
           <Pressable
             role="radio"
             aria-checked={quick}
@@ -275,6 +287,7 @@ function SchedulePage() {
             }}
             style={({ pressed }) => [
               styles.option,
+              !large && styles.optionHalf,
               quick && styles.optionOn,
               !quickOpen && styles.optionOff,
               pressed && styles.pressed,
@@ -308,6 +321,7 @@ function SchedulePage() {
             }}
             style={({ pressed }) => [
               styles.option,
+              !large && styles.optionHalf,
               !quick && styles.optionOn,
               pressed && styles.pressed,
             ]}

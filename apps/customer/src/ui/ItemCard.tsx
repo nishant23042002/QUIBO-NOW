@@ -26,7 +26,7 @@ export interface ItemCardProps {
   /** Text for the stepper's buttons, and the rule for count or weight. */
   stepper: Pick<
     StepperProps,
-    'addLabel' | 'decreaseLabel' | 'increaseLabel' | 'rule' | 'unitLabel'
+    'addLabel' | 'addAriaLabel' | 'decreaseLabel' | 'increaseLabel' | 'rule' | 'unitLabel'
   >;
 }
 

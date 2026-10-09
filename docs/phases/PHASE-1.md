@@ -155,8 +155,16 @@ _Goal: Home runs on mock data through the same path the live API will use._
   item cards and the cart all say when and where the order goes through one source (`useDeliveryWhen` and
   `useDeliveryAddress`), so they cannot disagree: quick delivery with its estimate in minutes, or the window the shopper picked,
   and the one delivery address. The address on Home opens the address page; choosing an address in 1e will change all of them
-  at once. G: offline and error
-  states, accessibility, large text, Hindi and Marathi review.
+  at once. G (done, apart from what only a phone can show): with no network, Continue waits (with "No internet" under the
+  total) while the cart itself still works; headers grow with the text instead of clipping it; rows that held a button beside text
+  (the delivery line, the items, the checkout bar, the price bar on a product page, coupon cards) wrap the button under the text
+  at large sizes; the delivery choices stack; compact controls and the bars that stay on screen (stepper, bottom bar, cart bar,
+  banners) stop growing at 1.2 to 1.3 times. For screen readers: every stepper and ADD names its item, the coupon actions name the
+  coupon, "Change" says what it changes, chips say "pressed", the checkout bar total is read again when it changes, and steppers
+  have a full 48 dp touch area. A Maestro flow for the cart is written (`apps/customer/.maestro/cart.yaml`) and has not been run
+  because the tool is not installed here. Still open: a native speaker for the Hindi and Marathi wording; the real text-size
+  setting on a phone (here it was tried by scaling the text up to 2 times); and `@react-native-community/netinfo`, so a real
+  phone knows when it is offline.
 
 ### 1e. First run and address: language, phone OTP, address
 

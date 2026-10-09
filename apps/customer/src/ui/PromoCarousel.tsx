@@ -41,6 +41,8 @@ const GAP = space[3];
  */
 const SIDE = space[8] - space[1];
 const CARD_HEIGHT = 104;
+/** The card is a fixed height, so its words grow with the phone's text size only this far. */
+const SCALE_MAX = 1.2;
 const AUTO_MS = 4200;
 /** After a person touches the row, it waits this long before sliding on its own again. */
 const IDLE_MS = 7000;
@@ -201,10 +203,15 @@ function PromoCard({ slide, width, onPress }: PromoCardProps) {
       ]}
     >
       <View style={styles.text}>
-        <Text variant="label" color={look.title} numberOfLines={2}>
+        <Text
+          variant="label"
+          color={look.title}
+          numberOfLines={2}
+          maxFontSizeMultiplier={SCALE_MAX}
+        >
           {slide.title}
         </Text>
-        <Text variant="small" color={look.body} numberOfLines={1}>
+        <Text variant="small" color={look.body} numberOfLines={1} maxFontSizeMultiplier={SCALE_MAX}>
           {slide.body}
         </Text>
       </View>

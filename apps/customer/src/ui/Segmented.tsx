@@ -102,7 +102,12 @@ export function Segmented({ options, value, onChange }: SegmentedProps) {
             }}
             style={styles.option}
           >
-            <Text variant="strong" color={active ? 'ink' : 'inkMuted'} numberOfLines={1}>
+            <Text
+              variant="strong"
+              color={active ? 'ink' : 'inkMuted'}
+              align="center"
+              numberOfLines={2}
+            >
               {option.label}
             </Text>
           </Pressable>

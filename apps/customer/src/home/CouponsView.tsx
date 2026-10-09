@@ -37,10 +37,11 @@ const makeStyles = (c: ThemeColors) =>
     },
     entry: { gap: space[3], padding: space[4] },
     offer: { gap: space[3], padding: space[4] },
-    offerTop: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-    offerText: { flex: 1, minWidth: 0, gap: space[1] },
-    action: { alignItems: 'flex-end', gap: space[1] },
-    offerBottom: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
+    // Wraps: with large text the button (or the "add more" line) drops under the offer instead of squeezing it.
+    offerTop: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space[3] },
+    offerText: { flexGrow: 1, flexShrink: 1, flexBasis: 120, minWidth: 0, gap: space[1] },
+    action: { alignItems: 'flex-end', gap: space[1], marginLeft: 'auto' },
+    offerBottom: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space[3] },
     // The code, in a dashed box like a coupon you could cut out.
     code: {
       paddingHorizontal: space[3],

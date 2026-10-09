@@ -86,6 +86,7 @@ export { Segmented, type SegmentedOption, type SegmentedProps } from './Segmente
 export { ShineSweep, type ShineSweepProps } from './ShineSweep';
 export { useReduceMotion } from './useReduceMotion';
 export { useScreenFocused } from './useScreenFocused';
+export { useLargeText } from './useLargeText';
 export { Sheet, type SheetProps } from './Sheet';
 export {
   SlotPicker,

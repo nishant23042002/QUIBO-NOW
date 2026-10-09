@@ -51,8 +51,9 @@ export function ItemTile({
       }}
       stepper={{
         addLabel: t('home.rails.add'),
-        decreaseLabel: t('home.rails.removeOne'),
-        increaseLabel: t('home.rails.addOne'),
+        addAriaLabel: t('home.rails.addNamed', { name: item.name }),
+        decreaseLabel: t('home.rails.removeOneOf', { name: item.name }),
+        increaseLabel: t('home.rails.addOneOf', { name: item.name }),
         maxLabel: t('home.rails.noMore'),
         rule: item.loose === true ? WEIGHT_RULE : countRule(item.maxQuantity),
         ...(item.loose === true ? { unitLabel: t('weights.kg') } : {}),

@@ -20,7 +20,7 @@ export interface AppHeaderProps {
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     bar: { backgroundColor: c.chrome },
-    row: { height: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center' },
+    row: { minHeight: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center' },
     back: { marginLeft: -space[2] },
     title: { flex: 1 },
     spacer: { flex: 1 },
@@ -58,7 +58,7 @@ export function AppHeader({ logoLabel, title, onBack, backLabel }: AppHeaderProp
         {logoLabel !== undefined ? <HeaderLogo label={logoLabel} /> : null}
         {title !== undefined ? (
           <View style={styles.title}>
-            <Text variant="label" color="onChrome" numberOfLines={1} role="heading">
+            <Text variant="label" color="onChrome" numberOfLines={2} role="heading">
               {title}
             </Text>
           </View>

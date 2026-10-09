@@ -38,6 +38,7 @@ import {
   useKeyboardVisible,
   useReduceMotion,
   useScreenFocused,
+  useLargeText,
   useScreenLoad,
   type BillRow,
 } from '@/ui';
@@ -82,7 +83,9 @@ const makeStyles = (c: ThemeColors) =>
       minHeight: LINE_HEIGHT,
       paddingVertical: space[2],
       flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'center',
+      rowGap: space[2],
       gap: space[3],
       paddingHorizontal: space[4],
     },
@@ -90,7 +93,9 @@ const makeStyles = (c: ThemeColors) =>
     // When it arrives, at the top of the items it is about, with a way to change it.
     arrive: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'center',
+      rowGap: space[2],
       gap: space[3],
       paddingHorizontal: space[4],
       paddingVertical: space[3],
@@ -106,7 +111,8 @@ const makeStyles = (c: ThemeColors) =>
       borderWidth: 1,
       borderColor: c.line,
     },
-    arriveText: { flex: 1, minWidth: 0 },
+    // Takes what is left, but not less than a readable line: with large text the button drops under it instead of squeezing it.
+    arriveText: { flexGrow: 1, flexShrink: 1, flexBasis: 100, minWidth: 0 },
     change: {
       minHeight: 40,
       flexDirection: 'row',
@@ -150,8 +156,9 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    name: { flex: 1, minWidth: 0 },
-    side: { alignItems: 'flex-end', gap: space[1] },
+    name: { flexGrow: 1, flexShrink: 1, flexBasis: 100, minWidth: 0 },
+    // The stepper and the price: on their own line under the name, at the right, when large text leaves no room beside it.
+    side: { alignItems: 'flex-end', gap: space[1], marginLeft: 'auto' },
     price: { flexDirection: 'row', alignItems: 'baseline', gap: space[1] },
     // Who sells it: a small shop mark and the name, short enough for the narrow column.
     sold: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
@@ -227,7 +234,9 @@ const makeStyles = (c: ThemeColors) =>
       right: 0,
       minHeight: DOCK,
       flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'center',
+      rowGap: space[2],
       gap: space[4],
       paddingHorizontal: space[4],
       borderTopWidth: 1,
@@ -237,7 +246,8 @@ const makeStyles = (c: ThemeColors) =>
     dockTotal: { flexShrink: 0 },
     dockPrice: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
     dockCaption: { flexDirection: 'row', gap: space[1] },
-    dockButton: { flex: 1 },
+    // Beside the total, or under it at full width when large text leaves no room.
+    dockButton: { flexGrow: 1, flexBasis: 150 },
     empty: { flex: 1, minHeight: 300 },
     emptyPage: { flexGrow: 1 },
     savedGutter: { paddingHorizontal: space[3] },
@@ -264,6 +274,8 @@ function CartPage() {
   const slotText = useSlotText();
   const when = useDeliveryWhen();
   const address = useDeliveryAddress();
+  // With large text, names and the address wrap instead of being cut short.
+  const large = useLargeText();
   // While the keyboard is up the bottom menu steps aside, and so does the checkout bar: they would only ride on top of it.
   const keyboard = useKeyboardVisible();
   const room = keyboard ? insets.bottom : insets.bottom + BOTTOM_BAR_HEIGHT;
@@ -455,6 +467,7 @@ function CartPage() {
                 </View>
                 <Pressable
                   role="button"
+                  aria-label={t('coupons.removeNamed', { code: coupon.applied.offer.code })}
                   hitSlop={6}
                   onPress={() => {
                     glide();
@@ -479,6 +492,7 @@ function CartPage() {
                   </View>
                   <Pressable
                     role="button"
+                    aria-label={t('coupons.switchTo', { code: coupon.better.offer.code })}
                     hitSlop={6}
                     onPress={() => {
                       const better = coupon.better;
@@ -531,6 +545,7 @@ function CartPage() {
               </View>
               <Pressable
                 role="button"
+                aria-label={t('coupons.applyNamed', { code: coupon.best.offer.code })}
                 hitSlop={6}
                 onPress={() => {
                   const best = coupon.best;
@@ -568,6 +583,7 @@ function CartPage() {
             </View>
             <Pressable
               role="button"
+              aria-label={t('cart.changeTimeLabel')}
               hitSlop={6}
               onPress={() => {
                 router.push('/schedule');
@@ -586,12 +602,13 @@ function CartPage() {
               <Text variant="fine" color="inkMuted">
                 {t('trust.deliveringTo')}
               </Text>
-              <Text variant="small" numberOfLines={1}>
+              <Text variant="small" numberOfLines={large ? 3 : 1}>
                 {address}
               </Text>
             </View>
             <Pressable
               role="link"
+              aria-label={t('trust.changeAddress')}
               hitSlop={8}
               onPress={() => {
                 router.push('/address');
@@ -617,7 +634,7 @@ function CartPage() {
                 <Pressable
                   role="button"
                   aria-label={t('trust.saveForLater', { name: line.name })}
-                  hitSlop={10}
+                  hitSlop={12}
                   onPress={() => {
                     glide();
                     cart.saved.save(line.id);
@@ -628,7 +645,10 @@ function CartPage() {
                 </Pressable>
               </View>
               <View style={styles.name}>
-                <Text variant="strong" numberOfLines={line.soldBy === undefined ? 2 : 1}>
+                <Text
+                  variant="strong"
+                  numberOfLines={large ? 3 : line.soldBy === undefined ? 2 : 1}
+                >
                   {line.name}
                 </Text>
                 <Text variant="small" color="inkMuted" numberOfLines={1}>
@@ -656,8 +676,8 @@ function CartPage() {
                     cart.setQuantity(line.id, next);
                   }}
                   addLabel={t('home.rails.add')}
-                  decreaseLabel={t('home.rails.removeOne')}
-                  increaseLabel={t('home.rails.addOne')}
+                  decreaseLabel={t('home.rails.removeOneOf', { name: line.name })}
+                  increaseLabel={t('home.rails.addOneOf', { name: line.name })}
                   maxLabel={t('home.rails.noMore')}
                   rule={line.loose === true ? WEIGHT_RULE : countRule(line.maxQuantity)}
                   {...(line.loose === true ? { unitLabel: t('weights.kg') } : {})}
@@ -769,7 +789,8 @@ function CartPage() {
             setDockHeight(Math.round(event.nativeEvent.layout.height));
           }}
         >
-          <View style={styles.dockTotal} accessible>
+          {/* Read out again when the total changes, so a shopper using a screen reader hears what the change did to the bill. */}
+          <View style={styles.dockTotal} accessible aria-live="polite">
             <View style={styles.dockPrice}>
               <PopOnChange value={bill.toPay}>
                 <Text variant="subheading">{formatRupees(bill.toPay)}</Text>
@@ -784,7 +805,11 @@ function CartPage() {
               <Text variant="fine" color="inkMuted">
                 {t('cart.toPay')}
               </Text>
-              {bill.totalSaved > 0 ? (
+              {!online ? (
+                <Text variant="caption" color="warning">
+                  {`· ${t('cart.offlineShort')}`}
+                </Text>
+              ) : bill.totalSaved > 0 ? (
                 <Text variant="caption" color="success">
                   {`· ${t('cart.savedShort', { amount: formatRupees(bill.totalSaved) })}`}
                 </Text>
@@ -792,8 +817,10 @@ function CartPage() {
             </View>
           </View>
           <View style={styles.dockButton}>
+            {/* The cart works with no network, but ordering needs one: the way forward waits until it is back. */}
             <Button
               label={t('cart.continue')}
+              disabled={!online}
               shine
               onPress={() => {
                 router.push('/checkout');

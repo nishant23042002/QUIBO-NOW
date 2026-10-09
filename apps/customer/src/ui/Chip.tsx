@@ -39,7 +39,7 @@ export function Chip({ label, selected = false, disabled = false, onPress, icon 
   return (
     <Pressable
       role="button"
-      aria-selected={selected}
+      aria-pressed={selected}
       aria-disabled={disabled}
       disabled={disabled || onPress === undefined}
       onPress={onPress}

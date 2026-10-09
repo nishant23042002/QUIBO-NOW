@@ -7,6 +7,9 @@ import { Text } from './Text';
 import { radius, space } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
 
+/** A stepper's text grows with the phone's text size only this far: it is a control, and the item beside it needs room too. */
+const CONTROL_SCALE_MAX = 1.3;
+
 export interface StepperProps {
   /** How much is in the cart. 0 shows the ADD button. */
   value: number;
@@ -15,6 +18,8 @@ export interface StepperProps {
   rule?: QuantityRule;
   /** The text on the ADD button. Pass a translated string. */
   addLabel: string;
+  /** What a screen reader says for ADD when it should name the item, for example "Add Toned milk". Defaults to `addLabel`. */
+  addAriaLabel?: string;
   /** Names of the two buttons for screen readers. */
   decreaseLabel: string;
   increaseLabel: string;
@@ -43,7 +48,8 @@ const makeStyles = (c: ThemeColors) =>
       borderRadius: radius.md,
       backgroundColor: c.action,
     },
-    side: { width: 28, height: 32, alignItems: 'center', justifyContent: 'center' },
+    // 32 wide with 8 of reach on each side makes the 48 dp a thumb needs.
+    side: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
     value: { minWidth: 22, alignItems: 'center' },
     pressed: { opacity: 0.8 },
     atMax: { opacity: 0.35 },
@@ -55,6 +61,7 @@ export function Stepper({
   onChange,
   rule = COUNT_RULE,
   addLabel,
+  addAriaLabel,
   decreaseLabel,
   increaseLabel,
   maxLabel,
@@ -85,14 +92,14 @@ export function Stepper({
       <Animated.View style={{ transform: [{ scale: bounce }] }}>
         <Pressable
           role="button"
-          aria-label={addLabel}
+          aria-label={addAriaLabel ?? addLabel}
           hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
           onPress={() => {
             onChange(stepQuantity(0, 1, rule));
           }}
           style={({ pressed }) => [styles.add, pressed && styles.pressed]}
         >
-          <Text variant="strong" color="action">
+          <Text variant="strong" color="action" maxFontSizeMultiplier={CONTROL_SCALE_MAX}>
             {addLabel}
           </Text>
         </Pressable>
@@ -118,7 +125,7 @@ export function Stepper({
         <Icon name="minus" color={colors.onAction} size={14} />
       </Pressable>
       <View style={styles.value} aria-live="polite">
-        <Text variant="strong" color="onAction">
+        <Text variant="strong" color="onAction" maxFontSizeMultiplier={CONTROL_SCALE_MAX}>
           {shown}
         </Text>
       </View>

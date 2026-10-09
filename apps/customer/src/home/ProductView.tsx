@@ -93,12 +93,14 @@ const makeStyles = (c: ThemeColors) =>
       position: 'absolute',
       left: 0,
       right: 0,
-      height: ACTION_HEIGHT,
+      minHeight: ACTION_HEIGHT,
       flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: space[3],
       paddingHorizontal: space[3],
+      paddingVertical: space[2],
       borderTopWidth: 1,
       borderTopColor: c.line,
       backgroundColor: c.surface,
@@ -160,6 +162,8 @@ export function ProductView({
   const [reveal] = useState(() => new Animated.Value(0));
   const [skeletonOn, setSkeletonOn] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  // How tall the price and ADD bar really is, so the page's end and the cart bar clear it at any text size.
+  const [actionHeight, setActionHeight] = useState(ACTION_HEIGHT);
   // The insight card covers most of the picture while it is open, so the saving ribbon steps aside.
   const [insightOpen, setInsightOpen] = useState(false);
   const [scrollY] = useState(() => new Animated.Value(0));
@@ -223,8 +227,9 @@ export function ProductView({
   const dock = insets.bottom + BOTTOM_BAR_HEIGHT;
   const stepper = {
     addLabel: t('home.rails.add'),
-    decreaseLabel: t('home.rails.removeOne'),
-    increaseLabel: t('home.rails.addOne'),
+    addAriaLabel: t('home.rails.addNamed', { name: item.name }),
+    decreaseLabel: t('home.rails.removeOneOf', { name: item.name }),
+    increaseLabel: t('home.rails.addOneOf', { name: item.name }),
     maxLabel: t('home.rails.noMore'),
     rule: pack.loose === true ? WEIGHT_RULE : countRule(pack.maxQuantity),
     ...(pack.loose === true ? { unitLabel: t('weights.kg') } : {}),
@@ -359,7 +364,7 @@ export function ProductView({
               contentContainerStyle={[
                 styles.content,
                 {
-                  paddingBottom: dock + ACTION_HEIGHT + space[6] + (cart.count > 0 ? CART_ROOM : 0),
+                  paddingBottom: dock + actionHeight + space[6] + (cart.count > 0 ? CART_ROOM : 0),
                 },
               ]}
             >
@@ -636,7 +641,12 @@ export function ProductView({
         </View>
       )}
       {blocked ? null : (
-        <View style={[styles.action, { bottom: dock }]}>
+        <View
+          style={[styles.action, { bottom: dock }]}
+          onLayout={(event) => {
+            setActionHeight(Math.round(event.nativeEvent.layout.height));
+          }}
+        >
           <PriceBadge amount={pack.price} {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})} />
           {out ? (
             <Text variant="strong" color="inkMuted">
@@ -662,7 +672,7 @@ export function ProductView({
           )}
         </View>
       )}
-      <CartLayer bottom={dock + (blocked ? 0 : ACTION_HEIGHT)} />
+      <CartLayer bottom={dock + (blocked ? 0 : actionHeight)} />
     </View>
   );
 }

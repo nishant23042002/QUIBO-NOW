@@ -102,6 +102,9 @@
       "add": "जोडा",
       "removeOne": "एक कमी करा",
       "addOne": "एक वाढवा",
+      "addNamed": "{name} जोडा",
+      "removeOneOf": "{name}: एक कमी करा",
+      "addOneOf": "{name}: एक वाढवा",
       "off": "सूट",
       "outOfStock": "स्टॉकमध्ये नाही",
       "onlyLeft": "फक्त {count} उरले",
@@ -567,6 +570,7 @@
     "whyFree": "तुमच्या वस्तूंची एकूण रक्कम {amount} किंवा जास्त आहे, म्हणून डिलिव्हरी मोफत आहे. त्याचे शुल्क {fee} झाले असते.",
     "whyTrim": "कमाल मर्यादेपर्यंत कमी केले",
     "savedShort": "{amount} वाचले",
+    "offlineShort": "इंटरनेट नाही",
     "arrivingToday": "आज पोहोचेल, {window}",
     "arrivingTomorrow": "उद्या पोहोचेल, {window}",
     "arrivingNote": "सर्व वस्तू एकत्र येतील.",
@@ -608,7 +612,8 @@
     "couponRow": "कूपन {code}",
     "slotGone": "तुम्ही निवडलेली वेळ आता उपलब्ध नाही, म्हणून तुमची ऑर्डर {when} साठी ठरली आहे.",
     "quickClosedNote": "जलद डिलिव्हरी सध्या बंद आहे, म्हणून तुमची ऑर्डर {when} साठी ठरली आहे.",
-    "nowQuick": "जलद डिलिव्हरी"
+    "nowQuick": "जलद डिलिव्हरी",
+    "changeTimeLabel": "डिलिव्हरीची वेळ बदला"
   },
   "coupons": {
     "title": "कूपन आणि ऑफर",
@@ -636,7 +641,10 @@
     "dropped": "{code} काढले. पुन्हा वापरण्यासाठी आणखी {amount} जोडा.",
     "better": "{code} वापरून आणखी {amount} वाचवा",
     "switch": "बदला",
-    "bestBadge": "सर्वाधिक बचत"
+    "bestBadge": "सर्वाधिक बचत",
+    "removeNamed": "कूपन {code} काढा",
+    "switchTo": "{code} वर बदला",
+    "applyNamed": "कूपन {code} लावा"
   },
   "extras": {
     "tabTip": "टिप",
@@ -688,7 +696,8 @@
     "moveToCart": "कार्टमध्ये टाका",
     "savedRemove": "जतन केलेल्यातून काढा",
     "share": "कार्ट शेअर करा",
-    "shareMessage": "माझे क्विबो नाऊ कार्ट: {items}. एकूण {total}."
+    "shareMessage": "माझे क्विबो नाऊ कार्ट: {items}. एकूण {total}.",
+    "changeAddress": "डिलिव्हरीचा पत्ता बदला"
   },
   "weights": {
     "perKg": "प्रति किलो",
