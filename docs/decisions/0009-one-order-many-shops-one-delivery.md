@@ -38,5 +38,6 @@ The customer never sees several riders arriving at different times.
 
 - No contract or database change yet: Phase 0 has no order schema. The `Order` and `OrderShop` Zod contracts
   are written in the first phase that needs them.
-- The Phase 1 cart shows items grouped by shop, with one total, one free-delivery line and one delivery window.
+- The Phase 1 cart shows one order with one total, one free-delivery line and one delivery window. (It first grouped items
+  by shop; ADR 0011 made it one flat list, with a "Sold by" line in partner towns.)
 - The driver app (phases 5 and 6) shows one job with several pickup stops.

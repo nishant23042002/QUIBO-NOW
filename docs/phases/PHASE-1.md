@@ -124,9 +124,10 @@ _Goal: Home runs on mock data through the same path the live API will use._
   the bugs that cost real money later); Maestro flow: add items, change a quantity, remove an item.
 - **Your check:** bill numbers add up by hand; weights and rupees look right; empty cart is helpful.
 - **Built in phases (the cart follows the design the user chose from reference screenshots).** A: page frame and
-  bill (done: pale header, savings strip, bill with delivery fee and a handling fee of 6 to 18 rupees that follows the
-  most delicate item and festival rushes, savings card, minimum-order notice, checkout bar; fees and limits live in
-  `ZONE` in `home/delivery.ts`). B: delivery card and the schedule page (1-hour slots, today and tomorrow). C: coupons
+  bill (done, then corrected by ADR 0011: no minimum order, a flat list of items, a delivery fee that follows the
+  trip and is capped at 30 rupees, a handling fee under 18 rupees set by the most delicate item, a plain bill with
+  "Why this price?", the savings strip, the checkout bar; fees and limits live in `ZONE` in `home/delivery.ts`). B:
+  delivery card and the schedule page (1-hour slots, today and tomorrow; the slot feeds the delivery fee). C: coupons
   and offers (placeholders). D: tip, delivery instructions, "You might also like". E: trust extras (one-trip strip,
   verified shops, price promise, refund for lighter weight, easy problems, safe handover code, save for later and
   share, delivering-to strip). F: loose items sold by weight and the "if unavailable" choice. G: offline and error

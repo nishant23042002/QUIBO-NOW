@@ -149,7 +149,7 @@ Build in this order: customer web app, then the admin panel (which includes the 
 - **Screens:** language and phone OTP; home with "Your shops", categories and a reorder strip; shop page with in-shop search; global search; cart; address; checkout; order tracking; past orders; help.
 - **Search:** typed-in-English-letters Hindi and Marathi ("dudh", "aata"), spelling tolerance, voice search in V2.
 - **Address:** map pin, landmark text, ward or mohalla, alternate phone number; serviceability checked against zone polygons.
-- **Checkout rules:** minimum basket per zone, distance-band delivery fee, free delivery above a threshold, COD cap for new customers, per-item substitution choice, estimated weight bill with a stated tolerance.
+- **Checkout rules:** no minimum order (ADR 0011), a delivery fee from the trip's distance band plus rush-hour, festival and weather extras and capped at 30 rupees, a handling fee under 18 rupees set by the most delicate item, free delivery above a threshold, COD cap for new customers, per-item substitution choice, estimated weight bill with a stated tolerance.
 - **Tracking:** status timeline, call shop, call rider, WhatsApp updates for every state change.
 - **Delivery proof:** customer OTP or photo at the door; COD amount shown to the rider.
 
@@ -177,7 +177,7 @@ Build in this order: customer web app, then the admin panel (which includes the 
 | Assisted order | A form for phone and WhatsApp orders so you can run the concierge version from day one |
 | Stores | Onboarding checklist, document check, commission, hours, quality score |
 | Catalogue | Master catalogue with Hindi and Marathi aliases, bulk import, image review |
-| Zones | Draw delivery polygons, set fee bands, slots, minimums |
+| Zones | Draw delivery polygons, set fee bands and extras, slots |
 | Customers and support | Lookup, order history, refunds, COD risk flags, blocklist |
 | Riders | Onboarding, documents, working-day count for gig-worker registration (section 11) |
 | Finance | Payout runs, rider cash reconciliation, refunds, invoices |
@@ -277,7 +277,7 @@ Dashed boxes are rented services; swapping any one of them should touch one modu
 - **Everything is retryable.** Idempotency keys on order creation, payments and webhooks; the store portal and driver app queue transitions offline and replay them.
 - **Timers are jobs.** The 90-second accept timeout, the ready timeout and unassigned-order alerts run as delayed jobs so a restart does not lose them.
 - **Real time, cheaply.** Server-sent events for customer tracking, push plus a socket for store and rider alerts, WhatsApp for everything the customer should see outside the app.
-- **Config lives in the database.** Zones, fee bands, slots, minimums and COD limits sit in tables with admin screens, not in code.
+- **Config lives in the database.** Zones, fee bands and caps, slots and COD limits sit in tables with admin screens, not in code.
 - **Multi-town from day one.** A `town_id` on every business table is cheap now and painful to retrofit.
 - **Security basics.** OTP rate limits, role-based access, signed upload URLs, an audit log of admin actions and minimal personal data (section 11).
 
@@ -334,7 +334,7 @@ The model is about 23 tables, five of them used only in dark-store mode; the har
 | Entity | Key fields | Notes |
 | --- | --- | --- |
 | `town` | name, state, status, fulfilment\_mode (partner, dark, hybrid), settings | The tenant; one row per launched town |
-| `zone` | town\_id, polygon, fee bands, minimum order, slots | PostGIS polygon; drives serviceability and fees |
+| `zone` | town\_id, polygon, fee bands and extras, fee cap, handling fees, slots | PostGIS polygon; drives serviceability and fees |
 | `user` | phone (unique), name, role, language | One table for customers, store owners, riders and staff |
 | `address` | user\_id, zone\_id, lat, lng, landmark, ward, alt\_phone | Zone is computed when saved |
 | `store` | type (partner or dark), stock\_mode (toggle or counted), owner, name, FSSAI number, GST number, location, hours, status, commission, auto\_accept, self\_delivery | Status: onboarding, active, paused |
@@ -437,7 +437,7 @@ Each phase ends with a gate review on its last day: run the checklist, fix every
 
 - [ ] 8 to 10 shops live with FSSAI numbers on file
 - [ ] 2 or 3 riders with signed agreements; cash limit and nightly deposit rule set
-- [ ] Delivery zones drawn; fee bands and minimum basket set
+- [ ] Delivery zones drawn; fee bands, extras and caps set
 - [ ] Gateway tested in live mode, including one real refund
 - [ ] WhatsApp templates approved and SMS fallback tested
 - [ ] Database backup restored once in a test; error alerts reach your phone
