@@ -164,29 +164,6 @@ export function ProductSkeleton({
           ) : null}
 
           <View style={styles.gutter}>
-            <View style={styles.card}>
-              <View style={styles.tiles}>
-                {tileRows.flatMap((rowSpec, index) =>
-                  [0, 1].map((side) => (
-                    <View key={`${index}-${side}`} style={styles.tile}>
-                      <Skeleton
-                        height={
-                          TILE_PAD * 2 +
-                          TILE_ICON +
-                          TILE_GAP * 2 +
-                          small * rowSpec.title +
-                          small * rowSpec.body
-                        }
-                        rounded={radius.lg}
-                      />
-                    </View>
-                  )),
-                )}
-              </View>
-            </View>
-          </View>
-
-          <View style={styles.gutter}>
             <View style={[styles.card, styles.section]}>
               {bar('highlights', line(fontSize.lg, 'tight'), '38%')}
               {[1, 1, 2, 1].map((lines, index) => (
@@ -238,6 +215,33 @@ export function ProductSkeleton({
               </View>
             </Fragment>
           ))}
+
+          <View style={styles.gutter}>
+            <View style={[styles.card, styles.section]}>
+              {bar('promises', line(fontSize.lg, 'tight'), '40%')}
+              <View style={styles.tiles}>
+                {tileRows.slice(0, 1).flatMap((rowSpec, index) =>
+                  [0, 1].map((side) => (
+                    <View key={`${index}-${side}`} style={styles.tile}>
+                      <Skeleton
+                        height={
+                          TILE_PAD * 2 +
+                          TILE_ICON +
+                          TILE_GAP * 2 +
+                          small * rowSpec.title +
+                          small * rowSpec.body
+                        }
+                        rounded={radius.lg}
+                      />
+                    </View>
+                  )),
+                )}
+              </View>
+              <View style={styles.pillRow}>
+                <Skeleton width={120} height={PILL} rounded={radius.full} />
+              </View>
+            </View>
+          </View>
         </View>
       </SkeletonScope>
     </View>

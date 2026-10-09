@@ -163,6 +163,8 @@ export function ProductView({
   const [reveal] = useState(() => new Animated.Value(0));
   const [skeletonOn, setSkeletonOn] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  // The promises under the rails show two of the four until opened, like the highlights.
+  const [trustOpen, setTrustOpen] = useState(false);
   // How tall the price and ADD bar really is, so the page's end and the cart bar clear it at any text size.
   const [actionHeight, setActionHeight] = useState(ACTION_HEIGHT);
   // The insight card covers most of the picture while it is open, so the saving ribbon steps aside.
@@ -495,38 +497,6 @@ export function ProductView({
                 </View>
               ) : null}
               <View style={styles.gutter}>
-                <View style={styles.card}>
-                  <TrustTiles
-                    tiles={[
-                      {
-                        key: 'verified',
-                        icon: 'shield',
-                        title: t('product.trust.verified.title'),
-                        body: t('product.trust.verified.body'),
-                      },
-                      {
-                        key: 'packed',
-                        icon: 'store',
-                        title: t('product.trust.packed.title'),
-                        body: t('product.trust.packed.body', { shop: item.shopName }),
-                      },
-                      {
-                        key: 'window',
-                        icon: 'clock',
-                        title: t('product.trust.window.title'),
-                        body: t('product.trust.window.body'),
-                      },
-                      {
-                        key: 'replace',
-                        icon: 'repeat',
-                        title: t('product.trust.replace.title'),
-                        body: t('product.trust.replace.body'),
-                      },
-                    ]}
-                  />
-                </View>
-              </View>
-              <View style={styles.gutter}>
                 <View style={[styles.card, styles.section]}>
                   <CardTitle>{t('product.highlights')}</CardTitle>
                   <FactTable
@@ -622,6 +592,59 @@ export function ProductView({
                   </ProductRail>
                 </View>
               ) : null}
+              <View style={styles.gutter}>
+                <View style={[styles.card, styles.section]}>
+                  <CardTitle>{t('product.trust.title')}</CardTitle>
+                  <TrustTiles
+                    tiles={[
+                      {
+                        key: 'verified',
+                        icon: 'shield',
+                        title: t('product.trust.verified.title'),
+                        body: t('product.trust.verified.body'),
+                      },
+                      {
+                        key: 'packed',
+                        icon: 'store',
+                        title: t('product.trust.packed.title'),
+                        body: t('product.trust.packed.body', { shop: item.shopName }),
+                      },
+                      ...(trustOpen
+                        ? [
+                            {
+                              key: 'window',
+                              icon: 'clock' as const,
+                              title: t('product.trust.window.title'),
+                              body: t('product.trust.window.body'),
+                            },
+                            {
+                              key: 'replace',
+                              icon: 'repeat' as const,
+                              title: t('product.trust.replace.title'),
+                              body: t('product.trust.replace.body'),
+                            },
+                          ]
+                        : []),
+                    ]}
+                  />
+                  <Pressable
+                    role="button"
+                    aria-expanded={trustOpen}
+                    aria-label={trustOpen ? t('product.viewLess') : t('product.viewMore')}
+                    onPress={() => {
+                      setTrustOpen((current) => !current);
+                    }}
+                    style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+                  >
+                    <Text variant="strong" color="accentInk">
+                      {trustOpen ? t('product.viewLess') : t('product.viewMore')}
+                    </Text>
+                    <View style={trustOpen ? styles.flipped : undefined}>
+                      <Icon name="chevron" color={colors.accentInk} size={16} />
+                    </View>
+                  </Pressable>
+                </View>
+              </View>
             </Animated.ScrollView>
           </Animated.View>
           {skeletonOn ? (
