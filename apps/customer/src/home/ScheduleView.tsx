@@ -9,6 +9,7 @@ import {
   BOTTOM_BAR_HEIGHT,
   Button,
   Icon,
+  QTile,
   Sheet,
   SlotPicker,
   Text,
@@ -78,6 +79,17 @@ const makeStyles = (c: ThemeColors) =>
     // The text on the left, and the icon centred on the right, so the icon never depends on how many lines the title takes.
     optionRow: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: space[2] },
     optionText: { flex: 1, minWidth: 0, gap: space[1] },
+    // The calendar gets a tile the size of the Q tile on the other card, so the two cards match.
+    optionIcon: {
+      width: 36,
+      height: 36,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: c.line,
+      backgroundColor: c.surface,
+    },
     pressed: { opacity: 0.85 },
     quickNote: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3], padding: space[4] },
     quickNoteText: { flex: 1, minWidth: 0, gap: space[1] },
@@ -273,7 +285,9 @@ export function ScheduleView() {
                     : t('cart.quickClosed')}
                 </Text>
               </View>
-              <Icon name="bolt" color={colors.success} size={20} />
+              <View aria-hidden>
+                <QTile size={36} label={t('app.name')} />
+              </View>
             </View>
           </Pressable>
           <Pressable
@@ -303,7 +317,9 @@ export function ScheduleView() {
                     : t('cart.scheduleSub')}
                 </Text>
               </View>
-              <Icon name="calendar" color={colors.warning} size={20} />
+              <View style={styles.optionIcon} aria-hidden>
+                <Icon name="calendar" color={colors.accentInk} size={20} />
+              </View>
             </View>
           </Pressable>
         </View>

@@ -14,6 +14,7 @@ import {
   Notice,
   Popover,
   PopoverHost,
+  QTile,
   StatePanel,
   Stepper,
   Text,
@@ -260,8 +261,14 @@ export function CartView() {
         </View>
         <View style={styles.card}>
           <View style={styles.arrive}>
-            <View style={styles.arriveIcon} aria-hidden>
-              <Icon name={quick ? 'bolt' : 'clock'} color={colors.accentInk} size={20} />
+            <View aria-hidden>
+              {quick ? (
+                <QTile size={40} label={t('app.name')} />
+              ) : (
+                <View style={styles.arriveIcon}>
+                  <Icon name="clock" color={colors.accentInk} size={20} />
+                </View>
+              )}
             </View>
             <View style={styles.arriveText}>
               <Text variant="strong" numberOfLines={2}>

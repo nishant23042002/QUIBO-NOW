@@ -24,6 +24,7 @@ export { Input, type InputProps } from './Input';
 export { ItemCard, type ItemCardProps } from './ItemCard';
 export { HeaderLogo } from './brand/HeaderLogo';
 export { LogoStacked, QMark, type LogoGround } from './brand/Logo';
+export { QTile, type QTileProps } from './QTile';
 export { gridCardWidth } from './logic/grid';
 export { COUNT_RULE, WEIGHT_RULE, countRule, type QuantityRule } from './logic/quantity';
 export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
