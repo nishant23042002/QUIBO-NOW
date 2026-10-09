@@ -101,7 +101,8 @@ export function PromoCarousel({ slides, label, onPress }: PromoCarouselProps) {
   const lastTouch = useRef(0);
   const page = useRef(0);
   const [scrollX] = useState(() => new Animated.Value(0));
-  const cardWidth = screen - SIDE * 2;
+  // A window that has not been measured yet is 0 wide: the cards stay at least a point wide so the dots' ranges still rise.
+  const cardWidth = Math.max(screen - SIDE * 2, 1);
   const step = cardWidth + GAP;
   const count = slides.length;
 

@@ -211,7 +211,7 @@ and has not been run, because the tool is not installed here.
 **Progress.** Built in six pieces, one at a time, each tested before the next:
 
 - [x] 1f-1. Order model and the mock order clock (logic and tests only; ADR 0018)
-- [ ] 1f-2. Checkout screen
+- [x] 1f-2. Checkout screen (when and where, shops, payment with the cash limit, the bill; Place order waits for 1f-3)
 - [ ] 1f-3. Place order (idempotency key, test UPI sheet, cart clears)
 - [ ] 1f-4. Tracking screen and the active order on the Orders tab
 - [ ] 1f-5. The exits (rejected, cancelled, undelivered) and cancelling

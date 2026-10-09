@@ -66,6 +66,15 @@ export interface TipRules {
   max: Money;
 }
 
+/** How the shopper may pay. */
+export interface PaymentRules {
+  /**
+   * The most cash on delivery can be for a new customer, in paise. A shopper with no earlier orders is new, and Phase 1 has no
+   * order history, so for now it holds for everyone. Above it, the shopper pays by UPI.
+   */
+  codMaxNewCustomer: Money;
+}
+
 /** A town's delivery rules. Fees and limits live in data, not in screens (the town's own rules arrive in Phase 2). */
 export interface ZoneSettings {
   /** The item total from which delivery is free. */
@@ -75,6 +84,7 @@ export interface ZoneSettings {
   quick: QuickRules;
   tip: TipRules;
   weights: WeightRules;
+  payment: PaymentRules;
   /** The handling fee for each class of care, before any festival surcharge. */
   handling: Readonly<Record<CareClass, Money>>;
   /** What is added to the handling fee on a festival day. */
@@ -103,6 +113,7 @@ export const ZONE: ZoneSettings = {
     max: money(3_000),
   },
   weights: { tolerancePercent: 5 },
+  payment: { codMaxNewCustomer: money(100_000) },
   tip: { options: [money(1_000), money(2_000), money(3_000)], max: money(10_000) },
   quick: {
     baseMinutes: 6,

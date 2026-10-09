@@ -40,7 +40,6 @@ import {
   useScreenFocused,
   useLargeText,
   useScreenLoad,
-  type BillRow,
 } from '@/ui';
 import { UndoToast } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -55,10 +54,10 @@ import {
   TrustPromises,
   VerifiedShops,
 } from './CartExtras';
-import { SAMPLE_DISTANCE_KM } from './delivery';
+import { useBillRows } from './billRows';
 import { useDeliveryAddress, useDeliveryWhen } from './deliveryInfo';
 import { CART_LOAD_MS, CART_POLICY } from './loading';
-import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
+import { SavingsDetails } from './PriceDetails';
 import { rememberCartShape, rememberedCartShape, cartShape } from './skeletonShape';
 import { useSlotText } from './slotText';
 
@@ -290,6 +289,7 @@ function CartPage() {
   const reduceMotion = useReduceMotion();
   const focused = useScreenFocused();
   const { bill, coupon } = cart;
+  const rows = useBillRows();
   const current = cart.delivery.current;
   const quick = current?.kind === 'quick';
   // The way the order goes now, in words, for the notes that say it changed.
@@ -356,34 +356,6 @@ function CartPage() {
       </View>
     );
   }
-
-  const rows: BillRow[] = [
-    { label: t('cart.itemsRow', { count: cart.count }), amount: bill.itemTotal },
-    ...(bill.coupon !== undefined
-      ? [
-          {
-            label: t('cart.couponRow', { code: bill.coupon.code }),
-            amount: bill.coupon.discount,
-            valueLabel: `\u2212${formatRupees(bill.coupon.discount)}`,
-            positive: true,
-          },
-        ]
-      : []),
-    {
-      label: t('cart.deliveryKm', { km: kmLabel(SAMPLE_DISTANCE_KM) }),
-      amount: bill.delivery.fee,
-      ...(bill.delivery.free ? { valueLabel: t('cart.free'), positive: true } : {}),
-      info: <DeliveryDetails bill={bill} distanceKm={SAMPLE_DISTANCE_KM} />,
-      infoLabel: t('cart.whyTitle'),
-    },
-    {
-      label: t('cart.handlingFee'),
-      amount: bill.handling.fee,
-      info: <HandlingDetails bill={bill} />,
-      infoLabel: t('cart.whyTitle'),
-    },
-    ...(bill.tip > 0 ? [{ label: t('extras.tipRow'), amount: bill.tip }] : []),
-  ];
 
   return (
     <PopoverHost style={styles.page}>

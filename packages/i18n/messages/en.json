@@ -752,6 +752,21 @@
     "selectedNote": "Your order will be delivered to this address.",
     "savedNote": "Address saved"
   },
+  "checkout": {
+    "title": "Checkout",
+    "estimate": "An estimate, not a promise.",
+    "yourOrder": "Your order",
+    "payTitle": "How would you like to pay",
+    "codTitle": "Cash on delivery",
+    "codSub": "Pay the rider {amount} at the door",
+    "codOver": "Available up to {max} for your first orders. Pay with UPI instead.",
+    "upiTitle": "UPI",
+    "upiSub": "Pay now with any UPI app",
+    "place": "Place order",
+    "changeTime": "Change delivery time",
+    "changeAddress": "Change delivery address",
+    "noAddress": "Add a delivery address to place your order."
+  },
   "firstRun": {
     "progress": "Step {n} of {total}",
     "continue": "Continue",
