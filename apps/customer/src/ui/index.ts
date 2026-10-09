@@ -69,6 +69,13 @@ export { ShopsPanel, type ShopsPanelProps } from './ShopsPanel';
 export { ShopsChip, type ShopsChipProps } from './ShopsChip';
 export { Popover, PopoverHost, type PopoverProps } from './Popover';
 export { Sheet, type SheetProps } from './Sheet';
+export {
+  SlotPicker,
+  type SlotChipData,
+  type SlotDayTab,
+  type SlotGroupData,
+  type SlotPickerProps,
+} from './SlotPicker';
 export { ShopCard, type ShopCardProps } from './ShopCard';
 export { Stepper, type StepperProps } from './Stepper';
 export { Text, type TextColor, type TextProps, type TextVariant } from './Text';

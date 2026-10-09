@@ -9,6 +9,7 @@ import { restoreCart, serialiseCart, type PackLimit } from './cartStore';
 import { FREE_DELIVERY_FROM, SAMPLE_DISTANCE_KM } from './delivery';
 import { useConditions } from './conditions';
 import { capQuantity } from './packs';
+import { useSlotChoice, type SlotState } from './useSlotChoice';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
 /** One pack of an item in the cart. The cart is one flat list: it is one order, however many stores it comes from. */
@@ -58,6 +59,8 @@ export interface DraftCart {
   savedLabel?: string;
   /** What the order comes to: items, delivery, handling, and what is saved. All integer paise. */
   bill: Bill;
+  /** When the order arrives: the earliest window or one the shopper picked, kept on the phone. */
+  delivery: SlotState;
   /** What is in the cart, latest first: for the little pictures in the cart bar. */
   lines: readonly { id: string; emoji: string; category: ItemCategory }[];
   /** False until the cart saved on the phone has been read back. Until then it looks empty only because it is still loading. */
@@ -104,6 +107,7 @@ export function useDraftCart(): DraftCart {
   const homeItems = useHomeItems();
   const conditions = useConditions();
   const dark = conditions.store === 'dark';
+  const delivery = useSlotChoice();
   const [quantities, setQuantities] = useState<Readonly<Record<string, number>>>({});
   // The order packs were first added in, so "latest first" is known.
   const [order, setOrder] = useState<readonly string[]>([]);
@@ -185,7 +189,8 @@ export function useDraftCart(): DraftCart {
     cares: inCart.map(([, { item }]) => careOf(item.id, item.category)),
     trip: {
       distanceKm: SAMPLE_DISTANCE_KM,
-      hour: new Date().getHours(),
+      // The window the order is delivered in sets the hour, so a quieter window can cost less.
+      hour: delivery.slot?.hour ?? delivery.now.getHours(),
       festival: conditions.festival,
       rain: conditions.rain,
       rush: conditions.rush,
@@ -238,6 +243,7 @@ export function useDraftCart(): DraftCart {
       : t('home.cart.freeNeed', { amount: formatRupees(remaining) }),
     progress: Math.min(Number(sum.total) / Number(FREE_DELIVERY_FROM), 1),
     bill,
+    delivery,
     ...(sum.saved > 0
       ? { savedLabel: t('home.cart.saved', { amount: formatRupees(sum.saved) }) }
       : {}),

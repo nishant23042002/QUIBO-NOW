@@ -28,6 +28,16 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[4],
     },
     divided: { borderTopWidth: 1, borderTopColor: c.line },
+    arrive: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+      borderBottomWidth: 1,
+      borderBottomColor: c.line,
+    },
+    arriveText: { flex: 1, gap: space[1] },
     name: { flex: 1, gap: space[1] },
     side: { alignItems: 'flex-end', gap: space[1] },
   });
@@ -45,6 +55,14 @@ export function CartSkeleton() {
           <Skeleton width="60%" height={16} />
         </View>
         <View style={styles.card}>
+          <View style={styles.arrive}>
+            <Skeleton width={20} height={20} rounded={radius.full} />
+            <View style={styles.arriveText}>
+              <Skeleton width="65%" height={16} />
+              <Skeleton width="80%" height={14} />
+            </View>
+            <Skeleton width={72} height={36} rounded={radius.md} />
+          </View>
           {Array.from({ length: LINES }, (_, index) => (
             <View key={index} style={[styles.line, index > 0 && styles.divided]}>
               <Skeleton width={THUMB} height={THUMB} rounded={radius.md} />

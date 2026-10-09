@@ -27,6 +27,7 @@ import { CartSkeleton, LINE_HEIGHT, THUMB } from './CartSkeleton';
 import { useTintOf } from './categories';
 import { SAMPLE_DISTANCE_KM } from './delivery';
 import { DeliveryDetails, HandlingDetails, SavingsDetails, kmLabel } from './PriceDetails';
+import { useSlotText } from './slotText';
 
 /** The checkout bar's height: 12 above and below a 48 dp button, and its top line. */
 const DOCK = 73;
@@ -55,6 +56,26 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[4],
     },
     divided: { borderTopWidth: 1, borderTopColor: c.line },
+    // When it arrives, at the top of the items it is about, with a way to change it.
+    arrive: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[4],
+      paddingVertical: space[3],
+      borderBottomWidth: 1,
+      borderBottomColor: c.line,
+    },
+    arriveText: { flex: 1, minWidth: 0 },
+    change: {
+      minHeight: 36,
+      paddingHorizontal: space[3],
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1.5,
+      borderRadius: radius.md,
+      borderColor: c.action,
+    },
     thumb: {
       width: THUMB,
       height: THUMB,
@@ -137,6 +158,7 @@ export function CartView() {
   const cart = useCart();
   const tintOf = useTintOf();
   const online = useOnline();
+  const slotText = useSlotText();
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
   const { bill } = cart;
 
@@ -219,6 +241,29 @@ export function CartView() {
           </Text>
         </View>
         <View style={styles.card}>
+          <View style={styles.arrive}>
+            <Icon name="clock" color={colors.accentInk} size={20} />
+            <View style={styles.arriveText}>
+              <Text variant="strong" numberOfLines={2}>
+                {cart.delivery.slot !== undefined ? slotText.arriving(cart.delivery.slot) : ''}
+              </Text>
+              <Text variant="small" color="inkMuted">
+                {t('cart.arrivingNote')}
+              </Text>
+            </View>
+            <Pressable
+              role="button"
+              hitSlop={6}
+              onPress={() => {
+                router.push('/schedule');
+              }}
+              style={({ pressed }) => [styles.change, pressed && { opacity: 0.7 }]}
+            >
+              <Text variant="strong" color="accentInk">
+                {t('cart.change')}
+              </Text>
+            </Pressable>
+          </View>
           {cart.items.map((line, index) => (
             <View key={line.id} style={[styles.line, index > 0 && styles.divided]}>
               <View style={[styles.thumb, { backgroundColor: tintOf(line.category) }]} aria-hidden>

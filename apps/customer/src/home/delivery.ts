@@ -19,11 +19,24 @@ export interface DeliveryRules {
   max: Money;
 }
 
+/** When orders can be delivered, in one-hour windows. */
+export interface SlotRules {
+  /** The first hour a window can start, on a 24-hour clock. */
+  firstHour: number;
+  /** The hour the last window ends. The last window starts one hour before it. */
+  lastEndHour: number;
+  /** A window can be chosen only if it starts at least this long from now, so the shop has time to pack. */
+  leadMinutes: number;
+  /** Windows that are full, as "today-18" or "tomorrow-9" (the day, then the hour the window starts). */
+  full: readonly string[];
+}
+
 /** A town's delivery rules. Fees and limits live in data, not in screens (the town's own rules arrive in Phase 2). */
 export interface ZoneSettings {
   /** The item total from which delivery is free. */
   freeDeliveryFrom: Money;
   delivery: DeliveryRules;
+  slots: SlotRules;
   /** The handling fee for each class of care, before any festival surcharge. */
   handling: Readonly<Record<CareClass, Money>>;
   /** What is added to the handling fee on a festival day. */
@@ -50,6 +63,12 @@ export const ZONE: ZoneSettings = {
     festivalExtra: money(400),
     rainExtra: money(300),
     max: money(3_000),
+  },
+  slots: {
+    firstHour: 7,
+    lastEndHour: 21,
+    leadMinutes: 60,
+    full: ['today-18', 'today-19', 'tomorrow-8', 'tomorrow-9', 'tomorrow-18'],
   },
   handling: {
     standard: money(600),
