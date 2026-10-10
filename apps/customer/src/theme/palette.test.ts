@@ -60,6 +60,17 @@ const REQUIRED: readonly Pair[] = [
   ['warning text', 'warning', 'warningBg', 4.5],
   ['error text', 'danger', 'dangerBg', 4.5],
   ['info text', 'info', 'infoBg', 4.5],
+  // Added in the hardening pass (1h) for what 1f and 1g put on screen.
+  ['ended-order text on cards', 'danger', 'surface', 4.5],
+  ['error text on the page', 'danger', 'bg', 4.5],
+  ['the cross on an ended step', 'danger', 'dangerBg', 3],
+  ['success text on the page', 'success', 'bg', 4.5],
+  ['warning text on cards', 'warning', 'surface', 4.5],
+  ['accent text on a tinted tile', 'accentInk', 'accentSubtle', 4.5],
+  ['captions on a tinted tile', 'inkMuted', 'accentSubtle', 4.5],
+  ['the outline of an order in progress', 'action', 'bg', 3],
+  ['the tick on the placed screen', 'chrome', 'accent', 3],
+  ['the progress bar on the welcome and placed screens', 'accent', 'chrome', 3],
 ];
 
 const SCHEMES: readonly Scheme[] = ['light', 'dark'];

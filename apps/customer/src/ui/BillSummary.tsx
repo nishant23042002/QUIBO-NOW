@@ -132,9 +132,13 @@ export function BillSummary({
         </View>
       ))}
       <View style={styles.total}>
-        <Text variant="heading">{totalLabel}</Text>
+        <Text variant="heading" role={undefined}>
+          {totalLabel}
+        </Text>
         <FlashOnChange value={total}>
-          <Text variant="heading">{formatRupees(total)}</Text>
+          <Text variant="heading" role={undefined}>
+            {formatRupees(total)}
+          </Text>
         </FlashOnChange>
       </View>
     </View>
