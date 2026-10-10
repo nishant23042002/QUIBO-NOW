@@ -249,7 +249,7 @@ a fast order clock with a slow switch; the active order kept on the phone.
 - [x] 1g-1. Orders: In progress and Past, pictures of what was ordered on every order screen, "Order details"
 - [x] 1g-2. Help: FAQ, call and WhatsApp, report a problem on an order (kept with the order, on the phone)
 - [x] 1g-3. Settings: the Profile screen as settings, shortcuts, testing tools in one card, the components gallery out of release builds
-- [ ] 1g-4. Maestro flow for help, Hindi and Marathi drafts, notes
+- [x] 1g-4. Maestro flows for help and settings, Hindi and Marathi drafts (in the review sheet), notes
 
 - **Build:** **past orders** list and detail, **help** (FAQ topics, call and WhatsApp the operator, report a problem on an
   order), and **settings** (language, theme, saved addresses, log out). The `/components` gallery is removed from production
@@ -257,8 +257,17 @@ a fast order clock with a slow switch; the active order kept on the phone.
 - **Parked by the owner (2026-10-10): one-tap reorder ("Order again").** It needs an order to keep its items, which the order
   contract does not hold today (it keeps shops, payment and total). To be decided later, with the order contract in view; see
   `PHASE-1-notes.md`.
-- **Tests:** Maestro flow: help opens the call and WhatsApp links; a problem on an order can be reported.
+- **Tests:** Maestro flows `help.yaml` (call and WhatsApp hand-over, a common question, reporting a problem on an order) and
+  `settings.yaml` (shortcuts, language both ways, log out). Neither has been run: Maestro is not installed on the machine they
+  were written on.
 - **Your check:** help answers the real questions.
+
+**Done, waiting for the owner's check.** Your check, on a phone, in this order: (1) place an order and look at the Orders tab:
+orders in progress first, the rest under Past orders, each with pictures of what was in it; (2) open an order and read it to the
+end: items, payment and Order details; (3) from that order tap "Need help with this order?", open a question, tap Call us and
+WhatsApp and see that the right number and message come up; (4) report a missing item and see it under "Your reports"; (5) open
+Settings from the profile button: the three shortcuts, language both ways, Appearance, log out; (6) in a development build open
+Testing tools, and check a release build has no such card. Parked by decision: "Order again" (`PHASE-1-notes.md`).
 
 ### 1h. Hardening and gate
 
