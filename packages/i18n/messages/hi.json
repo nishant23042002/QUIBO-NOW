@@ -834,7 +834,7 @@
     "etaToday": "आज पहुँचेगा, {window}",
     "etaTomorrow": "कल पहुँचेगा, {window}",
     "etaOther": "{date} को पहुँचेगा, {window}",
-    "deliveredAt": "{time} पर पहुँचा",
+    "deliveredAt": "{time} पहुँचा",
     "step": {
       "placed": "ऑर्डर दिया",
       "accepted": "दुकान ने स्वीकार किया",
@@ -879,10 +879,10 @@
     "cancelOffline": "ऑर्डर रद्द करने के लिए कनेक्शन चाहिए।",
     "tooLate": "दुकान यह ऑर्डर पैक कर चुकी है, इसलिए अब रद्द नहीं हो सकता।",
     "endedBy": {
-      "customer": "{time} पर आपने रद्द किया",
-      "ops": "{time} पर हमने रद्द किया",
-      "shop": "{time} पर दुकान ने मना किया",
-      "rider": "{time} पर पहुँचाया नहीं जा सका"
+      "customer": "{time} आपने रद्द किया",
+      "ops": "{time} हमने रद्द किया",
+      "shop": "{time} दुकान ने मना किया",
+      "rider": "{time} पहुँचाया नहीं जा सका"
     },
     "refundTitle": "रिफ़ंड आ रहा है",
     "refundBody": "{amount} 3 से 5 कार्य दिवसों में आपके UPI खाते में लौट जाएँगे।",
@@ -904,7 +904,7 @@
     "talkTitle": "किसी से बात करें",
     "hours": "रोज़ {from} से {to} तक",
     "call": "हमें कॉल करें",
-    "whatsapp": "WhatsApp करें",
+    "whatsapp": "व्हाट्सऐप",
     "whatsappHello": "नमस्ते, मुझे मदद चाहिए।",
     "whatsappOrder": "नमस्ते, मुझे ऑर्डर {number} के बारे में मदद चाहिए।",
     "reportTitle": "ऑर्डर की समस्या बताएँ",
