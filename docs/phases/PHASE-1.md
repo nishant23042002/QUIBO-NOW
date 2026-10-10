@@ -318,13 +318,13 @@ Testing tools, and check a release build has no such card. Parked by decision: "
 
 ## Gate checklist (PLAN section 16)
 
-- [ ] Plan approved before coding; nothing outside the phase was built
-- [ ] `lint`, `typecheck`, `test` and `build` pass on a clean install, with no unexplained warnings
+- [x] Plan approved before coding; nothing outside the phase was built
+- [x] `lint`, `typecheck`, `test` and `build` pass on a clean install, with no unexplained warnings
 - [ ] Maestro flows pass in both fulfilment modes
 - [ ] No serious accessibility issues: contrast tests, a TalkBack pass, the largest font size
 - [ ] Bundle size inside the budget; a cold start recorded on a 2 GB phone
 - [ ] Tested by hand on a real low-end Android phone with a throttled network
-- [ ] No open blocker or major defects; minor ones logged with an owner
+- [ ] No open blocker or major defects; minor ones logged with an owner (one major open: the Categories tab, M1 in `PHASE-1-defects.md`)
 - [ ] `PHASE-1-report.md` written, demo done, human sign-off recorded, tag `phase-1-complete` pushed
 
 ## Decisions and open questions
