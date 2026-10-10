@@ -127,6 +127,13 @@ language: a TalkBack pass, the phone's largest font size, and Devanagari renderi
 - **Money maths runs on Hermes.** The Components screen is the on-device check. If it ever shows `wrong`,
   fall back to plain integer maths in `money.ts` (amounts stay below 2^53).
 
+## Parked by the owner
+
+- **"Order again" (one-tap reorder), parked 2026-10-10.** Not part of 1g for now. What it needs when it is taken up: the order
+  must keep what was bought (pack ids, quantities, the loose weights) as well as the shops, payment and total; the cart then
+  needs a way to add those packs back, cut to what is in stock now (the cart already does this when it restores itself), and to
+  say which ones are gone. The plan's "reorder strip" on Home (PLAN section 5) is the same piece of work.
+
 ## For Phase 2 (parked, not for now)
 
 - **Confirm `OrderStatus` against the PLAN section 7 diagram.** It is a reconstructed stub

@@ -235,11 +235,14 @@ a fast order clock with a slow switch; the active order kept on the phone.
 
 ### 1g. Past orders, reorder, help, settings
 
-- **Build:** **past orders** list and detail, a one-tap **reorder** into the cart, **help** (FAQ topics, call and
-  WhatsApp the operator, report a problem on an order), and **settings** (language, theme, saved addresses, log
-  out). The `/components` gallery is removed from production builds.
-- **Tests:** Maestro flow: reorder a past order; help opens the call and WhatsApp links.
-- **Your check:** reordering feels effortless; help answers the real questions.
+- **Build:** **past orders** list and detail, **help** (FAQ topics, call and WhatsApp the operator, report a problem on an
+  order), and **settings** (language, theme, saved addresses, log out). The `/components` gallery is removed from production
+  builds.
+- **Parked by the owner (2026-10-10): one-tap reorder ("Order again").** It needs an order to keep its items, which the order
+  contract does not hold today (it keeps shops, payment and total). To be decided later, with the order contract in view; see
+  `PHASE-1-notes.md`.
+- **Tests:** Maestro flow: help opens the call and WhatsApp links; a problem on an order can be reported.
+- **Your check:** help answers the real questions.
 
 ### 1h. Hardening and gate
 
