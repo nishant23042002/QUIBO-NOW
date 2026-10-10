@@ -1,7 +1,7 @@
-import { Fragment, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { ProductRail, SectionDivider, space } from '@/ui';
+import { ProductRail, space } from '@/ui';
 import { HomeSkeleton } from './HomeSkeleton';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
@@ -14,6 +14,8 @@ const ORDER: readonly ItemCategory[] = ['dairy', 'vegetables', 'fruits', 'staple
 
 const styles = StyleSheet.create({
   feed: { gap: space[5], paddingVertical: space[5] },
+  // The category rows, one under another with room between them: no divider line.
+  rails: { gap: space[6], paddingVertical: space[5] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
 });
 
@@ -64,22 +66,18 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
   }
 
   return (
-    <View style={styles.feed}>
-      {ORDER.map((key, index) => (
-        <Fragment key={key}>
-          {index > 0 ? <SectionDivider /> : null}
-          <ProductRail
-            title={t(`home.rails.${key}`)}
-            seeAllLabel={t('home.rails.seeAll')}
-            onSeeAll={() => {
-              onSeeAll(key);
-            }}
-          >
-            {items
-              .filter((item) => item.category === key)
-              .map((item) => tile(item, RAIL_CARD_WIDTH))}
-          </ProductRail>
-        </Fragment>
+    <View style={styles.rails}>
+      {ORDER.map((key) => (
+        <ProductRail
+          key={key}
+          title={t(`home.rails.${key}`)}
+          seeAllLabel={t('home.rails.seeAll')}
+          onSeeAll={() => {
+            onSeeAll(key);
+          }}
+        >
+          {items.filter((item) => item.category === key).map((item) => tile(item, RAIL_CARD_WIDTH))}
+        </ProductRail>
       ))}
     </View>
   );

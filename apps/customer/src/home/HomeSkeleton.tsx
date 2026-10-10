@@ -1,15 +1,6 @@
-import { Fragment } from 'react';
 import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import {
-  ProductCardSkeleton,
-  SectionDivider,
-  Skeleton,
-  SkeletonScope,
-  fontSize,
-  leading,
-  space,
-} from '@/ui';
+import { ProductCardSkeleton, Skeleton, SkeletonScope, fontSize, leading, space } from '@/ui';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 
 /** The widths of the five rails' titles, so they do not all look alike. */
@@ -24,6 +15,7 @@ const HEAD_HEIGHT = space[10];
 // the real cards replace the grey ones.
 const styles = StyleSheet.create({
   feed: { gap: space[5], paddingVertical: space[5] },
+  rails: { gap: space[6], paddingVertical: space[5] },
   rail: { gap: space[3] },
   head: {
     height: HEAD_HEIGHT,
@@ -83,24 +75,21 @@ export function HomeSkeleton({
 
   return (
     <SkeletonScope label={label}>
-      <View style={styles.feed}>
-        {RAIL_TITLES.map((title, index) => (
-          <Fragment key={title}>
-            {index > 0 ? <SectionDivider /> : null}
-            <View style={styles.rail}>
-              <View style={styles.head}>
-                <Skeleton width={title} height={20} />
-                <Skeleton width={56} height={16} />
-              </View>
-              <ScrollView horizontal scrollEnabled={false} showsHorizontalScrollIndicator={false}>
-                <View style={styles.row}>
-                  {Array.from({ length: RAIL_CARDS }, (_, card) => (
-                    <ProductCardSkeleton key={card} width={RAIL_CARD_WIDTH} />
-                  ))}
-                </View>
-              </ScrollView>
+      <View style={styles.rails}>
+        {RAIL_TITLES.map((title) => (
+          <View key={title} style={styles.rail}>
+            <View style={styles.head}>
+              <Skeleton width={title} height={20} />
+              <Skeleton width={56} height={16} />
             </View>
-          </Fragment>
+            <ScrollView horizontal scrollEnabled={false} showsHorizontalScrollIndicator={false}>
+              <View style={styles.row}>
+                {Array.from({ length: RAIL_CARDS }, (_, card) => (
+                  <ProductCardSkeleton key={card} width={RAIL_CARD_WIDTH} />
+                ))}
+              </View>
+            </ScrollView>
+          </View>
         ))}
       </View>
     </SkeletonScope>
