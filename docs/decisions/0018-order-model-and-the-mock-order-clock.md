@@ -33,6 +33,11 @@ fulfilment mode without a screen asking which mode the town is in (ADR 0002).
    window, never as a countdown (ADR 0012).
 8. **The clock runs while the app is open and sleeps until the next move is due.** With no connection it pauses, and when the phone
    is back it catches up with the true times. The development switch "Order speed" sets how fast the next order moves.
+9. **A payment that is not needed goes back.** When a paid UPI order ends rejected, cancelled or undelivered, the same status move
+   sets its payment to `refunding`. A cash order that did not arrive was never paid, so it stays as it was and the screens say
+   nothing was charged.
+10. **Cancelling is the customer's, until packing is finished.** Anything already due is applied first, so a late tap cannot undo a
+    move that has happened: the order is left as it is and the customer is told it is too late.
 
 ## Consequences
 

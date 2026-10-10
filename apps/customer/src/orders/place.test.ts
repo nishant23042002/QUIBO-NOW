@@ -136,6 +136,16 @@ describe('saving and reading orders back', () => {
     expect(parseOrders(serialiseOrders(moved))).toEqual(moved);
   });
 
+  it('gives back orders that have ended, whichever way they ended', () => {
+    for (const ending of ['delivered', 'rejected', 'cancelled', 'undelivered'] as const) {
+      for (const method of ['cod', 'upi'] as const) {
+        const placed = placeOnce([], request({ method })).orders[0] as TrackedOrder;
+        const done = advance({ ...placed, ending }, new Date(NOW.getTime() + 600_000));
+        expect(parseOrders(serialiseOrders([done]))).toEqual([done]);
+      }
+    }
+  });
+
   it('is empty when nothing was saved, or the saving is damaged', () => {
     expect(parseOrders(null)).toEqual([]);
     expect(parseOrders('not json')).toEqual([]);

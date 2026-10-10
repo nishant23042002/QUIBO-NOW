@@ -5,6 +5,8 @@ import { samplePlacedOrder } from './sample';
 import {
   cashToKeep,
   clockParts,
+  endNoteOf,
+  endedBy,
   dayRelativeTo,
   etaOf,
   headlineOf,
@@ -146,5 +148,34 @@ describe('mockShopPhone', () => {
     expect(mockShopPhone(0)).toBe('9876500001');
     expect(mockShopPhone(1)).toBe('9876500002');
     expect(mockShopPhone(0)).toHaveLength(10);
+  });
+});
+
+describe('endNoteOf', () => {
+  it('is nothing while the order is going, and after it arrives', () => {
+    expect(endNoteOf(after('by_shop', 30))).toBeNull();
+    expect(endNoteOf(after('by_shop', 600))).toBeNull();
+  });
+
+  it('says a UPI payment is on its way back, with the amount', () => {
+    for (const ending of ['rejected', 'cancelled', 'undelivered'] as const) {
+      expect(endNoteOf(after('by_shop', 600, ending, 'upi'))).toEqual({
+        kind: 'refund',
+        amount: money(24_900),
+      });
+    }
+  });
+
+  it('says nothing was charged for cash', () => {
+    expect(endNoteOf(after('by_shop', 600, 'cancelled', 'cod'))).toEqual({ kind: 'nothing' });
+  });
+});
+
+describe('endedBy', () => {
+  it('names who ended an order that did not arrive', () => {
+    expect(endedBy(after('by_shop', 600, 'rejected'))).toBe('shop');
+    expect(endedBy(after('by_shop', 600, 'undelivered'))).toBe('rider');
+    expect(endedBy(after('by_shop', 600, 'cancelled'))).toBe('ops');
+    expect(endedBy(after('by_shop', 600))).toBeNull();
   });
 });

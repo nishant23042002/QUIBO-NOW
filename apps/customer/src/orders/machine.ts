@@ -31,13 +31,23 @@ export function transition(
   return OrderSchema.parse({
     ...order,
     status: to,
-    // Cash is paid at the door, so it is settled when the order arrives.
-    payment:
-      to === 'delivered' && order.payment.method === 'cod'
-        ? { ...order.payment, status: 'paid' }
-        : order.payment,
+    payment: paymentAfter(order, to),
     events: [...order.events, event],
   });
+}
+
+/**
+ * What happens to the payment when the order moves. Cash is paid at the door, so it is settled when the order arrives. A UPI payment
+ * on an order that ended without arriving goes back to the customer. A cash order that did not arrive was never paid.
+ */
+function paymentAfter(order: Order, to: OrderStatus): Order['payment'] {
+  const { payment } = order;
+  if (to === 'delivered' && payment.method === 'cod') return { ...payment, status: 'paid' };
+  const ended = to === 'rejected' || to === 'cancelled' || to === 'undelivered';
+  if (ended && payment.method === 'upi' && payment.status === 'paid') {
+    return { ...payment, status: 'refunding' };
+  }
+  return payment;
 }
 
 /** How an order is going to end. Chosen when it is placed; normally it arrives. */

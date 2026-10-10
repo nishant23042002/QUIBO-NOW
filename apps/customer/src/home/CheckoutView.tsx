@@ -230,7 +230,7 @@ function CheckoutPage() {
           total: bill.toPay,
           now: new Date(),
         },
-        { ending: 'delivered', speed: conditions.orderSpeed },
+        { ending: conditions.orderEnding, speed: conditions.orderSpeed },
       );
       cart.clearAfterOrder();
       dispatch({ type: 'saved' });

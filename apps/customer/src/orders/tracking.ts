@@ -107,3 +107,23 @@ export const MOCK_RIDER = { name: 'Ramesh', phone: '9876500099' } as const;
 export function mockShopPhone(index: number): string {
   return `98765${String(index + 1).padStart(5, '0')}`;
 }
+
+/** What an order that ended without arriving means for the customer's money. */
+export type EndNote = { kind: 'refund'; amount: Money } | { kind: 'nothing' };
+
+/** The note under an order that did not arrive: a UPI payment is on its way back, and cash was never taken. Null otherwise. */
+export function endNoteOf(order: Order): EndNote | null {
+  const ended =
+    order.status === 'rejected' || order.status === 'cancelled' || order.status === 'undelivered';
+  if (!ended) return null;
+  return order.payment.status === 'refunding'
+    ? { kind: 'refund', amount: order.total }
+    : { kind: 'nothing' };
+}
+
+/** Who ended an order that did not arrive, from its last event: the customer, the shop, the rider or us. */
+export function endedBy(order: Order): 'customer' | 'shop' | 'rider' | 'ops' | null {
+  const last = order.events[order.events.length - 1];
+  if (last === undefined || endNoteOf(order) === null) return null;
+  return last.by === 'system' ? 'ops' : last.by;
+}

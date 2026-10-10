@@ -8,8 +8,11 @@ export const PAYMENT_METHODS = ['cod', 'upi'] as const;
 export const PaymentMethodSchema = z.enum(PAYMENT_METHODS);
 export type PaymentMethod = z.infer<typeof PaymentMethodSchema>;
 
-/** `to_collect` is cash the rider will take at the door; it becomes `paid` when the order is delivered. */
-export const PAYMENT_STATUSES = ['to_collect', 'paid'] as const;
+/**
+ * `to_collect` is cash the rider will take at the door; it becomes `paid` when the order is delivered. `refunding` is a UPI payment
+ * on an order that did not arrive: it is on its way back to the customer.
+ */
+export const PAYMENT_STATUSES = ['to_collect', 'paid', 'refunding'] as const;
 export const PaymentStatusSchema = z.enum(PAYMENT_STATUSES);
 export type PaymentStatus = z.infer<typeof PaymentStatusSchema>;
 

@@ -15,6 +15,8 @@ export interface Conditions {
   store: 'partner' | 'dark';
   /** How fast the mock order clock moves an order along: a whole order in about a minute, or six times slower. */
   orderSpeed: 'fast' | 'slow';
+  /** How the next order placed ends: it arrives, or the shop turns it down, we cancel it, or the rider cannot deliver. */
+  orderEnding: 'delivered' | 'rejected' | 'cancelled' | 'undelivered';
 }
 
 const listeners = new Set<() => void>();
@@ -24,6 +26,7 @@ let current: Conditions = {
   rush: false,
   store: 'partner',
   orderSpeed: 'fast',
+  orderEnding: 'delivered',
 };
 
 function subscribe(listener: () => void): () => void {

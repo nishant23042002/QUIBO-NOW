@@ -10,7 +10,7 @@ import {
 import type { Order } from '@quibo/contracts';
 import { useOnline } from '@/network';
 import { readSetting, writeSetting } from '@/storage';
-import { advance, nextDueAt, type TrackedOrder } from './machine';
+import { advance, cancelByCustomer, nextDueAt, type TrackedOrder } from './machine';
 import {
   DEFAULT_PLAN,
   parseOrders,
@@ -32,6 +32,11 @@ export interface Orders {
   latest: TrackedOrder | undefined;
   /** Places an order. The same key always gives the same order, so a retry never places a second one. */
   place: (request: PlaceRequest, plan?: ClockPlan) => Order;
+  /**
+   * The customer cancels an order. "too_late" when the shop had already packed it by the time of the tap (the order is left as it
+   * is), "missing" when there is no such order.
+   */
+  cancel: (id: string) => 'cancelled' | 'too_late' | 'missing';
   /** One order by its id, if it is kept on the phone. */
   find: (id: string) => TrackedOrder | undefined;
   /** The order that was just placed, while the "Order placed" screen is up. */
@@ -102,6 +107,20 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     return result.order;
   }, []);
 
+  const cancel = useCallback((id: string): 'cancelled' | 'too_late' | 'missing' => {
+    const index = current.current.findIndex((tracked) => tracked.order.id === id);
+    const tracked = current.current[index];
+    if (tracked === undefined) return 'missing';
+    const result = cancelByCustomer(tracked, new Date());
+    const next = current.current.map((candidate, at) => (at === index ? result : candidate));
+    current.current = next;
+    setOrders(next);
+    const last = result.order.events[result.order.events.length - 1];
+    return result.order.status === 'cancelled' && last?.by === 'customer'
+      ? 'cancelled'
+      : 'too_late';
+  }, []);
+
   const find = useCallback(
     (id: string) => orders.find((tracked) => tracked.order.id === id),
     [orders],
@@ -116,6 +135,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     orders,
     latest: orders[0],
     place,
+    cancel,
     find,
     justPlaced,
     dismissPlaced,

@@ -18,6 +18,7 @@ import {
   useScreenLoad,
 } from '@/ui';
 import { orderNumber } from './ids';
+import { endNoteOf } from './tracking';
 import { useOrders } from './OrdersProvider';
 
 const makeStyles = (c: ThemeColors) =>
@@ -112,18 +113,28 @@ function OrdersList() {
             <Text variant="subheading" role="heading">
               {t('orders.card', { number: orderNumber(order.id) })}
             </Text>
-            <Text variant="strong" color="accentInk">
+            <Text
+              variant="strong"
+              color={endNoteOf(order) === null ? 'accentInk' : 'inkMuted'}
+              strike={endNoteOf(order) !== null}
+            >
               {formatRupees(order.total)}
             </Text>
           </View>
-          <Text variant="strong">{t(`orders.status.${order.status}`)}</Text>
+          <Text variant="strong" color={endNoteOf(order) === null ? 'ink' : 'danger'}>
+            {t(`orders.status.${order.status}`)}
+          </Text>
           <Text variant="small" color="inkMuted">
             {t('orders.items', { shops: order.shops.map((shop) => shop.name).join(', ') })}
           </Text>
           <Text variant="small" color="inkMuted">
-            {order.payment.method === 'cod'
-              ? t('orders.payCod', { amount: formatRupees(order.total) })
-              : t('orders.payUpi', { amount: formatRupees(order.total) })}
+            {order.payment.status === 'refunding'
+              ? t('orders.refunding', { amount: formatRupees(order.total) })
+              : endNoteOf(order) !== null
+                ? t('orders.nothingCharged')
+                : order.payment.method === 'cod'
+                  ? t('orders.payCod', { amount: formatRupees(order.total) })
+                  : t('orders.payUpi', { amount: formatRupees(order.total) })}
           </Text>
         </Pressable>
       ))}

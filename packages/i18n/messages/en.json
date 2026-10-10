@@ -206,7 +206,12 @@
       "darkStore": "One dark store",
       "orderSpeed": "Order speed (testing)",
       "speedFast": "Fast, about a minute",
-      "speedSlow": "Slow, six times slower"
+      "speedSlow": "Slow, six times slower",
+      "ending": "Next order ends (testing)",
+      "endDelivered": "It arrives",
+      "endRejected": "Shop turns it down",
+      "endCancelled": "We cancel it",
+      "endUndelivered": "Rider cannot deliver"
     },
     "account": "Your account",
     "signedIn": "Signed in as {phone}",
@@ -794,6 +799,8 @@
     "items": "From {shops}",
     "payCod": "Pay {amount} to the rider at the door",
     "payUpi": "Paid {amount} by UPI",
+    "refunding": "Refund of {amount} on its way",
+    "nothingCharged": "Nothing was charged",
     "status": {
       "placed": "Placed",
       "accepted": "Shop confirmed",
@@ -857,7 +864,26 @@
     "notFoundTitle": "We could not find this order",
     "notFoundBody": "It may have been removed from this phone.",
     "notFoundAction": "See your orders",
-    "viewOrder": "Track order"
+    "viewOrder": "Track order",
+    "cancel": "Cancel order",
+    "cancelTitle": "Cancel this order?",
+    "cancelBodyUpi": "You can cancel until the shop has packed it. Your {amount} goes back to your UPI account in 3 to 5 working days.",
+    "cancelBodyCod": "You can cancel until the shop has packed it. Nothing has been charged.",
+    "cancelConfirm": "Yes, cancel order",
+    "cancelKeep": "Keep order",
+    "cancelOffline": "You need a connection to cancel an order.",
+    "tooLate": "The shop has already packed this order, so it can no longer be cancelled.",
+    "endedBy": {
+      "customer": "Cancelled by you at {time}",
+      "ops": "Cancelled by us at {time}",
+      "shop": "The shop turned it down at {time}",
+      "rider": "It could not be delivered at {time}"
+    },
+    "refundTitle": "Refund on its way",
+    "refundBody": "{amount} goes back to your UPI account in 3 to 5 working days.",
+    "nothingTitle": "Nothing was charged",
+    "nothingBody": "You did not pay anything for this order.",
+    "backToShopping": "Back to shopping"
   },
   "firstRun": {
     "progress": "Step {n} of {total}",

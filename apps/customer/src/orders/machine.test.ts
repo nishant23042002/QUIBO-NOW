@@ -58,6 +58,31 @@ describe('transition', () => {
     expect(transition(order, 'delivered', at(60), 'rider').payment.status).toBe('paid');
   });
 
+  it('sends a UPI payment back when the order ends without arriving', () => {
+    for (const path of [
+      ['rejected'],
+      ['accepted', 'cancelled'],
+      ['accepted', 'ready', 'picked_up', 'undelivered'],
+    ] as const) {
+      let order = samplePlacedOrder('by_shop', at(0), 'upi');
+      for (const to of path) order = transition(order, to, at(10), 'shop');
+      expect(order.payment).toEqual({ method: 'upi', status: 'refunding' });
+    }
+  });
+
+  it('keeps a UPI payment paid when the order arrives', () => {
+    let order = samplePlacedOrder('by_shop', at(0), 'upi');
+    for (const to of ['accepted', 'ready', 'picked_up', 'delivered'] as const) {
+      order = transition(order, to, at(10), 'shop');
+    }
+    expect(order.payment.status).toBe('paid');
+  });
+
+  it('leaves a cash order that did not arrive with nothing paid', () => {
+    const order = transition(samplePlacedOrder(), 'rejected', at(10), 'shop');
+    expect(order.payment).toEqual({ method: 'cod', status: 'to_collect' });
+  });
+
   it('keeps a UPI order paid throughout', () => {
     const order = samplePlacedOrder('by_shop', at(0), 'upi');
     expect(order.payment.status).toBe('paid');

@@ -22,7 +22,7 @@ import {
 const MODES: readonly Mode[] = ['system', 'light', 'dark'];
 
 /** How many choices each settings group has, for the skeleton: language, appearance, then the developer switches. */
-const DEV_GROUPS = [2, 2, 2, 2, 2, 2] as const;
+const DEV_GROUPS = [2, 2, 2, 2, 2, 2, 4] as const;
 /** The developer buttons at the end: "fail the next load" and the components gallery. */
 const DEV_BUTTONS = 2;
 
@@ -141,6 +141,19 @@ function Settings() {
             value={conditions.orderSpeed}
             onChange={(value) => {
               setConditions({ orderSpeed: value });
+            }}
+          />
+          <OptionGroup
+            title={t('profile.dev.ending')}
+            options={[
+              { value: 'delivered', label: t('profile.dev.endDelivered') },
+              { value: 'rejected', label: t('profile.dev.endRejected') },
+              { value: 'cancelled', label: t('profile.dev.endCancelled') },
+              { value: 'undelivered', label: t('profile.dev.endUndelivered') },
+            ]}
+            value={conditions.orderEnding}
+            onChange={(value) => {
+              setConditions({ orderEnding: value });
             }}
           />
           <Button

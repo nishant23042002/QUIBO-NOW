@@ -1,5 +1,6 @@
 import { formatRupees, type Order } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
 import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SETTINGS_LOAD_MS, SETTINGS_POLICY } from '@/home/loading';
@@ -12,7 +13,9 @@ import {
   BOTTOM_BAR_HEIGHT,
   Icon,
   LoadGate,
+  Button,
   Notice,
+  Sheet,
   Skeleton,
   SkeletonLine,
   SkeletonScope,
@@ -23,6 +26,7 @@ import {
   useLargeText,
   useScreenLoad,
 } from '@/ui';
+import { canCancel } from './machine';
 import { useOrders } from './OrdersProvider';
 import { shopParts, timelineOf, type StepState } from './timeline';
 import {
@@ -30,6 +34,8 @@ import {
   cashToKeep,
   clockParts,
   dayRelativeTo,
+  endNoteOf,
+  endedBy,
   etaOf,
   headlineOf,
   mockShopPhone,
@@ -100,6 +106,8 @@ const makeStyles = (c: ThemeColors) =>
     },
     grow: { flex: 1, minWidth: 0 },
     skeleton: { flex: 1, overflow: 'hidden' },
+    actions: { gap: space[2] },
+    sheetActions: { gap: space[2] },
   });
 
 /** Grey blocks in the shape of the tracking page: the headline, the steps, the shops and the payment. */
@@ -215,6 +223,10 @@ function call(phone: string): void {
 
 function TrackingPage({ order }: { order: Order }) {
   const { t } = useLanguage();
+  const router = useRouter();
+  const { cancel } = useOrders();
+  const [asking, setAsking] = useState(false);
+  const [tooLate, setTooLate] = useState(false);
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
   const online = useOnline();
@@ -227,11 +239,16 @@ function TrackingPage({ order }: { order: Order }) {
   const delivered = reachedOn(order, 'delivered');
   const cash = cashToKeep(order);
   const parts = shopParts(order);
+  const endNote = endNoteOf(order);
+  const who = endedBy(order);
+  const endedAt = reachedOn(order, order.status);
   const etaLine =
     eta === null
-      ? delivered !== null
-        ? t('tracking.deliveredAt', { time: time(delivered) })
-        : null
+      ? who !== null && endedAt !== null
+        ? t(`tracking.endedBy.${who}`, { time: time(endedAt) })
+        : delivered !== null
+          ? t('tracking.deliveredAt', { time: time(delivered) })
+          : null
       : eta.kind === 'range'
         ? t('tracking.etaRange', { from: eta.from, to: eta.to })
         : (() => {
@@ -270,9 +287,11 @@ function TrackingPage({ order }: { order: Order }) {
             <View key={shop.id} style={styles.shop}>
               <View style={styles.shopName}>
                 <Text numberOfLines={large ? 2 : 1}>{shop.name}</Text>
-                <Text variant="fine" color="inkMuted">
-                  {t(`tracking.part.${shop.part}`)}
-                </Text>
+                {endNote === null ? (
+                  <Text variant="fine" color="inkMuted">
+                    {t(`tracking.part.${shop.part}`)}
+                  </Text>
+                ) : null}
               </View>
               {shopsCallable(order) ? (
                 <Pressable
@@ -326,32 +345,108 @@ function TrackingPage({ order }: { order: Order }) {
         </View>
       ) : null}
 
-      <View style={[styles.card, styles.block]}>
-        {cash !== null ? (
-          <>
-            <Text variant="subheading" role="heading">
-              {t('tracking.payDoor')}
+      {endNote !== null ? (
+        <View style={[styles.card, styles.block]}>
+          <Text variant="subheading" role="heading">
+            {endNote.kind === 'refund' ? t('tracking.refundTitle') : t('tracking.nothingTitle')}
+          </Text>
+          <Text color="inkMuted">
+            {endNote.kind === 'refund'
+              ? t('tracking.refundBody', { amount: formatRupees(endNote.amount) })
+              : t('tracking.nothingBody')}
+          </Text>
+        </View>
+      ) : (
+        <View style={[styles.card, styles.block]}>
+          {cash !== null ? (
+            <>
+              <Text variant="subheading" role="heading">
+                {t('tracking.payDoor')}
+              </Text>
+              <Text color="inkMuted">{t('tracking.keepCash', { amount: formatRupees(cash) })}</Text>
+            </>
+          ) : order.payment.method === 'upi' ? (
+            <>
+              <Text variant="subheading" role="heading">
+                {t('tracking.paidUpi')}
+              </Text>
+              <Text color="inkMuted">{t('tracking.nothingToPay')}</Text>
+            </>
+          ) : order.payment.status === 'paid' ? (
+            <>
+              <Text variant="subheading" role="heading">
+                {t('tracking.paidCash')}
+              </Text>
+              <Text color="inkMuted">
+                {t('tracking.cashCollected', { amount: formatRupees(order.total) })}
+              </Text>
+            </>
+          ) : null}
+        </View>
+      )}
+
+      {tooLate ? <Notice tone="warning" icon="info" message={t('tracking.tooLate')} /> : null}
+      {canCancel(order) ? (
+        <View style={styles.actions}>
+          <Button
+            label={t('tracking.cancel')}
+            variant="secondary"
+            disabled={!online}
+            onPress={() => {
+              setAsking(true);
+            }}
+          />
+          {online ? null : (
+            <Text variant="small" color="inkMuted" align="center">
+              {t('tracking.cancelOffline')}
             </Text>
-            <Text color="inkMuted">{t('tracking.keepCash', { amount: formatRupees(cash) })}</Text>
-          </>
-        ) : order.payment.method === 'upi' ? (
-          <>
-            <Text variant="subheading" role="heading">
-              {t('tracking.paidUpi')}
-            </Text>
-            <Text color="inkMuted">{t('tracking.nothingToPay')}</Text>
-          </>
-        ) : order.payment.status === 'paid' ? (
-          <>
-            <Text variant="subheading" role="heading">
-              {t('tracking.paidCash')}
-            </Text>
-            <Text color="inkMuted">
-              {t('tracking.cashCollected', { amount: formatRupees(order.total) })}
-            </Text>
-          </>
-        ) : null}
-      </View>
+          )}
+        </View>
+      ) : null}
+      {endNote !== null ? (
+        <View style={styles.actions}>
+          <Button
+            label={t('tracking.backToShopping')}
+            variant="secondary"
+            onPress={() => {
+              router.navigate('/');
+            }}
+          />
+        </View>
+      ) : null}
+
+      <Sheet
+        open={asking}
+        onClose={() => {
+          setAsking(false);
+        }}
+        title={t('tracking.cancelTitle')}
+        closeLabel={t('common.close')}
+        footer={
+          <View style={styles.sheetActions}>
+            <Button
+              label={t('tracking.cancelConfirm')}
+              onPress={() => {
+                setAsking(false);
+                if (cancel(order.id) === 'too_late') setTooLate(true);
+              }}
+            />
+            <Button
+              label={t('tracking.cancelKeep')}
+              variant="secondary"
+              onPress={() => {
+                setAsking(false);
+              }}
+            />
+          </View>
+        }
+      >
+        <Text color="inkMuted">
+          {order.payment.method === 'upi'
+            ? t('tracking.cancelBodyUpi', { amount: formatRupees(order.total) })
+            : t('tracking.cancelBodyCod')}
+        </Text>
+      </Sheet>
     </ScrollView>
   );
 }
