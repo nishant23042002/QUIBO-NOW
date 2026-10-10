@@ -7,9 +7,9 @@
 /** A cart taller than this is not drawn in full: the rest is below the fold, and the grey blocks would only be longer. */
 export const CART_LINES_MAX = 5;
 export const SAVED_MAX = 2;
-export const COUPONS_MAX = 4;
+const COUPONS_MAX = 4;
 /** Items, delivery and handling: the bill lines every cart has. */
-export const BILL_ROWS_BASE = 3;
+const BILL_ROWS_BASE = 3;
 
 export const clampCount = (count: number, min: number, max: number): number =>
   Math.min(max, Math.max(min, Math.floor(count)));

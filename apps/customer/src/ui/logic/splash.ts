@@ -1,7 +1,7 @@
 /** How long the splash stays at least, so the logo is seen and the app never flashes past it. */
-export const SPLASH_MIN_MS = 1200;
+const SPLASH_MIN_MS = 1200;
 /** With "reduce motion" on there is nothing to watch, so the splash only covers the loading. */
-export const SPLASH_MIN_REDUCED_MS = 300;
+const SPLASH_MIN_REDUCED_MS = 300;
 /** The fade from the splash into the app. */
 export const SPLASH_FADE_MS = 350;
 

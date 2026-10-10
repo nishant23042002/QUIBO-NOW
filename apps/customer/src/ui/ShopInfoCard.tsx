@@ -26,7 +26,7 @@ export interface ShopInfoCardProps {
 }
 
 /** Every card is the same width and height, so a row of them lines up and the next one peeks in. */
-export const SHOP_INFO_CARD_WIDTH = 180;
+const SHOP_INFO_CARD_WIDTH = 180;
 const PHOTO_RATIO = 1.55;
 const INSET = space[2];
 const CORNER = space[1] + 2;
