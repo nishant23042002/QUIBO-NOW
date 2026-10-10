@@ -473,6 +473,16 @@ function TrackingPage({ order }: { order: Order }) {
         ))}
       </View>
 
+      <View style={styles.actions}>
+        <Button
+          label={t('help.needHelpOrder')}
+          variant="secondary"
+          onPress={() => {
+            router.push({ pathname: '/help', params: { orderId: order.id } });
+          }}
+        />
+      </View>
+
       <Sheet
         open={asking}
         onClose={() => {

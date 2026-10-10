@@ -75,6 +75,17 @@ export interface PaymentRules {
   codMaxNewCustomer: Money;
 }
 
+/** How a shopper reaches a person. Placeholders until the real operator line is set up for the pilot town. */
+export interface SupportRules {
+  /** The number to call, ten digits. */
+  phone: string;
+  /** The number on WhatsApp, with the country code and no plus or spaces, as a `wa.me` link wants it. */
+  whatsapp: string;
+  /** The hours someone answers, on a 24-hour clock: from this hour to that hour, every day. */
+  fromHour: number;
+  toHour: number;
+}
+
 /** A town's delivery rules. Fees and limits live in data, not in screens (the town's own rules arrive in Phase 2). */
 export interface ZoneSettings {
   /** The item total from which delivery is free. */
@@ -85,6 +96,7 @@ export interface ZoneSettings {
   tip: TipRules;
   weights: WeightRules;
   payment: PaymentRules;
+  support: SupportRules;
   /** The handling fee for each class of care, before any festival surcharge. */
   handling: Readonly<Record<CareClass, Money>>;
   /** What is added to the handling fee on a festival day. */
@@ -114,6 +126,7 @@ export const ZONE: ZoneSettings = {
   },
   weights: { tolerancePercent: 5 },
   payment: { codMaxNewCustomer: money(100_000) },
+  support: { phone: '9011285958', whatsapp: '919011285958', fromHour: 8, toHour: 22 },
   tip: { options: [money(1_000), money(2_000), money(3_000)], max: money(10_000) },
   quick: {
     baseMinutes: 6,

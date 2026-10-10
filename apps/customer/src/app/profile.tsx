@@ -62,6 +62,13 @@ function Settings() {
         ) : null}
         <Button label={t('profile.logout')} variant="secondary" onPress={account.logOut} />
       </View>
+      <Button
+        label={t('help.title')}
+        variant="secondary"
+        onPress={() => {
+          router.push('/help');
+        }}
+      />
       <OptionGroup
         title={t('language.label')}
         options={LOCALES.map((value) => ({ value, label: messages[value].language[value] }))}

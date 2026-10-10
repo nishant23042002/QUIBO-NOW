@@ -899,6 +899,72 @@
     "detailUpi": "{amount} by UPI",
     "detailCash": "{amount} in cash"
   },
+  "help": {
+    "title": "Help",
+    "talkTitle": "Talk to a person",
+    "hours": "Every day, {from} to {to}",
+    "call": "Call us",
+    "whatsapp": "WhatsApp",
+    "whatsappHello": "Hi, I need help.",
+    "whatsappOrder": "Hi, I need help with order {number}.",
+    "reportTitle": "Report a problem with an order",
+    "reportSub": "Missing, wrong or damaged items, or a payment",
+    "questionsTitle": "Common questions",
+    "yourReports": "Your reports",
+    "received": "Received. We will get back to you.",
+    "needHelpOrder": "Need help with this order?",
+    "faq": {
+      "time": {
+        "q": "How long will my order take?",
+        "a": "Quick delivery shows an estimate in minutes before you order, a little longer in rush hour or rain. It is an estimate, not a promise. You can also pick a one-hour window today or tomorrow."
+      },
+      "cancel": {
+        "q": "Can I cancel my order?",
+        "a": "Yes, until the shop has packed it. Open the order and tap Cancel order. After that it is on its way and cannot be cancelled."
+      },
+      "refund": {
+        "q": "How do refunds work?",
+        "a": "If you paid by UPI and the order is cancelled or does not arrive, the money goes back to your UPI account in 3 to 5 working days. If you chose cash, nothing is charged."
+      },
+      "cash": {
+        "q": "Why can I not pay with cash?",
+        "a": "Cash on delivery is available up to {max} for your first orders, so a rider never carries a large amount of cash. Above that, please pay with UPI."
+      },
+      "stock": {
+        "q": "What if an item is out of stock?",
+        "a": "You choose in the cart: swap it for something close, or take it out. You can set it for the whole order or for one item. You only pay for what is delivered."
+      },
+      "area": {
+        "q": "Where do you deliver?",
+        "a": "We deliver inside our delivery area, which you see as a shape on the map when you add an address. If your pin is outside it, the address says so before you save."
+      }
+    },
+    "report": {
+      "title": "Report a problem",
+      "whichOrder": "Which order?",
+      "change": "Tap to choose another order",
+      "whatWrong": "What went wrong?",
+      "kind": {
+        "missing": "An item was missing",
+        "wrong": "I got the wrong item",
+        "damaged": "An item was damaged or spoiled",
+        "payment": "A payment or refund problem",
+        "other": "Something else"
+      },
+      "whichItems": "Which items?",
+      "noteLabel": "Anything else we should know (optional)",
+      "noteHint": "Up to {max} characters.",
+      "send": "Send report",
+      "sending": "Sending…",
+      "sentTitle": "We have it",
+      "sentBody": "We will get back to you by phone or WhatsApp.",
+      "done": "Done",
+      "back": "Back",
+      "noOrdersTitle": "No orders to report on yet",
+      "noOrdersBody": "Once you have placed an order you can report a problem with it here. You can still call or WhatsApp us from Help.",
+      "offline": "You need a connection to send a report. You can still call us from Help."
+    }
+  },
   "firstRun": {
     "progress": "Step {n} of {total}",
     "continue": "Continue",

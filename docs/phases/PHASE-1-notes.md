@@ -127,6 +127,14 @@ language: a TalkBack pass, the phone's largest font size, and Devanagari renderi
 - **Money maths runs on Hermes.** The Components screen is the on-device check. If it ever shows `wrong`,
   fall back to plain integer maths in `money.ts` (amounts stay below 2^53).
 
+## For the hardening section (1h)
+
+- **A failed read is saved over.** `readSetting` returns nothing both when the key is empty and when reading failed, and each
+  provider then writes its (empty) state back. If a read ever failed on a phone, the orders, reports, cart or addresses would be
+  replaced by nothing on the first write. Fix: tell "empty" from "failed" in `src/storage.ts`, and do not write until a read has
+  succeeded. Seen once in the test browser only as orders that were missing when a new session began; it could not be made to
+  happen again, so the cause there is probably the pane clearing its storage, but the hazard is real.
+
 ## Parked by the owner
 
 - **"Order again" (one-tap reorder), parked 2026-10-10.** Not part of 1g for now. What it needs when it is taken up: the order

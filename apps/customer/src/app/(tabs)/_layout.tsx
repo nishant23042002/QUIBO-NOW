@@ -22,7 +22,7 @@ const STEP_OF_CART: readonly string[] = ['checkout', 'schedule', 'coupons'];
 const STEP_OF_ORDERS: readonly string[] = ['order'];
 
 /** The address pages are reached from Home and from the cart alike, so no tab is lit for them. */
-const NEUTRAL: readonly string[] = ['address', 'address-edit'];
+const NEUTRAL: readonly string[] = ['address', 'address-edit', 'help', 'report'];
 
 function Bar({ state, navigation }: TabBarProps) {
   const { t } = useLanguage();

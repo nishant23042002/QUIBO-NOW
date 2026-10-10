@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AccountProvider, useAccount } from '@/account/AccountProvider';
 import { FirstRun } from '@/account/FirstRun';
 import { Welcome } from '@/account/Welcome';
+import { ReportsProvider } from '@/help/ReportsProvider';
 import { AddressProvider } from '@/home/AddressProvider';
 import { CartProvider } from '@/home/CartProvider';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
@@ -113,7 +114,9 @@ export default function RootLayout() {
           <AddressProvider>
             <CartProvider>
               <OrdersProvider>
-                <Gate />
+                <ReportsProvider>
+                  <Gate />
+                </ReportsProvider>
               </OrdersProvider>
             </CartProvider>
           </AddressProvider>
