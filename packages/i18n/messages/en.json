@@ -811,7 +811,11 @@
       "rejected": "The shop could not take it",
       "cancelled": "Cancelled",
       "undelivered": "Could not be delivered"
-    }
+    },
+    "inProgress": "In progress",
+    "nothingInProgress": "Nothing in progress right now.",
+    "past": "Past orders",
+    "track": "Track order"
   },
   "tracking": {
     "headline": {
@@ -884,7 +888,16 @@
     "refundBody": "{amount} goes back to your UPI account in 3 to 5 working days.",
     "nothingTitle": "Nothing was charged",
     "nothingBody": "You did not pay anything for this order.",
-    "backToShopping": "Back to shopping"
+    "backToShopping": "Back to shopping",
+    "itemsTitle": "Items in this order",
+    "detailsTitle": "Order details",
+    "detailNumber": "Order number",
+    "detailPlaced": "Placed",
+    "detailAddress": "Delivered to",
+    "detailShops": "Shops",
+    "detailPayment": "Payment",
+    "detailUpi": "{amount} by UPI",
+    "detailCash": "{amount} in cash"
   },
   "firstRun": {
     "progress": "Step {n} of {total}",

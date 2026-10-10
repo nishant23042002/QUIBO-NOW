@@ -811,7 +811,11 @@
       "rejected": "दुकान यह ऑर्डर नहीं ले सकी",
       "cancelled": "रद्द किया गया",
       "undelivered": "पहुँचाया नहीं जा सका"
-    }
+    },
+    "inProgress": "जारी ऑर्डर",
+    "nothingInProgress": "अभी कोई ऑर्डर जारी नहीं है।",
+    "past": "पिछले ऑर्डर",
+    "track": "ऑर्डर ट्रैक करें"
   },
   "tracking": {
     "headline": {
@@ -884,7 +888,16 @@
     "refundBody": "{amount} 3 से 5 कार्य दिवसों में आपके UPI खाते में लौट जाएँगे।",
     "nothingTitle": "कुछ भी नहीं कटा",
     "nothingBody": "इस ऑर्डर के लिए आपने कुछ भी नहीं दिया।",
-    "backToShopping": "खरीदारी पर लौटें"
+    "backToShopping": "खरीदारी पर लौटें",
+    "itemsTitle": "इस ऑर्डर की चीज़ें",
+    "detailsTitle": "ऑर्डर का विवरण",
+    "detailNumber": "ऑर्डर नंबर",
+    "detailPlaced": "ऑर्डर का समय",
+    "detailAddress": "पहुँचाने का पता",
+    "detailShops": "दुकानें",
+    "detailPayment": "भुगतान",
+    "detailUpi": "UPI से {amount}",
+    "detailCash": "नकद {amount}"
   },
   "firstRun": {
     "progress": "चरण {n}, कुल {total}",

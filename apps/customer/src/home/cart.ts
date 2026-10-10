@@ -36,6 +36,8 @@ export interface CartItem {
   quantityLine: string;
   /** What this line comes to, for example "₹58", or "≈ ₹63" when it is an estimate. */
   totalLabel: string;
+  /** What this line comes to, in paise. */
+  lineTotal: Money;
   /** What the same line would cost at the printed price, for example "₹64", when that is more. Shown struck through. */
   mrpLabel?: string;
   /** The partner shop that sells it. Absent when the town has one dark store, where there is nothing to tell apart. */
@@ -367,6 +369,7 @@ export function useDraftCart(): DraftCart {
         ? `${formatQuantity(quantity)} ${t('weights.kg')}`
         : `${pack.label} \u00D7 ${quantity}`,
       totalLabel: worth(lineTotals.get(packId) ?? money(0), loose),
+      lineTotal: lineTotals.get(packId) ?? money(0),
       ...(pack.mrp !== undefined && pack.mrp > pack.price
         ? { mrpLabel: formatRupees(multiplyByQuantity(pack.mrp, quantity)) }
         : {}),

@@ -18,6 +18,7 @@ describe('package index', () => {
         'OrderDeliverySchema',
         'OrderEventSchema',
         'OrderIdSchema',
+        'OrderItemSchema',
         'OrderSchema',
         'OrderShopSchema',
         'OrderStatusSchema',

@@ -5,6 +5,7 @@ import {
   defaultPayment,
   effectivePayment,
   orderDeliveryOf,
+  orderItemsOf,
   paymentOptions,
   shopLines,
 } from './checkout';
@@ -105,5 +106,52 @@ describe('orderDeliveryOf', () => {
     if (result.kind !== 'slot') return;
     expect(new Date(result.start)).toEqual(new Date(2026, 9, 10, 7, 0));
     expect(Date.parse(result.end) - Date.parse(result.start)).toBe(3_600_000);
+  });
+});
+
+describe('orderItemsOf', () => {
+  it('keeps each line as it was bought, with loose items marked', () => {
+    const items = orderItemsOf([
+      {
+        id: 'milk:500ml',
+        name: 'Toned milk',
+        pack: '500 ml',
+        emoji: 'M',
+        category: 'dairy',
+        quantity: 2,
+        lineTotal: money(5_800),
+      },
+      {
+        id: 'potato:loose',
+        name: 'Potato',
+        pack: 'per kg',
+        emoji: 'P',
+        category: 'vegetables',
+        quantity: 0.5,
+        loose: true,
+        lineTotal: money(1_800),
+      },
+    ]);
+    expect(items).toEqual([
+      {
+        packId: 'milk:500ml',
+        name: 'Toned milk',
+        pack: '500 ml',
+        emoji: 'M',
+        category: 'dairy',
+        quantity: 2,
+        lineTotal: 5_800,
+      },
+      {
+        packId: 'potato:loose',
+        name: 'Potato',
+        pack: 'per kg',
+        emoji: 'P',
+        category: 'vegetables',
+        quantity: 0.5,
+        loose: true,
+        lineTotal: 1_800,
+      },
+    ]);
   });
 });

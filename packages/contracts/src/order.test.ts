@@ -8,6 +8,28 @@ const base = {
   status: 'accepted',
   acceptance: 'by_shop',
   shops: [{ id: 'dairy', name: 'Sharma Dairy' }],
+  items: [
+    {
+      packId: 'milk:500ml',
+      name: 'Toned milk',
+      pack: '500 ml',
+      emoji: '🥛',
+      category: 'dairy',
+      quantity: 2,
+      lineTotal: 5800,
+    },
+    {
+      packId: 'potato:loose',
+      name: 'Potato',
+      pack: 'loose',
+      emoji: '🥔',
+      category: 'vegetables',
+      quantity: 0.5,
+      loose: true,
+      lineTotal: 1800,
+    },
+  ],
+  address: 'Home - 7B, Market Road',
   delivery: { kind: 'quick', fromMinutes: 25, toMinutes: 30 },
   payment: { method: 'cod', status: 'to_collect' },
   total: 24900,
@@ -79,6 +101,19 @@ describe('OrderSchema', () => {
     };
     expect(OrderSchema.safeParse(empty).success).toBe(false);
     expect(OrderSchema.safeParse({ ...base, delivery: undefined }).success).toBe(false);
+  });
+
+  it('keeps what was bought, with its picture, count and line total', () => {
+    const parsed = OrderSchema.parse(base);
+    expect(parsed.items.map((item) => item.name)).toEqual(['Toned milk', 'Potato']);
+    expect(parsed.items[1]).toMatchObject({ quantity: 0.5, loose: true, lineTotal: 1800 });
+  });
+
+  it('needs at least one item, a positive quantity and an address', () => {
+    expect(OrderSchema.safeParse({ ...base, items: [] }).success).toBe(false);
+    const none = { ...base.items[0], quantity: 0 };
+    expect(OrderSchema.safeParse({ ...base, items: [none] }).success).toBe(false);
+    expect(OrderSchema.safeParse({ ...base, address: '' }).success).toBe(false);
   });
 
   it('keeps money as integer paise', () => {

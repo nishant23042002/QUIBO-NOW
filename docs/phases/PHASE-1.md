@@ -241,7 +241,15 @@ a fast order clock with a slow switch; the active order kept on the phone.
   both modes.
 - **Your check:** the full order, end to end, on your phone, in both modes.
 
-### 1g. Past orders, reorder, help, settings
+### 1g. Past orders, help, settings
+
+**Progress.**
+
+- [x] 1g-0. The 1f wrap-up: Maestro order flows, ADR 0019, the language review sheet
+- [x] 1g-1. Orders: In progress and Past, pictures of what was ordered on every order screen, "Order details"
+- [ ] 1g-2. Help: FAQ, call and WhatsApp, report a problem on an order
+- [ ] 1g-3. Settings: the Profile screen as settings, saved addresses, the components gallery out of production builds
+- [ ] 1g-4. Maestro flow for help, Hindi and Marathi drafts, notes
 
 - **Build:** **past orders** list and detail, **help** (FAQ topics, call and WhatsApp the operator, report a problem on an
   order), and **settings** (language, theme, saved addresses, log out). The `/components` gallery is removed from production

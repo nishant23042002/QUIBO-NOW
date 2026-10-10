@@ -811,7 +811,11 @@
       "rejected": "दुकान ही ऑर्डर घेऊ शकले नाही",
       "cancelled": "रद्द केली",
       "undelivered": "पोहोचवता आली नाही"
-    }
+    },
+    "inProgress": "सुरू असलेल्या ऑर्डर",
+    "nothingInProgress": "सध्या काहीही सुरू नाही.",
+    "past": "मागील ऑर्डर",
+    "track": "ऑर्डर ट्रॅक करा"
   },
   "tracking": {
     "headline": {
@@ -884,7 +888,16 @@
     "refundBody": "{amount} 3 ते 5 कामाच्या दिवसांत तुमच्या UPI खात्यात परत येतील.",
     "nothingTitle": "काहीही पैसे कापले नाहीत",
     "nothingBody": "या ऑर्डरसाठी तुम्ही काहीही दिले नाही.",
-    "backToShopping": "खरेदीकडे परत"
+    "backToShopping": "खरेदीकडे परत",
+    "itemsTitle": "या ऑर्डरमधील वस्तू",
+    "detailsTitle": "ऑर्डरचा तपशील",
+    "detailNumber": "ऑर्डर क्रमांक",
+    "detailPlaced": "ऑर्डर दिल्याची वेळ",
+    "detailAddress": "पोहोचवण्याचा पत्ता",
+    "detailShops": "दुकाने",
+    "detailPayment": "पेमेंट",
+    "detailUpi": "UPI ने {amount}",
+    "detailCash": "रोख {amount}"
   },
   "firstRun": {
     "progress": "पायरी {n}, एकूण {total}",

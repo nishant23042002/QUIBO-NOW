@@ -61,6 +61,28 @@ export const OrderDeliverySchema = z
   });
 export type OrderDelivery = z.infer<typeof OrderDeliverySchema>;
 
+/**
+ * One thing that was bought, kept as it was when the order was placed: its name and pack, the picture (an emoji on its category's
+ * tile until there are photos), how many (or how many kilograms, for a loose item) and what the line came to.
+ */
+export const OrderItemSchema = z.object({
+  /** The pack's id in the catalogue, for example "milk:500ml". */
+  packId: z.string().min(1),
+  name: z.string().min(1),
+  /** The pack, for example "500 ml". */
+  pack: z.string().min(1),
+  emoji: z.string().min(1),
+  /** The category the item is in, which sets the colour behind its picture. */
+  category: z.string().min(1),
+  /** A count, or kilograms with up to three decimals for a loose item. */
+  quantity: z.number().positive(),
+  /** Sold loose by weight: `quantity` is in kilograms and the line was an estimate until it was weighed. */
+  loose: z.boolean().optional(),
+  /** What the line came to, in paise. */
+  lineTotal: MoneySchema,
+});
+export type OrderItem = z.infer<typeof OrderItemSchema>;
+
 /** One shop's part of the order. One order can hold several shops; there is still one rider and one delivery (ADR 0009). */
 export const OrderShopSchema = z.object({
   id: z.string().min(1),
@@ -81,6 +103,9 @@ export const OrderSchema = z
     status: OrderStatusSchema,
     acceptance: AcceptanceSchema,
     shops: z.array(OrderShopSchema).min(1),
+    items: z.array(OrderItemSchema).min(1),
+    /** Where it goes, in one line, as it was when the order was placed. */
+    address: z.string().min(1),
     delivery: OrderDeliverySchema,
     payment: z.object({ method: PaymentMethodSchema, status: PaymentStatusSchema }),
     /** What the customer pays, in paise. For cash on delivery this is the amount the rider collects. */

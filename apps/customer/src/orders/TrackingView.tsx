@@ -27,12 +27,14 @@ import {
   useScreenLoad,
 } from '@/ui';
 import { canCancel } from './machine';
+import { orderNumber } from './ids';
+import { ItemLine } from './ItemThumb';
 import { useOrders } from './OrdersProvider';
+import { useDateTimeLabel, useTimeLabel } from './useTime';
 import { shopParts, timelineOf, type StepState } from './timeline';
 import {
   MOCK_RIDER,
   cashToKeep,
-  clockParts,
   dayRelativeTo,
   endNoteOf,
   endedBy,
@@ -117,6 +119,15 @@ const makeStyles = (c: ThemeColors) =>
     riderText: { flexGrow: 1, flexShrink: 1, flexBasis: 120, minWidth: 0 },
     skeleton: { flex: 1, overflow: 'hidden' },
     actions: { gap: space[2] },
+    cardHead: {
+      flexDirection: 'row',
+      alignItems: 'baseline',
+      justifyContent: 'space-between',
+      gap: space[3],
+    },
+    items: { gap: space[3] },
+    fact: { flexDirection: 'row', justifyContent: 'space-between', gap: space[4] },
+    factValue: { flex: 1, minWidth: 0, alignItems: 'flex-end' },
     sheetActions: { gap: space[2] },
   });
 
@@ -149,15 +160,6 @@ function TrackingSkeleton() {
       </View>
     </SkeletonScope>
   );
-}
-
-/** A time of day on a 12-hour clock, for example "10:02 AM". Hindi and Marathi follow it with "बजे" or "वाजता". */
-function useTimeLabel(): (date: Date) => string {
-  const { t } = useLanguage();
-  return (date) => {
-    const { hour, minutes, morning } = clockParts(date);
-    return `${hour}:${minutes} ${t(morning ? 'cart.chipAm' : 'cart.chipPm')}`;
-  };
 }
 
 function Timeline({ order }: { order: Order }) {
@@ -243,6 +245,7 @@ function TrackingPage({ order }: { order: Order }) {
   const large = useLargeText();
   const slotText = useSlotText();
   const time = useTimeLabel();
+  const dateTime = useDateTimeLabel();
   const { colors } = useTheme();
 
   const eta = etaOf(order);
@@ -355,6 +358,24 @@ function TrackingPage({ order }: { order: Order }) {
         </View>
       ) : null}
 
+      <View style={[styles.card, styles.block]}>
+        <View style={styles.cardHead}>
+          <Text variant="subheading" role="heading">
+            {t('tracking.itemsTitle')}
+          </Text>
+          <Text variant="small" color="inkMuted">
+            {t(order.items.length === 1 ? 'home.cart.itemsOne' : 'home.cart.itemsMany', {
+              count: order.items.length,
+            })}
+          </Text>
+        </View>
+        <View style={styles.items}>
+          {order.items.map((item) => (
+            <ItemLine key={item.packId} item={item} />
+          ))}
+        </View>
+      </View>
+
       {endNote !== null ? (
         <View style={[styles.card, styles.block]}>
           <Text variant="subheading" role="heading">
@@ -424,6 +445,33 @@ function TrackingPage({ order }: { order: Order }) {
           />
         </View>
       ) : null}
+
+      <View style={[styles.card, styles.block]}>
+        <Text variant="subheading" role="heading">
+          {t('tracking.detailsTitle')}
+        </Text>
+        {[
+          [t('tracking.detailNumber'), orderNumber(order.id)],
+          [t('tracking.detailPlaced'), dateTime(new Date(order.placedAt))],
+          [t('tracking.detailAddress'), order.address],
+          [t('tracking.detailShops'), order.shops.map((shop) => shop.name).join(', ')],
+          [
+            t('tracking.detailPayment'),
+            order.payment.method === 'upi'
+              ? t('tracking.detailUpi', { amount: formatRupees(order.total) })
+              : t('tracking.detailCash', { amount: formatRupees(order.total) }),
+          ],
+        ].map(([label, value]) => (
+          <View key={label} style={styles.fact}>
+            <Text variant="small" color="inkMuted">
+              {label}
+            </Text>
+            <View style={styles.factValue}>
+              <Text variant="small">{value}</Text>
+            </View>
+          </View>
+        ))}
+      </View>
 
       <Sheet
         open={asking}

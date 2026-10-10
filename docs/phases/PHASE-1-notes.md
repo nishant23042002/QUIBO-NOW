@@ -133,6 +133,9 @@ language: a TalkBack pass, the phone's largest font size, and Devanagari renderi
   must keep what was bought (pack ids, quantities, the loose weights) as well as the shops, payment and total; the cart then
   needs a way to add those packs back, cut to what is in stock now (the cart already does this when it restores itself), and to
   say which ones are gone. The plan's "reorder strip" on Home (PLAN section 5) is the same piece of work.
+  **Update (2026-10-10):** the first half is done. The order now keeps its items (pack id, name, picture, quantity, line
+  total) and its address, because the order screens show pictures of what was bought. What is left is the cart side: adding
+  those packs back, cut to stock, and saying which are gone.
 
 ## For Phase 2 (parked, not for now)
 

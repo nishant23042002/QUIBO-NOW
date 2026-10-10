@@ -25,6 +25,18 @@ function request(overrides: Partial<PlaceRequest> = {}): PlaceRequest {
       { id: 'dairy', name: 'Sharma Dairy' },
       { id: 'veg', name: 'Patil Vegetables' },
     ],
+    items: [
+      {
+        packId: 'milk:500ml',
+        name: 'Toned milk',
+        pack: '500 ml',
+        emoji: '🥛',
+        category: 'dairy',
+        quantity: 2,
+        lineTotal: money(5_800),
+      },
+    ],
+    address: 'Home - 7B, Market Road',
     delivery: { kind: 'quick', fromMinutes: 25, toMinutes: 30 },
     method: 'cod',
     total: money(34_100),
@@ -60,6 +72,13 @@ describe('buildOrder', () => {
     expect(order.events).toEqual([{ status: 'placed', at: NOW.toISOString(), by: 'customer' }]);
     expect(order.placedAt).toBe(NOW.toISOString());
     expect(order.idempotencyKey).toBe('key-aaaaaaaa');
+  });
+
+  it('keeps what was bought and where it goes', () => {
+    const order = buildOrder(request());
+    expect(order.items).toHaveLength(1);
+    expect(order.items[0]).toMatchObject({ name: 'Toned milk', quantity: 2, lineTotal: 5_800 });
+    expect(order.address).toBe('Home - 7B, Market Road');
   });
 
   it('remembers how the order is delivered', () => {

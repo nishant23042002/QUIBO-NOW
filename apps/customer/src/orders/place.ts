@@ -5,6 +5,7 @@ import {
   type Money,
   type Order,
   type OrderDelivery,
+  type OrderItem,
   type OrderShop,
   type PaymentMethod,
   type TownId,
@@ -29,6 +30,8 @@ export interface PlaceRequest {
   townId: TownId;
   mode: FulfilmentMode;
   shops: readonly OrderShop[];
+  items: readonly OrderItem[];
+  address: string;
   delivery: OrderDelivery;
   method: PaymentMethod;
   total: Money;
@@ -56,6 +59,8 @@ export function buildOrder(request: PlaceRequest): Order {
     status: 'placed',
     acceptance: acceptanceFor(request.mode),
     shops: request.shops,
+    items: request.items,
+    address: request.address,
     delivery: request.delivery,
     payment: {
       method: request.method,

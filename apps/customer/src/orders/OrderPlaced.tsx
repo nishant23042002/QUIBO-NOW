@@ -6,6 +6,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { palettes } from '@/theme';
 import { Icon, Text, radius, space, useReduceMotion } from '@/ui';
 import { orderNumber } from './ids';
+import { ThumbRow } from './ItemThumb';
 import { PLACED_FADE_MS, PLACED_MS, PLACED_REDUCED_MS } from './timing';
 
 // Like the opening splash and the welcome, a brand moment: the same aubergine in both themes.
@@ -118,6 +119,8 @@ export function OrderPlaced({ order, onDone }: { order: Order; onDone: () => voi
           {t('placed.body')}
         </Text>
       </View>
+      {/* What was ordered, so the moment is about their own things. */}
+      <ThumbRow items={order.items} size={44} fit={5} ring={BACKGROUND} />
     </Animated.View>
   );
 }

@@ -38,6 +38,10 @@ fulfilment mode without a screen asking which mode the town is in (ADR 0002).
    nothing was charged.
 10. **Cancelling is the customer's, until packing is finished.** Anything already due is applied first, so a late tap cannot undo a
     move that has happened: the order is left as it is and the customer is told it is too late.
+11. **The order keeps what was bought and where it goes.** `items` holds each line as it was when the order was placed: the pack,
+    its name, its picture (an emoji on the category's tile until there are photos), how many or how many kilograms, and what it
+    came to; `address` holds the delivery address in one line. Checkout, the placed screen, the Orders list and the order's page
+    all show the pictures from the order, never from today's catalogue, so an order reads the same later.
 
 ## Consequences
 

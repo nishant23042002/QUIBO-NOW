@@ -1,4 +1,4 @@
-import type { Money, OrderDelivery, PaymentMethod } from '@quibo/contracts';
+import type { Money, OrderDelivery, OrderItem, PaymentMethod } from '@quibo/contracts';
 import { ZONE, type ZoneSettings } from '../home/delivery';
 import type { Delivery } from '../home/slots';
 
@@ -77,4 +77,29 @@ export function orderDeliveryOf(
     return { kind: 'slot', start: start.toISOString(), end: end.toISOString() };
   }
   return { kind: 'quick', fromMinutes: eta.from, toMinutes: eta.to };
+}
+
+/** What was bought, as the order keeps it, from the cart's lines. */
+export function orderItemsOf(
+  lines: readonly {
+    id: string;
+    name: string;
+    pack: string;
+    emoji: string;
+    category: string;
+    quantity: number;
+    loose?: true;
+    lineTotal: Money;
+  }[],
+): OrderItem[] {
+  return lines.map((line) => ({
+    packId: line.id,
+    name: line.name,
+    pack: line.pack,
+    emoji: line.emoji,
+    category: line.category,
+    quantity: line.quantity,
+    ...(line.loose === true ? { loose: true } : {}),
+    lineTotal: line.lineTotal,
+  }));
 }

@@ -5,7 +5,14 @@ import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useOnline } from '@/network';
-import { effectivePayment, orderDeliveryOf, paymentOptions, shopLines } from '@/orders/checkout';
+import {
+  effectivePayment,
+  orderDeliveryOf,
+  orderItemsOf,
+  paymentOptions,
+  shopLines,
+} from '@/orders/checkout';
+import { ItemLine } from '@/orders/ItemThumb';
 import { newUuid } from '@/orders/ids';
 import { useOrders } from '@/orders/OrdersProvider';
 import { IDLE, isBusy, nextFlow } from '@/orders/placeFlow';
@@ -92,6 +99,8 @@ const makeStyles = (c: ThemeColors) =>
       minHeight: 32,
     },
     shopName: { flexShrink: 1, minWidth: 0 },
+    groups: { gap: space[4] },
+    group: { gap: space[3] },
     option: {
       minHeight: 72,
       flexDirection: 'row',
@@ -209,6 +218,11 @@ function CheckoutPage() {
   const codAllowed = options.some((option) => option.method === 'cod' && option.allowed);
 
   const delivery = orderDeliveryOf(cart.delivery.current, cart.delivery.eta);
+  // Each thing in the cart as the order will keep it, with the shop it comes from, so the card can show them shop by shop.
+  const orderItems = orderItemsOf(cart.items).map((item, index) => ({
+    item,
+    shop: cart.items[index]?.soldBy ?? t('cart.darkStore'),
+  }));
 
   const later = (run: () => void, ms: number) => {
     timers.current.push(setTimeout(run, ms));
@@ -225,6 +239,8 @@ function CheckoutPage() {
           townId: towns[mode].id,
           mode,
           shops: cart.stores,
+          items: orderItems.map(({ item }) => item),
+          address,
           delivery,
           method,
           total: bill.toPay,
@@ -331,17 +347,26 @@ function CheckoutPage() {
               {t('checkout.yourOrder')}
             </Text>
           </View>
-          <View>
+          <View style={styles.groups}>
             {shops.map((shop) => (
-              <View key={shop.name} style={styles.shop}>
-                <View style={styles.shopName}>
-                  <Text numberOfLines={large ? 2 : 1}>{shop.name}</Text>
+              <View key={shop.name} style={styles.group}>
+                <View style={styles.shop}>
+                  <View style={styles.shopName}>
+                    <Text variant="strong" numberOfLines={large ? 2 : 1}>
+                      {shop.name}
+                    </Text>
+                  </View>
+                  <Text variant="small" color="inkMuted">
+                    {t(shop.items === 1 ? 'home.cart.itemsOne' : 'home.cart.itemsMany', {
+                      count: shop.items,
+                    })}
+                  </Text>
                 </View>
-                <Text variant="small" color="inkMuted">
-                  {t(shop.items === 1 ? 'home.cart.itemsOne' : 'home.cart.itemsMany', {
-                    count: shop.items,
-                  })}
-                </Text>
+                {orderItems
+                  .filter((line) => line.shop === shop.name)
+                  .map(({ item }) => (
+                    <ItemLine key={item.packId} item={item} />
+                  ))}
               </View>
             ))}
           </View>
