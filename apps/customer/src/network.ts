@@ -1,14 +1,15 @@
+import NetInfo from '@react-native-community/netinfo';
 import { useSyncExternalStore } from 'react';
 import { Platform } from 'react-native';
+import { isReachable } from './networkCore';
 
 /**
  * Whether the phone can reach the network, and a way to rehearse a bad connection while the app runs on mock data.
  *
- * On the web this follows the browser's own online and offline events. On a phone there is no such API in React
- * Native itself: it needs `@react-native-community/netinfo`, which has not been added yet (adding a dependency
- * needs a decision, see docs/phases/PHASE-1.md). Until then a phone counts as online, and the two switches below
- * (shown in development builds only, on the Profile screen) stand in for a real failure so the offline and error
- * screens can be seen and tested.
+ * On the web this follows the browser's own online and offline events. On a phone it follows
+ * `@react-native-community/netinfo`, which reports a change as it happens. Two switches (shown in development builds only, in
+ * the testing tools on the Settings screen) stand in for a failure on demand, so the offline and error screens can be seen
+ * without pulling a cable.
  */
 
 const listeners = new Set<() => void>();
@@ -21,8 +22,21 @@ function notify(): void {
   });
 }
 
-function browserOnline(): boolean {
-  return Platform.OS !== 'web' || typeof navigator === 'undefined' || navigator.onLine;
+// What the phone last said. Assumed online until it says otherwise, so a slow first report never shows "offline".
+let phoneOnline = true;
+
+if (Platform.OS !== 'web') {
+  NetInfo.addEventListener((state) => {
+    const next = isReachable(state);
+    if (next === phoneOnline) return;
+    phoneOnline = next;
+    notify();
+  });
+}
+
+function deviceOnline(): boolean {
+  if (Platform.OS !== 'web') return phoneOnline;
+  return typeof navigator === 'undefined' || navigator.onLine;
 }
 
 function subscribe(listener: () => void): () => void {
@@ -40,7 +54,7 @@ function subscribe(listener: () => void): () => void {
   };
 }
 
-const isOnline = (): boolean => browserOnline() && !simulatedOffline;
+const isOnline = (): boolean => deviceOnline() && !simulatedOffline;
 
 /** True while the network can be reached. */
 export function useOnline(): boolean {

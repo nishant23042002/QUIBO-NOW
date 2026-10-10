@@ -331,8 +331,7 @@ Testing tools, and check a release build has no such card. Parked by decision: "
 
 Decided by the human:
 
-1. **Offline detection (1b):** add `@react-native-community/netinfo` only if it turns out to be necessary; ask again
-   at the point of adding it, with the reason.
+1. **Offline detection (1b):** `@react-native-community/netinfo` added, approved by the owner on 2026-10-10 (ADR 0020).
 2. **Map pin (1e):** a mock picker now; a real map in Phase 2.
 3. **Font (1a):** system fonts. Poppins is dropped for this phase.
 4. **Palette (1a):** start from aubergine and pistachio; the human will ask for changes after seeing it.
