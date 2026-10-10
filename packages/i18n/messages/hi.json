@@ -965,6 +965,17 @@
       "offline": "शिकायत भेजने के लिए कनेक्शन चाहिए। मदद में कॉल अभी भी कर सकते हैं।"
     }
   },
+  "settings": {
+    "title": "सेटिंग",
+    "signedIn": "साइन इन है",
+    "skippedTitle": "टेस्टर",
+    "skipped": "टेस्टिंग के लिए साइन इन",
+    "addresses": "सहेजे हुए पते",
+    "orders": "आपके ऑर्डर",
+    "version": "Quibo Now · संस्करण {version}",
+    "testing": "टेस्टिंग के औज़ार",
+    "testingSub": "सिर्फ़ डेवलपमेंट बिल्ड में"
+  },
   "firstRun": {
     "progress": "चरण {n}, कुल {total}",
     "continue": "आगे बढ़ें",

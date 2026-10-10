@@ -965,6 +965,17 @@
       "offline": "You need a connection to send a report. You can still call us from Help."
     }
   },
+  "settings": {
+    "title": "Settings",
+    "signedIn": "Signed in",
+    "skippedTitle": "Tester",
+    "skipped": "Signed in for testing",
+    "addresses": "Saved addresses",
+    "orders": "Your orders",
+    "version": "Quibo Now · version {version}",
+    "testing": "Testing tools",
+    "testingSub": "Only in development builds"
+  },
   "firstRun": {
     "progress": "Step {n} of {total}",
     "continue": "Continue",

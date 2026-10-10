@@ -965,6 +965,17 @@
       "offline": "तक्रार पाठवण्यासाठी कनेक्शन हवे. मदतीमधून कॉल करता येतो."
     }
   },
+  "settings": {
+    "title": "सेटिंग",
+    "signedIn": "साइन इन आहे",
+    "skippedTitle": "टेस्टर",
+    "skipped": "टेस्टिंगसाठी साइन इन",
+    "addresses": "जतन केलेले पत्ते",
+    "orders": "तुमच्या ऑर्डर",
+    "version": "Quibo Now · आवृत्ती {version}",
+    "testing": "टेस्टिंगची साधने",
+    "testingSub": "फक्त डेव्हलपमेंट बिल्डमध्ये"
+  },
   "firstRun": {
     "progress": "पायरी {n}, एकूण {total}",
     "continue": "पुढे जा",

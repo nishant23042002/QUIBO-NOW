@@ -1,4 +1,4 @@
-// Writes the sheet a native Hindi or Marathi speaker reviews: every line of the screens built in Phase 1 section 1f and 1g, in
+// Writes the sheet a native Hindi or Marathi speaker reviews: every line of the screens built in Phase 1 sections 1f and 1g, in
 // English next to the Hindi and Marathi drafts, with a column to mark it OK or give the better wording.
 //
 //   node scripts/language-review.mjs
@@ -18,6 +18,7 @@ const SECTIONS = [
   ['Orders', 'orders'],
   ['Tracking an order', 'tracking'],
   ['Help', 'help'],
+  ['Settings', 'settings'],
 ];
 
 const en = read('en');

@@ -248,7 +248,7 @@ a fast order clock with a slow switch; the active order kept on the phone.
 - [x] 1g-0. The 1f wrap-up: Maestro order flows, ADR 0019, the language review sheet
 - [x] 1g-1. Orders: In progress and Past, pictures of what was ordered on every order screen, "Order details"
 - [x] 1g-2. Help: FAQ, call and WhatsApp, report a problem on an order (kept with the order, on the phone)
-- [ ] 1g-3. Settings: the Profile screen as settings, saved addresses, the components gallery out of production builds
+- [x] 1g-3. Settings: the Profile screen as settings, shortcuts, testing tools in one card, the components gallery out of release builds
 - [ ] 1g-4. Maestro flow for help, Hindi and Marathi drafts, notes
 
 - **Build:** **past orders** list and detail, **help** (FAQ topics, call and WhatsApp the operator, report a problem on an

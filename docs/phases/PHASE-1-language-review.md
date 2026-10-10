@@ -205,4 +205,18 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `help.report.noOrdersBody`  | Once you have placed an order you can report a problem with it here. You can still call or WhatsApp us from Help.                                                                            | ऑर्डर देने के बाद आप यहाँ उसकी समस्या बता सकते हैं। मदद में कॉल या WhatsApp अभी भी कर सकते हैं।                                                                     | ऑर्डर दिल्यावर तुम्ही इथे तिची अडचण सांगू शकता. मदतीमधून कॉल किंवा WhatsApp करू शकता.                                                                                    |                 |
 | `help.report.offline`       | You need a connection to send a report. You can still call us from Help.                                                                                                                     | शिकायत भेजने के लिए कनेक्शन चाहिए। मदद में कॉल अभी भी कर सकते हैं।                                                                                                  | तक्रार पाठवण्यासाठी कनेक्शन हवे. मदतीमधून कॉल करता येतो.                                                                                                                 |                 |
 
-167 lines in all.
+## Settings
+
+| Key                     | English                       | Hindi (draft)                 | Marathi (draft)               | OK or change to |
+| ----------------------- | ----------------------------- | ----------------------------- | ----------------------------- | --------------- |
+| `settings.title`        | Settings                      | सेटिंग                        | सेटिंग                        |                 |
+| `settings.signedIn`     | Signed in                     | साइन इन है                    | साइन इन आहे                   |                 |
+| `settings.skippedTitle` | Tester                        | टेस्टर                        | टेस्टर                        |                 |
+| `settings.skipped`      | Signed in for testing         | टेस्टिंग के लिए साइन इन       | टेस्टिंगसाठी साइन इन          |                 |
+| `settings.addresses`    | Saved addresses               | सहेजे हुए पते                 | जतन केलेले पत्ते              |                 |
+| `settings.orders`       | Your orders                   | आपके ऑर्डर                    | तुमच्या ऑर्डर                 |                 |
+| `settings.version`      | Quibo Now · version {version} | Quibo Now · संस्करण {version} | Quibo Now · आवृत्ती {version} |                 |
+| `settings.testing`      | Testing tools                 | टेस्टिंग के औज़ार             | टेस्टिंगची साधने              |                 |
+| `settings.testingSub`   | Only in development builds    | सिर्फ़ डेवलपमेंट बिल्ड में    | फक्त डेव्हलपमेंट बिल्डमध्ये   |                 |
+
+176 lines in all.

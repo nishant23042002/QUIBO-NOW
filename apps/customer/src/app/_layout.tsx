@@ -41,7 +41,7 @@ function Screens() {
       >
         {/* The tabs draw their own headers (Home's is tinted), so the stack shows none for them. */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="profile" options={{ title: t('profile.title') }} />
+        <Stack.Screen name="profile" options={{ title: t('settings.title') }} />
         <Stack.Screen name="components" options={{ title: t('components.title') }} />
       </Stack>
       {/* A solid strip behind the phone's own navigation buttons (or gesture bar), so the page never shows through
