@@ -1,0 +1,47 @@
+# Paying by UPI and cancelling: a payment can fail without losing the cart, the order can be paid and placed, and cancelling it
+# before the shop has packed it says the money is on its way back.
+#
+# Run it against the app open in Expo Go, on a fresh install:
+#   maestro test apps/customer/.maestro/order-cancel.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (checkout and tracking, 1f). It has not been run yet: the Maestro tool is not installed on the machine this
+# was written on. The UPI payment is a test sheet: no real money moves.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Delivering in.*|Arriving.*'
+
+- tapOn: 'Add Toned milk'
+- tapOn: 'Cart, .*'
+- tapOn: 'Continue'
+
+# Pay with UPI and make the test payment fail: the sheet stays, says so, and the cart is untouched.
+- tapOn: 'Pay now with any UPI app'
+- tapOn: 'Place order'
+- assertVisible: 'Test payment. No real money moves.'
+- tapOn: 'Make this payment fail'
+- extendedWaitUntil:
+    visible: 'That payment did not go through.*'
+    timeout: 5000
+
+# Pay properly this time.
+- tapOn: 'Pay ₹.*'
+- extendedWaitUntil:
+    visible: 'Order placed'
+    timeout: 15000
+
+# Cancel while the shop has not packed it yet: the first moves take a few seconds, so this is done straight away.
+- extendedWaitUntil:
+    visible: 'Cancel order'
+    timeout: 15000
+- tapOn: 'Cancel order'
+- assertVisible: 'Cancel this order?'
+- tapOn: 'Yes, cancel order'
+- extendedWaitUntil:
+    visible: 'This order was cancelled'
+    timeout: 5000
+- assertVisible: 'Cancelled by you at .*'
+- assertVisible: 'Refund on its way'

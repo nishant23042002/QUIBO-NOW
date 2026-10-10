@@ -1,0 +1,59 @@
+# An order from the cart to the door, in a partner-shop town: pay with cash, see "Order placed", then watch the order go through
+# the shop, the rider and delivery on its own tracking page.
+#
+# Run it against the app open in Expo Go, on a fresh install so the cart starts empty:
+#   maestro test apps/customer/.maestro/order.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (checkout and tracking, 1f). It has not been run yet: the Maestro tool is not installed on the machine this
+# was written on. The mock order clock moves an order through in about a minute, so the waits below are generous.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+
+# A fresh install starts with the first-run steps: a development build lets a tester pass them.
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Delivering in.*|Arriving.*'
+
+# Two things from two shops, then the cart and the way forward.
+- tapOn: 'Add Toned milk'
+- tapOn: 'Add Potato'
+- tapOn: 'Cart, .*'
+- assertVisible: 'Bill summary'
+- tapOn: 'Continue'
+
+# Checkout: when and where, the shops, how to pay, and the bill. Cash is the default.
+- assertVisible: 'Checkout'
+- assertVisible: 'Your order'
+- assertVisible: 'How would you like to pay'
+- assertVisible: 'Cash on delivery'
+- tapOn: 'Place order'
+
+# The placed moment, then the tracking page.
+- extendedWaitUntil:
+    visible: 'Order placed'
+    timeout: 10000
+- extendedWaitUntil:
+    visible: 'Waiting for the shop to confirm'
+    timeout: 15000
+- assertVisible: 'Keep .* ready for the rider.'
+
+# The shop packs it, the rider takes it, and it arrives. Cash is collected at the door.
+- extendedWaitUntil:
+    visible: 'The shop is packing your order'
+    timeout: 30000
+- extendedWaitUntil:
+    visible: 'Your rider is on the way'
+    timeout: 60000
+- assertVisible: 'Call rider'
+- extendedWaitUntil:
+    visible: 'Delivered at .*'
+    timeout: 90000
+- assertVisible: 'Paid in cash'
+
+# It is on the Orders tab, and the cart is empty again.
+- tapOn: 'Orders'
+- assertVisible: 'Order #.*'
+- tapOn: 'Cart'
+- assertVisible: 'Your cart is empty'

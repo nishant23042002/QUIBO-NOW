@@ -1,0 +1,42 @@
+# The same order in a town served by one company dark store. There is no shop to confirm it and no shop to call, and nothing on
+# the screen asks which kind of town it is: the order itself says who accepts it.
+#
+# Run it against the app open in Expo Go, on a fresh install:
+#   maestro test apps/customer/.maestro/order-dark.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (checkout and tracking, 1f). It has not been run yet: the Maestro tool is not installed on the machine this
+# was written on. The store type is a developer switch on the Profile screen, so it needs a development build (Expo Go is one).
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Delivering in.*|Arriving.*'
+
+# Switch the town to one dark store, then come back.
+- tapOn: 'Profile'
+- scrollUntilVisible:
+    element: 'One dark store'
+- tapOn: 'One dark store'
+- tapOn: 'Back'
+
+- tapOn: 'Add Toned milk'
+- tapOn: 'Cart, .*'
+- tapOn: 'Continue'
+- assertVisible: 'Quibo Store'
+- tapOn: 'Place order'
+
+# The store accepts by itself: no waiting for a shop, and no step for one.
+- extendedWaitUntil:
+    visible: 'We are packing your order'
+    timeout: 20000
+- assertNotVisible: 'Waiting for the shop to confirm'
+- assertNotVisible: 'Shop confirmed'
+- assertNotVisible: 'Call Quibo Store'
+- extendedWaitUntil:
+    visible: 'Your rider is on the way'
+    timeout: 60000
+- extendedWaitUntil:
+    visible: 'Delivered at .*'
+    timeout: 90000

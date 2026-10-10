@@ -10,7 +10,9 @@ appId: host.exp.exponent
 - launchApp:
     clearState: true
 - openLink: ${APP_URL}
-- assertVisible: 'Delivering in.*'
+# A fresh install starts with the first-run steps: a development build lets a tester pass them.
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Delivering in.*|Arriving.*'
 
 # Add two things from Home. The first card is the milk.
 - tapOn: 'Add Toned milk'

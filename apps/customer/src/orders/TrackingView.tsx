@@ -95,7 +95,16 @@ const makeStyles = (c: ThemeColors) =>
       borderRadius: radius.md,
       borderColor: c.action,
     },
-    rider: { flexDirection: 'row', alignItems: 'center', gap: space[3], padding: space[4] },
+    // Wraps: with a long name for the button (Hindi, Marathi, large text) it drops under the name instead of squeezing it.
+    rider: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      alignContent: 'center',
+      rowGap: space[2],
+      gap: space[3],
+      padding: space[4],
+    },
     riderIcon: {
       width: 40,
       height: 40,
@@ -105,6 +114,7 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.accentSubtle,
     },
     grow: { flex: 1, minWidth: 0 },
+    riderText: { flexGrow: 1, flexShrink: 1, flexBasis: 120, minWidth: 0 },
     skeleton: { flex: 1, overflow: 'hidden' },
     actions: { gap: space[2] },
     sheetActions: { gap: space[2] },
@@ -323,7 +333,7 @@ function TrackingPage({ order }: { order: Order }) {
           <View style={styles.riderIcon} aria-hidden>
             <Icon name="user" color={colors.accentInk} size={22} />
           </View>
-          <View style={styles.grow}>
+          <View style={styles.riderText}>
             <Text variant="label">{t('tracking.yourRider')}</Text>
             <Text variant="small" color="inkMuted">
               {`${MOCK_RIDER.name} · ${formatPhone(MOCK_RIDER.phone)}`}

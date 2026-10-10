@@ -799,6 +799,7 @@
     "items": "{shops} से",
     "payCod": "दरवाज़े पर राइडर को {amount} दें",
     "payUpi": "UPI से {amount} का भुगतान हो गया",
+    "paidCash": "{amount} नकद दिए",
     "refunding": "{amount} का रिफ़ंड आ रहा है",
     "nothingCharged": "कुछ भी नहीं कटा",
     "status": {

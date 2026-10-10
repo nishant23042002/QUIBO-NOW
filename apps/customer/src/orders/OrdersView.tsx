@@ -132,9 +132,11 @@ function OrdersList() {
               ? t('orders.refunding', { amount: formatRupees(order.total) })
               : endNoteOf(order) !== null
                 ? t('orders.nothingCharged')
-                : order.payment.method === 'cod'
-                  ? t('orders.payCod', { amount: formatRupees(order.total) })
-                  : t('orders.payUpi', { amount: formatRupees(order.total) })}
+                : order.payment.method === 'upi'
+                  ? t('orders.payUpi', { amount: formatRupees(order.total) })
+                  : order.payment.status === 'paid'
+                    ? t('orders.paidCash', { amount: formatRupees(order.total) })
+                    : t('orders.payCod', { amount: formatRupees(order.total) })}
           </Text>
         </Pressable>
       ))}

@@ -215,7 +215,15 @@ and has not been run, because the tool is not installed here.
 - [x] 1f-3. Place order (idempotency key, test UPI sheet, cart clears, "Order placed" screen, orders kept on the phone)
 - [x] 1f-4. Tracking screen (timeline, shops, rider, payment) and the order clock; Orders tab opens it
 - [x] 1f-5. The exits (rejected, cancelled, undelivered), refund notes and cancelling
-- [ ] 1f-6. Maestro flow, ADR 0019 for payment, Hindi and Marathi drafts
+- [x] 1f-6. Maestro flows, ADR 0019 for payment, the Hindi and Marathi review sheet
+
+**Done, waiting for the owner's check.** Your check, on a phone, in this order: (1) add items from two shops, go to checkout
+and place the order with cash; (2) watch it on its page until it arrives, and try Call; (3) place one with UPI, make the payment
+fail once, pay, and cancel it before the shop packs it; (4) in Profile choose "Shop turns it down" and "Rider cannot deliver"
+for the next order and place each; (5) switch to "One dark store" and place one, which has no shop step; (6) look at it all in
+Hindi and Marathi. The three Maestro flows (`order.yaml`, `order-dark.yaml`, `order-cancel.yaml`) say the same in steps; none
+has been run, because Maestro is not installed on the machine they were written on. The wording for a native speaker is in
+`PHASE-1-language-review.md`. Not part of 1f, by decision: "Order again" (parked, see `PHASE-1-notes.md`).
 
 Choices made with the owner: new-customer COD cap of 1,000 rupees held as a setting; a development-only mode switch in Profile;
 a fast order clock with a slow switch; the active order kept on the phone.

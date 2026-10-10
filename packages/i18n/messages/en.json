@@ -799,6 +799,7 @@
     "items": "From {shops}",
     "payCod": "Pay {amount} to the rider at the door",
     "payUpi": "Paid {amount} by UPI",
+    "paidCash": "Paid {amount} in cash",
     "refunding": "Refund of {amount} on its way",
     "nothingCharged": "Nothing was charged",
     "status": {

@@ -799,6 +799,7 @@
     "items": "{shops} कडून",
     "payCod": "दारात रायडरला {amount} द्या",
     "payUpi": "UPI ने {amount} भरले",
+    "paidCash": "{amount} रोख दिले",
     "refunding": "{amount} चा परतावा येत आहे",
     "nothingCharged": "काहीही पैसे कापले नाहीत",
     "status": {
