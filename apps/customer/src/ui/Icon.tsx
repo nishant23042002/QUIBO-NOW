@@ -4,9 +4,15 @@ import Svg, { Circle, Path } from 'react-native-svg';
 const STROKE = 2;
 const STROKE_LIGHT = 1.6;
 
-type Shape = { kind: 'path'; d: string } | { kind: 'dot'; x: number; y: number; r: number };
+type Shape =
+  | { kind: 'path'; d: string; solid?: true; cut?: true }
+  | { kind: 'dot'; x: number; y: number; r: number };
 
 const path = (d: string): Shape => ({ kind: 'path', d });
+/** A closed shape that is filled in the icon's colour in the solid form. */
+const solid = (d: string): Shape => ({ kind: 'path', d, solid: true });
+/** A line drawn in the background colour on top of a solid shape, so a detail shows as a cut-out. */
+const cut = (d: string): Shape => ({ kind: 'path', d, cut: true });
 const dot = (x: number, y: number, r: number): Shape => ({ kind: 'dot', x, y, r });
 /** A circle outline, written as a path so every shape is stroked the same way. */
 const ring = (cx: number, cy: number, r: number): Shape =>
@@ -109,6 +115,19 @@ const SHAPES = {
   ],
 } satisfies Record<string, Shape[]>;
 
+/** The solid forms of the icons the bottom bar lights: the rest have none and keep their outline. */
+const SOLID: Partial<Record<keyof typeof SHAPES, Shape[]>> = {
+  home: [solid('M12 3.6L3.4 11h2.3v9h4.6v-5.2h3.4V20h4.6v-9h2.3z')],
+  grid: [solid('M4.5 4.5h6v6h-6zM13.5 4.5h6v6h-6zM4.5 13.5h6v6h-6zM13.5 13.5h6v6h-6z')],
+  cart: [
+    path('M3 3.5h2l1 4'),
+    solid('M6 7.5h15l-1.9 7.2a2 2 0 0 1-1.95 1.5H9.6a2 2 0 0 1-1.97-1.6z'),
+    dot(9.5, 20.2, 1.5),
+    dot(17.5, 20.2, 1.5),
+  ],
+  receipt: [solid('M6 3h12v18l-3-2-3 2-3-2-3 2z'), cut('M9.5 8h5M9.5 12h5')],
+};
+
 export type IconName = keyof typeof SHAPES;
 
 interface IconProps {
@@ -118,20 +137,32 @@ interface IconProps {
   size?: number;
   /** A thin line instead of the usual one: for an icon drawn large, where the usual line would look heavy. */
   light?: boolean;
+  /** The solid form, for an icon that has one (the bottom bar's four); any other stays as an outline. */
+  filled?: boolean;
+  /** The colour of the cut-out details in the solid form: the colour of what is behind the icon. */
+  cutColor?: string;
 }
 
 /** Decorative: whatever holds the icon (a button, a notice) carries the accessible name. */
-export function Icon({ name, color, size = 20, light = false }: IconProps) {
+export function Icon({
+  name,
+  color,
+  size = 20,
+  light = false,
+  filled = false,
+  cutColor,
+}: IconProps) {
+  const shapes: readonly Shape[] = (filled ? SOLID[name] : undefined) ?? SHAPES[name];
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
-      {SHAPES[name].map((shape, index) =>
+      {shapes.map((shape, index) =>
         shape.kind === 'path' ? (
           <Path
             key={index}
             d={shape.d}
-            fill="none"
-            stroke={color}
-            strokeWidth={light ? STROKE_LIGHT : STROKE}
+            fill={shape.solid === true ? color : 'none'}
+            stroke={shape.cut === true ? (cutColor ?? color) : color}
+            strokeWidth={shape.solid === true ? 1.2 : light ? STROKE_LIGHT : STROKE}
             strokeLinecap="round"
             strokeLinejoin="round"
           />
