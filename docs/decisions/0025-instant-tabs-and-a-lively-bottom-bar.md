@@ -32,6 +32,12 @@ turned solid and gave a short pulse. The header and the cart pill stayed put. Ou
 5. **Going back.** `NAV_STYLE = 'classic'` removes the line, the solid icon and the pop (the pistachio pill and outline icons remain).
    Steps 1 to 3 are separate from it.
 
+6. **Screens cross-fade** (added after the first phone test: the lit tab was instant but the screen then cut in). Changing screen in
+   the tab group is a 220 ms cross-fade on the bottom bar's curve (`animation: 'fade'` with a tuned `transitionSpec`, native-driven),
+   so the screen leaving fades out as the one arriving fades in. The bars sit outside it and do not move. It is part of the lively look
+   (`NAV_STYLE`) and is left out with "reduce motion" on. The stack's page background sits behind the tabs, so nothing else shows
+   through mid-fade.
+
 ## Consequences
 
 - The testing switches "Pretend offline" and "Next load fails" no longer meet Cart or Orders on a return to them, or on a first visit

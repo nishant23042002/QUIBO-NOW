@@ -1,10 +1,19 @@
 import { Tabs } from 'expo-router';
 import { useEffect, useState } from 'react';
 import type { ComponentProps } from 'react';
+import { Easing } from 'react-native';
 import { useCart } from '@/home/CartProvider';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { BottomBar, LogoStacked, TRAILING_WIDTH, showChrome, useKeyboardVisible } from '@/ui';
+import {
+  BottomBar,
+  LogoStacked,
+  TRAILING_WIDTH,
+  showChrome,
+  useKeyboardVisible,
+  useReduceMotion,
+} from '@/ui';
+import { NAV_STYLE } from '@/ui/logic/navBar';
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
@@ -34,6 +43,16 @@ const WARM_ORDER: readonly string[] = ['cart', 'orders', 'categories'];
 const WARM_FIRST_MS = 900;
 const WARM_NEXT_MS = 450;
 const WARM_IDLE_LIMIT_MS = 2000;
+
+/**
+ * Moving from one screen to another is a cross-fade: the screen leaving fades out as the one arriving fades in, on the animation
+ * thread, so it stays smooth while the phone is busy drawing the new screen. The bottom bar and the cart bar sit outside it and do
+ * not move. It uses the bottom bar's own curve.
+ */
+const SCREEN_FADE = {
+  animation: 'timing',
+  config: { duration: 220, easing: Easing.bezier(0.4, 0, 0.2, 1) },
+} as const;
 
 function Bar({ state, navigation }: TabBarProps) {
   const { t } = useLanguage();
@@ -91,6 +110,9 @@ function Bar({ state, navigation }: TabBarProps) {
 
 export default function TabsLayout() {
   const { colors } = useTheme();
+  const reduceMotion = useReduceMotion();
+  // The cross-fade is part of the lively look (`NAV_STYLE`), and is left out with "reduce motion" on.
+  const fade = NAV_STYLE === 'lively' && !reduceMotion;
   const [warmed, setWarmed] = useState(0);
 
   useEffect(() => {
@@ -124,6 +146,8 @@ export default function TabsLayout() {
         headerShown: false,
         sceneStyle: { backgroundColor: colors.bg },
         freezeOnBlur: true,
+        animation: fade ? 'fade' : 'none',
+        ...(fade ? { transitionSpec: SCREEN_FADE } : {}),
       }}
     >
       {TABS.map((tab) => {
