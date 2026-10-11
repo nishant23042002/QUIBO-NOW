@@ -90,7 +90,7 @@ export interface DraftCart {
   hint: string;
   /** How close the whole cart is to free delivery, from 0 to 1. */
   progress: number;
-  /** The small cart pill's two short lines: "₹153 more" over "for free delivery", or "Free delivery" over "unlocked". */
+  /** The small cart pill's two short lines: "₹53 more" over "for free delivery", or "Free delivery" over "unlocked". */
   pill: { title: string; sub: string };
   /** What the whole cart saves against the printed prices, for example "You saved ₹7". Absent when it saves nothing. */
   savedLabel?: string;

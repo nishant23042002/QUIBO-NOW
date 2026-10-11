@@ -107,7 +107,7 @@ export interface ZoneSettings {
 
 /** Sample rules for the pilot town. Prices are integer paise. */
 export const ZONE: ZoneSettings = {
-  freeDeliveryFrom: money(19_900),
+  freeDeliveryFrom: money(9_900),
   delivery: {
     bands: [
       { upToKm: 1, fee: money(1_200) },
@@ -157,7 +157,7 @@ export const ZONE: ZoneSettings = {
 };
 
 /**
- * The order total from which delivery is free: 199 rupees. A sample until each town's own fee rules arrive
+ * The order total from which delivery is free: 99 rupees (ADR 0022). A sample until each town's own fee rules arrive
  * (Phase 2); the offers and the cart both read it from here, so they always agree.
  */
 export const FREE_DELIVERY_FROM = ZONE.freeDeliveryFrom;

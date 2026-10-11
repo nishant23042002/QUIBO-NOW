@@ -55,7 +55,7 @@ export interface CartFloatProps {
   follow?: boolean;
   /** Free delivery has been reached: the note says so, and its icon turns pistachio. */
   free?: boolean;
-  /** The note's two short lines, already worded: for example "₹153 more" over "for free delivery", or "Free delivery" over "unlocked". */
+  /** The note's two short lines, already worded: for example "₹53 more" over "for free delivery", or "Free delivery" over "unlocked". */
   pillTitle?: string;
   pillSub?: string;
 }

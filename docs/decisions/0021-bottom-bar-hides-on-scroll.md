@@ -22,7 +22,7 @@ is a lot of the view, and the big quick-commerce apps give it back while the sho
    jump. At the lower left a separate free-delivery note slides in beside it. The button is pistachio with a static cart icon
    (never the items, whatever is in the cart) and "View cart" over the count in words. The note is dark, with a full-colour delivery scooter
    (`assets/delivery-scooter.png`) and two short lines. The scooter is the progress bar: drawn faded, it comes into full colour
-   from its left as the cart nears free delivery, easing to each change, so there is no separate line. Not yet free: "₹153 more"
+   from its left as the cart nears free delivery, easing to each change, so there is no separate line. Not yet free: "₹53 more"
    over "for free delivery". Free: the scooter is in full colour with a small pistachio tick and a small pop, and it reads
    "Free delivery" over "unlocked". The pair sit 8 dp from each side
    and from each other, and are about 48 dp tall. The scooter has two looks, chosen by one constant (`DELIVERY_ART` in

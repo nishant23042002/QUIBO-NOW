@@ -1,12 +1,16 @@
 import { money } from '@quibo/contracts';
 import { describe, expect, it } from 'vitest';
 import { computeBill, type BillInput } from './bill';
+import { ZONE } from './delivery';
+
+// The line is read from the zone, so the tests follow it when the town's rule changes. The default basket sits below it.
+const LINE = Number(ZONE.freeDeliveryFrom);
 
 const input = (
   over: Partial<BillInput> = {},
   trip: Partial<BillInput['trip']> = {},
 ): BillInput => ({
-  itemTotal: money(12_000),
+  itemTotal: money(6_000),
   saved: money(500),
   cares: ['chilled'],
   trip: { distanceKm: 2.4, hour: 12, festival: false, rain: false, ...trip },
@@ -19,8 +23,8 @@ describe('computeBill', () => {
     expect(bill.delivery.fee).toBe(2_000);
     expect(bill.delivery.free).toBe(false);
     expect(bill.handling).toEqual({ fee: 1_000, reason: 'chilled', festival: false });
-    expect(bill.toPay).toBe(12_000 + 2_000 + 1_000);
-    expect(bill.printedTotal).toBe(12_500);
+    expect(bill.toPay).toBe(6_000 + 2_000 + 1_000);
+    expect(bill.printedTotal).toBe(6_500);
     expect(bill.totalSaved).toBe(500);
   });
 
@@ -30,13 +34,13 @@ describe('computeBill', () => {
   });
 
   it('makes delivery free from exactly the line, and counts the fee as a saving', () => {
-    const bill = computeBill(input({ itemTotal: money(19_900) }));
+    const bill = computeBill(input({ itemTotal: money(LINE) }));
     expect(bill.delivery.fee).toBe(0);
     expect(bill.delivery.free).toBe(true);
     expect(bill.delivery.waived).toBe(2_000);
-    expect(bill.toPay).toBe(19_900 + 1_000);
+    expect(bill.toPay).toBe(LINE + 1_000);
     expect(bill.totalSaved).toBe(500 + 2_000);
-    expect(computeBill(input({ itemTotal: money(19_899) })).delivery.free).toBe(false);
+    expect(computeBill(input({ itemTotal: money(LINE - 1) })).delivery.free).toBe(false);
   });
 
   it('follows the trip: a longer one in a rush on a festival day costs more, up to the cap', () => {
@@ -73,33 +77,33 @@ describe('computeBill', () => {
   it('takes a coupon off the items, counts it as a saving, and never touches free delivery', () => {
     const bill = computeBill(input({ coupon: { code: 'SAVE30', discount: money(3_000) } }));
     expect(bill.coupon).toEqual({ code: 'SAVE30', discount: 3_000 });
-    expect(bill.toPay).toBe(12_000 - 3_000 + 2_000 + 1_000);
+    expect(bill.toPay).toBe(6_000 - 3_000 + 2_000 + 1_000);
     expect(bill.totalSaved).toBe(500 + 3_000);
     // The price with no offers at all is what the bill would be with the coupon and the printed-price discounts undone.
-    expect(bill.toPay + bill.totalSaved).toBe(12_000 + 500 + 2_000 + 1_000);
-    // Items of 199 rupees are free delivery; a coupon that brings them below that does not take it away.
+    expect(bill.toPay + bill.totalSaved).toBe(6_000 + 500 + 2_000 + 1_000);
+    // Items at the line are free delivery; a coupon that brings them below that does not take it away.
     const free = computeBill(
-      input({ itemTotal: money(19_900), coupon: { code: 'SAVE30', discount: money(3_000) } }),
+      input({ itemTotal: money(LINE), coupon: { code: 'SAVE30', discount: money(3_000) } }),
     );
     expect(free.delivery.free).toBe(true);
-    expect(free.toPay).toBe(19_900 - 3_000 + 1_000);
+    expect(free.toPay).toBe(LINE - 3_000 + 1_000);
   });
 
   it('leaves the coupon out when it takes off nothing', () => {
     const bill = computeBill(input({ coupon: { code: 'SAVE30', discount: money(0) } }));
     expect(bill.coupon).toBeUndefined();
-    expect(bill.toPay).toBe(12_000 + 2_000 + 1_000);
+    expect(bill.toPay).toBe(6_000 + 2_000 + 1_000);
   });
 
   it('adds a tip to what is paid, and leaves it out of the savings and of free delivery', () => {
     const bill = computeBill(input({ tip: money(2_000) }));
     expect(bill.tip).toBe(2_000);
-    expect(bill.toPay).toBe(12_000 + 2_000 + 1_000 + 2_000);
+    expect(bill.toPay).toBe(6_000 + 2_000 + 1_000 + 2_000);
     expect(bill.totalSaved).toBe(500);
-    // 199 rupees of items are free delivery however large the tip is, and a tip never helps reach it.
-    expect(computeBill(input({ itemTotal: money(19_000), tip: money(10_000) })).delivery.free).toBe(
-      false,
-    );
+    // Items at the line are free delivery however large the tip is, and a tip never helps reach it.
+    expect(
+      computeBill(input({ itemTotal: money(LINE - 100), tip: money(10_000) })).delivery.free,
+    ).toBe(false);
   });
 
   it('is all zero for an empty cart, tip included', () => {

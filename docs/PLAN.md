@@ -149,7 +149,7 @@ Build in this order: customer web app, then the admin panel (which includes the 
 - **Screens:** language and phone OTP; home with "Your shops", categories and a reorder strip; shop page with in-shop search; global search; cart; address; checkout; order tracking; past orders; help.
 - **Search:** typed-in-English-letters Hindi and Marathi ("dudh", "aata"), spelling tolerance, voice search in V2.
 - **Address:** map pin, landmark text, ward or mohalla, alternate phone number; serviceability checked against zone polygons.
-- **Checkout rules:** no minimum order (ADR 0011), a delivery fee from the trip's distance band plus rush-hour, festival and weather extras and capped at 30 rupees, a handling fee under 18 rupees set by the most delicate item, free delivery above a threshold, COD cap for new customers, per-item substitution choice, estimated weight bill with a stated tolerance.
+- **Checkout rules:** no minimum order (ADR 0011), a delivery fee from the trip's distance band plus rush-hour, festival and weather extras and capped at 30 rupees, a handling fee under 18 rupees set by the most delicate item, free delivery from a basket value of 99 rupees (the pilot sample; a zone setting, ADR 0022), COD cap for new customers, per-item substitution choice, estimated weight bill with a stated tolerance.
 - **Tracking:** status timeline, call shop, call rider, WhatsApp updates for every state change.
 - **Delivery proof:** a photo at the door, or the rider's tap on delivered; the customer is never asked for a code (ADR 0013). COD amount shown to the rider.
 
@@ -468,6 +468,8 @@ At base assumptions one order earns about Rs 2 and a town needs roughly 870 orde
 &#91;embedded content: illustrative assumptions typed in chat · two scenarios, 25 to 150 orders a day\]
 
 Commission, batching and basket size move the result most; test them in that order.
+
+Note (ADR 0022): the free-delivery line is 99 rupees, and both baskets above (350 and 450) are well over it, so nearly every order ships free. Read the "Delivery and small-basket fees" row as small-basket and handling fees only until a real fee mix is measured; the table has not been re-run for this and its contribution figures are therefore optimistic.
 
 **Same basket, dark-store mode (illustrative)**
 
