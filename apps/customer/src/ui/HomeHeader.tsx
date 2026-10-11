@@ -1,5 +1,13 @@
 import { useEffect, useState, type ReactNode } from 'react';
-import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
+import {
+  Animated,
+  Easing,
+  Pressable,
+  StyleSheet,
+  View,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
@@ -63,6 +71,8 @@ export interface HomeHeaderProps {
   onProfilePress: () => void;
   /** Extra room under the page's last row, for something floating over it such as the cart bar. */
   bottomSpace?: number;
+  /** Told how far the page has scrolled, on every scroll event: the bottom bar hides and shows from it. */
+  onScrollY?: (offset: number) => void;
   /** The page under the header. It scrolls, and the header folds as it does. */
   children: ReactNode;
 }
@@ -137,6 +147,7 @@ export function HomeHeader({
   onAddressPress,
   onProfilePress,
   bottomSpace = 0,
+  onScrollY,
   children,
 }: HomeHeaderProps) {
   const insets = useSafeAreaInsets();
@@ -264,6 +275,9 @@ export function HomeHeader({
         scrollEventThrottle={16}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
           useNativeDriver: true,
+          listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+            onScrollY?.(event.nativeEvent.contentOffset.y);
+          },
         })}
         // The page starts below the header as it is when fully open.
         contentContainerStyle={{

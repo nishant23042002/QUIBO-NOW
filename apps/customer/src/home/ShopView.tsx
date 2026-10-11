@@ -13,6 +13,7 @@ import {
   Text,
   radius,
   space,
+  chromeScrollProps,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -81,6 +82,7 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
   return (
     <View style={styles.page}>
       <ScrollView
+        {...chromeScrollProps}
         contentContainerStyle={[
           styles.content,
           {
@@ -151,7 +153,7 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
           ))
         )}
       </ScrollView>
-      <CartLayer bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
+      <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
     </View>
   );
 }

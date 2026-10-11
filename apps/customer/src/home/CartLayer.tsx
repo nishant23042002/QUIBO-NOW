@@ -36,7 +36,7 @@ export function UndoToast({ bottom, aboveBar = false }: { bottom: number; aboveB
  * opens the cart page. A screen places it once and says how far above its own bottom the bar docks (above the tab bar
  * on Home, at the phone's bottom edge on a shop page).
  */
-export function CartLayer({ bottom }: { bottom: number }) {
+export function CartLayer({ bottom, follow = false }: { bottom: number; follow?: boolean }) {
   const { t } = useLanguage();
   const cart = useCart();
   const tintOf = useTintOf();
@@ -65,6 +65,7 @@ export function CartLayer({ bottom }: { bottom: number }) {
           router.push('/cart');
         }}
         bottom={bottom}
+        follow={follow}
       />
       <UndoToast bottom={bottom} aboveBar />
     </>

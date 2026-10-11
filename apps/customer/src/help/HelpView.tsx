@@ -22,6 +22,7 @@ import {
   radius,
   space,
   useScreenLoad,
+  chromeScrollProps,
 } from '@/ui';
 import { telLink, whatsAppLink } from './contact';
 import { useReports } from './ReportsProvider';
@@ -128,6 +129,7 @@ function HelpPage({ orderId }: { orderId: string | undefined }) {
 
   return (
     <ScrollView
+      {...chromeScrollProps}
       style={styles.page}
       contentContainerStyle={[
         styles.content,

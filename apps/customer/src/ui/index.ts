@@ -7,7 +7,8 @@ export {
   type BillSummaryProps,
   type FreeDeliveryHint,
 } from './BillSummary';
-export { BottomBar, type BottomBarProps, type BottomBarTab } from './BottomBar';
+export { BottomBar, TRAILING_WIDTH, type BottomBarProps, type BottomBarTab } from './BottomBar';
+export { chromeScrollProps, reportChromeScroll, showChrome, useChromeProgress } from './chrome';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { CategoryTabs, type CategoryTab, type CategoryTabsProps } from './CategoryTabs';

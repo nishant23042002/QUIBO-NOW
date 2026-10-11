@@ -1,14 +1,15 @@
 import { useState, type ReactNode } from 'react';
 import { Animated, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import Svg, { Line } from 'react-native-svg';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { useHomeScroll } from './HomeScroll';
 import { Icon } from './Icon';
 import { Text } from './Text';
-import { space } from './tokens';
+import { TAP_MIN, radius, space } from './tokens';
 
 export interface ProductRailProps {
   title: string;
-  /** The text of the link at the right, for example "See all". Leave it and `onSeeAll` out for a row with nowhere to go. */
+  /** The text of the button under the row, for example "See all". Leave it and `onSeeAll` out for a row with nowhere to go. */
   seeAllLabel?: string;
   onSeeAll?: () => void;
   /** The cards. They sit in one row that swipes sideways. */
@@ -23,19 +24,32 @@ const makeStyles = (c: ThemeColors) =>
       zIndex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
       gap: space[3],
       paddingHorizontal: space[4],
       backgroundColor: c.bg,
     },
-    title: { flex: 1, minWidth: 0 },
-    more: { minHeight: space[10], flexDirection: 'row', alignItems: 'center', gap: space[1] },
-    pressed: { opacity: 0.7 },
+    title: { flexShrink: 1, minWidth: 0 },
+    // A dotted line carries on from the title to the edge of the page.
+    dots: { flex: 1, minWidth: space[6], height: 2 },
+    // Under the row, the width of the page: the way into the whole category.
+    more: {
+      marginHorizontal: space[4],
+      minHeight: TAP_MIN,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[1],
+      borderWidth: 1.5,
+      borderRadius: radius.lg,
+      borderColor: c.ctl,
+      backgroundColor: c.surface,
+    },
+    pressed: { backgroundColor: c.muted },
     row: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
   });
 
 /**
- * A titled row of items with a "See all" link. On the home page the title sticks just under the tabs while
+ * A titled row of items with a dotted line from its title to the page's edge and a "See all" button under the row. On the home page the title sticks just under the tabs while
  * its row scrolls past, then is pushed out by the next row's title. The sticking is a transform driven by the
  * page's scroll position, so it runs on the phone's animation thread and never lags the finger.
  */
@@ -81,24 +95,35 @@ export function ProductRail({ title, seeAllLabel, onSeeAll, children }: ProductR
             {title}
           </Text>
         </View>
-        {seeAllLabel !== undefined && onSeeAll !== undefined ? (
-          <Pressable
-            role="button"
-            aria-label={`${seeAllLabel}: ${title}`}
-            onPress={onSeeAll}
-            hitSlop={6}
-            style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-          >
-            <Text variant="strong" color="accentInk">
-              {seeAllLabel}
-            </Text>
-            <Icon name="chevronRight" color={colors.accentInk} size={14} />
-          </Pressable>
-        ) : null}
+        <View style={styles.dots} aria-hidden>
+          <Svg width="100%" height={2}>
+            <Line
+              x1="1"
+              y1="1"
+              x2="100%"
+              y2="1"
+              stroke={colors.ctl}
+              strokeWidth={2}
+              strokeLinecap="round"
+              strokeDasharray="0.1 6"
+            />
+          </Svg>
+        </View>
       </Animated.View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.row}>{children}</View>
       </ScrollView>
+      {seeAllLabel !== undefined && onSeeAll !== undefined ? (
+        <Pressable
+          role="button"
+          aria-label={`${seeAllLabel}: ${title}`}
+          onPress={onSeeAll}
+          style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+        >
+          <Text variant="strong">{seeAllLabel}</Text>
+          <Icon name="chevronRight" color={colors.ink} size={16} />
+        </Pressable>
+      ) : null}
     </View>
   );
 }

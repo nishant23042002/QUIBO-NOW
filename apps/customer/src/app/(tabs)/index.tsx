@@ -11,7 +11,7 @@ import { useSampleShops } from '@/home/sampleShops';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BOTTOM_BAR_HEIGHT, HomeHeader } from '@/ui';
+import { BOTTOM_BAR_HEIGHT, HomeHeader, reportChromeScroll } from '@/ui';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
@@ -73,12 +73,14 @@ export default function HomeScreen() {
         onProfilePress={() => {
           router.push('/profile');
         }}
+        // The bottom bar hides while the page is read and comes back on the way up.
+        onScrollY={reportChromeScroll}
         // The floating cart bar covers the bottom of the page when it shows, so the page leaves room for it.
         bottomSpace={BOTTOM_BAR_HEIGHT + (cart.count > 0 ? CART_ROOM : 0)}
       >
         <HomeFeed category={category} onSeeAll={setCategory} />
       </HomeHeader>
-      <CartLayer bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
+      <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
     </View>
   );
 }

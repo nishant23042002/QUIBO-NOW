@@ -1,10 +1,13 @@
-import { Text as NativeText, Pressable, StyleSheet, View } from 'react-native';
+import type { ReactNode } from 'react';
+import { Animated, Text as NativeText, Pressable, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { useChromeProgress } from './chrome';
 import { PopOnChange } from './ChangeCue';
 import { Icon, type IconName } from './Icon';
 import { Text } from './Text';
 import { BOTTOM_BAR_HEIGHT, radius, space } from './tokens';
+import { useReduceMotion } from './useReduceMotion';
 
 export interface BottomBarTab {
   key: string;
@@ -21,7 +24,15 @@ export interface BottomBarProps {
   tabs: readonly BottomBarTab[];
   activeKey: string;
   onSelect: (key: string) => void;
+  /**
+   * A tile at the far right edge, outside the tabs: a spot for something of the app's own (for now the logo). It is not a tab and
+   * not pressed. It fills the bar's whole height, the strip behind the phone's buttons included.
+   */
+  trailing?: ReactNode;
 }
+
+/** How wide the tile at the right edge is. The tabs share what is left. */
+export const TRAILING_WIDTH = 68;
 
 const PILL_WIDTH = 56;
 const PILL_HEIGHT = 30;
@@ -46,6 +57,15 @@ const makeStyles = (c: ThemeColors) =>
       borderTopWidth: 1,
       borderTopColor: c.line,
       backgroundColor: c.surface,
+    },
+    tabs: { flex: 1, flexDirection: 'row' },
+    // The tile at the right edge: the app's dark colour, square at the edge and rounded only on its upper left.
+    trailing: {
+      width: TRAILING_WIDTH,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderTopLeftRadius: radius.lg,
+      backgroundColor: c.chrome,
     },
     tab: {
       flex: 1,
@@ -96,62 +116,82 @@ const makeStyles = (c: ThemeColors) =>
  * under it, so nothing shows through. Its height is `BOTTOM_BAR_HEIGHT` plus that inset, and the cart bar and
  * the pages above it use the same number.
  */
-export function BottomBar({ tabs, activeKey, onSelect }: BottomBarProps) {
+export function BottomBar({ tabs, activeKey, onSelect, trailing }: BottomBarProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
   const insets = useSafeAreaInsets();
+  const reduceMotion = useReduceMotion();
+  const hide = useChromeProgress();
+  const height = BOTTOM_BAR_HEIGHT + insets.bottom;
 
   return (
-    <View
-      role="tablist"
+    <Animated.View
       style={[
         styles.bar,
-        { height: BOTTOM_BAR_HEIGHT + insets.bottom, paddingBottom: insets.bottom },
+        {
+          height,
+          // Sliding down and fading out as the page is read; with "reduce motion" on it only fades.
+          opacity: hide.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }),
+          transform: [
+            {
+              translateY: reduceMotion
+                ? 0
+                : hide.interpolate({ inputRange: [0, 1], outputRange: [0, height] }),
+            },
+          ],
+        },
       ]}
     >
-      {tabs.map((tab) => {
-        const active = tab.key === activeKey;
-        return (
-          <Pressable
-            key={tab.key}
-            role="tab"
-            aria-selected={active}
-            aria-label={tab.accessibilityLabel ?? tab.label}
-            onPress={() => {
-              onSelect(tab.key);
-            }}
-            style={({ pressed }) => [styles.tab, pressed && styles.pressed]}
-          >
-            <View style={[styles.pill, active && styles.pillOn]}>
-              <Icon
-                name={tab.icon}
-                color={active ? colors.action : colors.inkMuted}
-                size={24}
-                light
-              />
-              {tab.badge !== undefined && tab.badge > 0 ? (
-                <View style={styles.badgeSlot} aria-hidden>
-                  <PopOnChange value={tab.badge}>
-                    <View style={styles.badge}>
-                      <NativeText allowFontScaling={false} style={styles.badgeText}>
-                        {tab.badge > BADGE_MAX ? `${BADGE_MAX}+` : String(tab.badge)}
-                      </NativeText>
-                    </View>
-                  </PopOnChange>
-                </View>
-              ) : null}
-            </View>
-            <Text
-              variant="caption"
-              color={active ? 'action' : 'inkMuted'}
-              numberOfLines={1}
-              maxFontSizeMultiplier={LABEL_SCALE_MAX}
+      <View role="tablist" style={[styles.tabs, { paddingBottom: insets.bottom }]}>
+        {tabs.map((tab) => {
+          const active = tab.key === activeKey;
+          return (
+            <Pressable
+              key={tab.key}
+              role="tab"
+              aria-selected={active}
+              aria-label={tab.accessibilityLabel ?? tab.label}
+              onPress={() => {
+                onSelect(tab.key);
+              }}
+              style={({ pressed }) => [styles.tab, pressed && styles.pressed]}
             >
-              {tab.label}
-            </Text>
-          </Pressable>
-        );
-      })}
-    </View>
+              <View style={[styles.pill, active && styles.pillOn]}>
+                <Icon
+                  name={tab.icon}
+                  color={active ? colors.action : colors.inkMuted}
+                  size={24}
+                  light
+                />
+                {tab.badge !== undefined && tab.badge > 0 ? (
+                  <View style={styles.badgeSlot} aria-hidden>
+                    <PopOnChange value={tab.badge}>
+                      <View style={styles.badge}>
+                        <NativeText allowFontScaling={false} style={styles.badgeText}>
+                          {tab.badge > BADGE_MAX ? `${BADGE_MAX}+` : String(tab.badge)}
+                        </NativeText>
+                      </View>
+                    </PopOnChange>
+                  </View>
+                ) : null}
+              </View>
+              <Text
+                variant="caption"
+                color={active ? 'action' : 'inkMuted'}
+                numberOfLines={1}
+                maxFontSizeMultiplier={LABEL_SCALE_MAX}
+              >
+                {tab.label}
+              </Text>
+            </Pressable>
+          );
+        })}
+      </View>
+      {trailing !== undefined ? (
+        <View style={styles.trailing} aria-hidden>
+          {trailing}
+        </View>
+      ) : null}
+    </Animated.View>
   );
 }

@@ -22,6 +22,7 @@ import {
   Text,
   space,
   useKeyboardVisible,
+  chromeScrollProps,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -270,6 +271,7 @@ export function SearchView({
         </View>
       </View>
       <ScrollView
+        {...chromeScrollProps}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}
@@ -277,7 +279,7 @@ export function SearchView({
       >
         {content}
       </ScrollView>
-      {keyboard ? null : <CartLayer bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />}
+      {keyboard ? null : <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />}
     </View>
   );
 }

@@ -1,9 +1,10 @@
 import { Tabs } from 'expo-router';
+import { useEffect } from 'react';
 import type { ComponentProps } from 'react';
 import { useCart } from '@/home/CartProvider';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { BottomBar, useKeyboardVisible } from '@/ui';
+import { BottomBar, LogoStacked, TRAILING_WIDTH, showChrome, useKeyboardVisible } from '@/ui';
 
 type TabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
@@ -41,6 +42,11 @@ function Bar({ state, navigation }: TabBarProps) {
           ? 'none'
           : 'index';
 
+  // A new screen starts with the bar in place, whatever the last one had scrolled.
+  useEffect(() => {
+    showChrome();
+  }, [current]);
+
   // While the keyboard is up the bar would only ride on top of it, so it steps aside.
   if (keyboard) return null;
 
@@ -58,6 +64,7 @@ function Bar({ state, navigation }: TabBarProps) {
           : {}),
       }))}
       activeKey={active}
+      trailing={<LogoStacked width={TRAILING_WIDTH - 16} ground="chrome" label={t('app.name')} />}
       onSelect={(key) => {
         const route = state.routes.find((candidate) => candidate.name === key);
         if (route === undefined) return;

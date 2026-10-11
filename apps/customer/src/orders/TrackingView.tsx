@@ -25,6 +25,7 @@ import {
   space,
   useLargeText,
   useScreenLoad,
+  chromeScrollProps,
 } from '@/ui';
 import { canCancel } from './machine';
 import { orderNumber } from './ids';
@@ -274,6 +275,7 @@ function TrackingPage({ order }: { order: Order }) {
 
   return (
     <ScrollView
+      {...chromeScrollProps}
       style={styles.page}
       contentContainerStyle={[
         styles.content,
