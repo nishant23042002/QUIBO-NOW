@@ -10,6 +10,8 @@ import {
   StyleSheet,
   View,
   useWindowDimensions,
+  type NativeScrollEvent,
+  type NativeSyntheticEvent,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -39,6 +41,8 @@ import {
   countRule,
   radius,
   space,
+  useChromeProgress,
+  useChromeReport,
   type InsightPage,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
@@ -156,6 +160,8 @@ export function ProductView({
   const items = useHomeItems();
   const { width } = useWindowDimensions();
   const reduceMotion = useReduceMotion();
+  const hideBar = useChromeProgress();
+  const reportScroll = useChromeReport();
   const online = useOnline();
   // loading, then ready; or offline / failed, with a way to try again.
   const [phase, setPhase] = useState<'loading' | 'ready' | 'offline' | 'failed'>('loading');
@@ -233,6 +239,10 @@ export function ProductView({
   const saved =
     pack.mrp !== undefined && pack.mrp > pack.price ? subtract(pack.mrp, pack.price) : undefined;
   const dock = insets.bottom + BOTTOM_BAR_HEIGHT;
+  // The bottom bar slides away as the page is read. The ADD bar slides down by as much, so it rests on the bottom edge and there is
+  // no gap, and the cart bar shrinks into its small form just above it. With "reduce motion" on the bars stay where they are.
+  const followsBar = !reduceMotion;
+  const barDrop = hideBar.interpolate({ inputRange: [0, 1], outputRange: [0, BOTTOM_BAR_HEIGHT] });
   const stepper = {
     addLabel: t('home.rails.add'),
     addAriaLabel: t('home.rails.addNamed', { name: item.name }),
@@ -368,6 +378,10 @@ export function ProductView({
               scrollEventThrottle={16}
               onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
                 useNativeDriver: true,
+                listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+                  // Scrolling down hides the bottom bar and brings the cart bar down to its small form, as on Home.
+                  if (followsBar) reportScroll(event.nativeEvent.contentOffset.y);
+                },
               })}
               contentContainerStyle={[
                 styles.content,
@@ -672,8 +686,12 @@ export function ProductView({
         </View>
       )}
       {blocked ? null : (
-        <View
-          style={[styles.action, { bottom: dock }]}
+        <Animated.View
+          style={[
+            styles.action,
+            { bottom: dock },
+            followsBar ? { transform: [{ translateY: barDrop }] } : null,
+          ]}
           onLayout={(event) => {
             setActionHeight(Math.round(event.nativeEvent.layout.height));
           }}
@@ -716,9 +734,9 @@ export function ProductView({
               {...stepper}
             />
           )}
-        </View>
+        </Animated.View>
       )}
-      <CartLayer bottom={dock + (blocked ? 0 : actionHeight)} />
+      <CartLayer follow={followsBar} bottom={dock + (blocked ? 0 : actionHeight)} />
     </View>
   );
 }
