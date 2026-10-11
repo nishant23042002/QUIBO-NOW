@@ -8,7 +8,8 @@ export {
   type FreeDeliveryHint,
 } from './BillSummary';
 export { BottomBar, TRAILING_WIDTH, type BottomBarProps, type BottomBarTab } from './BottomBar';
-export { chromeScrollProps, reportChromeScroll, showChrome, useChromeProgress } from './chrome';
+export { reportChromeScroll, showChrome, useChromeProgress } from './chrome';
+export { useChromeReport, useChromeScroll } from './useChromeScroll';
 export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { CategoryTabs, type CategoryTab, type CategoryTabsProps } from './CategoryTabs';

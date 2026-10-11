@@ -25,7 +25,7 @@ import {
   space,
   useLargeText,
   useScreenLoad,
-  chromeScrollProps,
+  useChromeScroll,
 } from '@/ui';
 import { canCancel } from './machine';
 import { orderNumber } from './ids';
@@ -236,6 +236,7 @@ function call(phone: string): void {
 
 function TrackingPage({ order }: { order: Order }) {
   const { t } = useLanguage();
+  const chromeScroll = useChromeScroll();
   const router = useRouter();
   const { cancel } = useOrders();
   const [asking, setAsking] = useState(false);
@@ -275,7 +276,7 @@ function TrackingPage({ order }: { order: Order }) {
 
   return (
     <ScrollView
-      {...chromeScrollProps}
+      {...chromeScroll}
       style={styles.page}
       contentContainerStyle={[
         styles.content,

@@ -17,7 +17,6 @@ import {
   radius,
   space,
   useScreenLoad,
-  chromeScrollProps,
 } from '@/ui';
 import { orderNumber } from './ids';
 import { ThumbRow } from './ItemThumb';
@@ -183,7 +182,6 @@ function OrdersList() {
 
   return (
     <ScrollView
-      {...chromeScrollProps}
       style={styles.page}
       contentContainerStyle={[
         styles.content,

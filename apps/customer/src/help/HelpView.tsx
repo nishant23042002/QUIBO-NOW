@@ -22,7 +22,7 @@ import {
   radius,
   space,
   useScreenLoad,
-  chromeScrollProps,
+  useChromeScroll,
 } from '@/ui';
 import { telLink, whatsAppLink } from './contact';
 import { useReports } from './ReportsProvider';
@@ -106,6 +106,7 @@ function HelpSkeleton() {
 
 function HelpPage({ orderId }: { orderId: string | undefined }) {
   const { t } = useLanguage();
+  const chromeScroll = useChromeScroll();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
@@ -129,7 +130,7 @@ function HelpPage({ orderId }: { orderId: string | undefined }) {
 
   return (
     <ScrollView
-      {...chromeScrollProps}
+      {...chromeScroll}
       style={styles.page}
       contentContainerStyle={[
         styles.content,

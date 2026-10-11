@@ -1,4 +1,4 @@
-import { Animated, Easing, type NativeScrollEvent, type NativeSyntheticEvent } from 'react-native';
+import { Animated, Easing } from 'react-native';
 import { INITIAL_TRACK, trackScroll, type ScrollTrack } from './logic/chromeScroll';
 
 /**
@@ -45,11 +45,3 @@ export function showChrome(): void {
 export function useChromeProgress(): Animated.Value {
   return progress;
 }
-
-/** Spread on a vertical scroll view whose scrolling should hide the bar. */
-export const chromeScrollProps = {
-  scrollEventThrottle: 16,
-  onScroll: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    reportChromeScroll(event.nativeEvent.contentOffset.y);
-  },
-} as const;

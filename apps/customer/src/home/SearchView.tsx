@@ -22,7 +22,7 @@ import {
   Text,
   space,
   useKeyboardVisible,
-  chromeScrollProps,
+  useChromeScroll,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -91,6 +91,7 @@ export function SearchView({
   inputRef: Ref<TextInput>;
 }) {
   const { t } = useLanguage();
+  const chromeScroll = useChromeScroll();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
@@ -271,7 +272,7 @@ export function SearchView({
         </View>
       </View>
       <ScrollView
-        {...chromeScrollProps}
+        {...chromeScroll}
         keyboardShouldPersistTaps="handled"
         keyboardDismissMode="on-drag"
         showsVerticalScrollIndicator={false}

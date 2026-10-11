@@ -11,7 +11,7 @@ import { useSampleShops } from '@/home/sampleShops';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BOTTOM_BAR_HEIGHT, HomeHeader, reportChromeScroll } from '@/ui';
+import { BOTTOM_BAR_HEIGHT, HomeHeader, useChromeReport } from '@/ui';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
@@ -34,6 +34,7 @@ export default function HomeScreen() {
   const offers = useHomeOffers();
   const [category, setCategory] = useState('all');
   const cart = useCart();
+  const reportScroll = useChromeReport();
   const when = useDeliveryWhen();
   const address = useDeliveryAddress();
   const insets = useSafeAreaInsets();
@@ -74,7 +75,7 @@ export default function HomeScreen() {
           router.push('/profile');
         }}
         // The bottom bar hides while the page is read and comes back on the way up.
-        onScrollY={reportChromeScroll}
+        onScrollY={reportScroll}
         // The floating cart bar covers the bottom of the page when it shows, so the page leaves room for it.
         bottomSpace={BOTTOM_BAR_HEIGHT + (cart.count > 0 ? CART_ROOM : 0)}
       >

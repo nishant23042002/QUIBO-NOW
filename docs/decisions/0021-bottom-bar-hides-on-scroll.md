@@ -29,8 +29,11 @@ is a lot of the view, and the big quick-commerce apps give it back while the sho
    `ui/logic/deliveryArt.ts`): `mono`, a white front-view scooter (`assets/delivery-scooter-mono.png`) that fills with white
    the same way and turns pistachio once free; and `classic`, the full-colour one above. Set it to `classic` to go back. Corners are 12 dp (the tile 6), a little sharper than the rest, and not
    full circles. Tapping either opens the cart.
-4. **Only screens that scroll a long list hide it:** Home, shop pages, search, Orders, an order's page and Help. Cart, checkout,
-   the item page and the address pages have their own bottom buttons, so the bar stays.
+4. **Only screens that scroll a long list hide it:** Home, shop pages, search, an order's page and Help. The main tabs after Home
+   (Orders, and Categories once it is built) always keep their bar, so a tab the shopper moves between never loses it. Cart, checkout,
+   and the address pages have their own bottom buttons, so the bar stays. The item page now hides it too (see ADR 0024).
+   A page only counts as scrolling while it is the one in front, so a page still gliding when its tab is left cannot hide the bar
+   on the next screen.
 5. **A tile at the far right edge** holds the full Quibo logo for now. It is not a tab and is not pressed; it is a place kept for
    something of the app's own, later. It is set in 8 dp from the bar's top and bottom, flush with the screen's right edge, and
    rounded on both left corners.
@@ -42,5 +45,5 @@ is a lot of the view, and the big quick-commerce apps give it back while the sho
 - The "removed, undo" note rests right above whatever is lowest: the full cart bar with the bottom bar in place, the small
   note and button once it is away, or the screen's bottom edge when the cart is empty. It glides between these with the same
   shared value, so it never floats high above the collapsed pair.
-- A future screen that scrolls a long list adds one line (`{...chromeScrollProps}`) to take part.
+- A future screen that scrolls a long list takes part with `const chromeScroll = useChromeScroll()` and `{...chromeScroll}`.
 - The logo tile is decoration until it is given a job; it must not be given a tap target without a name and a destination.

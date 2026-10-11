@@ -13,7 +13,7 @@ import {
   Text,
   radius,
   space,
-  chromeScrollProps,
+  useChromeScroll,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -56,6 +56,7 @@ const makeStyles = (c: ThemeColors) =>
  */
 export function ShopView({ shop }: { shop: ShopDetails }) {
   const { t } = useLanguage();
+  const chromeScroll = useChromeScroll();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
@@ -82,7 +83,7 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
   return (
     <View style={styles.page}>
       <ScrollView
-        {...chromeScrollProps}
+        {...chromeScroll}
         contentContainerStyle={[
           styles.content,
           {
