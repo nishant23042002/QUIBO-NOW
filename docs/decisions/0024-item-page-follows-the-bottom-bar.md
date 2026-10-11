@@ -20,6 +20,13 @@ the item page fixed because it has its own ADD bar. The result was that the same
 4. **A page counts as scrolling only while it is in front** (`ui/useChromeScroll.ts`), so a page still gliding when its tab was left
    cannot hide the bar on the next screen. Orders, a main tab, keeps its bar always.
 
+5. **The ADD bar is hidden until the page's own price and ADD have scrolled out of sight.** The same control is never on screen twice:
+   at the top the shopper uses the price row in the page, and once it has gone past the top the bar slides up (260 ms in, 200 ms out,
+   on the bottom bar's curve), then goes again when the row is back in view. Three layout measurements say where the row ends; a
+   24 dp margin stops it flickering at the edge. The slide, the cart bar's lift above it and the drop with the bottom bar are all
+   native animations. While it is away it takes no touches and is hidden from a screen reader. With "reduce motion" on it shows
+   and hides without sliding. The cart bar rests just above the bottom bar while the ADD bar is away.
+
 ## Consequences
 
 - The cart bar now means the same thing everywhere it appears: Home, a shop, search and an item.

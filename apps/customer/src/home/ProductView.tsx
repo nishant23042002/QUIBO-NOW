@@ -1,6 +1,6 @@
 import { formatRupees, subtract } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import * as Linking from 'expo-linking';
 import {
   Animated,
@@ -61,6 +61,12 @@ import { useShop } from './sampleShops';
 
 /** How long the loading skeleton shows when the page opens, as real data would take to arrive. */
 const LOAD_MS = 150;
+/** The ADD bar slides in and out on the bottom bar's own curve, a little quicker on the way out. */
+const BAR_IN_MS = 260;
+const BAR_OUT_MS = 200;
+const BAR_EASE = Easing.bezier(0.4, 0, 0.2, 1);
+/** Once the ADD bar is showing, the page has to come back this far before it goes, so a small wobble at the edge cannot flicker it. */
+const BAR_HYSTERESIS = 24;
 /** How many rows of the information card show before "View more". */
 const INFORMATION_SHOWN = 3;
 /** How long the grey skeleton takes to fade into the real page. */
@@ -162,6 +168,47 @@ export function ProductView({
   const reduceMotion = useReduceMotion();
   const hideBar = useChromeProgress();
   const reportScroll = useChromeReport();
+  // The ADD bar only shows once the price and ADD in the page itself have scrolled out of sight, so the same control is never on
+  // screen twice. `inlineEnd` is where that row ends, from three measurements; `barIn` is 0 hidden to 1 shown, on the animation thread.
+  const [barShown, setBarShown] = useState(false);
+  const [barIn] = useState(() => new Animated.Value(0));
+  const [inline, setInline] = useState({ section: 0, card: 0, row: 0, height: 0 });
+
+  // Remembers where the page's own price row is, changing state only when a measurement actually changes.
+  const measure = (key: keyof typeof inline, value: number) => {
+    setInline((current) => (current[key] === value ? current : { ...current, [key]: value }));
+  };
+
+  const onPageScroll = useCallback(
+    (event: NativeSyntheticEvent<NativeScrollEvent>) => {
+      const y = event.nativeEvent.contentOffset.y;
+      // Scrolling down hides the bottom bar and brings the cart bar down to its small form, as on Home.
+      if (!reduceMotion) reportScroll(y);
+      // The ADD bar comes once the page's own price and ADD are out of sight, and goes when they are back. State changes only
+      // when the answer changes, not on every frame of the scroll.
+      const end = inline.section + inline.card + inline.row + inline.height;
+      const past = inline.height > 0 && y >= (barShown ? end - BAR_HYSTERESIS : end);
+      if (past !== barShown) setBarShown(past);
+    },
+    [reduceMotion, reportScroll, inline, barShown],
+  );
+
+  useEffect(() => {
+    if (reduceMotion) {
+      barIn.setValue(barShown ? 1 : 0);
+      return undefined;
+    }
+    const slide = Animated.timing(barIn, {
+      toValue: barShown ? 1 : 0,
+      duration: barShown ? BAR_IN_MS : BAR_OUT_MS,
+      easing: BAR_EASE,
+      useNativeDriver: true,
+    });
+    slide.start();
+    return () => {
+      slide.stop();
+    };
+  }, [barShown, reduceMotion, barIn]);
   const online = useOnline();
   // loading, then ready; or offline / failed, with a way to try again.
   const [phase, setPhase] = useState<'loading' | 'ready' | 'offline' | 'failed'>('loading');
@@ -243,6 +290,12 @@ export function ProductView({
   // no gap, and the cart bar shrinks into its small form just above it. With "reduce motion" on the bars stay where they are.
   const followsBar = !reduceMotion;
   const barDrop = hideBar.interpolate({ inputRange: [0, 1], outputRange: [0, BOTTOM_BAR_HEIGHT] });
+  // Hidden, the ADD bar sits below its place, behind the bottom bar; shown, it is where it was. It also drops with the bottom bar.
+  const awayBy = actionHeight + insets.bottom + space[2];
+  const barSlide = followsBar
+    ? Animated.add(barDrop, barIn.interpolate({ inputRange: [0, 1], outputRange: [awayBy, 0] }))
+    : barIn.interpolate({ inputRange: [0, 1], outputRange: [awayBy, 0] });
+  const cartLift = barIn.interpolate({ inputRange: [0, 1], outputRange: [0, -actionHeight] });
   const stepper = {
     addLabel: t('home.rails.add'),
     addAriaLabel: t('home.rails.addNamed', { name: item.name }),
@@ -378,10 +431,7 @@ export function ProductView({
               scrollEventThrottle={16}
               onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
                 useNativeDriver: true,
-                listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-                  // Scrolling down hides the bottom bar and brings the cart bar down to its small form, as on Home.
-                  if (followsBar) reportScroll(event.nativeEvent.contentOffset.y);
-                },
+                listener: onPageScroll,
               })}
               contentContainerStyle={[
                 styles.content,
@@ -423,8 +473,18 @@ export function ProductView({
                   }
                 />
               </View>
-              <View style={styles.gutter}>
-                <View style={styles.card}>
+              <View
+                style={styles.gutter}
+                onLayout={(event) => {
+                  measure('section', event.nativeEvent.layout.y);
+                }}
+              >
+                <View
+                  style={styles.card}
+                  onLayout={(event) => {
+                    measure('card', event.nativeEvent.layout.y);
+                  }}
+                >
                   <View style={styles.packRow}>
                     <DietMark kind={item.diet.kind} label={item.diet.label} size={18} />
                     <Text variant="small" color="inkMuted">
@@ -437,7 +497,13 @@ export function ProductView({
                       ? t('weights.netLine')
                       : t('product.netQuantity', { pack: pack.label })}
                   </Text>
-                  <View style={styles.priceRow}>
+                  <View
+                    style={styles.priceRow}
+                    onLayout={(event) => {
+                      measure('row', event.nativeEvent.layout.y);
+                      measure('height', event.nativeEvent.layout.height);
+                    }}
+                  >
                     <PriceBadge
                       amount={pack.price}
                       {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
@@ -687,11 +753,9 @@ export function ProductView({
       )}
       {blocked ? null : (
         <Animated.View
-          style={[
-            styles.action,
-            { bottom: dock },
-            followsBar ? { transform: [{ translateY: barDrop }] } : null,
-          ]}
+          pointerEvents={barShown ? 'auto' : 'none'}
+          aria-hidden={!barShown}
+          style={[styles.action, { bottom: dock, transform: [{ translateY: barSlide }] }]}
           onLayout={(event) => {
             setActionHeight(Math.round(event.nativeEvent.layout.height));
           }}
@@ -736,7 +800,13 @@ export function ProductView({
           )}
         </Animated.View>
       )}
-      <CartLayer follow={followsBar} bottom={dock + (blocked ? 0 : actionHeight)} />
+      {/* The cart bar rests above the bottom bar while the ADD bar is away, and rides up above it as it comes. */}
+      <Animated.View
+        pointerEvents="box-none"
+        style={[StyleSheet.absoluteFill, { transform: [{ translateY: cartLift }] }]}
+      >
+        <CartLayer follow={followsBar} bottom={dock} />
+      </Animated.View>
     </View>
   );
 }
