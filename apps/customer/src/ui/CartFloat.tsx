@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Text as NativeText, Pressable, StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { useChromeProgress } from './chrome';
-import { Icon, ProgressIcon } from './Icon';
+import SCOOTER from '../../assets/delivery-scooter.png';
+import { Icon } from './Icon';
+import { ProgressImage } from './ProgressImage';
 import { Text } from './Text';
 import { BOTTOM_BAR_HEIGHT, TAP_MIN, radius, space } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
@@ -62,6 +64,8 @@ const SCALE_MAX = 1.3;
 const HIDDEN_BY = 140;
 /** How far the collapsed note and button sit in from the screen's sides and up from its bottom strip. */
 const PILL_MARGIN = space[2];
+/** The delivery scooter, in full colour: it is the free-delivery progress bar, filling from its left as the cart nears it. */
+const NOTE_PICTURE = 38;
 const FILL = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const;
 const THUMB = 34;
 const RING = 2;
@@ -166,7 +170,20 @@ const makeStyles = (c: ThemeColors) =>
       justifyContent: 'center',
       borderRadius: radius.sm,
     },
-    noteTileFree: { backgroundColor: c.accent },
+    // A small pistachio tick on the picture's lower right once free delivery is reached.
+    noteCheck: {
+      position: 'absolute',
+      right: -4,
+      bottom: -4,
+      width: 18,
+      height: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radius.full,
+      backgroundColor: c.accent,
+      borderWidth: 2,
+      borderColor: c.chrome,
+    },
     noteText: { flexShrink: 1 },
     cartButton: {
       minHeight: TAP_MIN,
@@ -544,20 +561,17 @@ export function CartFloat({
               aria-label={`${pillTitle} ${pillSub}. ${actionLabel}`}
             >
               <View style={styles.noteRow}>
-                <Animated.View
-                  style={[
-                    styles.noteTile,
-                    free ? styles.noteTileFree : null,
-                    { transform: [{ scale: unlockedPop }] },
-                  ]}
-                >
-                  <ProgressIcon
-                    name="bike"
-                    color={free ? colors.onAccent : colors.onChromeMuted}
-                    fillColor={free ? colors.onAccent : colors.accent}
+                <Animated.View style={[styles.noteTile, { transform: [{ scale: unlockedPop }] }]}>
+                  <ProgressImage
+                    source={SCOOTER}
                     progress={free ? 1 : progress}
-                    size={30}
+                    size={NOTE_PICTURE}
                   />
+                  {free ? (
+                    <View style={styles.noteCheck}>
+                      <Icon name="check" color={colors.onAccent} size={12} />
+                    </View>
+                  ) : null}
                 </Animated.View>
                 <View style={styles.noteText}>
                   <Text

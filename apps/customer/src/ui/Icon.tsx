@@ -1,7 +1,4 @@
-import { useEffect, useState } from 'react';
-import { Animated, Easing, View } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
-import { useReduceMotion } from './useReduceMotion';
 
 /** The usual stroke weight, round ends, drawn on a 24 by 24 grid, and the thin one for larger, quieter pictures. */
 const STROKE = 2;
@@ -78,15 +75,6 @@ const SHAPES = {
     dot(10.6, 11, 0.9),
     dot(13.4, 14, 0.9),
   ],
-  // A delivery bike: a box over the rear wheel, a floor, and the steering column with its bar.
-  bike: [
-    ring(5.5, 17, 2.5),
-    ring(18.5, 17, 2.5),
-    path('M3 6.5h7v6.5H3z'),
-    path('M8 17h8'),
-    path('M10 13h5'),
-    path('M15.5 17l2.5-8.5h2.2'),
-  ],
   calendar: [path('M5 6.5h14V20H5z'), path('M5 10.5h14'), path('M8.5 4v4M15.5 4v4')],
   clock: [ring(12, 12, 9), path('M12 7v5.5l3.5 2')],
   sun: [
@@ -132,95 +120,25 @@ interface IconProps {
   light?: boolean;
 }
 
-function drawShapes(name: IconName, color: string, strokeWidth: number) {
-  return SHAPES[name].map((shape, index) =>
-    shape.kind === 'path' ? (
-      <Path
-        key={index}
-        d={shape.d}
-        fill="none"
-        stroke={color}
-        strokeWidth={strokeWidth}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    ) : (
-      <Circle key={index} cx={shape.x} cy={shape.y} r={shape.r} fill={color} />
-    ),
-  );
-}
-
 /** Decorative: whatever holds the icon (a button, a notice) carries the accessible name. */
 export function Icon({ name, color, size = 20, light = false }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
-      {drawShapes(name, color, light ? STROKE_LIGHT : STROKE)}
+      {SHAPES[name].map((shape, index) =>
+        shape.kind === 'path' ? (
+          <Path
+            key={index}
+            d={shape.d}
+            fill="none"
+            stroke={color}
+            strokeWidth={light ? STROKE_LIGHT : STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        ) : (
+          <Circle key={index} cx={shape.x} cy={shape.y} r={shape.r} fill={color} />
+        ),
+      )}
     </Svg>
-  );
-}
-
-interface ProgressIconProps {
-  name: IconName;
-  /** The quiet colour of the whole picture, drawn first. */
-  color: string;
-  /** The colour that fills the picture from its left edge as `progress` grows. */
-  fillColor: string;
-  /** How much of the picture is filled, from 0 to 1. */
-  progress: number;
-  size?: number;
-}
-
-/** The drawn part of the picture starts a little in from its left edge and ends a little before its right one (of 24). */
-const DRAWN_FROM = 2;
-const DRAWN_SPAN = 21;
-const GROW_MS = 320;
-
-/**
- * An icon that is also a progress bar: it is drawn quietly, and the same drawing is laid over it in a stronger colour inside a
- * window that opens from the left as `progress` grows. The window is an ordinary clipped view, not an SVG clip path, because a
- * clip path that changes after the first draw is not redrawn reliably on phones. The window eases to each new value so a change
- * is seen. Decorative, like `Icon`.
- */
-export function ProgressIcon({ name, color, fillColor, progress, size = 24 }: ProgressIconProps) {
-  const reduceMotion = useReduceMotion();
-  const amount = Math.min(Math.max(progress, 0), 1);
-  const edge = amount > 0 ? (DRAWN_FROM + DRAWN_SPAN * amount) / 24 : 0;
-  const [open] = useState(() => new Animated.Value(edge));
-
-  useEffect(() => {
-    if (reduceMotion) {
-      open.setValue(edge);
-      return undefined;
-    }
-    const move = Animated.timing(open, {
-      toValue: edge,
-      duration: GROW_MS,
-      easing: Easing.out(Easing.cubic),
-      useNativeDriver: false,
-    });
-    move.start();
-    return () => {
-      move.stop();
-    };
-  }, [edge, reduceMotion, open]);
-
-  return (
-    <View style={{ width: size, height: size }} aria-hidden>
-      <View style={{ opacity: 0.6 }}>
-        <Icon name={name} color={color} size={size} />
-      </View>
-      <Animated.View
-        style={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          height: size,
-          overflow: 'hidden',
-          width: open.interpolate({ inputRange: [0, 1], outputRange: [0, size] }),
-        }}
-      >
-        <Icon name={name} color={fillColor} size={size} />
-      </Animated.View>
-    </View>
   );
 }

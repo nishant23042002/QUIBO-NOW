@@ -20,10 +20,11 @@ is a lot of the view, and the big quick-commerce apps give it back while the sho
 3. **The cart bar never disappears; it comes apart into two.** As the bottom bar slides away the full cart bar sinks with it
    and shrinks into a small cart button at the lower right while its words fade early, so there is one continuous motion and no
    jump. At the lower left a separate free-delivery note slides in beside it. The button is pistachio with a static cart icon
-   (never the items, whatever is in the cart) and "View cart" over the count in words. The note is dark, with a delivery bike
-   and two short lines. The bike is the progress bar: drawn quietly, it fills with pistachio from its left as the cart nears
-   free delivery, so there is no separate line. Not yet free: "₹153 more" over "for free delivery". Free: the bike is drawn
-   whole on a pistachio tile with a small pop, and it reads "Free delivery" over "unlocked". The pair sit 8 dp from each side
+   (never the items, whatever is in the cart) and "View cart" over the count in words. The note is dark, with a full-colour delivery scooter
+   (`assets/delivery-scooter.png`) and two short lines. The scooter is the progress bar: drawn faded, it comes into full colour
+   from its left as the cart nears free delivery, easing to each change, so there is no separate line. Not yet free: "₹153 more"
+   over "for free delivery". Free: the scooter is in full colour with a small pistachio tick and a small pop, and it reads
+   "Free delivery" over "unlocked". The pair sit 8 dp from each side
    and from each other, and are about 48 dp tall. Corners are 12 dp (the tile 6), a little sharper than the rest, and not
    full circles. Tapping either opens the cart.
 4. **Only screens that scroll a long list hide it:** Home, shop pages, search, Orders, an order's page and Help. Cart, checkout,
