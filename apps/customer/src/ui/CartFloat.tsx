@@ -2,8 +2,10 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Text as NativeText, Pressable, StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { useChromeProgress } from './chrome';
-import SCOOTER from '../../assets/delivery-scooter.png';
+import SCOOTER_CLASSIC from '../../assets/delivery-scooter.png';
+import SCOOTER_MONO from '../../assets/delivery-scooter-mono.png';
 import { Icon } from './Icon';
+import { DELIVERY_ART, artTint, type DeliveryArt } from './logic/deliveryArt';
 import { ProgressImage } from './ProgressImage';
 import { Text } from './Text';
 import { BOTTOM_BAR_HEIGHT, TAP_MIN, radius, space } from './tokens';
@@ -64,8 +66,12 @@ const SCALE_MAX = 1.3;
 const HIDDEN_BY = 140;
 /** How far the collapsed note and button sit in from the screen's sides and up from its bottom strip. */
 const PILL_MARGIN = space[2];
-/** The delivery scooter, in full colour: it is the free-delivery progress bar, filling from its left as the cart nears it. */
+/** The delivery scooter: it is the free-delivery progress bar, filling from its left as the cart nears it. Which one shows is `DELIVERY_ART`. */
 const NOTE_PICTURE = 38;
+const SCOOTERS: Readonly<Record<DeliveryArt, number>> = {
+  classic: SCOOTER_CLASSIC,
+  mono: SCOOTER_MONO,
+};
 const FILL = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const;
 const THUMB = 34;
 const RING = 2;
@@ -240,6 +246,7 @@ export function CartFloat({
   const [pill, setPill] = useState({ width: 0, height: 0 });
   const [unlockedPop] = useState(() => new Animated.Value(1));
   const wasFree = useRef(free);
+  const tintName = artTint(DELIVERY_ART, free);
 
   // The icon tile gives a small pop when free delivery is reached, so the moment is noticed.
   useEffect(() => {
@@ -563,9 +570,10 @@ export function CartFloat({
               <View style={styles.noteRow}>
                 <Animated.View style={[styles.noteTile, { transform: [{ scale: unlockedPop }] }]}>
                   <ProgressImage
-                    source={SCOOTER}
+                    source={SCOOTERS[DELIVERY_ART]}
                     progress={free ? 1 : progress}
                     size={NOTE_PICTURE}
+                    tint={tintName === null ? undefined : colors[tintName]}
                   />
                   {free ? (
                     <View style={styles.noteCheck}>

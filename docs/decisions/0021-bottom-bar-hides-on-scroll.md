@@ -25,7 +25,9 @@ is a lot of the view, and the big quick-commerce apps give it back while the sho
    from its left as the cart nears free delivery, easing to each change, so there is no separate line. Not yet free: "₹153 more"
    over "for free delivery". Free: the scooter is in full colour with a small pistachio tick and a small pop, and it reads
    "Free delivery" over "unlocked". The pair sit 8 dp from each side
-   and from each other, and are about 48 dp tall. Corners are 12 dp (the tile 6), a little sharper than the rest, and not
+   and from each other, and are about 48 dp tall. The scooter has two looks, chosen by one constant (`DELIVERY_ART` in
+   `ui/logic/deliveryArt.ts`): `mono`, a white front-view scooter (`assets/delivery-scooter-mono.png`) that fills with white
+   the same way and turns pistachio once free; and `classic`, the full-colour one above. Set it to `classic` to go back. Corners are 12 dp (the tile 6), a little sharper than the rest, and not
    full circles. Tapping either opens the cart.
 4. **Only screens that scroll a long list hide it:** Home, shop pages, search, Orders, an order's page and Help. Cart, checkout,
    the item page and the address pages have their own bottom buttons, so the bar stays.
