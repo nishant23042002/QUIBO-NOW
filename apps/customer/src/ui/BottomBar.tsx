@@ -311,7 +311,7 @@ export function BottomBar({ tabs, activeKey, onSelect, trailing }: BottomBarProp
                   active={active}
                   lively={lively}
                   color={active ? colors.action : colors.inkMuted}
-                  cutColor={colors.accentSubtle}
+                  cutColor={colors.lilac}
                 />
                 {tab.badge !== undefined && tab.badge > 0 ? (
                   <View style={styles.badgeSlot} aria-hidden>
