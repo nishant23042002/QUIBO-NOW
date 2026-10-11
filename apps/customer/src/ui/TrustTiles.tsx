@@ -39,7 +39,7 @@ const makeStyles = (c: ThemeColors) =>
       padding: space[4],
       borderRadius: radius.lg,
     },
-    soft: { backgroundColor: c.accentSubtle },
+    soft: { backgroundColor: c.lilac, borderWidth: 1, borderColor: c.line },
     brand: { backgroundColor: c.headerBg },
     icon: {
       width: 40,
@@ -94,11 +94,7 @@ export function TrustTiles({ tiles, tone = 'soft', scroll = false, bleed = 0 }: 
           >
             <View style={styles.slideHead}>
               <View style={styles.slideIcon}>
-                <Icon
-                  name={tile.icon}
-                  color={brand ? colors.onHeader : colors.accentInk}
-                  size={18}
-                />
+                <Icon name={tile.icon} color={brand ? colors.onHeader : colors.action} size={18} />
               </View>
               <View style={styles.slideTitle}>
                 <Text variant="strong" color={brand ? 'onHeader' : 'ink'} numberOfLines={2}>
@@ -125,7 +121,7 @@ export function TrustTiles({ tiles, tone = 'soft', scroll = false, bleed = 0 }: 
           aria-label={`${tile.title}. ${tile.body}`}
         >
           <View style={styles.icon}>
-            <Icon name={tile.icon} color={brand ? colors.onHeader : colors.accentInk} size={20} />
+            <Icon name={tile.icon} color={brand ? colors.onHeader : colors.action} size={20} />
           </View>
           <View style={styles.words}>
             <Text variant="strong" color={brand ? 'onHeader' : 'ink'}>

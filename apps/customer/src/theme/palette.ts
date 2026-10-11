@@ -57,6 +57,11 @@ export interface ThemeColors {
   accentSubtle: string;
   /** Accent-coloured text (links, prices) that is readable on `surface` and `bg`. */
   accentInk: string;
+  /**
+   * A soft aubergine tint, for blocks that should feel set apart and a little premium without shouting: the chosen size, and
+   * the promise tiles. Text on it uses `ink` and `inkMuted`.
+   */
+  lilac: string;
 
   /** The deeper olive of the price badge's edge and the divider's mark: a decorative shape, not text. */
   accentEdge: string;
@@ -115,6 +120,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     accentPressed: '#9FD24E',
     accentSubtle: '#EAF8CF',
     accentInk: '#4C7A12',
+    lilac: '#EFE4F5',
     accentEdge: '#5E8F17',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',
@@ -159,6 +165,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     accentPressed: '#9FD24E',
     accentSubtle: '#33481A',
     accentInk: '#B8E86B',
+    lilac: '#2A1836',
     accentEdge: '#7BA531',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',

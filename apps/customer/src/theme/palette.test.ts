@@ -67,6 +67,8 @@ const REQUIRED: readonly Pair[] = [
   ['success text on the page', 'success', 'bg', 4.5],
   ['warning text on cards', 'warning', 'surface', 4.5],
   ['accent text on a tinted tile', 'accentInk', 'accentSubtle', 4.5],
+  ['text on a lilac block', 'ink', 'lilac', 4.5],
+  ['captions on a lilac block', 'inkMuted', 'lilac', 4.5],
   ['captions on a tinted tile', 'inkMuted', 'accentSubtle', 4.5],
   ['the outline of an order in progress', 'action', 'bg', 3],
   ['the tick on the placed screen', 'chrome', 'accent', 3],

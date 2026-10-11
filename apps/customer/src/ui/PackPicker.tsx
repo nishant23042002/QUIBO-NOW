@@ -47,7 +47,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.ctl,
       backgroundColor: c.surface,
     },
-    selected: { borderColor: c.action, backgroundColor: c.accentSubtle },
+    selected: { borderColor: c.action, backgroundColor: c.lilac },
     unavailable: { opacity: 0.55, borderStyle: 'dashed' },
     // The tag hangs over the option's top edge, so every option is the same height with or without one.
     tag: {
