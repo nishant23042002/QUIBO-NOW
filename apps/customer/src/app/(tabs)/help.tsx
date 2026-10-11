@@ -1,8 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { CartHeader } from '@/home/CartHeader';
 import { HelpView } from '@/help/HelpView';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({ page: { flex: 1 } });
 
@@ -14,7 +14,7 @@ export default function HelpScreen() {
 
   return (
     <View style={styles.page}>
-      <CartHeader
+      <AppHeader
         title={t('help.title')}
         backLabel={t('common.back')}
         onBack={() => {

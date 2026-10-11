@@ -796,6 +796,7 @@
   },
   "orders": {
     "title": "ऑर्डर",
+    "activeCount": "{count} सुरू",
     "emptyTitle": "अजून ऑर्डर नाहीत",
     "emptyBody": "ऑर्डर दिल्यावर तुमच्या ऑर्डर इथे दिसतील.",
     "emptyAction": "खरेदी सुरू करा",

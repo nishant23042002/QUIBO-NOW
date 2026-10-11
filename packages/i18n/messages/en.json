@@ -796,6 +796,7 @@
   },
   "orders": {
     "title": "Orders",
+    "activeCount": "{count} in progress",
     "emptyTitle": "No orders yet",
     "emptyBody": "Your orders will show up here once you place one.",
     "emptyAction": "Start shopping",

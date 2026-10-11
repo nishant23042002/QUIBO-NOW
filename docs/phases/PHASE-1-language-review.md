@@ -54,6 +54,7 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | Key                         | English                                           | Hindi (draft)                              | Marathi (draft)                          | OK or change to |
 | --------------------------- | ------------------------------------------------- | ------------------------------------------ | ---------------------------------------- | --------------- |
 | `orders.title`              | Orders                                            | ऑर्डर                                      | ऑर्डर                                    |                 |
+| `orders.activeCount`        | {count} in progress                               | {count} जारी                               | {count} सुरू                             |                 |
 | `orders.emptyTitle`         | No orders yet                                     | अभी कोई ऑर्डर नहीं                         | अजून ऑर्डर नाहीत                         |                 |
 | `orders.emptyBody`          | Your orders will show up here once you place one. | ऑर्डर देने के बाद आपके ऑर्डर यहाँ दिखेंगे। | ऑर्डर दिल्यावर तुमच्या ऑर्डर इथे दिसतील. |                 |
 | `orders.emptyAction`        | Start shopping                                    | खरीदारी शुरू करें                          | खरेदी सुरू करा                           |                 |
@@ -219,4 +220,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `settings.testing`      | Testing tools                 | टेस्टिंग के औज़ार             | टेस्टिंगची साधने              |                 |
 | `settings.testingSub`   | Only in development builds    | सिर्फ़ डेवलपमेंट बिल्ड में    | फक्त डेव्हलपमेंट बिल्डमध्ये   |                 |
 
-176 lines in all.
+177 lines in all.

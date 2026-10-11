@@ -31,6 +31,7 @@ function Screens() {
           // Our own header, so its height never depends on when the phone reports the status bar.
           header: ({ navigation, options }) => (
             <AppHeader
+              statusBar="always"
               title={options.title ?? ''}
               backLabel={t('common.back')}
               onBack={navigation.goBack}

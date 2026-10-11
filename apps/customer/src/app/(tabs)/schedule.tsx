@@ -1,10 +1,10 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { CartHeader } from '@/home/CartHeader';
 import { armQuietCartReturn } from '@/home/cartReturn';
 import { useCart } from '@/home/CartProvider';
 import { ScheduleView } from '@/home/ScheduleView';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
@@ -18,7 +18,7 @@ export default function ScheduleScreen() {
 
   return (
     <View style={styles.page}>
-      <CartHeader
+      <AppHeader
         title={t('cart.scheduleTitle')}
         {...(cart.count > 0 ? { subtitle: cart.itemsLabel } : {})}
         backLabel={t('common.back')}

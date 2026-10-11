@@ -1,9 +1,9 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { CartHeader } from '@/home/CartHeader';
 import { armQuietCartReturn } from '@/home/cartReturn';
 import { CouponsView } from '@/home/CouponsView';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
@@ -16,7 +16,7 @@ export default function CouponsScreen() {
 
   return (
     <View style={styles.page}>
-      <CartHeader
+      <AppHeader
         title={t('coupons.title')}
         backLabel={t('common.back')}
         onBack={() => {

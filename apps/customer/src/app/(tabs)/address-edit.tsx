@@ -1,8 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { AddressEditView } from '@/home/AddressEditView';
-import { CartHeader } from '@/home/CartHeader';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({ page: { flex: 1 } });
 
@@ -14,7 +14,7 @@ export default function AddressEditScreen() {
 
   return (
     <View style={styles.page}>
-      <CartHeader
+      <AppHeader
         title={t(id === undefined ? 'address.addTitle' : 'address.editTitle')}
         backLabel={t('common.back')}
         onBack={() => {

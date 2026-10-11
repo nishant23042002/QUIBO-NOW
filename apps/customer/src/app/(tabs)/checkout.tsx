@@ -1,10 +1,10 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { CartHeader } from '@/home/CartHeader';
 import { armQuietCartReturn } from '@/home/cartReturn';
 import { useCart } from '@/home/CartProvider';
 import { CheckoutView } from '@/home/CheckoutView';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({ page: { flex: 1 } });
 
@@ -16,7 +16,7 @@ export default function CheckoutScreen() {
 
   return (
     <View style={styles.page}>
-      <CartHeader
+      <AppHeader
         title={t('checkout.title')}
         {...(cart.count > 0 ? { subtitle: cart.itemsLabel } : {})}
         backLabel={t('common.back')}

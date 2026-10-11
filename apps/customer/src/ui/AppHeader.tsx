@@ -4,36 +4,71 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, type ThemeColors } from '@/theme';
 import { HeaderLogo } from './brand/HeaderLogo';
 import { IconButton } from './IconButton';
+import { ScreenStatusBar } from './ScreenStatusBar';
 import { Text } from './Text';
-import { HEADER_HEIGHT, space } from './tokens';
+import { HEADER_HEIGHT, radius, space } from './tokens';
 
 export interface AppHeaderProps {
   /** On the first screen: the QUIBO NOW logo, named for screen readers. Leave out on other screens. */
   logoLabel?: string;
   /** On other screens: the screen's title. */
   title?: string;
-  /** Give both to show a back button. */
+  /** Under the title, for example "3 items". Leave out when there is nothing worth saying. */
+  subtitle?: string;
+  /** Give both to show a back button. A screen that is one of the tabs has none. */
   onBack?: () => void;
   backLabel?: string;
+  /** Gives the header a share button at its end. Both are needed. */
+  shareLabel?: string;
+  onShare?: () => void;
+  /**
+   * Which status bar goes with it. Screens in the tabs stay mounted after they are left, so theirs only exists while the screen is in
+   * front ('screen', the usual). A screen outside the tabs, such as Settings, has no use for that and always sets it ('always').
+   */
+  statusBar?: 'screen' | 'always';
 }
+
+/** An icon button's circle is 38 dp inside a 48 dp touch area, so the circle sits this far in from the area's edge. */
+const CIRCLE_INSET = 5;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    bar: { backgroundColor: c.chrome },
-    row: { minHeight: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center' },
-    back: { marginLeft: -space[2] },
-    title: { flex: 1 },
+    // One block of the deep aubergine with a rounded lower edge, on every screen but Home and the item page (which wear the colour
+    // of their category).
+    bar: {
+      backgroundColor: c.chrome,
+      borderBottomLeftRadius: radius.lg,
+      borderBottomRightRadius: radius.lg,
+    },
+    row: { minHeight: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    // Pulled out by the circle's inset, so the circle's outer edge lines up with the page's cards.
+    back: { marginLeft: -CIRCLE_INSET },
+    // With no back button the title starts where the cards' text does.
+    titleAlone: { marginLeft: space[1] },
+    title: { flex: 1, minWidth: 0 },
+    end: { marginRight: -CIRCLE_INSET },
     spacer: { flex: 1 },
   });
 
 /**
- * The header of every screen. Its height is the same every time: the status bar's height from the
- * phone, plus a fixed 56 dp. The dark colour is painted behind the status bar, so the app fills the
- * whole screen instead of leaving a strip at the top.
+ * The header of every screen except Home and the item page: the deep aubergine in both themes with a rounded lower edge, a pale
+ * round back button, the title, and optionally a line under it and a share button at the end. Its height is the same every time:
+ * the status bar's height from the phone, plus a fixed 56 dp, which the line under the title fits inside. The colour is painted
+ * behind the status bar, so the app fills the whole screen.
  */
-export function AppHeader({ logoLabel, title, onBack, backLabel }: AppHeaderProps) {
+export function AppHeader({
+  logoLabel,
+  title,
+  subtitle,
+  onBack,
+  backLabel,
+  shareLabel,
+  onShare,
+  statusBar = 'screen',
+}: AppHeaderProps) {
   const insets = useSafeAreaInsets();
   const styles = useStyles(makeStyles);
+  const back = onBack !== undefined && backLabel !== undefined;
 
   return (
     <View
@@ -41,30 +76,40 @@ export function AppHeader({ logoLabel, title, onBack, backLabel }: AppHeaderProp
       style={[
         styles.bar,
         {
-          paddingTop: insets.top,
-          paddingLeft: insets.left + space[4],
-          paddingRight: insets.right + space[2],
+          paddingTop: insets.top + space[1],
+          paddingLeft: insets.left + space[3],
+          paddingRight: insets.right + space[3],
         },
       ]}
     >
       {/* This header is dark in both themes, so the status bar text is light. */}
-      <StatusBar style="light" />
+      {statusBar === 'always' ? <StatusBar style="light" /> : <ScreenStatusBar style="light" />}
       <View style={styles.row}>
-        {onBack !== undefined && backLabel !== undefined ? (
+        {back ? (
           <View style={styles.back}>
-            <IconButton icon="back" label={backLabel} onPress={onBack} />
+            <IconButton icon="back" label={backLabel} onPress={onBack} ground="header" />
           </View>
         ) : null}
         {logoLabel !== undefined ? <HeaderLogo label={logoLabel} /> : null}
         {title !== undefined ? (
-          <View style={styles.title}>
+          <View style={[styles.title, !back && styles.titleAlone]}>
             <Text variant="label" color="onChrome" numberOfLines={2} role="heading">
               {title}
             </Text>
+            {subtitle !== undefined ? (
+              <Text variant="caption" color="onChromeMuted" numberOfLines={1}>
+                {subtitle}
+              </Text>
+            ) : null}
           </View>
         ) : (
           <View style={styles.spacer} />
         )}
+        {shareLabel !== undefined && onShare !== undefined ? (
+          <View style={styles.end}>
+            <IconButton icon="share" label={shareLabel} onPress={onShare} ground="header" />
+          </View>
+        ) : null}
       </View>
     </View>
   );

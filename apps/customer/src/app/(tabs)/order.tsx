@@ -1,10 +1,10 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { CartHeader } from '@/home/CartHeader';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { orderNumber } from '@/orders/ids';
 import { useOrders } from '@/orders/OrdersProvider';
 import { TrackingView } from '@/orders/TrackingView';
+import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({ page: { flex: 1 } });
 
@@ -18,7 +18,7 @@ export default function OrderScreen() {
 
   return (
     <View style={styles.page}>
-      <CartHeader
+      <AppHeader
         title={
           tracked === undefined
             ? t('orders.title')

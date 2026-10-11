@@ -1,10 +1,10 @@
 import { formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
 import { Share, StyleSheet, View } from 'react-native';
-import { CartHeader } from '@/home/CartHeader';
 import { useCart } from '@/home/CartProvider';
 import { CartView } from '@/home/CartView';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
@@ -33,7 +33,7 @@ export default function CartScreen() {
 
   return (
     <View style={styles.page}>
-      <CartHeader
+      <AppHeader
         title={t('cart.title')}
         {...(cart.count > 0 ? { subtitle: cart.itemsLabel } : {})}
         backLabel={t('common.back')}

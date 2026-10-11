@@ -1,8 +1,8 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { AddressesView } from '@/home/AddressesView';
-import { CartHeader } from '@/home/CartHeader';
 import { useLanguage } from '@/i18n/LanguageProvider';
+import { AppHeader } from '@/ui';
 
 const styles = StyleSheet.create({ page: { flex: 1 } });
 
@@ -13,7 +13,7 @@ export default function AddressScreen() {
 
   return (
     <View style={styles.page}>
-      <CartHeader
+      <AppHeader
         title={t('address.title')}
         backLabel={t('common.back')}
         onBack={() => {
