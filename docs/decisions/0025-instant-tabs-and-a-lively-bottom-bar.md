@@ -19,7 +19,8 @@ turned solid and gave a short pulse. The header and the cart pill stayed put. Ou
 1. **A press lights its tab at once** (`shownTab` in `ui/logic/navBar.ts`); the screen change follows a frame later. The router's word
    takes over as soon as it says anything else is chosen, and a press that goes nowhere stops being lit after 700 ms.
 2. **The main tabs are built early.** After Home has settled, Cart, Orders and Categories are built one at a time, 450 ms apart
-   (the first after 900 ms), by turning off `lazy` for each in turn. They are frozen while out of front (ADR 0023), so they cost
+   (the first after 900 ms) and only when the phone is idle (`requestIdleCallback`, within 2 s; React Native 0.86 deprecates
+   `InteractionManager`), by turning off `lazy` for each in turn. They are frozen while out of front (ADR 0023), so they cost
    nothing more once built.
 3. **Cart and Orders never show their skeleton on the way back** (`quietReturn`), and one built early is ready at once, with no pretend
    wait (`backgroundReady` in `useScreenLoad`), so the first tap shows it straight away. Screens that need the server, and every

@@ -1,6 +1,5 @@
 import { Tabs } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { InteractionManager } from 'react-native';
 import type { ComponentProps } from 'react';
 import { useCart } from '@/home/CartProvider';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -34,6 +33,7 @@ const NEUTRAL: readonly string[] = ['address', 'address-edit', 'help', 'report']
 const WARM_ORDER: readonly string[] = ['cart', 'orders', 'categories'];
 const WARM_FIRST_MS = 900;
 const WARM_NEXT_MS = 450;
+const WARM_IDLE_LIMIT_MS = 2000;
 
 function Bar({ state, navigation }: TabBarProps) {
   const { t } = useLanguage();
@@ -95,18 +95,22 @@ export default function TabsLayout() {
 
   useEffect(() => {
     if (warmed >= WARM_ORDER.length) return undefined;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-    const task = InteractionManager.runAfterInteractions(() => {
-      timer = setTimeout(
-        () => {
-          setWarmed((count) => count + 1);
-        },
-        warmed === 0 ? WARM_FIRST_MS : WARM_NEXT_MS,
-      );
-    });
+    let idle: number | undefined;
+    // After a pause, and then only when the phone has nothing else to do (but within two seconds), build the next tab.
+    const timer = setTimeout(
+      () => {
+        idle = requestIdleCallback(
+          () => {
+            setWarmed((count) => count + 1);
+          },
+          { timeout: WARM_IDLE_LIMIT_MS },
+        );
+      },
+      warmed === 0 ? WARM_FIRST_MS : WARM_NEXT_MS,
+    );
     return () => {
-      task.cancel();
-      if (timer !== undefined) clearTimeout(timer);
+      clearTimeout(timer);
+      if (idle !== undefined) cancelIdleCallback(idle);
     };
   }, [warmed]);
 
