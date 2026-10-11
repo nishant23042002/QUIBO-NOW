@@ -7,7 +7,7 @@ import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 
 /** How long the loading skeleton shows after a category is chosen. */
-const LOAD_MS = 600;
+const LOAD_MS = 200;
 
 /** The order the rows come in when "All" is chosen. */
 const ORDER: readonly ItemCategory[] = ['dairy', 'vegetables', 'fruits', 'staples', 'snacks'];

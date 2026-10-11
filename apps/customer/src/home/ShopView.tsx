@@ -24,7 +24,7 @@ import { useHomeItems, type ItemCategory } from './items';
 import type { ShopDetails } from './sampleShops';
 
 /** How long the loading skeleton shows when a shop page opens, as real items would take to arrive. */
-const LOAD_MS = 500;
+const LOAD_MS = 200;
 
 /** The order a shop's categories come in. */
 const ORDER: readonly ItemCategory[] = ['dairy', 'vegetables', 'fruits', 'staples', 'snacks'];

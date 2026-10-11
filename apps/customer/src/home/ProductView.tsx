@@ -56,7 +56,7 @@ import { useProductDetails } from './productDetails';
 import { useShop } from './sampleShops';
 
 /** How long the loading skeleton shows when the page opens, as real data would take to arrive. */
-const LOAD_MS = 400;
+const LOAD_MS = 150;
 /** How many rows of the information card show before "View more". */
 const INFORMATION_SHOWN = 3;
 /** How long the grey skeleton takes to fade into the real page. */
