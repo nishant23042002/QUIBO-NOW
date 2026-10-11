@@ -1,5 +1,7 @@
-import { useId } from 'react';
-import Svg, { Circle, ClipPath, Defs, G, Path, Rect } from 'react-native-svg';
+import { useEffect, useState } from 'react';
+import { Animated, Easing, View } from 'react-native';
+import Svg, { Circle, Path } from 'react-native-svg';
+import { useReduceMotion } from './useReduceMotion';
 
 /** The usual stroke weight, round ends, drawn on a 24 by 24 grid, and the thin one for larger, quieter pictures. */
 const STROKE = 2;
@@ -168,22 +170,57 @@ interface ProgressIconProps {
   size?: number;
 }
 
+/** The drawn part of the picture starts a little in from its left edge and ends a little before its right one (of 24). */
+const DRAWN_FROM = 2;
+const DRAWN_SPAN = 21;
+const GROW_MS = 320;
+
 /**
- * An icon that is also a progress bar: it is drawn quietly, and the same drawing is laid over it in a stronger colour,
- * cut off at `progress` of its width. Decorative, like `Icon`.
+ * An icon that is also a progress bar: it is drawn quietly, and the same drawing is laid over it in a stronger colour inside a
+ * window that opens from the left as `progress` grows. The window is an ordinary clipped view, not an SVG clip path, because a
+ * clip path that changes after the first draw is not redrawn reliably on phones. The window eases to each new value so a change
+ * is seen. Decorative, like `Icon`.
  */
 export function ProgressIcon({ name, color, fillColor, progress, size = 24 }: ProgressIconProps) {
-  const clipId = `fill-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  const reduceMotion = useReduceMotion();
   const amount = Math.min(Math.max(progress, 0), 1);
+  const edge = amount > 0 ? (DRAWN_FROM + DRAWN_SPAN * amount) / 24 : 0;
+  const [open] = useState(() => new Animated.Value(edge));
+
+  useEffect(() => {
+    if (reduceMotion) {
+      open.setValue(edge);
+      return undefined;
+    }
+    const move = Animated.timing(open, {
+      toValue: edge,
+      duration: GROW_MS,
+      easing: Easing.out(Easing.cubic),
+      useNativeDriver: false,
+    });
+    move.start();
+    return () => {
+      move.stop();
+    };
+  }, [edge, reduceMotion, open]);
+
   return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
-      <Defs>
-        <ClipPath id={clipId}>
-          <Rect x={0} y={0} width={amount > 0 ? 2 + 21 * amount : 0} height={24} />
-        </ClipPath>
-      </Defs>
-      <G opacity={0.6}>{drawShapes(name, color, STROKE)}</G>
-      <G clipPath={`url(#${clipId})`}>{drawShapes(name, fillColor, STROKE)}</G>
-    </Svg>
+    <View style={{ width: size, height: size }} aria-hidden>
+      <View style={{ opacity: 0.6 }}>
+        <Icon name={name} color={color} size={size} />
+      </View>
+      <Animated.View
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          height: size,
+          overflow: 'hidden',
+          width: open.interpolate({ inputRange: [0, 1], outputRange: [0, size] }),
+        }}
+      >
+        <Icon name={name} color={fillColor} size={size} />
+      </Animated.View>
+    </View>
   );
 }
