@@ -1,4 +1,5 @@
-import Svg, { Circle, Path } from 'react-native-svg';
+import { useId } from 'react';
+import Svg, { Circle, ClipPath, Defs, G, Path, Rect } from 'react-native-svg';
 
 /** The usual stroke weight, round ends, drawn on a 24 by 24 grid, and the thin one for larger, quieter pictures. */
 const STROKE = 2;
@@ -75,6 +76,15 @@ const SHAPES = {
     dot(10.6, 11, 0.9),
     dot(13.4, 14, 0.9),
   ],
+  // A delivery bike: a box over the rear wheel, a floor, and the steering column with its bar.
+  bike: [
+    ring(5.5, 17, 2.5),
+    ring(18.5, 17, 2.5),
+    path('M3 6.5h7v6.5H3z'),
+    path('M8 17h8'),
+    path('M10 13h5'),
+    path('M15.5 17l2.5-8.5h2.2'),
+  ],
   calendar: [path('M5 6.5h14V20H5z'), path('M5 10.5h14'), path('M8.5 4v4M15.5 4v4')],
   clock: [ring(12, 12, 9), path('M12 7v5.5l3.5 2')],
   sun: [
@@ -120,25 +130,60 @@ interface IconProps {
   light?: boolean;
 }
 
+function drawShapes(name: IconName, color: string, strokeWidth: number) {
+  return SHAPES[name].map((shape, index) =>
+    shape.kind === 'path' ? (
+      <Path
+        key={index}
+        d={shape.d}
+        fill="none"
+        stroke={color}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ) : (
+      <Circle key={index} cx={shape.x} cy={shape.y} r={shape.r} fill={color} />
+    ),
+  );
+}
+
 /** Decorative: whatever holds the icon (a button, a notice) carries the accessible name. */
 export function Icon({ name, color, size = 20, light = false }: IconProps) {
   return (
     <Svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
-      {SHAPES[name].map((shape, index) =>
-        shape.kind === 'path' ? (
-          <Path
-            key={index}
-            d={shape.d}
-            fill="none"
-            stroke={color}
-            strokeWidth={light ? STROKE_LIGHT : STROKE}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        ) : (
-          <Circle key={index} cx={shape.x} cy={shape.y} r={shape.r} fill={color} />
-        ),
-      )}
+      {drawShapes(name, color, light ? STROKE_LIGHT : STROKE)}
+    </Svg>
+  );
+}
+
+interface ProgressIconProps {
+  name: IconName;
+  /** The quiet colour of the whole picture, drawn first. */
+  color: string;
+  /** The colour that fills the picture from its left edge as `progress` grows. */
+  fillColor: string;
+  /** How much of the picture is filled, from 0 to 1. */
+  progress: number;
+  size?: number;
+}
+
+/**
+ * An icon that is also a progress bar: it is drawn quietly, and the same drawing is laid over it in a stronger colour,
+ * cut off at `progress` of its width. Decorative, like `Icon`.
+ */
+export function ProgressIcon({ name, color, fillColor, progress, size = 24 }: ProgressIconProps) {
+  const clipId = `fill-${useId().replace(/[^a-zA-Z0-9]/g, '')}`;
+  const amount = Math.min(Math.max(progress, 0), 1);
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" aria-hidden>
+      <Defs>
+        <ClipPath id={clipId}>
+          <Rect x={0} y={0} width={amount > 0 ? 2 + 21 * amount : 0} height={24} />
+        </ClipPath>
+      </Defs>
+      <G opacity={0.6}>{drawShapes(name, color, STROKE)}</G>
+      <G clipPath={`url(#${clipId})`}>{drawShapes(name, fillColor, STROKE)}</G>
     </Svg>
   );
 }

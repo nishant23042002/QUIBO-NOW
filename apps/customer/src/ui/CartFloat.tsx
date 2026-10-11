@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Text as NativeText, Pressable, StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { useChromeProgress } from './chrome';
-import { Icon } from './Icon';
+import { Icon, ProgressIcon } from './Icon';
 import { Text } from './Text';
 import { BOTTOM_BAR_HEIGHT, TAP_MIN, radius, space } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
@@ -148,7 +148,7 @@ const makeStyles = (c: ThemeColors) =>
       flex: 1,
       minWidth: 0,
       overflow: 'hidden',
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       backgroundColor: c.chrome,
     },
     noteRow: {
@@ -160,30 +160,21 @@ const makeStyles = (c: ThemeColors) =>
       paddingVertical: space[1],
     },
     noteTile: {
-      width: 34,
-      height: 34,
+      width: 38,
+      height: 38,
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: radius.md,
+      borderRadius: radius.sm,
     },
     noteTileFree: { backgroundColor: c.accent },
-    noteTileBg: {
-      ...FILL,
-      borderRadius: radius.md,
-      backgroundColor: c.onChromeMuted,
-      opacity: 0.2,
-    },
     noteText: { flexShrink: 1 },
-    noteTrack: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 3 },
-    noteFill: { position: 'absolute', left: 0, top: 0, bottom: 0, backgroundColor: c.accent },
-    noteTrackBg: { ...FILL, backgroundColor: c.onChromeMuted, opacity: 0.35 },
     cartButton: {
       minHeight: TAP_MIN,
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[2],
       paddingHorizontal: space[3],
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       backgroundColor: c.accent,
     },
     cartText: { flexShrink: 0 },
@@ -230,7 +221,6 @@ export function CartFloat({
   // How big the full bar and the pill are, so the bar can shrink into the pill's place as one shape.
   const [barHeight, setBarHeight] = useState(0);
   const [pill, setPill] = useState({ width: 0, height: 0 });
-  const [noteWidth, setNoteWidth] = useState(0);
   const [unlockedPop] = useState(() => new Animated.Value(1));
   const wasFree = useRef(free);
 
@@ -546,9 +536,6 @@ export function CartFloat({
                 ],
               },
             ]}
-            onLayout={(event) => {
-              setNoteWidth(event.nativeEvent.layout.width);
-            }}
           >
             <Pressable
               onPress={onPress}
@@ -564,11 +551,12 @@ export function CartFloat({
                     { transform: [{ scale: unlockedPop }] },
                   ]}
                 >
-                  {free ? null : <View style={styles.noteTileBg} />}
-                  <Icon
-                    name={free ? 'check' : 'tag'}
-                    color={free ? colors.onAccent : colors.accent}
-                    size={20}
+                  <ProgressIcon
+                    name="bike"
+                    color={free ? colors.onAccent : colors.onChromeMuted}
+                    fillColor={free ? colors.onAccent : colors.accent}
+                    progress={free ? 1 : progress}
+                    size={30}
                   />
                 </Animated.View>
                 <View style={styles.noteText}>
@@ -589,16 +577,6 @@ export function CartFloat({
                     {pillSub}
                   </Text>
                 </View>
-              </View>
-              {/* The fine line along the bottom: how much of the way to free delivery. */}
-              <View style={styles.noteTrack} aria-hidden>
-                <View style={styles.noteTrackBg} />
-                <View
-                  style={[
-                    styles.noteFill,
-                    { width: noteWidth * Math.min(Math.max(progress, 0), 1) },
-                  ]}
-                />
               </View>
             </Pressable>
           </Animated.View>
