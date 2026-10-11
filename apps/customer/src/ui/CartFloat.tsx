@@ -45,14 +45,13 @@ export interface CartFloatProps {
   bottom: number;
   /**
    * Follows the bottom bar: when the page is scrolled down and the bar slides away, this bar sinks into the room it leaves and
-   * turns into a small pill at the lower right, and it comes back when the bar does. Leave it off on a screen whose bar never hides.
+   * shrinks into a small cart button at the lower right, with a separate free-delivery note beside it at the left. They go back
+   * when the bar does. Leave it off on a screen whose bar never hides.
    */
   follow?: boolean;
-  /** How many things are in the cart: shown as a small count on the cart icon of the pill. */
-  count?: number;
-  /** Free delivery has been reached: the pill says so, and its icon turns pistachio. */
+  /** Free delivery has been reached: the note says so, and its icon turns pistachio. */
   free?: boolean;
-  /** The pill's two short lines, already worded: for example "₹153 more" over "for free delivery", or "Free delivery" over "unlocked". */
+  /** The note's two short lines, already worded: for example "₹153 more" over "for free delivery", or "Free delivery" over "unlocked". */
   pillTitle?: string;
   pillSub?: string;
 }
@@ -61,7 +60,7 @@ export interface CartFloatProps {
 const SCALE_MAX = 1.3;
 
 const HIDDEN_BY = 140;
-/** How far the small pill sits in from the screen's right edge and up from its bottom strip. */
+/** How far the collapsed note and button sit in from the screen's sides and up from its bottom strip. */
 const PILL_MARGIN = space[3];
 const FILL = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const;
 const THUMB = 34;
@@ -134,55 +133,60 @@ const makeStyles = (c: ThemeColors) =>
     shine: { position: 'absolute', top: -24, bottom: -24, left: 0, flexDirection: 'row' },
     stripe: { backgroundColor: c.headerControl },
     pressed: { opacity: 0.94 },
-    // The small form, at the lower right while the bottom bar is away: a cart icon (with the count on it), two short lines, a
-    // chevron, and the thin free-delivery line along its bottom. Squared-off corners, like the rest of the app, not a capsule.
-    pill: {
+    // The collapsed form, at the bottom while the bottom bar is away: two separate pieces side by side. At the left a dark note
+    // about free delivery; at the right a pistachio cart button, which is what the full bar shrinks into. Corners are the app's
+    // large radius, not a capsule.
+    collapsed: {
       position: 'absolute',
+      left: PILL_MARGIN,
+      right: PILL_MARGIN,
+      flexDirection: 'row',
+      alignItems: 'stretch',
+      justifyContent: 'space-between',
+      gap: space[2],
+    },
+    note: {
+      flexShrink: 1,
       overflow: 'hidden',
       borderRadius: radius.lg,
       backgroundColor: c.chrome,
     },
-    pillRow: {
+    noteRow: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[2],
       paddingLeft: space[2],
-      paddingRight: space[3],
+      paddingRight: space[4],
       paddingTop: space[2],
       paddingBottom: space[2] + 3,
     },
-    pillTile: {
+    noteTile: {
       width: 40,
       height: 40,
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.md,
     },
-    pillTileFree: { backgroundColor: c.accent },
-    pillTileBg: {
+    noteTileFree: { backgroundColor: c.accent },
+    noteTileBg: {
       ...FILL,
       borderRadius: radius.md,
       backgroundColor: c.onChromeMuted,
       opacity: 0.2,
     },
-    pillCount: {
-      position: 'absolute',
-      top: -6,
-      right: -6,
-      minWidth: 22,
-      height: 22,
-      paddingHorizontal: 4,
+    noteText: { flexShrink: 1 },
+    noteTrack: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 3 },
+    noteFill: { position: 'absolute', left: 0, top: 0, bottom: 0, backgroundColor: c.accent },
+    noteTrackBg: { ...FILL, backgroundColor: c.onChromeMuted, opacity: 0.35 },
+    cartButton: {
+      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: radius.md,
+      gap: space[2],
+      paddingHorizontal: space[3],
+      borderRadius: radius.lg,
       backgroundColor: c.accent,
-      borderWidth: 2,
-      borderColor: c.chrome,
     },
-    pillText: { flexShrink: 1 },
-    pillTrack: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 3 },
-    pillFill: { position: 'absolute', left: 0, top: 0, bottom: 0 },
-    pillTrackBg: { ...FILL, backgroundColor: c.onChromeMuted, opacity: 0.35 },
+    cartText: { flexShrink: 0 },
     // The fine line along the bottom: how much of the way to free delivery.
     track: { height: 4, backgroundColor: c.onChromeMuted, opacity: 0.35 },
     fill: { position: 'absolute', left: 0, bottom: 0, height: 4, backgroundColor: c.accent },
@@ -212,7 +216,6 @@ export function CartFloat({
   onPress,
   bottom,
   follow = false,
-  count = 0,
   free = false,
   pillTitle = '',
   pillSub = '',
@@ -227,6 +230,7 @@ export function CartFloat({
   // How big the full bar and the pill are, so the bar can shrink into the pill's place as one shape.
   const [barHeight, setBarHeight] = useState(0);
   const [pill, setPill] = useState({ width: 0, height: 0 });
+  const [noteWidth, setNoteWidth] = useState(0);
   const [unlockedPop] = useState(() => new Animated.Value(1));
   const wasFree = useRef(free);
 
@@ -518,81 +522,117 @@ export function CartFloat({
           pointerEvents={visible ? 'box-none' : 'none'}
           aria-hidden
           style={[
-            styles.pill,
+            styles.collapsed,
             {
-              // Rests in the corner where the bottom bar's strip was, clear of the phone's own buttons.
+              // Rests where the bottom bar's strip was, clear of the phone's own buttons.
               bottom: bottom - BOTTOM_BAR_HEIGHT + PILL_MARGIN,
-              right: PILL_MARGIN,
               opacity: Animated.multiply(shown, pillFade),
             },
           ]}
-          onLayout={(event) => {
-            const { width: w, height: h } = event.nativeEvent.layout;
-            setPill((current) =>
-              current.width === w && current.height === h ? current : { width: w, height: h },
-            );
-          }}
         >
+          {/* The note: how far free delivery is, or that it is unlocked. It slides in from the left as the bar settles. */}
+          <Animated.View
+            style={[
+              styles.note,
+              {
+                transform: [
+                  {
+                    translateX: away.interpolate({
+                      inputRange: [0.4, 1],
+                      outputRange: [-24, 0],
+                      extrapolate: 'clamp',
+                    }),
+                  },
+                ],
+              },
+            ]}
+            onLayout={(event) => {
+              setNoteWidth(event.nativeEvent.layout.width);
+            }}
+          >
+            <Pressable
+              onPress={onPress}
+              style={({ pressed }) => (pressed ? styles.pressed : null)}
+              role="button"
+              aria-label={`${pillTitle} ${pillSub}. ${actionLabel}`}
+            >
+              <View style={styles.noteRow}>
+                <Animated.View
+                  style={[
+                    styles.noteTile,
+                    free ? styles.noteTileFree : null,
+                    { transform: [{ scale: unlockedPop }] },
+                  ]}
+                >
+                  {free ? null : <View style={styles.noteTileBg} />}
+                  <Icon
+                    name={free ? 'check' : 'tag'}
+                    color={free ? colors.onAccent : colors.accent}
+                    size={22}
+                  />
+                </Animated.View>
+                <View style={styles.noteText}>
+                  <Text
+                    variant="strong"
+                    color={free ? 'accent' : 'onChrome'}
+                    numberOfLines={1}
+                    maxFontSizeMultiplier={SCALE_MAX}
+                  >
+                    {pillTitle}
+                  </Text>
+                  <Text
+                    variant="caption"
+                    color="onChromeMuted"
+                    numberOfLines={1}
+                    maxFontSizeMultiplier={SCALE_MAX}
+                  >
+                    {pillSub}
+                  </Text>
+                </View>
+              </View>
+              {/* The fine line along the bottom: how much of the way to free delivery. */}
+              <View style={styles.noteTrack} aria-hidden>
+                <View style={styles.noteTrackBg} />
+                <View
+                  style={[
+                    styles.noteFill,
+                    { width: noteWidth * Math.min(Math.max(progress, 0), 1) },
+                  ]}
+                />
+              </View>
+            </Pressable>
+          </Animated.View>
+          {/* The cart button: a static cart icon, never the items, with the count in words beside it. */}
           <Pressable
             role="button"
-            aria-label={`${itemsLabel}. ${totalLabel}. ${pillTitle} ${pillSub}. ${actionLabel}`}
+            aria-label={`${itemsLabel}. ${totalLabel}. ${actionLabel}`}
             onPress={onPress}
-            style={({ pressed }) => (pressed ? styles.pressed : null)}
+            style={({ pressed }) => [styles.cartButton, pressed && styles.pressed]}
+            onLayout={(event) => {
+              const { width: w, height: h } = event.nativeEvent.layout;
+              setPill((current) =>
+                current.width === w && current.height === h ? current : { width: w, height: h },
+              );
+            }}
           >
-            <View style={styles.pillRow}>
-              <Animated.View
-                style={[
-                  styles.pillTile,
-                  free ? styles.pillTileFree : null,
-                  { transform: [{ scale: unlockedPop }] },
-                ]}
+            <Icon name="cart" color={colors.onAccent} size={24} />
+            <View style={styles.cartText}>
+              <Text
+                variant="strong"
+                color="onAccent"
+                numberOfLines={1}
+                maxFontSizeMultiplier={SCALE_MAX}
               >
-                {free ? null : <View style={styles.pillTileBg} />}
-                <Icon
-                  name={free ? 'check' : 'cart'}
-                  color={free ? colors.onAccent : colors.onChrome}
-                  size={22}
-                />
-                {count > 0 ? (
-                  <View style={styles.pillCount}>
-                    <Text variant="caption" color="onAccent" maxFontSizeMultiplier={1}>
-                      {count > 99 ? '99+' : String(count)}
-                    </Text>
-                  </View>
-                ) : null}
-              </Animated.View>
-              <View style={styles.pillText}>
-                <Text
-                  variant="strong"
-                  color={free ? 'accent' : 'onChrome'}
-                  numberOfLines={1}
-                  maxFontSizeMultiplier={SCALE_MAX}
-                >
-                  {pillTitle}
-                </Text>
-                <Text
-                  variant="caption"
-                  color="onChromeMuted"
-                  numberOfLines={1}
-                  maxFontSizeMultiplier={SCALE_MAX}
-                >
-                  {pillSub}
-                </Text>
-              </View>
-              <Icon name="chevronRight" color={colors.onChromeMuted} size={18} />
-            </View>
-            {/* The same fine line as the full bar: how much of the way to free delivery. */}
-            <View style={styles.pillTrack} aria-hidden>
-              <View style={styles.pillTrackBg} />
-              <View
-                style={[
-                  styles.pillFill,
-                  {
-                    width: pill.width * Math.min(Math.max(progress, 0), 1),
-                    backgroundColor: colors.accent,
-                  },
-                ]}
-              />
+                {actionLabel}
+              </Text>
+              <Text
+                variant="caption"
+                color="onAccent"
+                numberOfLines={1}
+                maxFontSizeMultiplier={SCALE_MAX}
+              >
+                {itemsLabel}
+              </Text>
             </View>
           </Pressable>
         </Animated.View>

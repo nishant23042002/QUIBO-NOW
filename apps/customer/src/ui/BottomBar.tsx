@@ -26,13 +26,15 @@ export interface BottomBarProps {
   onSelect: (key: string) => void;
   /**
    * A tile at the far right edge, outside the tabs: a spot for something of the app's own (for now the logo). It is not a tab and
-   * not pressed. It fills the bar's whole height, the strip behind the phone's buttons included.
+   * not pressed. It is set in from the bar's top and bottom and sits clear of the strip behind the phone's buttons.
    */
   trailing?: ReactNode;
 }
 
 /** How wide the tile at the right edge is. The tabs share what is left. */
 export const TRAILING_WIDTH = 68;
+/** How far the tile at the right edge is set in from the bar's top and bottom. */
+const TRAILING_INSET = space[2];
 
 const PILL_WIDTH = 56;
 const PILL_HEIGHT = 30;
@@ -59,12 +61,15 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     tabs: { flex: 1, flexDirection: 'row' },
-    // The tile at the right edge: the app's dark colour, square at the edge and rounded only on its upper left.
+    // The tile at the right edge: the app's dark colour, set in from the bar's top and bottom, flush with the screen's right edge
+    // and rounded on both left corners.
     trailing: {
       width: TRAILING_WIDTH,
+      marginTop: TRAILING_INSET,
       alignItems: 'center',
       justifyContent: 'center',
       borderTopLeftRadius: radius.lg,
+      borderBottomLeftRadius: radius.lg,
       backgroundColor: c.chrome,
     },
     tab: {
@@ -189,7 +194,10 @@ export function BottomBar({ tabs, activeKey, onSelect, trailing }: BottomBarProp
         })}
       </View>
       {trailing !== undefined ? (
-        <View style={styles.trailing} aria-hidden>
+        <View
+          style={[styles.trailing, { marginBottom: insets.bottom + TRAILING_INSET }]}
+          aria-hidden
+        >
           {trailing}
         </View>
       ) : null}

@@ -17,16 +17,18 @@ is a lot of the view, and the big quick-commerce apps give it back while the sho
 2. **One shared value drives everything** (`ui/chrome.ts`): 0 with the bar in place, 1 with it away. Screens that scroll report
    their offset; a new screen always starts with the bar in place. Everything moves with transforms and opacity on the phone's
    animation thread, so nothing is laid out while it runs and no state changes on the JavaScript thread mid-move.
-3. **The cart bar never disappears; it turns into a pill.** The full bar and the pill are the same dark shape at two sizes. As
-   the bottom bar slides away the full bar sinks with it and shrinks toward the pill's corner while its words fade early, and the
-   pill's words arrive as it lands, so there is one continuous motion and no jump. The pill shows a cart icon (it never shows
-   items, whatever is in the cart) with the count on it, two short lines, a chevron, and the thin free-delivery line along its
-   bottom. Not yet free: "₹153 more" over "for free delivery". Free: the icon tile turns pistachio with a check and gives a small
-   pop, and it reads "Free delivery" over "unlocked". Corners are 16 and 12 dp, not full circles.
+3. **The cart bar never disappears; it comes apart into two.** As the bottom bar slides away the full cart bar sinks with it
+   and shrinks into a small cart button at the lower right while its words fade early, so there is one continuous motion and no
+   jump. At the lower left a separate free-delivery note slides in beside it. The button is pistachio with a static cart icon
+   (never the items, whatever is in the cart) and "View cart" over the count in words. The note is dark, with a tile, two short
+   lines and the thin free-delivery line along its bottom. Not yet free: "₹153 more" over "for free delivery". Free: the tile
+   turns pistachio with a check and gives a small pop, and it reads "Free delivery" over "unlocked". Corners are 16 and 12 dp, not
+   full circles. Tapping either opens the cart.
 4. **Only screens that scroll a long list hide it:** Home, shop pages, search, Orders, an order's page and Help. Cart, checkout,
    the item page and the address pages have their own bottom buttons, so the bar stays.
 5. **A tile at the far right edge** holds the full Quibo logo for now. It is not a tab and is not pressed; it is a place kept for
-   something of the app's own, later. It fills the bar's whole height and is rounded only at its upper left.
+   something of the app's own, later. It is set in 8 dp from the bar's top and bottom, flush with the screen's right edge, and
+   rounded on both left corners.
 6. **Category rows:** the title runs into a thin, light dotted line, and "See all" is a full-width button under the row.
 
 ## Consequences
