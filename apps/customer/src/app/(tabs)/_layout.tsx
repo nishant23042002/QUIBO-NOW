@@ -1,5 +1,6 @@
 import { Tabs } from 'expo-router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { InteractionManager } from 'react-native';
 import type { ComponentProps } from 'react';
 import { useCart } from '@/home/CartProvider';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -24,6 +25,15 @@ const STEP_OF_ORDERS: readonly string[] = ['order'];
 
 /** The address pages are reached from Home and from the cart alike, so no tab is lit for them. */
 const NEUTRAL: readonly string[] = ['address', 'address-edit', 'help', 'report'];
+
+/**
+ * The tabs other than Home are built in the background one after another once Home has settled, so the first tap on each only
+ * switches to a screen that is already there. They are built one at a time, with a pause, so building one never shows up as a
+ * stutter on Home. (Frozen while out of front, they cost nothing more.)
+ */
+const WARM_ORDER: readonly string[] = ['cart', 'orders', 'categories'];
+const WARM_FIRST_MS = 900;
+const WARM_NEXT_MS = 450;
 
 function Bar({ state, navigation }: TabBarProps) {
   const { t } = useLanguage();
@@ -81,6 +91,24 @@ function Bar({ state, navigation }: TabBarProps) {
 
 export default function TabsLayout() {
   const { colors } = useTheme();
+  const [warmed, setWarmed] = useState(0);
+
+  useEffect(() => {
+    if (warmed >= WARM_ORDER.length) return undefined;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const task = InteractionManager.runAfterInteractions(() => {
+      timer = setTimeout(
+        () => {
+          setWarmed((count) => count + 1);
+        },
+        warmed === 0 ? WARM_FIRST_MS : WARM_NEXT_MS,
+      );
+    });
+    return () => {
+      task.cancel();
+      if (timer !== undefined) clearTimeout(timer);
+    };
+  }, [warmed]);
 
   return (
     <Tabs
@@ -94,9 +122,12 @@ export default function TabsLayout() {
         freezeOnBlur: true,
       }}
     >
-      {TABS.map((tab) => (
-        <Tabs.Screen key={tab.name} name={tab.name} />
-      ))}
+      {TABS.map((tab) => {
+        const order = WARM_ORDER.indexOf(tab.name);
+        // Built on the first visit, until its turn to be built early has come.
+        const lazy = !(order >= 0 && order < warmed);
+        return <Tabs.Screen key={tab.name} name={tab.name} options={{ lazy }} />;
+      })}
       {/* A shop's page lives in the tab group so the bottom bar stays, but it is not a tab: href null hides it from the bar. */}
       <Tabs.Screen name="shop/[id]" options={{ href: null }} />
       {/* An item's page, the same: reached from a card, with the bottom bar kept. */}
