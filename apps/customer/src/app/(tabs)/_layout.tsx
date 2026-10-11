@@ -86,7 +86,13 @@ export default function TabsLayout() {
     <Tabs
       tabBar={(props) => <Bar {...props} />}
       backBehavior="history"
-      screenOptions={{ headerShown: false, sceneStyle: { backgroundColor: colors.bg } }}
+      // A screen that is not in front is frozen: it keeps what it shows and its place, but is not drawn again each time the cart,
+      // the clock or a timer changes something. Without this every screen visited so far was redrawn behind the one in view.
+      screenOptions={{
+        headerShown: false,
+        sceneStyle: { backgroundColor: colors.bg },
+        freezeOnBlur: true,
+      }}
     >
       {TABS.map((tab) => (
         <Tabs.Screen key={tab.name} name={tab.name} />
