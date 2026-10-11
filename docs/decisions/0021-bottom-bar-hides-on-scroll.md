@@ -36,5 +36,8 @@ is a lot of the view, and the big quick-commerce apps give it back while the sho
 ## Consequences
 
 - Pages keep the room for the bar at their bottom, so nothing jumps when it comes back.
+- The "removed, undo" note rests right above whatever is lowest: the full cart bar with the bottom bar in place, the small
+  note and button once it is away, or the screen's bottom edge when the cart is empty. It glides between these with the same
+  shared value, so it never floats high above the collapsed pair.
 - A future screen that scrolls a long list adds one line (`{...chromeScrollProps}`) to take part.
 - The logo tile is decoration until it is given a job; it must not be given a tap target without a name and a destination.

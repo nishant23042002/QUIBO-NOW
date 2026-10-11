@@ -17,6 +17,8 @@ export interface ToastProps {
   onTimeout: () => void;
   /** How far its bottom edge sits above the bottom of the screen. */
   bottom: number;
+  /** An extra, animated vertical move on top of `bottom` (negative is up), for a toast that follows things that move. */
+  shift?: Animated.AnimatedNode;
 }
 
 const SHOWN_FOR_MS = 4500;
@@ -44,7 +46,15 @@ const makeStyles = (c: ThemeColors) =>
  * A short message that slides up from the bottom, such as "Toned milk removed" with an "Undo" button. It goes
  * by itself after a few seconds. Announced to screen readers when it appears.
  */
-export function Toast({ visible, message, actionLabel, onAction, onTimeout, bottom }: ToastProps) {
+export function Toast({
+  visible,
+  message,
+  actionLabel,
+  onAction,
+  onTimeout,
+  bottom,
+  shift,
+}: ToastProps) {
   const styles = useStyles(makeStyles);
   const reduceMotion = useReduceMotion();
   const [shown] = useState(() => new Animated.Value(visible ? 1 : 0));
@@ -92,6 +102,7 @@ export function Toast({ visible, message, actionLabel, onAction, onTimeout, bott
           bottom,
           opacity: shown,
           transform: [
+            ...(shift === undefined ? [] : [{ translateY: shift }]),
             { translateY: shown.interpolate({ inputRange: [0, 1], outputRange: [HIDDEN_BY, 0] }) },
           ],
         },
