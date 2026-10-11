@@ -90,6 +90,8 @@ export interface DraftCart {
   hint: string;
   /** How close the whole cart is to free delivery, from 0 to 1. */
   progress: number;
+  /** The small cart pill's two short lines: "₹153 more" over "for free delivery", or "Free delivery" over "unlocked". */
+  pill: { title: string; sub: string };
   /** What the whole cart saves against the printed prices, for example "You saved ₹7". Absent when it saves nothing. */
   savedLabel?: string;
   /** What the order comes to: items, delivery, handling, and what is saved. All integer paise. */
@@ -402,6 +404,12 @@ export function useDraftCart(): DraftCart {
       ? t('home.cart.freeReached')
       : t('home.cart.freeNeed', { amount: formatRupees(remaining) }),
     progress: Math.min(Number(sum.total) / Number(FREE_DELIVERY_FROM), 1),
+    pill: free
+      ? { title: t('home.cart.pillFree'), sub: t('home.cart.pillFreeSub') }
+      : {
+          title: t('home.cart.pillMore', { amount: formatRupees(remaining) }),
+          sub: t('home.cart.pillMoreSub'),
+        },
     bill,
     coupon,
     stores: sum.baskets.map((basket) => ({ id: basket.shopId, name: basket.shopName })),

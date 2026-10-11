@@ -60,6 +60,10 @@ export function CartLayer({ bottom, follow = false }: { bottom: number; follow?:
         {...(cart.savedLabel !== undefined ? { savedLabel: cart.savedLabel } : {})}
         hint={cart.hint}
         progress={cart.progress}
+        count={cart.count}
+        free={cart.free}
+        pillTitle={cart.pill.title}
+        pillSub={cart.pill.sub}
         actionLabel={t('home.cart.view')}
         onPress={() => {
           router.push('/cart');

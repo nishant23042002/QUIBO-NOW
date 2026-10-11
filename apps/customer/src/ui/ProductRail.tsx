@@ -103,9 +103,10 @@ export function ProductRail({ title, seeAllLabel, onSeeAll, children }: ProductR
               x2="100%"
               y2="1"
               stroke={colors.ctl}
-              strokeWidth={2}
+              strokeOpacity={0.55}
+              strokeWidth={1.5}
               strokeLinecap="round"
-              strokeDasharray="0.1 6"
+              strokeDasharray="0.1 5"
             />
           </Svg>
         </View>

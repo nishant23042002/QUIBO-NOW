@@ -48,12 +48,21 @@ export interface CartFloatProps {
    * turns into a small pill at the lower right, and it comes back when the bar does. Leave it off on a screen whose bar never hides.
    */
   follow?: boolean;
+  /** How many things are in the cart: shown as a small count on the cart icon of the pill. */
+  count?: number;
+  /** Free delivery has been reached: the pill says so, and its icon turns pistachio. */
+  free?: boolean;
+  /** The pill's two short lines, already worded: for example "₹153 more" over "for free delivery", or "Free delivery" over "unlocked". */
+  pillTitle?: string;
+  pillSub?: string;
 }
 
 /** The bar stays on screen over every page, so its text grows with the phone's text size only this far. */
 const SCALE_MAX = 1.3;
 
 const HIDDEN_BY = 140;
+/** How far the small pill sits in from the screen's right edge and up from its bottom strip. */
+const PILL_MARGIN = space[3];
 const FILL = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const;
 const THUMB = 34;
 const RING = 2;
@@ -125,10 +134,10 @@ const makeStyles = (c: ThemeColors) =>
     shine: { position: 'absolute', top: -24, bottom: -24, left: 0, flexDirection: 'row' },
     stripe: { backgroundColor: c.headerControl },
     pressed: { opacity: 0.94 },
-    // The small form, at the lower right while the bottom bar is away: a picture, two short lines, and a square pistachio button.
+    // The small form, at the lower right while the bottom bar is away: a cart icon (with the count on it), two short lines, a
+    // chevron, and the thin free-delivery line along its bottom. Squared-off corners, like the rest of the app, not a capsule.
     pill: {
       position: 'absolute',
-      right: space[3],
       overflow: 'hidden',
       borderRadius: radius.lg,
       backgroundColor: c.chrome,
@@ -136,19 +145,39 @@ const makeStyles = (c: ThemeColors) =>
     pillRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: space[3],
-      paddingLeft: space[3],
-      paddingRight: space[2],
+      gap: space[2],
+      paddingLeft: space[2],
+      paddingRight: space[3],
       paddingTop: space[2],
       paddingBottom: space[2] + 3,
     },
-    pillGo: {
+    pillTile: {
       width: 40,
       height: 40,
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.md,
+    },
+    pillTileFree: { backgroundColor: c.accent },
+    pillTileBg: {
+      ...FILL,
+      borderRadius: radius.md,
+      backgroundColor: c.onChromeMuted,
+      opacity: 0.2,
+    },
+    pillCount: {
+      position: 'absolute',
+      top: -6,
+      right: -6,
+      minWidth: 22,
+      height: 22,
+      paddingHorizontal: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: radius.md,
       backgroundColor: c.accent,
+      borderWidth: 2,
+      borderColor: c.chrome,
     },
     pillText: { flexShrink: 1 },
     pillTrack: { position: 'absolute', left: 0, right: 0, bottom: 0, height: 3 },
@@ -183,6 +212,10 @@ export function CartFloat({
   onPress,
   bottom,
   follow = false,
+  count = 0,
+  free = false,
+  pillTitle = '',
+  pillSub = '',
 }: CartFloatProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
@@ -191,18 +224,25 @@ export function CartFloat({
   const [still] = useState(() => new Animated.Value(0));
   // 0 with the bottom bar in place and the full bar showing, 1 with the bar away and the pill showing.
   const away = follow ? chromeProgress : still;
-  const [compact, setCompact] = useState(false);
-  const [pillWidth, setPillWidth] = useState(0);
+  // How big the full bar and the pill are, so the bar can shrink into the pill's place as one shape.
+  const [barHeight, setBarHeight] = useState(0);
+  const [pill, setPill] = useState({ width: 0, height: 0 });
+  const [unlockedPop] = useState(() => new Animated.Value(1));
+  const wasFree = useRef(free);
 
+  // The icon tile gives a small pop when free delivery is reached, so the moment is noticed.
   useEffect(() => {
-    if (!follow) return undefined;
-    const id = chromeProgress.addListener(({ value }) => {
-      setCompact(value > 0.5);
-    });
-    return () => {
-      chromeProgress.removeListener(id);
-    };
-  }, [follow, chromeProgress]);
+    if (wasFree.current === free) return;
+    wasFree.current = free;
+    if (!free || reduceMotion) return;
+    unlockedPop.setValue(0.7);
+    Animated.spring(unlockedPop, {
+      toValue: 1,
+      friction: 4,
+      tension: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [free, reduceMotion, unlockedPop]);
   const [shown] = useState(() => new Animated.Value(visible ? 1 : 0));
   const [pop] = useState(() => new Animated.Value(1));
   const [sweep] = useState(() => new Animated.Value(0));
@@ -276,32 +316,48 @@ export function CartFloat({
 
   const fill = width * Math.min(Math.max(progress, 0), 1);
 
+  // The bar and the pill are the same dark shape at two sizes. While the bottom bar slides away, the bar sinks with it (as if it
+  // were stacked on it), shrinks toward the pill's corner, and its words fade early; the pill's words arrive as it lands. The pill
+  // is a real element of its own, so what is left at the end is exactly it.
+  const morph = follow && !reduceMotion && width > 0 && barHeight > 0 && pill.width > 0;
+  const ratioX = morph ? Math.min(1, pill.width / width) : 1;
+  const ratioY = morph ? Math.min(1, pill.height / barHeight) : 1;
+  const moveX = morph ? (width * (1 - ratioX)) / 2 - PILL_MARGIN : 0;
+  const moveY = morph ? BOTTOM_BAR_HEIGHT - PILL_MARGIN + (barHeight * (1 - ratioY)) / 2 : 0;
+  const wordsFade = away.interpolate({
+    inputRange: [0, 0.3],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+  const barFade = away.interpolate({
+    inputRange: [0.8, 1],
+    outputRange: [1, 0],
+    extrapolate: 'clamp',
+  });
+  const pillFade = away.interpolate({
+    inputRange: [0.55, 1],
+    outputRange: [0, 1],
+    extrapolate: 'clamp',
+  });
+
   return (
     <>
       <Animated.View
-        pointerEvents={visible && !compact ? 'box-none' : 'none'}
-        aria-hidden={!visible || compact}
+        pointerEvents={visible ? 'box-none' : 'none'}
+        aria-hidden={!visible}
         style={[
           styles.wrap,
           {
             bottom,
-            // Fades out quickly as it sinks, so the pill takes its place without the two showing at once.
-            opacity: Animated.multiply(
-              shown,
-              away.interpolate({ inputRange: [0, 0.5], outputRange: [1, 0], extrapolate: 'clamp' }),
-            ),
+            opacity: Animated.multiply(shown, barFade),
             transform: [
               {
                 translateY: shown.interpolate({ inputRange: [0, 1], outputRange: [HIDDEN_BY, 0] }),
               },
-              {
-                translateY: reduceMotion
-                  ? 0
-                  : away.interpolate({
-                      inputRange: [0, 1],
-                      outputRange: [0, BOTTOM_BAR_HEIGHT],
-                    }),
-              },
+              { translateX: away.interpolate({ inputRange: [0, 1], outputRange: [0, moveX] }) },
+              { translateY: away.interpolate({ inputRange: [0, 1], outputRange: [0, moveY] }) },
+              { scaleX: away.interpolate({ inputRange: [0, 1], outputRange: [1, ratioX] }) },
+              { scaleY: away.interpolate({ inputRange: [0, 1], outputRange: [1, ratioY] }) },
               { scale: pop },
             ],
           },
@@ -314,139 +370,144 @@ export function CartFloat({
           style={({ pressed }) => [styles.bar, pressed && styles.pressed]}
           onLayout={(event) => {
             setWidth(event.nativeEvent.layout.width);
+            setBarHeight(event.nativeEvent.layout.height);
           }}
         >
-          <View style={styles.strip} aria-hidden>
-            <View style={styles.stripBg} />
-            <View style={styles.stripHint}>
-              <Text
-                variant="caption"
-                color="onChrome"
-                numberOfLines={1}
-                maxFontSizeMultiplier={SCALE_MAX}
-              >
-                {hint}
-              </Text>
-            </View>
-            {savedLabel !== undefined ? (
-              <View style={styles.saved}>
+          <Animated.View style={{ opacity: wordsFade }}>
+            <View style={styles.strip} aria-hidden>
+              <View style={styles.stripBg} />
+              <View style={styles.stripHint}>
                 <Text
                   variant="caption"
-                  color="accent"
+                  color="onChrome"
                   numberOfLines={1}
                   maxFontSizeMultiplier={SCALE_MAX}
                 >
-                  {savedLabel}
+                  {hint}
                 </Text>
               </View>
-            ) : null}
-          </View>
-          <View style={styles.row}>
-            <View style={styles.thumbs} aria-hidden>
-              {thumbs.map((thumb, index) => (
-                <View
-                  key={thumb.key}
-                  style={[
-                    styles.thumb,
-                    index > 0 && styles.overlap,
-                    { backgroundColor: thumb.tint },
-                  ]}
-                >
-                  <NativeText allowFontScaling={false} style={{ fontSize: 18, lineHeight: 24 }}>
-                    {thumb.emoji}
-                  </NativeText>
-                </View>
-              ))}
-              {moreLabel !== undefined ? (
-                <View style={[styles.thumb, styles.overlap, styles.more]}>
-                  <Text variant="caption" color="onAccent" maxFontSizeMultiplier={1}>
-                    {moreLabel}
+              {savedLabel !== undefined ? (
+                <View style={styles.saved}>
+                  <Text
+                    variant="caption"
+                    color="accent"
+                    numberOfLines={1}
+                    maxFontSizeMultiplier={SCALE_MAX}
+                  >
+                    {savedLabel}
                   </Text>
                 </View>
               ) : null}
             </View>
-            <View style={styles.text}>
-              <Text
-                variant="label"
-                color="onChrome"
-                numberOfLines={1}
-                maxFontSizeMultiplier={SCALE_MAX}
-              >
-                {`${itemsLabel} · ${totalLabel}`}
-              </Text>
-              <View style={styles.shopRow}>
-                <Icon name="store" color={colors.onChromeMuted} size={14} />
-                <View style={styles.stripHint}>
-                  <Text
-                    variant="small"
-                    color="onChromeMuted"
-                    numberOfLines={1}
-                    maxFontSizeMultiplier={SCALE_MAX}
+            <View style={styles.row}>
+              <View style={styles.thumbs} aria-hidden>
+                {thumbs.map((thumb, index) => (
+                  <View
+                    key={thumb.key}
+                    style={[
+                      styles.thumb,
+                      index > 0 && styles.overlap,
+                      { backgroundColor: thumb.tint },
+                    ]}
                   >
-                    {shopLabel}
-                  </Text>
-                </View>
+                    <NativeText allowFontScaling={false} style={{ fontSize: 18, lineHeight: 24 }}>
+                      {thumb.emoji}
+                    </NativeText>
+                  </View>
+                ))}
+                {moreLabel !== undefined ? (
+                  <View style={[styles.thumb, styles.overlap, styles.more]}>
+                    <Text variant="caption" color="onAccent" maxFontSizeMultiplier={1}>
+                      {moreLabel}
+                    </Text>
+                  </View>
+                ) : null}
               </View>
-            </View>
-            <View style={styles.actionBox} aria-hidden>
-              {reduceMotion ? null : (
-                <Animated.View
-                  pointerEvents="none"
-                  style={[
-                    styles.halo,
-                    {
-                      opacity: halo.interpolate({ inputRange: [0, 1], outputRange: [0.9, 0] }),
-                      transform: [
-                        { scale: halo.interpolate({ inputRange: [0, 1], outputRange: [1, 1.35] }) },
-                      ],
-                    },
-                  ]}
-                />
-              )}
-              <View
-                style={styles.action}
-                onLayout={(event) => {
-                  setButtonWidth(event.nativeEvent.layout.width);
-                }}
-              >
+              <View style={styles.text}>
                 <Text
-                  variant="strong"
-                  color="onAccent"
+                  variant="label"
+                  color="onChrome"
                   numberOfLines={1}
                   maxFontSizeMultiplier={SCALE_MAX}
                 >
-                  {actionLabel}
+                  {`${itemsLabel} · ${totalLabel}`}
                 </Text>
-                {reduceMotion || buttonWidth === 0 ? null : (
+                <View style={styles.shopRow}>
+                  <Icon name="store" color={colors.onChromeMuted} size={14} />
+                  <View style={styles.stripHint}>
+                    <Text
+                      variant="small"
+                      color="onChromeMuted"
+                      numberOfLines={1}
+                      maxFontSizeMultiplier={SCALE_MAX}
+                    >
+                      {shopLabel}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.actionBox} aria-hidden>
+                {reduceMotion ? null : (
                   <Animated.View
                     pointerEvents="none"
                     style={[
-                      styles.shine,
+                      styles.halo,
                       {
-                        opacity: sweep.interpolate({
-                          inputRange: [0, 0.08, 0.92, 1],
-                          outputRange: [0, 1, 1, 0],
-                        }),
+                        opacity: halo.interpolate({ inputRange: [0, 1], outputRange: [0.9, 0] }),
                         transform: [
                           {
-                            translateX: sweep.interpolate({
-                              inputRange: [0, 1],
-                              outputRange: [-50, buttonWidth + 30],
-                            }),
+                            scale: halo.interpolate({ inputRange: [0, 1], outputRange: [1, 1.35] }),
                           },
-                          { rotate: '18deg' },
                         ],
                       },
                     ]}
-                  >
-                    <View style={[styles.stripe, { width: 8, opacity: 0.3 }]} />
-                    <View style={[styles.stripe, { width: 14, opacity: 0.95 }]} />
-                    <View style={[styles.stripe, { width: 8, opacity: 0.3 }]} />
-                  </Animated.View>
+                  />
                 )}
+                <View
+                  style={styles.action}
+                  onLayout={(event) => {
+                    setButtonWidth(event.nativeEvent.layout.width);
+                  }}
+                >
+                  <Text
+                    variant="strong"
+                    color="onAccent"
+                    numberOfLines={1}
+                    maxFontSizeMultiplier={SCALE_MAX}
+                  >
+                    {actionLabel}
+                  </Text>
+                  {reduceMotion || buttonWidth === 0 ? null : (
+                    <Animated.View
+                      pointerEvents="none"
+                      style={[
+                        styles.shine,
+                        {
+                          opacity: sweep.interpolate({
+                            inputRange: [0, 0.08, 0.92, 1],
+                            outputRange: [0, 1, 1, 0],
+                          }),
+                          transform: [
+                            {
+                              translateX: sweep.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [-50, buttonWidth + 30],
+                              }),
+                            },
+                            { rotate: '18deg' },
+                          ],
+                        },
+                      ]}
+                    >
+                      <View style={[styles.stripe, { width: 8, opacity: 0.3 }]} />
+                      <View style={[styles.stripe, { width: 14, opacity: 0.95 }]} />
+                      <View style={[styles.stripe, { width: 8, opacity: 0.3 }]} />
+                    </Animated.View>
+                  )}
+                </View>
               </View>
             </View>
-          </View>
+          </Animated.View>
           {/* The fine line along the bottom: how much of the way to free delivery. */}
           <View style={styles.track} aria-hidden />
           <View style={[styles.fill, { width: fill }]} aria-hidden />
@@ -454,69 +515,71 @@ export function CartFloat({
       </Animated.View>
       {follow ? (
         <Animated.View
-          pointerEvents={visible && compact ? 'box-none' : 'none'}
-          aria-hidden={!visible || !compact}
+          pointerEvents={visible ? 'box-none' : 'none'}
+          aria-hidden
           style={[
             styles.pill,
             {
               // Rests in the corner where the bottom bar's strip was, clear of the phone's own buttons.
-              bottom: bottom - BOTTOM_BAR_HEIGHT + space[3],
-              opacity: Animated.multiply(
-                shown,
-                away.interpolate({
-                  inputRange: [0.4, 1],
-                  outputRange: [0, 1],
-                  extrapolate: 'clamp',
-                }),
-              ),
-              transform: [
-                {
-                  translateY: reduceMotion
-                    ? 0
-                    : away.interpolate({ inputRange: [0, 1], outputRange: [24, 0] }),
-                },
-              ],
+              bottom: bottom - BOTTOM_BAR_HEIGHT + PILL_MARGIN,
+              right: PILL_MARGIN,
+              opacity: Animated.multiply(shown, pillFade),
             },
           ]}
+          onLayout={(event) => {
+            const { width: w, height: h } = event.nativeEvent.layout;
+            setPill((current) =>
+              current.width === w && current.height === h ? current : { width: w, height: h },
+            );
+          }}
         >
           <Pressable
             role="button"
-            aria-label={`${itemsLabel}. ${totalLabel}. ${actionLabel}`}
+            aria-label={`${itemsLabel}. ${totalLabel}. ${pillTitle} ${pillSub}. ${actionLabel}`}
             onPress={onPress}
-            onLayout={(event) => {
-              setPillWidth(event.nativeEvent.layout.width);
-            }}
             style={({ pressed }) => (pressed ? styles.pressed : null)}
           >
             <View style={styles.pillRow}>
-              {thumbs[0] !== undefined ? (
-                <View style={[styles.thumb, { backgroundColor: thumbs[0].tint }]} aria-hidden>
-                  <NativeText allowFontScaling={false} style={{ fontSize: 18, lineHeight: 24 }}>
-                    {thumbs[0].emoji}
-                  </NativeText>
-                </View>
-              ) : null}
+              <Animated.View
+                style={[
+                  styles.pillTile,
+                  free ? styles.pillTileFree : null,
+                  { transform: [{ scale: unlockedPop }] },
+                ]}
+              >
+                {free ? null : <View style={styles.pillTileBg} />}
+                <Icon
+                  name={free ? 'check' : 'cart'}
+                  color={free ? colors.onAccent : colors.onChrome}
+                  size={22}
+                />
+                {count > 0 ? (
+                  <View style={styles.pillCount}>
+                    <Text variant="caption" color="onAccent" maxFontSizeMultiplier={1}>
+                      {count > 99 ? '99+' : String(count)}
+                    </Text>
+                  </View>
+                ) : null}
+              </Animated.View>
               <View style={styles.pillText}>
                 <Text
                   variant="strong"
-                  color="onChrome"
+                  color={free ? 'accent' : 'onChrome'}
                   numberOfLines={1}
                   maxFontSizeMultiplier={SCALE_MAX}
                 >
-                  {actionLabel}
+                  {pillTitle}
                 </Text>
                 <Text
-                  variant="small"
+                  variant="caption"
                   color="onChromeMuted"
                   numberOfLines={1}
                   maxFontSizeMultiplier={SCALE_MAX}
                 >
-                  {`${itemsLabel} · ${totalLabel}`}
+                  {pillSub}
                 </Text>
               </View>
-              <View style={styles.pillGo} aria-hidden>
-                <Icon name="chevronRight" color={colors.onAccent} size={20} />
-              </View>
+              <Icon name="chevronRight" color={colors.onChromeMuted} size={18} />
             </View>
             {/* The same fine line as the full bar: how much of the way to free delivery. */}
             <View style={styles.pillTrack} aria-hidden>
@@ -525,7 +588,7 @@ export function CartFloat({
                 style={[
                   styles.pillFill,
                   {
-                    width: pillWidth * Math.min(Math.max(progress, 0), 1),
+                    width: pill.width * Math.min(Math.max(progress, 0), 1),
                     backgroundColor: colors.accent,
                   },
                 ]}

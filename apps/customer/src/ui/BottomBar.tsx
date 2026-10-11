@@ -130,8 +130,9 @@ export function BottomBar({ tabs, activeKey, onSelect, trailing }: BottomBarProp
         styles.bar,
         {
           height,
-          // Sliding down and fading out as the page is read; with "reduce motion" on it only fades.
-          opacity: hide.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }),
+          // Sliding straight down out of the way as the page is read, with no fade, so it never seems to jump; with "reduce motion"
+          // on it only fades.
+          opacity: reduceMotion ? hide.interpolate({ inputRange: [0, 1], outputRange: [1, 0] }) : 1,
           transform: [
             {
               translateY: reduceMotion

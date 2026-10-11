@@ -10,15 +10,17 @@ const progress = new Animated.Value(0);
 let track: ScrollTrack = INITIAL_TRACK;
 let running: Animated.CompositeAnimation | null = null;
 
-const HIDE_MS = 240;
-const SHOW_MS = 200;
+const HIDE_MS = 280;
+const SHOW_MS = 260;
+/** The standard "ease in and out" curve: a soft start and a long, gentle landing, so nothing seems to snap. */
+const EASE = Easing.bezier(0.4, 0, 0.2, 1);
 
 function moveTo(hidden: boolean): void {
   running?.stop();
   running = Animated.timing(progress, {
     toValue: hidden ? 1 : 0,
     duration: hidden ? HIDE_MS : SHOW_MS,
-    easing: Easing.inOut(Easing.cubic),
+    easing: EASE,
     useNativeDriver: true,
   });
   running.start();
