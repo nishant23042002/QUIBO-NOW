@@ -218,9 +218,18 @@ function OrdersList() {
 }
 
 /** The Orders tab: orders in progress first, then the ones that are over, newest first. Each opens its own page. */
+/** Orders is a tab and its list is on the phone: coming back to it never shows its skeleton again. */
+const alwaysQuiet = (): boolean => true;
+
 export function OrdersView() {
   const { loaded } = useOrders();
-  const load = useScreenLoad({ loadMs: SETTINGS_LOAD_MS, policy: SETTINGS_POLICY, hold: !loaded });
+  const load = useScreenLoad({
+    loadMs: SETTINGS_LOAD_MS,
+    policy: SETTINGS_POLICY,
+    hold: !loaded,
+    quietReturn: alwaysQuiet,
+    backgroundReady: true,
+  });
   return (
     <LoadGate load={load} skeleton={<OrdersSkeleton />}>
       <OrdersList />

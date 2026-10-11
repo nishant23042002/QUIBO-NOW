@@ -818,6 +818,15 @@ function CartPage() {
  * the delivery time or coupons page does not show it again. With no network the cart still shows, with its notice; a failed
  * load shows a message to try again.
  */
+/**
+ * Coming back to the cart never shows its skeleton again: it is a tab, its data is on the phone, and it is built early. (A return
+ * from one of its own steps used to be the only quiet one; that flag is still taken so it does not linger.)
+ */
+function quietCartReturn(): boolean {
+  takeQuietCartReturn();
+  return true;
+}
+
 export function CartView() {
   const cart = useCart();
   const insets = useSafeAreaInsets();
@@ -825,7 +834,8 @@ export function CartView() {
     loadMs: CART_LOAD_MS,
     policy: CART_POLICY,
     hold: !cart.ready,
-    quietReturn: takeQuietCartReturn,
+    quietReturn: quietCartReturn,
+    backgroundReady: true,
   });
   const { ready } = cart;
   const known = cartShape({

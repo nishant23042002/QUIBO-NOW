@@ -1,4 +1,4 @@
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useNavigation } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing } from 'react-native';
 import { loadOutcome, useOnline } from '@/network';
@@ -26,6 +26,12 @@ export interface ScreenLoadOptions {
    * is instead of showing its skeleton again (a return from a step opened from it). Pass a constant function.
    */
   quietReturn?: () => boolean;
+  /**
+   * For a screen whose data is on the phone and that is built early, while another screen is in front: it is ready at once, with no
+   * pretend wait, because nobody is looking at it. The first time it comes to the front it then shows straight away. Does nothing
+   * for a screen built as it opens.
+   */
+  backgroundReady?: boolean;
 }
 
 export interface ScreenLoad {
@@ -52,14 +58,17 @@ export function useScreenLoad({
   policy,
   hold = false,
   quietReturn,
+  backgroundReady = false,
 }: ScreenLoadOptions): ScreenLoad {
   const online = useOnline();
   const reduceMotion = useReduceMotion();
-  const [phase, setPhase] = useState<LoadPhase>('loading');
+  const navigation = useNavigation();
+  const [readyAtStart] = useState(() => backgroundReady && !hold && !navigation.isFocused());
+  const [phase, setPhase] = useState<LoadPhase>(() => (readyAtStart ? 'ready' : 'loading'));
   const [attempt, setAttempt] = useState(0);
-  const [reveal] = useState(() => new Animated.Value(0));
-  const [skeletonOn, setSkeletonOn] = useState(true);
-  const everLoaded = useRef(false);
+  const [reveal] = useState(() => new Animated.Value(readyAtStart ? 1 : 0));
+  const [skeletonOn, setSkeletonOn] = useState(!readyAtStart);
+  const everLoaded = useRef(readyAtStart);
   const seenBefore = useRef(false);
 
   const restart = useCallback(() => {
@@ -81,6 +90,8 @@ export function useScreenLoad({
   );
 
   useEffect(() => {
+    // Ready from the start, built in the background: there is nothing to wait for until it is loaded again.
+    if (readyAtStart && attempt === 0) return undefined;
     const timer = setTimeout(() => {
       const result = asksNetwork(policy) ? loadOutcome() : 'ok';
       setPhase((current) => settle(current, phaseAfter(result, policy)));
@@ -88,7 +99,7 @@ export function useScreenLoad({
     return () => {
       clearTimeout(timer);
     };
-  }, [attempt, online, loadMs, policy]);
+  }, [attempt, online, loadMs, policy, readyAtStart]);
 
   const loaded = phase === 'ready' && !hold;
 
