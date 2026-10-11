@@ -53,13 +53,13 @@ export interface ThemeColors {
   accent: string;
   onAccent: string;
   accentPressed: string;
-  /** The background of a selected chip, tab or delivery window. */
+  /** A soft green wash for what is saved or on offer (a coupon, a saving, an offer tag, the delivery zone). Chosen options use `lilac`. */
   accentSubtle: string;
   /** Accent-coloured text (links, prices) that is readable on `surface` and `bg`. */
   accentInk: string;
   /**
-   * A soft aubergine tint, for blocks that should feel set apart and a little premium without shouting: the chosen size, and
-   * the promise tiles. Text on it uses `ink` and `inkMuted`.
+   * A soft aubergine tint, for blocks that should feel set apart and a little premium without shouting: every chosen option
+   * (chip, size, delivery window, address, the active tab), and icon bubbles and promise tiles. Text on it uses `ink` and `inkMuted`.
    */
   lilac: string;
 

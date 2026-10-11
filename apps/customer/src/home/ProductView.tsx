@@ -97,7 +97,7 @@ const makeStyles = (c: ThemeColors) =>
       borderRadius: radius.full,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: c.accentSubtle,
+      backgroundColor: c.lilac,
     },
     shopText: { flex: 1, minWidth: 0 },
     pressed: { opacity: 0.8 },
@@ -643,7 +643,7 @@ export function ProductView({
                   style={({ pressed }) => [styles.card, styles.shop, pressed && styles.pressed]}
                 >
                   <View style={styles.shopIcon}>
-                    <Icon name="store" color={colors.accentInk} size={20} />
+                    <Icon name="store" color={colors.action} size={20} />
                   </View>
                   <View style={styles.shopText}>
                     <View style={styles.shopName}>

@@ -40,7 +40,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.line,
       backgroundColor: c.surface,
     },
-    chosen: { borderColor: c.action, backgroundColor: c.accentSubtle },
+    chosen: { borderColor: c.action, backgroundColor: c.lilac },
     top: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3] },
     text: { flex: 1, minWidth: 0, gap: space[1] },
     nameRow: { flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', gap: space[2] },
@@ -141,7 +141,7 @@ function AddressCard({
             onPress={onEdit}
             style={styles.link}
           >
-            <Text variant="strong" color="accentInk">
+            <Text variant="strong" color="action">
               {t('address.edit')}
             </Text>
           </Pressable>

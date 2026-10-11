@@ -26,7 +26,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.ctl,
       backgroundColor: c.surface,
     },
-    selected: { borderColor: c.action, backgroundColor: c.accentSubtle },
+    selected: { borderColor: c.action, backgroundColor: c.lilac },
     disabled: { opacity: 0.5 },
     pressed: { opacity: 0.8 },
   });

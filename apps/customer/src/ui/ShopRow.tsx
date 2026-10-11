@@ -37,7 +37,7 @@ const makeStyles = (c: ThemeColors) =>
       borderRadius: CIRCLE / 2,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: c.accentSubtle,
+      backgroundColor: c.lilac,
     },
     text: { flex: 1, minWidth: 0 },
     nameRow: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
@@ -57,7 +57,7 @@ export function ShopRow({ name, type, statusLabel, open, verifiedLabel, onPress 
       style={({ pressed }) => [styles.row, pressed && styles.pressed]}
     >
       <View style={styles.circle}>
-        <Icon name="store" color={colors.accentInk} size={22} />
+        <Icon name="store" color={colors.action} size={22} />
       </View>
       <View style={styles.text}>
         <View style={styles.nameRow}>

@@ -31,7 +31,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.full,
-      backgroundColor: c.accentSubtle,
+      backgroundColor: c.lilac,
     },
   });
 
@@ -46,7 +46,7 @@ export function StatePanel({ icon, title, body, actionLabel, onAction }: StatePa
   return (
     <View style={styles.panel} role="alert">
       <View style={styles.circle} aria-hidden>
-        <Icon name={icon} color={colors.accentInk} size={32} />
+        <Icon name={icon} color={colors.action} size={32} />
       </View>
       <Text variant="heading" align="center">
         {title}

@@ -74,7 +74,7 @@ const makeStyles = (c: ThemeColors) =>
       borderWidth: 2,
     },
     nodeDone: { backgroundColor: c.action, borderColor: c.action },
-    nodeCurrent: { backgroundColor: c.accentSubtle, borderColor: c.action },
+    nodeCurrent: { backgroundColor: c.lilac, borderColor: c.action },
     nodeUpcoming: { borderColor: c.ctl },
     nodeStopped: { backgroundColor: c.dangerBg, borderColor: c.danger },
     line: { flex: 1, width: 2, backgroundColor: c.line, marginVertical: space[1] },
@@ -114,7 +114,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.full,
-      backgroundColor: c.accentSubtle,
+      backgroundColor: c.lilac,
     },
     grow: { flex: 1, minWidth: 0 },
     riderText: { flexGrow: 1, flexShrink: 1, flexBasis: 120, minWidth: 0 },
@@ -337,7 +337,7 @@ function TrackingPage({ order }: { order: Order }) {
       {riderShown(order) ? (
         <View style={[styles.card, styles.rider]}>
           <View style={styles.riderIcon} aria-hidden>
-            <Icon name="user" color={colors.accentInk} size={22} />
+            <Icon name="user" color={colors.action} size={22} />
           </View>
           <View style={styles.riderText}>
             <Text variant="label">{t('tracking.yourRider')}</Text>

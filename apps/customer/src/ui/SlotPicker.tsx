@@ -68,7 +68,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.ctl,
       backgroundColor: c.surface,
     },
-    selected: { borderColor: c.action, backgroundColor: c.accentSubtle },
+    selected: { borderColor: c.action, backgroundColor: c.lilac },
     full: { borderColor: c.line, backgroundColor: c.muted },
     pressed: { opacity: 0.8 },
     empty: { paddingVertical: space[6], alignItems: 'center' },

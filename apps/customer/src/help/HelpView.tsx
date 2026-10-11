@@ -51,7 +51,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.md,
-      backgroundColor: c.accentSubtle,
+      backgroundColor: c.lilac,
     },
     grow: { flex: 1, minWidth: 0 },
     question: {
@@ -179,7 +179,7 @@ function HelpPage({ orderId }: { orderId: string | undefined }) {
         style={({ pressed }) => [styles.card, styles.entry, pressed && { opacity: 0.85 }]}
       >
         <View style={styles.entryIcon} aria-hidden>
-          <Icon name="info" color={colors.accentInk} size={22} />
+          <Icon name="info" color={colors.action} size={22} />
         </View>
         <View style={styles.grow}>
           <Text variant="label">{t('help.reportTitle')}</Text>

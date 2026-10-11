@@ -50,7 +50,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.full,
-      backgroundColor: c.accentSubtle,
+      backgroundColor: c.lilac,
     },
     grow: { flex: 1, minWidth: 0 },
     logout: { minWidth: 112 },
@@ -176,7 +176,7 @@ function Settings() {
       <View style={styles.card}>
         <View style={styles.account}>
           <View style={styles.avatar} aria-hidden>
-            <Icon name="user" color={colors.accentInk} size={22} />
+            <Icon name="user" color={colors.action} size={22} />
           </View>
           <View style={styles.grow}>
             <Text variant="label">

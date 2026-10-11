@@ -87,7 +87,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.lg,
-      backgroundColor: c.accentSubtle,
+      backgroundColor: c.lilac,
     },
     chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
     custom: { gap: space[3] },
@@ -116,7 +116,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.line,
       backgroundColor: c.surface,
     },
-    tileOn: { borderColor: c.accentEdge, backgroundColor: c.accentSubtle },
+    tileOn: { borderColor: c.action, backgroundColor: c.lilac },
     tick: {
       position: 'absolute',
       top: space[2],
@@ -189,7 +189,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.full,
-      backgroundColor: c.accentSubtle,
+      backgroundColor: c.lilac,
     },
     // "If something is unavailable": the way into the per-item choices, and one row for each item.
     expand: {
@@ -262,8 +262,8 @@ function InstructionTile({
           pressed && { opacity: 0.85 },
         ]}
       >
-        <Icon name={icon} color={selected ? colors.accentInk : colors.ink} size={32} light />
-        <Text variant="caption" color={selected ? 'accentInk' : 'ink'} align="center">
+        <Icon name={icon} color={selected ? colors.action : colors.ink} size={32} light />
+        <Text variant="caption" color="ink" align="center">
           {label}
         </Text>
         {selected ? (
@@ -555,7 +555,7 @@ export function SubstitutionCard() {
           </Text>
         </View>
         <View style={styles.shield} aria-hidden>
-          <Icon name="repeat" color={colors.accentInk} size={18} />
+          <Icon name="repeat" color={colors.action} size={18} />
         </View>
       </View>
       <Segmented
@@ -768,7 +768,7 @@ export function VerifiedShops() {
       {stores.map((store, index) => (
         <View key={store.id} style={[styles.row, index > 0 && styles.rowDivided]}>
           <View style={styles.shield} aria-hidden>
-            <Icon name="store" color={colors.accentInk} size={18} />
+            <Icon name="store" color={colors.action} size={18} />
           </View>
           <View style={styles.rowText}>
             <Text variant="strong" numberOfLines={1}>

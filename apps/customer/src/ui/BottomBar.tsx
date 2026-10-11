@@ -86,7 +86,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    pillOn: { backgroundColor: c.accentSubtle },
+    pillOn: { backgroundColor: c.lilac },
     // The count sits on the icon's upper right corner, with a ring of the bar's colour so it never runs into the icon.
     badgeSlot: { position: 'absolute', top: -7, right: 3 },
     badge: {

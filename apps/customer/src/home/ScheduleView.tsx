@@ -90,7 +90,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.ctl,
       backgroundColor: c.surface,
     },
-    optionOn: { borderColor: c.action, backgroundColor: c.accentSubtle },
+    optionOn: { borderColor: c.action, backgroundColor: c.lilac },
     optionOff: { opacity: 0.55, borderColor: c.line },
     // The text on the left, and the icon centred on the right, so the icon never depends on how many lines the title takes.
     optionRow: { flexGrow: 1, flexDirection: 'row', alignItems: 'center', gap: space[2] },
