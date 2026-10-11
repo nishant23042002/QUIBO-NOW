@@ -1,4 +1,4 @@
-# 0021. The bottom bar hides while the page is read
+﻿# 0021. The bottom bar hides while the page is read
 
 - **Status:** Accepted (Phase 1)
 - **Date:** 2026-10-11
@@ -22,8 +22,7 @@ is a lot of the view, and the big quick-commerce apps give it back while the sho
    jump. At the lower left a separate free-delivery note slides in beside it. The button is pistachio with a static cart icon
    (never the items, whatever is in the cart) and "View cart" over the count in words. The note is dark, with a tile, two short
    lines and the thin free-delivery line along its bottom. Not yet free: "₹153 more" over "for free delivery". Free: the tile
-   turns pistachio with a check and gives a small pop, and it reads "Free delivery" over "unlocked". Corners are 16 and 12 dp, not
-   full circles. Tapping either opens the cart.
+   turns pistachio with a check and gives a small pop, and it reads "Free delivery" over "unlocked". They sit 8 dp from each side and from each other, and are about 48 dp tall. Corners are 16 and 12 dp, not\n full circles. Tapping either opens the cart.
 4. **Only screens that scroll a long list hide it:** Home, shop pages, search, Orders, an order's page and Help. Cart, checkout,
    the item page and the address pages have their own bottom buttons, so the bar stays.
 5. **A tile at the far right edge** holds the full Quibo logo for now. It is not a tab and is not pressed; it is a place kept for

@@ -4,7 +4,7 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { useChromeProgress } from './chrome';
 import { Icon } from './Icon';
 import { Text } from './Text';
-import { BOTTOM_BAR_HEIGHT, radius, space } from './tokens';
+import { BOTTOM_BAR_HEIGHT, TAP_MIN, radius, space } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
 
 /** One product in the cart, drawn as a small round picture. */
@@ -61,7 +61,7 @@ const SCALE_MAX = 1.3;
 
 const HIDDEN_BY = 140;
 /** How far the collapsed note and button sit in from the screen's sides and up from its bottom strip. */
-const PILL_MARGIN = space[3];
+const PILL_MARGIN = space[2];
 const FILL = { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 } as const;
 const THUMB = 34;
 const RING = 2;
@@ -142,11 +142,11 @@ const makeStyles = (c: ThemeColors) =>
       right: PILL_MARGIN,
       flexDirection: 'row',
       alignItems: 'stretch',
-      justifyContent: 'space-between',
-      gap: space[2],
+      gap: PILL_MARGIN,
     },
     note: {
-      flexShrink: 1,
+      flex: 1,
+      minWidth: 0,
       overflow: 'hidden',
       borderRadius: radius.lg,
       backgroundColor: c.chrome,
@@ -155,14 +155,13 @@ const makeStyles = (c: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[2],
-      paddingLeft: space[2],
-      paddingRight: space[4],
-      paddingTop: space[2],
-      paddingBottom: space[2] + 3,
+      paddingLeft: space[1] + 2,
+      paddingRight: space[3],
+      paddingVertical: space[1],
     },
     noteTile: {
-      width: 40,
-      height: 40,
+      width: 34,
+      height: 34,
       alignItems: 'center',
       justifyContent: 'center',
       borderRadius: radius.md,
@@ -179,6 +178,7 @@ const makeStyles = (c: ThemeColors) =>
     noteFill: { position: 'absolute', left: 0, top: 0, bottom: 0, backgroundColor: c.accent },
     noteTrackBg: { ...FILL, backgroundColor: c.onChromeMuted, opacity: 0.35 },
     cartButton: {
+      minHeight: TAP_MIN,
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[2],
@@ -568,7 +568,7 @@ export function CartFloat({
                   <Icon
                     name={free ? 'check' : 'tag'}
                     color={free ? colors.onAccent : colors.accent}
-                    size={22}
+                    size={20}
                   />
                 </Animated.View>
                 <View style={styles.noteText}>
@@ -615,7 +615,7 @@ export function CartFloat({
               );
             }}
           >
-            <Icon name="cart" color={colors.onAccent} size={24} />
+            <Icon name="cart" color={colors.onAccent} size={22} />
             <View style={styles.cartText}>
               <Text
                 variant="strong"
