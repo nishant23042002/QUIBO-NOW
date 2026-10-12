@@ -26,7 +26,11 @@ same app showed three headers, and the search bar at 52 dp was taller than it ne
 5. **Only Categories and Orders adopt it now.** The cart and every secondary screen (checkout, delivery time, coupons, addresses,
    Help, Settings, an order's page, the item and shop pages) keep their own headers. A further tab-like screen can adopt `TabHeader`
    later if it is searched or browsed first; that is a decision to make then, not a default.
-6. **Tabs that are kept do not replay their skeleton** (`quietReturn`, `backgroundReady`), as before.
+6. **The top of the header fades out of the deep aubergine.** A gradient from the app's dark colour to nothing (`HeaderGlow`) lies
+   over the tint, holding its depth under the heading and the address and gone by the search bar, so the text is white in both themes
+   and the search sits on the plain tint with no seam. Because it is laid over the tint, the colour a category chooses keeps
+   changing underneath it. Once the dark top has slid away the tint is under the status bar, so its text turns dark again.
+7. **Tabs that are kept do not replay their skeleton** (`quietReturn`, `backgroundReady`), as before.
 
 ## Consequences
 

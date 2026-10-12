@@ -11,6 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
 import { HomeScrollContext } from './HomeScroll';
+import { HeaderGlow } from './HeaderGlow';
 import { HeaderIdentity } from './HeaderIdentity';
 import { PromoCarousel, type PromoSlide } from './PromoCarousel';
 import { SearchBar, type SearchHint } from './SearchBar';
@@ -142,6 +143,8 @@ export function HomeHeader({
   );
   const [tintAt] = useState(() => new Animated.Value(selectedIndex));
   const [scrollY] = useState(() => new Animated.Value(0));
+  // Once the dark top has slid away, the tint is under the status bar, so its text turns dark again (in the light theme).
+  const [stuck, setStuck] = useState(false);
   // How tall the two pieces are, measured, so the page can start below them and the upper part knows how far to travel.
   const [topHeight, setTopHeight] = useState(0);
   const [lowerHeight, setLowerHeight] = useState(0);
@@ -246,7 +249,7 @@ export function HomeHeader({
 
   return (
     <View style={styles.frame}>
-      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+      <ScreenStatusBar style={stuck && scheme === 'light' ? 'dark' : 'light'} />
       <Animated.ScrollView
         // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit
         // at the top and then drop; held back, it appears where it belongs.
@@ -257,7 +260,10 @@ export function HomeHeader({
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
           useNativeDriver: true,
           listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-            onScrollY?.(event.nativeEvent.contentOffset.y);
+            const offset = event.nativeEvent.contentOffset.y;
+            onScrollY?.(offset);
+            const past = offset > exit * 0.5;
+            setStuck((current) => (current === past ? current : past));
           },
         })}
         // The page starts below the header as it is when fully open.
@@ -322,6 +328,7 @@ export function HomeHeader({
         style={[styles.overlay, { top: insets.top, transform: [{ translateY: slideTop }] }]}
       >
         <Animated.View style={{ backgroundColor: background }}>
+          <HeaderGlow lift={insets.top} />
           <Animated.View
             style={[styles.top, { opacity: fadeOut }]}
             onLayout={(event) => {
