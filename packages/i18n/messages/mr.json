@@ -150,6 +150,11 @@
     },
     "shopsStrip": {
       "title": "तुमच्या शहरातील दुकाने"
+    },
+    "smallPrices": {
+      "title": "छोटे दर",
+      "under": "{amount} पेक्षा कमी",
+      "empty": "सध्या {amount} पेक्षा कमी काहीच नाही."
     }
   },
   "language": {

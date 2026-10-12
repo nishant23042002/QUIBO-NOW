@@ -278,10 +278,18 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | ----------------------- | ------------------ | ------------------- | ---------------------- | --------------- |
 | `home.shopsStrip.title` | Shops in your town | आपके शहर की दुकानें | तुमच्या शहरातील दुकाने |                 |
 
+## Small prices, on Home
+
+| Key                      | English                           | Hindi (draft)                        | Marathi (draft)                       | OK or change to |
+| ------------------------ | --------------------------------- | ------------------------------------ | ------------------------------------- | --------------- |
+| `home.smallPrices.title` | Small prices                      | छोटे दाम                             | छोटे दर                               |                 |
+| `home.smallPrices.under` | Under {amount}                    | {amount} से कम                       | {amount} पेक्षा कमी                   |                 |
+| `home.smallPrices.empty` | Nothing under {amount} right now. | अभी {amount} से कम की कोई चीज़ नहीं। | सध्या {amount} पेक्षा कमी काहीच नाही. |                 |
+
 ## Footer
 
 | Key           | English                                          | Hindi (draft)                                 | Marathi (draft)                                    | OK or change to |
 | ------------- | ------------------------------------------------ | --------------------------------------------- | -------------------------------------------------- | --------------- |
 | `footer.line` | Packed by shops in Roha. Delivered to your door. | रोहा की दुकानों से पैक, सीधे आपके दरवाज़े तक। | रोह्यातील दुकानांकडून पॅक, थेट तुमच्या दारापर्यंत. |                 |
 
-221 lines in all.
+224 lines in all.

@@ -150,6 +150,11 @@
     },
     "shopsStrip": {
       "title": "Shops in your town"
+    },
+    "smallPrices": {
+      "title": "Small prices",
+      "under": "Under {amount}",
+      "empty": "Nothing under {amount} right now."
     }
   },
   "language": {

@@ -22,6 +22,7 @@ const SECTIONS = [
   ['Categories tab', 'categoriesTab'],
   ['Shop by category, on Home', 'home.shopByCategory'],
   ['Shops in your town, on Home', 'home.shopsStrip'],
+  ['Small prices, on Home', 'home.smallPrices'],
   ['Footer', 'footer'],
 ];
 
