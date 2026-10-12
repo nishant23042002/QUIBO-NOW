@@ -1,21 +1,25 @@
 import { formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useState } from 'react';
+import { Pressable, StyleSheet, View } from 'react-native';
 import { SETTINGS_LOAD_MS, SETTINGS_POLICY } from '@/home/loading';
+import { useTabHeaderProps } from '@/home/useTabHeader';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
+  Chip,
   Icon,
   LoadGate,
   Skeleton,
   SkeletonLine,
   SkeletonScope,
   StatePanel,
+  TabHeader,
   Text,
   radius,
   space,
+  useChromeReport,
   useScreenLoad,
 } from '@/ui';
 import { orderNumber } from './ids';
@@ -29,8 +33,8 @@ import { useDateTimeLabel } from './useTime';
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     page: { flex: 1, backgroundColor: c.bg },
-    content: { gap: space[4], paddingHorizontal: space[3], paddingTop: space[3] },
-    section: { gap: space[3] },
+    content: { gap: space[3], paddingHorizontal: space[4], paddingTop: space[4] },
+    filters: { flexDirection: 'row', gap: space[2] },
     card: {
       gap: space[2],
       padding: space[4],
@@ -54,7 +58,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.line,
       borderStyle: 'dashed',
     },
-    empty: { flex: 1, minHeight: 300 },
+    empty: { minHeight: 360 },
     skeleton: { flex: 1, overflow: 'hidden' },
   });
 
@@ -151,10 +155,11 @@ function OrderCard({ tracked, active }: { tracked: TrackedOrder; active: boolean
   );
 }
 
-function OrdersList() {
+type Filter = 'progress' | 'past';
+
+function OrdersList({ filter }: { filter: Filter }) {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
-  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { orders, loaded } = useOrders();
 
@@ -162,67 +167,55 @@ function OrdersList() {
 
   if (orders.length === 0) {
     return (
-      <View style={styles.page}>
-        <View style={styles.empty}>
-          <StatePanel
-            icon="receipt"
-            title={t('orders.emptyTitle')}
-            body={t('orders.emptyBody')}
-            actionLabel={t('orders.emptyAction')}
-            onAction={() => {
-              router.navigate('/');
-            }}
-          />
-        </View>
+      <View style={styles.empty}>
+        <StatePanel
+          icon="receipt"
+          title={t('orders.emptyTitle')}
+          body={t('orders.emptyBody')}
+          actionLabel={t('orders.emptyAction')}
+          onAction={() => {
+            router.navigate('/');
+          }}
+        />
       </View>
     );
   }
 
   const { active, past } = splitOrders(orders);
+  const shown = filter === 'progress' ? active : past;
 
   return (
-    <ScrollView
-      style={styles.page}
-      contentContainerStyle={[
-        styles.content,
-        { paddingBottom: insets.bottom + BOTTOM_BAR_HEIGHT + space[6] },
-      ]}
-      showsVerticalScrollIndicator={false}
-    >
-      <View style={styles.section}>
-        <Text variant="strong" color="inkMuted" role="heading">
-          {t('orders.inProgress')}
-        </Text>
-        {active.length === 0 ? (
-          <View style={styles.quiet}>
-            <Text variant="small" color="inkMuted">
-              {t('orders.nothingInProgress')}
-            </Text>
-          </View>
-        ) : (
-          active.map((tracked) => <OrderCard key={tracked.order.id} tracked={tracked} active />)
-        )}
-      </View>
-      {past.length > 0 ? (
-        <View style={styles.section}>
-          <Text variant="strong" color="inkMuted" role="heading">
-            {t('orders.past')}
+    <View style={styles.content}>
+      {shown.length === 0 ? (
+        <View style={styles.quiet}>
+          <Text variant="small" color="inkMuted">
+            {filter === 'progress' ? t('orders.nothingInProgress') : t('orders.nothingPast')}
           </Text>
-          {past.map((tracked) => (
-            <OrderCard key={tracked.order.id} tracked={tracked} active={false} />
-          ))}
         </View>
-      ) : null}
-    </ScrollView>
+      ) : (
+        shown.map((tracked) => (
+          <OrderCard key={tracked.order.id} tracked={tracked} active={filter === 'progress'} />
+        ))
+      )}
+    </View>
   );
 }
 
-/** The Orders tab: orders in progress first, then the ones that are over, newest first. Each opens its own page. */
 /** Orders is a tab and its list is on the phone: coming back to it never shows its skeleton again. */
 const alwaysQuiet = (): boolean => true;
 
+/**
+ * The Orders tab, under the header Home wears. In the place where Home keeps its category tabs, two filter chips choose between the
+ * orders in progress and the ones that are over (newest first). Until the shopper chooses, it opens on what is in progress, or on
+ * the past orders when nothing is. Each order opens its own page.
+ */
 export function OrdersView() {
-  const { loaded } = useOrders();
+  const { t } = useLanguage();
+  const styles = useStyles(makeStyles);
+  const header = useTabHeaderProps();
+  const reportScroll = useChromeReport();
+  const { orders, loaded } = useOrders();
+  const [picked, setPicked] = useState<Filter | null>(null);
   const load = useScreenLoad({
     loadMs: SETTINGS_LOAD_MS,
     policy: SETTINGS_POLICY,
@@ -230,9 +223,43 @@ export function OrdersView() {
     quietReturn: alwaysQuiet,
     backgroundReady: true,
   });
+
+  const { active, past } = splitOrders(orders);
+  const filter: Filter = picked ?? (active.length > 0 || past.length === 0 ? 'progress' : 'past');
+  const rail =
+    orders.length > 0 ? (
+      <View style={styles.filters} role="radiogroup">
+        <Chip
+          label={
+            active.length > 0
+              ? `${t('orders.inProgress')} \u00B7 ${active.length}`
+              : t('orders.inProgress')
+          }
+          selected={filter === 'progress'}
+          onPress={() => {
+            setPicked('progress');
+          }}
+        />
+        <Chip
+          label={t('orders.past')}
+          selected={filter === 'past'}
+          onPress={() => {
+            setPicked('past');
+          }}
+        />
+      </View>
+    ) : undefined;
+
   return (
-    <LoadGate load={load} skeleton={<OrdersSkeleton />}>
-      <OrdersList />
-    </LoadGate>
+    <TabHeader
+      {...header}
+      {...(rail !== undefined ? { rail } : {})}
+      onScrollY={reportScroll}
+      bottomSpace={BOTTOM_BAR_HEIGHT}
+    >
+      <LoadGate inFlow load={load} skeleton={<OrdersSkeleton />}>
+        <OrdersList filter={filter} />
+      </LoadGate>
+    </TabHeader>
   );
 }

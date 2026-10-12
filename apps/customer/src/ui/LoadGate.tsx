@@ -8,6 +8,8 @@ import type { ScreenLoad } from './useScreenLoad';
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     fill: { flex: 1 },
+    flow: { minHeight: 360 },
+    natural: { minHeight: 280 },
     // The skeleton, laid over the real page while it fades in.
     cover: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: c.bg },
   });
@@ -18,6 +20,11 @@ export interface LoadGateProps {
   skeleton: ReactNode;
   /** The page itself. It is drawn from the start, under the skeleton, but cannot be touched until it has loaded. */
   children: ReactNode;
+  /**
+   * The gate sits inside a page that scrolls (under a header that scrolls with it), so it takes the height of its content instead of
+   * filling its parent. A message in place of the page keeps a sensible height of its own.
+   */
+  inFlow?: boolean;
 }
 
 /**
@@ -25,14 +32,14 @@ export interface LoadGateProps {
  * (no network where the page needs one, or a failed load). The header and the bottom bar stay outside it, so they never
  * flicker.
  */
-export function LoadGate({ load, skeleton, children }: LoadGateProps) {
+export function LoadGate({ load, skeleton, children, inFlow = false }: LoadGateProps) {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
 
   if (load.blocked) {
     const offline = load.phase === 'offline';
     return (
-      <View style={styles.fill}>
+      <View style={inFlow ? styles.flow : styles.fill}>
         <StatePanel
           icon={offline ? 'wifiOff' : 'close'}
           title={offline ? t('state.offline.title') : t('state.error.title')}
@@ -45,9 +52,9 @@ export function LoadGate({ load, skeleton, children }: LoadGateProps) {
   }
 
   return (
-    <View style={styles.fill}>
+    <View style={inFlow ? styles.natural : styles.fill}>
       <Animated.View
-        style={[styles.fill, { opacity: load.reveal }]}
+        style={[inFlow ? styles.natural : styles.fill, { opacity: load.reveal }]}
         pointerEvents={load.loaded ? 'auto' : 'none'}
         aria-hidden={!load.loaded}
       >

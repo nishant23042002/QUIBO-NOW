@@ -1,6 +1,6 @@
 # 0027. The search lives in the Categories header and stays when the page scrolls
 
-- **Status:** Accepted (Phase 1)
+- **Status:** Replaced by [0028](./0028-tabs-share-homes-header.md) the same day: the tabs now share Home's header instead
 - **Date:** 2026-10-12
 - **Source:** the owner, after seeing the Categories tab with its search field scrolling away with the tiles
 

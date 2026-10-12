@@ -832,6 +832,7 @@
     },
     "inProgress": "In progress",
     "nothingInProgress": "Nothing in progress right now.",
+    "nothingPast": "No past orders yet.",
     "past": "Past orders",
     "track": "Track order"
   },
@@ -1028,7 +1029,6 @@
     "welcomeBody": "Finding the shops near you…"
   },
   "categoriesTab": {
-    "searchHint": "Search for atta, dal, milk and more",
     "emptyTitle": "Nothing to show yet",
     "emptyBody": "The shops have not listed their categories yet. Please check back soon.",
     "groups": {

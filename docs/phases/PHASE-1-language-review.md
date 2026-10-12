@@ -75,6 +75,7 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `orders.status.undelivered` | Could not be delivered                            | पहुँचाया नहीं जा सका                       | पोहोचवता आली नाही                        |                 |
 | `orders.inProgress`         | In progress                                       | जारी ऑर्डर                                 | सुरू असलेल्या ऑर्डर                      |                 |
 | `orders.nothingInProgress`  | Nothing in progress right now.                    | अभी कोई ऑर्डर जारी नहीं है।                | सध्या काहीही सुरू नाही.                  |                 |
+| `orders.nothingPast`        | No past orders yet.                               | अभी तक कोई पुराना ऑर्डर नहीं।              | अजून कोणतीही जुनी ऑर्डर नाही.            |                 |
 | `orders.past`               | Past orders                                       | पिछले ऑर्डर                                | मागील ऑर्डर                              |                 |
 | `orders.track`              | Track order                                       | ऑर्डर ट्रैक करें                           | ऑर्डर ट्रॅक करा                          |                 |
 
@@ -224,7 +225,6 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 | Key                                   | English                                                                 | Hindi (draft)                                                        | Marathi (draft)                                                          | OK or change to |
 | ------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------- |
-| `categoriesTab.searchHint`            | Search for atta, dal, milk and more                                     | आटा, दाल, दूध और बहुत कुछ खोजें                                      | आटा, डाळ, दूध आणि बरेच काही शोधा                                         |                 |
 | `categoriesTab.emptyTitle`            | Nothing to show yet                                                     | अभी दिखाने के लिए कुछ नहीं है                                        | अजून दाखवण्यासाठी काही नाही                                              |                 |
 | `categoriesTab.emptyBody`             | The shops have not listed their categories yet. Please check back soon. | दुकानों ने अभी अपनी श्रेणियाँ नहीं जोड़ी हैं। कृपया जल्दी फिर देखें। | दुकानांनी अजून त्यांच्या श्रेणी जोडलेल्या नाहीत. कृपया लवकरच पुन्हा पहा. |                 |
 | `categoriesTab.groups.market`         | Fresh from the market                                                   | बाज़ार से ताज़ा                                                      | बाजारातून ताजे                                                           |                 |

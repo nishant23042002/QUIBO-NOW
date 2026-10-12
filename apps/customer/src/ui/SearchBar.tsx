@@ -26,7 +26,8 @@ export interface SearchBarProps {
   onChangeText?: (text: string) => void;
 }
 
-const BAR_HEIGHT = 52;
+/** Compact: the field is 44 dp tall, and its touch area is made up to 48 with a little slop above and below. */
+const BAR_HEIGHT = 44;
 /** How long each step takes, in milliseconds. */
 const TYPE_MS = 85;
 const ERASE_MS = 40;
@@ -41,17 +42,17 @@ const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     bar: {
       minHeight: BAR_HEIGHT,
-      paddingHorizontal: space[4],
+      paddingHorizontal: space[3],
       flexDirection: 'row',
       alignItems: 'center',
-      gap: space[3],
-      borderRadius: radius.lg,
+      gap: space[2],
+      borderRadius: radius.md,
       borderWidth: 1,
       borderColor: c.line,
       backgroundColor: c.surface,
     },
     pressed: { opacity: 0.9, transform: [{ scale: 0.99 }] },
-    input: { flex: 1, paddingVertical: space[2], fontSize: fontSize.base, color: c.ink },
+    input: { flex: 1, paddingVertical: space[1], fontSize: fontSize.sm, color: c.ink },
     hint: { flex: 1, minWidth: 0, justifyContent: 'center' },
   });
 
@@ -128,7 +129,7 @@ function TypedHint({ hint }: { hint: SearchHint }) {
 
   return (
     <View style={styles.hint} aria-hidden>
-      <Text color="inkMuted" numberOfLines={1}>
+      <Text variant="small" color="inkMuted" numberOfLines={1}>
         {hint.label} {OPEN_QUOTE}
         {word}
         {/* A thin bar after the word, hidden by matching the bar's colour so the text after it never shifts. */}
@@ -151,7 +152,7 @@ function TypedHint({ hint }: { hint: SearchHint }) {
 export function SearchBar({ placeholder, onPress, hint, value, onChangeText }: SearchBarProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
-  const icon = <Icon name="search" color={colors.inkMuted} size={22} />;
+  const icon = <Icon name="search" color={colors.inkMuted} size={20} />;
 
   if (onChangeText !== undefined) {
     return (
@@ -175,6 +176,7 @@ export function SearchBar({ placeholder, onPress, hint, value, onChangeText }: S
       role="button"
       aria-label={placeholder}
       onPress={onPress}
+      hitSlop={{ top: 2, bottom: 2 }}
       style={({ pressed }) => [styles.bar, pressed && styles.pressed]}
     >
       {icon}
@@ -182,7 +184,7 @@ export function SearchBar({ placeholder, onPress, hint, value, onChangeText }: S
         <TypedHint hint={hint} />
       ) : (
         <View style={styles.hint}>
-          <Text color="inkMuted" numberOfLines={1}>
+          <Text variant="small" color="inkMuted" numberOfLines={1}>
             {placeholder}
           </Text>
         </View>

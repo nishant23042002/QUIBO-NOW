@@ -7,8 +7,8 @@ import { BOTTOM_BAR_HEIGHT } from '@/ui';
 const styles = StyleSheet.create({ page: { flex: 1 } });
 
 /**
- * The Categories tab: groups of tiles, each a way into one kind of thing, under a header that holds the search. It is one of the
- * four tabs, so it has no back button.
+ * The Categories tab: groups of tiles, each a way into one kind of thing, under the header Home wears. It is one of the four tabs,
+ * so it has no back button.
  */
 export default function CategoriesScreen() {
   const insets = useSafeAreaInsets();

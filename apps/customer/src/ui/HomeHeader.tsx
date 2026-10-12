@@ -2,7 +2,6 @@ import { useEffect, useState, type ReactNode } from 'react';
 import {
   Animated,
   Easing,
-  Pressable,
   StyleSheet,
   View,
   type NativeScrollEvent,
@@ -12,22 +11,16 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
 import { HomeScrollContext } from './HomeScroll';
-import { Icon } from './Icon';
-import { IconButton } from './IconButton';
+import { HeaderIdentity } from './HeaderIdentity';
 import { PromoCarousel, type PromoSlide } from './PromoCarousel';
 import { SearchBar, type SearchHint } from './SearchBar';
 import type { ShopInfoCardProps } from './ShopInfoCard';
 import { ShopsChip } from './ShopsChip';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { ShopsPanel } from './ShopsPanel';
-import { Text } from './Text';
-import { TAP_MIN, radius, space } from './tokens';
+import { radius, space } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
 
-/** The profile button's round fill is 38 dp inside a 48 dp touch target, so 5 dp of the target is empty on each side. */
-const BUTTON_INSET = (TAP_MIN - 38) / 2;
-/** The heading's first line is 30 dp tall (24 dp text); lifting the button by this much centres it on that line. */
-const BUTTON_LIFT = (TAP_MIN - 30) / 2;
 /**
  * Layers that meet are laid over each other by this much, so a rounding difference of a fraction of a pixel
  * can never leave a hairline of the page showing between them.
@@ -84,18 +77,6 @@ const makeStyles = (c: ThemeColors) =>
     overlay: { position: 'absolute', left: 0, right: 0 },
     // The upper part: heading, address, profile button and the shops chip with its row.
     top: { paddingTop: space[3], paddingBottom: space[1] },
-    row: { flexDirection: 'row', alignItems: 'flex-start', gap: space[2] },
-    text: { flex: 1, minWidth: 0 },
-    address: {
-      minHeight: space[10],
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: space[1],
-      alignSelf: 'flex-start',
-      maxWidth: '100%',
-    },
-    addressText: { flexShrink: 1 },
-    button: { marginTop: -BUTTON_LIFT },
     chip: { alignItems: 'flex-start' },
     // The lower part, which stays at the top of the screen: the search bar and the tabs.
     // One dp more than it looks, because the lower part overlaps the upper by 1 dp (see SEAM).
@@ -347,43 +328,14 @@ export function HomeHeader({
               setTopHeight(Math.round(event.nativeEvent.layout.height));
             }}
           >
-            <View
-              style={{
-                paddingLeft: insets.left + space[4],
-                paddingRight: insets.right + space[4] - BUTTON_INSET,
-              }}
-            >
-              <View style={styles.row}>
-                <View style={styles.text}>
-                  <Text variant="heading" color="onHeader" numberOfLines={2}>
-                    {deliveryLine}
-                  </Text>
-                  <Pressable
-                    role="button"
-                    aria-label={`${addressCaption}: ${address}`}
-                    onPress={onAddressPress}
-                    hitSlop={6}
-                    style={({ pressed }) => [styles.address, pressed && styles.pressed]}
-                  >
-                    <Icon name="pin" color={colors.onHeader} size={16} />
-                    <View style={styles.addressText}>
-                      <Text variant="strong" color="onHeader" numberOfLines={1}>
-                        {address}
-                      </Text>
-                    </View>
-                    <Icon name="chevron" color={colors.onHeader} size={16} />
-                  </Pressable>
-                </View>
-                <View style={styles.button}>
-                  <IconButton
-                    icon="user"
-                    label={profileLabel}
-                    onPress={onProfilePress}
-                    ground="header"
-                  />
-                </View>
-              </View>
-            </View>
+            <HeaderIdentity
+              deliveryLine={deliveryLine}
+              address={address}
+              addressCaption={addressCaption}
+              profileLabel={profileLabel}
+              onAddressPress={onAddressPress}
+              onProfilePress={onProfilePress}
+            />
             {/* Under both columns, so it can use the full width instead of wrapping beside the profile button. */}
             <View style={gutter}>
               <View style={styles.chip}>
