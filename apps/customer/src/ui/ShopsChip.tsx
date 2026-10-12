@@ -17,23 +17,24 @@ export interface ShopsChipProps {
   onPress: () => void;
 }
 
-const AVATAR = 28;
+const AVATAR = 22;
 const MAX_AVATARS = 3;
-const OVERLAP = space[2];
+const OVERLAP = space[1] + 2;
 const RING = 2;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     chip: {
-      minHeight: space[10],
+      // A compact pill: the picture row (26) and a little air. The touch area is made 48 tall by `hitSlop` below.
+      minHeight: space[8],
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[2],
       alignSelf: 'flex-start',
       maxWidth: '100%',
-      paddingVertical: space[1],
-      paddingLeft: space[1],
-      paddingRight: space[3],
+      paddingVertical: 3,
+      paddingLeft: 3,
+      paddingRight: space[2] + 2,
       borderRadius: radius.full,
       backgroundColor: c.headerControl,
     },
@@ -90,7 +91,8 @@ export function ShopsChip({ shopNames, label, open, onPress }: ShopsChipProps) {
       aria-label={label}
       aria-expanded={open}
       onPress={onPress}
-      hitSlop={4}
+      // The pill is 32 tall; this makes the touch area the 48 dp a thumb needs.
+      hitSlop={{ top: 8, bottom: 8, left: 4, right: 4 }}
       style={({ pressed }) => [styles.chip, pressed && styles.pressed]}
     >
       <View style={styles.avatars} aria-hidden>
@@ -106,7 +108,7 @@ export function ShopsChip({ shopNames, label, open, onPress }: ShopsChipProps) {
               ]}
             >
               {/* Decorative, and it must stay inside its circle however large the phone's text is. */}
-              <Text variant="strong" color={tone.letter} maxFontSizeMultiplier={1}>
+              <Text variant="caption" color={tone.letter} maxFontSizeMultiplier={1}>
                 {initialOf(name)}
               </Text>
             </View>
@@ -114,7 +116,7 @@ export function ShopsChip({ shopNames, label, open, onPress }: ShopsChipProps) {
         })}
       </View>
       <View style={styles.label}>
-        <Text variant="strong" color="onHeaderControl" numberOfLines={2}>
+        <Text variant="caption" color="onHeaderControl" numberOfLines={2}>
           {label}
         </Text>
       </View>
@@ -126,7 +128,7 @@ export function ShopsChip({ shopNames, label, open, onPress }: ShopsChipProps) {
           ],
         }}
       >
-        <Icon name="chevron" color={colors.onHeaderControl} size={16} />
+        <Icon name="chevron" color={colors.onHeaderControl} size={14} />
       </Animated.View>
     </Pressable>
   );
