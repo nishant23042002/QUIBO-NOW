@@ -147,6 +147,9 @@
         "snacksBiscuits": "Snacks and biscuits",
         "teaMore": "Tea and more"
       }
+    },
+    "shopsStrip": {
+      "title": "Shops in your town"
     }
   },
   "language": {
@@ -1068,5 +1071,8 @@
       "kitchenNeeds": "Kitchen needs",
       "pooja": "Pooja"
     }
+  },
+  "footer": {
+    "line": "Packed by shops in Roha. Delivered to your door."
   }
 }

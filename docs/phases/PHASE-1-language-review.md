@@ -272,4 +272,16 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.shopByCategory.tiles.snacksBiscuits` | Snacks and biscuits | स्नैक्स और बिस्कुट        | स्नॅक्स आणि बिस्किटे |                 |
 | `home.shopByCategory.tiles.teaMore`        | Tea and more        | चाय और बहुत कुछ           | चहा आणि बरेच काही    |                 |
 
-219 lines in all.
+## Shops in your town, on Home
+
+| Key                     | English            | Hindi (draft)       | Marathi (draft)        | OK or change to |
+| ----------------------- | ------------------ | ------------------- | ---------------------- | --------------- |
+| `home.shopsStrip.title` | Shops in your town | आपके शहर की दुकानें | तुमच्या शहरातील दुकाने |                 |
+
+## Footer
+
+| Key           | English                                          | Hindi (draft)                                 | Marathi (draft)                                    | OK or change to |
+| ------------- | ------------------------------------------------ | --------------------------------------------- | -------------------------------------------------- | --------------- |
+| `footer.line` | Packed by shops in Roha. Delivered to your door. | रोहा की दुकानों से पैक, सीधे आपके दरवाज़े तक। | रोह्यातील दुकानांकडून पॅक, थेट तुमच्या दारापर्यंत. |                 |
+
+221 lines in all.

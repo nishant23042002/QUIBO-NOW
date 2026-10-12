@@ -70,6 +70,7 @@ export {
 } from './ProductCard';
 export { ProductCardSkeleton } from './ProductCardSkeleton';
 export { ProductRail, type ProductRailProps } from './ProductRail';
+export { BrandFooter } from './BrandFooter';
 export { RowTitle, type RowTitleProps } from './RowTitle';
 export { SeeAllButton, type SeeAllButtonProps } from './SeeAllButton';
 export {

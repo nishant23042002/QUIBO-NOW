@@ -21,6 +21,8 @@ const SECTIONS = [
   ['Settings', 'settings'],
   ['Categories tab', 'categoriesTab'],
   ['Shop by category, on Home', 'home.shopByCategory'],
+  ['Shops in your town, on Home', 'home.shopsStrip'],
+  ['Footer', 'footer'],
 ];
 
 const en = read('en');

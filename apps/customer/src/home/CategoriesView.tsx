@@ -4,6 +4,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
+  BrandFooter,
   CategoryTileGrid,
   CategoryTileGridSkeleton,
   LoadGate,
@@ -113,6 +114,7 @@ function CategoryGroups() {
           />
         </View>
       ))}
+      <BrandFooter />
     </View>
   );
 }
