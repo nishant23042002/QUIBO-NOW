@@ -1,9 +1,10 @@
 import type { Money } from '@quibo/contracts';
 import { Pressable, Text as NativeText, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { useStyles, type ThemeColors } from '@/theme';
+import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { DietMark } from './DietMark';
 import { DiscountRibbon } from './DiscountRibbon';
+import { Icon } from './Icon';
 import { PriceBadge } from './PriceBadge';
 import { Stepper, type StepperProps } from './Stepper';
 import { Text } from './Text';
@@ -18,22 +19,24 @@ export interface ProductCardProps {
   mrp?: Money;
   /** The ribbon on the picture: what is saved, in rupees, for example "₹6", and the word "OFF". Leave out when there is no saving. */
   ribbon?: { amount: string; offLabel: string };
+  /** For items that can come in the next delivery window: the line under the pack, for example "15–20 mins". Only some items have one. */
+  quickLabel?: string;
   /** Vegetarian or not, with the words a screen reader says for it. Packaged food always has one. */
   diet?: { kind: 'veg' | 'nonveg'; label: string };
   /**
    * When stock is short. "out": the item cannot be added, and says so on its picture. "low": a warning line
-   * under the pack, for example "Only 3 left".
+   * under the pack, for example "Only 3 left", in place of the delivery line.
    */
   stock?: { kind: 'out' | 'low'; label: string };
   /** One emoji standing in for the photo until real photos exist. */
   emoji: string;
   /** The colour behind the picture. */
   tint: string;
-  /** The card's width. The picture is a little wider than tall, so the card is not stretched. */
+  /** The card's width. The picture is a square of the same size. */
   width: number;
   /**
-   * Keep room under the pack for the low-stock line. A compact card has no such room unless asked, so cards stay short; a row that
-   * holds a card with the line passes true for all of them, so its cards stay the same height. Wide cards always keep the room.
+   * Keep room under the pack for the delivery or low-stock line. A compact card has no such room unless asked, so cards stay short;
+   * a row that holds a card with the line passes true for all of them, so its cards stay the same height. Wide cards always keep it.
    */
   reserveNote?: boolean;
   quantity: number;
@@ -55,8 +58,6 @@ export interface ProductCardProps {
 const NAME_LINES = 2;
 /** Cards narrower than this are compact: smaller text (never under 14) and a shorter picture, so a narrow card is not a tall one. */
 const COMPACT_UNDER = 150;
-const COMPACT_PICTURE = 1.2;
-const WIDE_PICTURE = 1.1;
 
 /** Whether a card of this width is the compact kind. */
 export function isCompactCard(width: number): boolean {
@@ -73,14 +74,12 @@ export interface ProductCardMetrics {
   priceHeight: number;
   /** The whole text block under the picture. */
   textHeight: number;
-  /** The picture's width over its height. */
-  pictureRatio: number;
 }
 
 /**
  * The measurements of a card's text block, shared with the loading skeleton so the two always line up. A compact card (under 150
  * wide) sets its name and pack at 14, the smallest size the app uses, with the name's lines packed close, and keeps room only for the
- * price, a two-line name and the pack, so it does not grow tall. A wide card keeps the roomier 16 and room for a low-stock line.
+ * price, a two-line name and the pack (and one more line when its row has a delivery or low-stock note), so it does not grow tall. A wide card keeps the roomier 16 and room for a low-stock line.
  * Without a width, the wide measurements.
  */
 export function useProductCardMetrics(width?: number, reserveNote?: boolean): ProductCardMetrics {
@@ -101,14 +100,7 @@ export function useProductCardMetrics(width?: number, reserveNote?: boolean): Pr
   const rows = 3 + (note ? 1 : 0);
   const textHeight =
     priceHeight + nameLine * NAME_LINES + line * (note ? 2 : 1) + space[1] * (rows - 1);
-  return {
-    compact,
-    line,
-    nameLine,
-    priceHeight,
-    textHeight,
-    pictureRatio: compact ? COMPACT_PICTURE : WIDE_PICTURE,
-  };
+  return { compact, line, nameLine, priceHeight, textHeight };
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -116,7 +108,7 @@ const makeStyles = (c: ThemeColors) =>
     card: { gap: space[2] },
     picture: {
       overflow: 'hidden',
-      borderRadius: radius.lg,
+      borderRadius: radius.md,
       borderWidth: 1,
       borderColor: c.line,
     },
@@ -154,13 +146,14 @@ const makeStyles = (c: ThemeColors) =>
     nameRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[1] },
     mark: { paddingTop: 3 },
     name: { flex: 1, minWidth: 0 },
+    line: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
   });
 
 /**
  * One item in a row or a grid: a picture on the category's tint with an aubergine ribbon for the saving
  * hanging from its top edge, ADD turning into a stepper in its lower corner (or "out of stock" in its place),
  * then the price badge, the vegetarian mark with the name (up to two lines), the pack size and, when stock is short, a warning.
- * The picture is a little wider than tall, and a narrow card sets its text at 14, so cards are short for their width.
+ * The picture is a square, and a narrow card sets its pack and notes at 14, so cards stay short for their width.
  */
 export function ProductCard({
   name,
@@ -168,6 +161,7 @@ export function ProductCard({
   price,
   mrp,
   ribbon,
+  quickLabel,
   diet,
   stock,
   emoji,
@@ -180,9 +174,11 @@ export function ProductCard({
   stepper,
 }: ProductCardProps) {
   const styles = useStyles(makeStyles);
-  const { compact, textHeight, pictureRatio } = useProductCardMetrics(width, reserveNote);
+  const { colors } = useTheme();
+  const { compact, textHeight } = useProductCardMetrics(width, reserveNote);
   const out = stock?.kind === 'out';
-  const pictureHeight = Math.round(width / pictureRatio);
+  // A square picture, the width of the card.
+  const pictureHeight = width;
 
   return (
     <View style={[styles.card, { width }]}>
@@ -255,6 +251,13 @@ export function ProductCard({
           <Text variant={compact ? 'caption' : 'strong'} color="warning" numberOfLines={1}>
             {stock.label}
           </Text>
+        ) : quickLabel !== undefined && !out ? (
+          <View style={styles.line} accessible aria-label={quickLabel}>
+            <Icon name="clock" color={colors.accentInk} size={14} />
+            <Text variant={compact ? 'caption' : 'strong'} color="accentInk" numberOfLines={1}>
+              {quickLabel}
+            </Text>
+          </View>
         ) : null}
       </Pressable>
     </View>

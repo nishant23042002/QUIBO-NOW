@@ -4,7 +4,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductRail, space } from '@/ui';
 import { HomeSkeleton } from './HomeSkeleton';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
-import { anyLowStock, useHomeItems, type HomeItem, type ItemCategory } from './items';
+import { anyCardNote, useHomeItems, type HomeItem, type ItemCategory } from './items';
 
 /** How long the loading skeleton shows after a category is chosen. */
 const LOAD_MS = 200;
@@ -75,7 +75,7 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
       {ORDER.map((key) => {
         const row = items.filter((item) => item.category === key);
         // Cards in a row stay one height: room for the low-stock line only when one of them has it.
-        const note = anyLowStock(row);
+        const note = anyCardNote(row);
         return (
           <ProductRail
             key={key}

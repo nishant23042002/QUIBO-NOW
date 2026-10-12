@@ -54,7 +54,7 @@ import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { ProductHeader } from './ProductHeader';
 import { ProductSkeleton } from './ProductSkeleton';
 import { ACTION_HEIGHT, makePageStyles } from './productLayout';
-import { anyLowStock, useHomeItems, type HomeItem } from './items';
+import { anyCardNote, useHomeItems, type HomeItem } from './items';
 import { moreFromShop, similarItems } from './product';
 import { useProductDetails } from './productDetails';
 import { useShop } from './sampleShops';
@@ -673,7 +673,7 @@ export function ProductView({
                         key={other.id}
                         item={other}
                         width={RAIL_CARD_WIDTH}
-                        reserveNote={anyLowStock(more)}
+                        reserveNote={anyCardNote(more)}
                         onOpen={onOpenRelated}
                       />
                     ))}
@@ -692,7 +692,7 @@ export function ProductView({
                         key={other.id}
                         item={other}
                         width={RAIL_CARD_WIDTH}
-                        reserveNote={anyLowStock(similar)}
+                        reserveNote={anyCardNote(similar)}
                         onOpen={onOpenRelated}
                       />
                     ))}

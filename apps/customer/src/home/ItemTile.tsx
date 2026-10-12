@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductCard, WEIGHT_RULE, countRule, gridCardWidth as gridWidth, space } from '@/ui';
 import { useCart } from './CartProvider';
+import { useDeliveryWhen } from './deliveryInfo';
 import { useTintOf } from './categories';
 import type { HomeItem } from './items';
 
@@ -28,6 +29,7 @@ export function ItemTile({
   const router = useRouter();
   const cart = useCart();
   const tintOf = useTintOf();
+  const when = useDeliveryWhen();
 
   return (
     <ProductCard
@@ -36,6 +38,7 @@ export function ItemTile({
       price={item.price}
       {...(item.mrp !== undefined ? { mrp: item.mrp } : {})}
       {...(item.ribbon !== undefined ? { ribbon: item.ribbon } : {})}
+      {...(item.quick === true ? { quickLabel: when.short } : {})}
       diet={item.diet}
       {...(item.stock !== undefined ? { stock: item.stock } : {})}
       emoji={item.emoji}

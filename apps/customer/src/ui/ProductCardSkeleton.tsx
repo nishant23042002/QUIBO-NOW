@@ -10,16 +10,16 @@ const styles = StyleSheet.create({
 });
 
 /**
- * A product card while items load, built from the same numbers as `ProductCard`: a picture of the same shape and rounding, then a
- * text block the card's own height holding the price badge, a two-line name and the pack. Put it inside a `SkeletonScope`.
+ * A product card while items load, built from the same numbers as `ProductCard`: a square picture with the same rounding, then a
+ * text block the card's own height holding the price badge, a two-line name, the pack and the line under it (a row almost always has one). Put it inside a `SkeletonScope`.
  */
 export function ProductCardSkeleton({ width }: { width: number }) {
-  const { line, nameLine, priceHeight, textHeight, pictureRatio } = useProductCardMetrics(width);
+  const { line, nameLine, priceHeight, textHeight } = useProductCardMetrics(width, true);
   const bar = Math.round(nameLine * 0.6);
 
   return (
     <View style={{ width, gap: space[2] }}>
-      <Skeleton width={width} height={Math.round(width / pictureRatio)} rounded={radius.lg} />
+      <Skeleton width={width} height={width} rounded={radius.md} />
       <View style={[styles.text, { minHeight: textHeight }]}>
         <View style={[styles.row, { height: priceHeight }]}>
           <Skeleton width={64} height={priceHeight - 6} rounded={radius.md} />
@@ -32,6 +32,9 @@ export function ProductCardSkeleton({ width }: { width: number }) {
         </View>
         <View style={[styles.row, { height: line }]}>
           <Skeleton width="36%" height={Math.round(bar * 0.85)} />
+        </View>
+        <View style={[styles.row, { height: line }]}>
+          <Skeleton width="50%" height={Math.round(bar * 0.85)} />
         </View>
       </View>
     </View>

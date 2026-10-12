@@ -31,7 +31,7 @@ import { useCart } from './CartProvider';
 import { useTintOf } from './categories';
 import { INSTRUCTIONS, NOTE_MAX, type InstructionKey } from './instructions';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
-import { anyLowStock, useHomeItems } from './items';
+import { anyCardNote, useHomeItems } from './items';
 import { licenceOf } from './sampleShops';
 import { suggestItems } from './suggestions';
 import { SUBSTITUTE_CHOICES, type SubstituteChoice } from './substitution';
@@ -672,7 +672,7 @@ export function AlsoLike() {
             key={item.id}
             item={item}
             width={RAIL_CARD_WIDTH}
-            reserveNote={anyLowStock(items)}
+            reserveNote={anyCardNote(items)}
           />
         ))}
       </ScrollView>

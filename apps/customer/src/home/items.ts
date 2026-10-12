@@ -10,9 +10,14 @@ import {
   type Unit,
 } from './packs';
 
-/** Whether any of these items shows a low-stock line, so a row of cards keeps room for it in every card. */
-export function anyLowStock(items: readonly { stock?: { kind: 'out' | 'low' } }[]): boolean {
-  return items.some((item) => item.stock?.kind === 'low');
+/**
+ * Whether any of these items shows a line under its pack (a low-stock warning, or the delivery window of an item that can come in
+ * the next one), so a row of cards keeps room for it in every card and the row stays one height.
+ */
+export function anyCardNote(
+  items: readonly { stock?: { kind: 'out' | 'low' }; quick?: true }[],
+): boolean {
+  return items.some((item) => item.stock?.kind === 'low' || item.quick === true);
 }
 
 /** The categories that hold items. "All" is not one of them: it shows every category's row. */
