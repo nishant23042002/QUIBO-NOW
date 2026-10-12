@@ -131,6 +131,19 @@
       "l": "{amount}/ली",
       "kg": "{amount}/किलो",
       "pc": "{amount}/नग"
+    },
+    "shopByCategory": {
+      "title": "श्रेणीनुसार खरेदी",
+      "tiles": {
+        "milkCurd": "दूध आणि दही",
+        "eggsPaneer": "अंडी आणि पनीर",
+        "vegetables": "भाज्या",
+        "fruits": "फळे",
+        "attaRice": "आटा आणि तांदूळ",
+        "oilMasala": "तेल आणि मसाले",
+        "snacksBiscuits": "स्नॅक्स आणि बिस्किटे",
+        "teaMore": "चहा आणि बरेच काही"
+      }
     }
   },
   "language": {
@@ -1013,5 +1026,42 @@
     "failed": "काहीतरी चुकले. कृपया पुन्हा प्रयत्न करा.",
     "welcome": "Quibo मध्ये तुमचे स्वागत आहे",
     "welcomeBody": "तुमच्या जवळची दुकाने शोधत आहोत…"
+  },
+  "categoriesTab": {
+    "searchHint": "आटा, डाळ, दूध आणि बरेच काही शोधा",
+    "groups": {
+      "market": "बाजारातून ताजे",
+      "dairy": "दुग्धजन्य आणि अंडी",
+      "staples": "स्वयंपाकघरातील किराणा",
+      "snacks": "स्नॅक्स आणि पेये",
+      "home": "घर आणि निगा"
+    },
+    "tiles": {
+      "dailyVegetables": "रोजच्या भाज्या",
+      "potatoOnion": "बटाटा आणि कांदा",
+      "fruits": "फळे",
+      "rootsLeaves": "कंद आणि पालेभाज्या",
+      "milk": "दूध",
+      "curd": "दही",
+      "paneer": "पनीर",
+      "eggs": "अंडी",
+      "butterGhee": "लोणी आणि तूप",
+      "atta": "आटा",
+      "rice": "तांदूळ",
+      "cookingOil": "खाद्यतेल",
+      "dal": "डाळी आणि कडधान्य",
+      "masala": "मसाले",
+      "sugarSalt": "साखर आणि मीठ",
+      "chips": "चिप्स",
+      "biscuits": "बिस्किटे",
+      "sweets": "मिठाई",
+      "teaCoffee": "चहा आणि कॉफी",
+      "instant": "इन्स्टंट पदार्थ",
+      "coldDrinks": "थंड पेये",
+      "soap": "साबण",
+      "cleaning": "स्वच्छता",
+      "kitchenNeeds": "स्वयंपाकघर सामान",
+      "pooja": "पूजा"
+    }
   }
 }

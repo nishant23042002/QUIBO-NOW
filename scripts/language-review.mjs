@@ -19,6 +19,8 @@ const SECTIONS = [
   ['Tracking an order', 'tracking'],
   ['Help', 'help'],
   ['Settings', 'settings'],
+  ['Categories tab', 'categoriesTab'],
+  ['Shop by category, on Home', 'home.shopByCategory'],
 ];
 
 const en = read('en');

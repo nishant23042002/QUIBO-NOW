@@ -131,6 +131,19 @@
       "l": "{amount}/L",
       "kg": "{amount}/kg",
       "pc": "{amount}/pc"
+    },
+    "shopByCategory": {
+      "title": "Shop by category",
+      "tiles": {
+        "milkCurd": "Milk and curd",
+        "eggsPaneer": "Eggs and paneer",
+        "vegetables": "Vegetables",
+        "fruits": "Fruits",
+        "attaRice": "Atta and rice",
+        "oilMasala": "Oil and masala",
+        "snacksBiscuits": "Snacks and biscuits",
+        "teaMore": "Tea and more"
+      }
     }
   },
   "language": {
@@ -1013,5 +1026,42 @@
     "failed": "Something went wrong. Please try again.",
     "welcome": "Welcome to Quibo",
     "welcomeBody": "Finding the shops near you…"
+  },
+  "categoriesTab": {
+    "searchHint": "Search for atta, dal, milk and more",
+    "groups": {
+      "market": "Fresh from the market",
+      "dairy": "Dairy and eggs",
+      "staples": "Kitchen staples",
+      "snacks": "Snacks and drinks",
+      "home": "Home and care"
+    },
+    "tiles": {
+      "dailyVegetables": "Daily vegetables",
+      "potatoOnion": "Potato and onion",
+      "fruits": "Fruits",
+      "rootsLeaves": "Roots and leaves",
+      "milk": "Milk",
+      "curd": "Curd",
+      "paneer": "Paneer",
+      "eggs": "Eggs",
+      "butterGhee": "Butter and ghee",
+      "atta": "Atta",
+      "rice": "Rice",
+      "cookingOil": "Cooking oil",
+      "dal": "Dal and pulses",
+      "masala": "Masala",
+      "sugarSalt": "Sugar and salt",
+      "chips": "Chips",
+      "biscuits": "Biscuits",
+      "sweets": "Sweets",
+      "teaCoffee": "Tea and coffee",
+      "instant": "Instant food",
+      "coldDrinks": "Cold drinks",
+      "soap": "Soap",
+      "cleaning": "Cleaning",
+      "kitchenNeeds": "Kitchen needs",
+      "pooja": "Pooja"
+    }
   }
 }

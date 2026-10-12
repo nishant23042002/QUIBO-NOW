@@ -131,6 +131,19 @@
       "l": "{amount}/ली",
       "kg": "{amount}/किग्रा",
       "pc": "{amount}/नग"
+    },
+    "shopByCategory": {
+      "title": "श्रेणी के हिसाब से खरीदें",
+      "tiles": {
+        "milkCurd": "दूध और दही",
+        "eggsPaneer": "अंडे और पनीर",
+        "vegetables": "सब्ज़ियाँ",
+        "fruits": "फल",
+        "attaRice": "आटा और चावल",
+        "oilMasala": "तेल और मसाले",
+        "snacksBiscuits": "स्नैक्स और बिस्कुट",
+        "teaMore": "चाय और बहुत कुछ"
+      }
     }
   },
   "language": {
@@ -1013,5 +1026,42 @@
     "failed": "कुछ गड़बड़ हो गई। कृपया फिर कोशिश करें।",
     "welcome": "Quibo में आपका स्वागत है",
     "welcomeBody": "आपके पास की दुकानें ढूँढ रहे हैं…"
+  },
+  "categoriesTab": {
+    "searchHint": "आटा, दाल, दूध और बहुत कुछ खोजें",
+    "groups": {
+      "market": "बाज़ार से ताज़ा",
+      "dairy": "डेयरी और अंडे",
+      "staples": "रसोई का राशन",
+      "snacks": "स्नैक्स और पेय",
+      "home": "घर और देखभाल"
+    },
+    "tiles": {
+      "dailyVegetables": "रोज़ की सब्ज़ियाँ",
+      "potatoOnion": "आलू और प्याज़",
+      "fruits": "फल",
+      "rootsLeaves": "कंद और पत्तेदार",
+      "milk": "दूध",
+      "curd": "दही",
+      "paneer": "पनीर",
+      "eggs": "अंडे",
+      "butterGhee": "मक्खन और घी",
+      "atta": "आटा",
+      "rice": "चावल",
+      "cookingOil": "खाने का तेल",
+      "dal": "दाल और दलहन",
+      "masala": "मसाले",
+      "sugarSalt": "चीनी और नमक",
+      "chips": "चिप्स",
+      "biscuits": "बिस्कुट",
+      "sweets": "मिठाई",
+      "teaCoffee": "चाय और कॉफ़ी",
+      "instant": "इंस्टेंट खाना",
+      "coldDrinks": "कोल्ड ड्रिंक",
+      "soap": "साबुन",
+      "cleaning": "सफ़ाई",
+      "kitchenNeeds": "रसोई का सामान",
+      "pooja": "पूजा"
+    }
   }
 }
