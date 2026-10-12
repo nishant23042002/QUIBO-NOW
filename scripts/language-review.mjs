@@ -1,4 +1,4 @@
-// Writes the sheet a native Hindi or Marathi speaker reviews: every line of the screens built in Phase 1 sections 1f and 1g, in
+// Writes the sheet a native Hindi or Marathi speaker reviews: every line of the screens built in Phase 1 sections 1f, 1g and 1k, in
 // English next to the Hindi and Marathi drafts, with a column to mark it OK or give the better wording.
 //
 //   node scripts/language-review.mjs
@@ -21,11 +21,15 @@ const SECTIONS = [
   ['Settings', 'settings'],
   ['Categories tab', 'categoriesTab'],
   ['Shop by category, on Home', 'home.shopByCategory'],
-  ['Shops in your town, on Home', 'home.shopsStrip'],
+  ['Shop by brand, on Home', 'home.shopByBrand'],
   ['Small prices, on Home', 'home.smallPrices'],
   ['Featured, on Home', 'home.featured'],
   ['Quieter times note, on Home', 'home.quieterNote'],
   ['Footer', 'footer'],
+  ['Brand page and brand filter', 'brandPage'],
+  ['Brand names', 'brands'],
+  ['Brands in search results', 'search.brands'],
+  ['If something is unavailable (the swap rule)', 'substitute'],
 ];
 
 const en = read('en');

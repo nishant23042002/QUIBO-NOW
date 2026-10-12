@@ -80,7 +80,13 @@
       "biscuits": "Tea biscuits",
       "chips": "Potato chips",
       "popcorn": "Popcorn",
-      "chocolate": "Chocolate"
+      "chocolate": "Chocolate",
+      "milkGokul": "Toned milk",
+      "milkKatraj": "Toned milk",
+      "milkChitale": "Toned milk",
+      "curdAmul": "Masti dahi",
+      "chocolateKitkat": "Wafer chocolate",
+      "biscuitsBritannia": "Tea biscuits"
     },
     "units": {
       "ml": "{n} ml",
@@ -148,8 +154,8 @@
         "teaMore": "Tea and more"
       }
     },
-    "shopsStrip": {
-      "title": "Shops in your town"
+    "shopByBrand": {
+      "title": "Shop by brand"
     },
     "smallPrices": {
       "title": "Small prices",
@@ -166,6 +172,34 @@
       "chaiBody": "Tea, biscuits and more"
     },
     "quieterNote": "Quieter times cost less. Pick a window and see the saving."
+  },
+  "brands": {
+    "amul": "Amul",
+    "gokul": "Gokul",
+    "katraj": "Katraj",
+    "chitale": "Chitale",
+    "aashirvaad": "Aashirvaad",
+    "indiaGate": "India Gate",
+    "fortune": "Fortune",
+    "parle": "Parle",
+    "lays": "Lay's",
+    "dairyMilk": "Dairy Milk",
+    "kitKat": "KitKat",
+    "britannia": "Britannia"
+  },
+  "brandPage": {
+    "products": "{count} products",
+    "productsOne": "1 product",
+    "soldBy": "Sold by {count} shops in Roha",
+    "soldByOne": "Sold by 1 shop in Roha",
+    "all": "All",
+    "filter": "Filter by kind",
+    "notFound": {
+      "title": "We could not find this brand",
+      "body": "It may no longer be listed. Go back and pick another.",
+      "back": "Back to Home"
+    },
+    "filterByBrand": "Filter by brand"
   },
   "language": {
     "label": "Language",
@@ -283,6 +317,7 @@
     "clearRecent": "Clear recent searches",
     "clearField": "Clear search",
     "try": "Try searching for",
+    "brands": "Brands",
     "shops": "Shops",
     "items": "Items",
     "noResults": {
@@ -293,15 +328,13 @@
   "product": {
     "soldBy": "Sold by {shop}",
     "save": "You save {amount}",
-    "moreFrom": "More from {shop}",
     "notFound": {
       "title": "We could not find this item",
       "body": "It may no longer be available. Go back and pick something else.",
       "back": "Back to Home"
     },
-    "pickSize": "Pick a size",
+    "pickSize": "Select Unit",
     "bestValue": "Best value",
-    "netQuantity": "Net quantity: {pack}",
     "taxes": "Inclusive of all taxes",
     "photoOf": "Photo {n} of {total}",
     "photos": {
@@ -432,29 +465,34 @@
       }
     },
     "highlights": "Highlights",
-    "information": "Information",
-    "viewMore": "View more",
-    "viewLess": "View less",
+    "information": "Info",
     "popularIn": "Popular in {category}",
     "openShop": "View shop",
     "rows": {
-      "type": "Product type",
-      "diet": "Dietary preference",
-      "goodFor": "Good for",
-      "shelfLife": "Shelf life",
-      "storage": "How to store",
-      "origin": "Country of origin",
-      "packedBy": "Packed by",
+      "type": "Product Type",
+      "diet": "Dietary Preference",
+      "goodFor": "Good For",
+      "shelfLife": "Shelf Life",
+      "storage": "Storage Instructions",
+      "origin": "Country of Origin",
+      "packedBy": "Packed By",
       "description": "Description",
       "ingredients": "Ingredients",
       "disclaimer": "Disclaimer",
-      "seller": "Seller name",
-      "address": "Seller address",
-      "licence": "Licence number",
-      "care": "Customer care",
-      "packedOn": "Packed on",
-      "bestBefore": "Best before",
-      "packerAddress": "Packer address"
+      "seller": "Seller",
+      "address": "Seller Address",
+      "licence": "Licence Number",
+      "care": "Customer Care Details",
+      "packedOn": "Packed On",
+      "bestBefore": "Best Before",
+      "packerAddress": "Packer Address",
+      "brand": "Brand",
+      "fatProfile": "Fat Profile",
+      "biologicalSource": "Biological Source",
+      "processingType": "Processing Type",
+      "sugarProfile": "Sugar Profile",
+      "servingSize": "Serving Size",
+      "energy": "Energy"
     },
     "shelf": {
       "days": "{n} days",
@@ -478,25 +516,6 @@
       "two": "Market Road, Roha, Raigad, Maharashtra",
       "three": "Mandi Lane, Roha, Raigad, Maharashtra",
       "four": "Bazaar Peth, Roha, Raigad, Maharashtra"
-    },
-    "trust": {
-      "title": "Our promises",
-      "verified": {
-        "title": "Verified shop",
-        "body": "Checked by Quibo"
-      },
-      "packed": {
-        "title": "Packed in your town",
-        "body": "Picked by {shop}"
-      },
-      "window": {
-        "title": "Delivered in your window",
-        "body": "Your order comes in a clear time window"
-      },
-      "replace": {
-        "title": "Replace or refund",
-        "body": "Not right? Tell us at the door"
-      }
     },
     "insight": {
       "title": "Good to know",
@@ -544,7 +563,34 @@
       "apple": "1 apple (150 g)",
       "tbsp": "1 tablespoon (15 ml)",
       "tsp": "1 teaspoon (5 g)"
-    }
+    },
+    "attr": {
+      "toned": "Toned",
+      "fullCream": "Full Cream",
+      "cowMilk": "Cow Milk",
+      "buffaloMilk": "Buffalo Milk",
+      "hen": "Hen",
+      "pasteurized": "Pasteurized",
+      "noAddedSugar": "No Added Sugar"
+    },
+    "packedToday": "Packed today",
+    "packedYesterday": "Packed yesterday",
+    "viewDetails": "View details",
+    "allDetails": "All details",
+    "keyInformation": "Key Information",
+    "nutritionalInformation": "Nutritional Information",
+    "closeDetails": "Close details",
+    "alsoAtOne": "Also at 1 other shop",
+    "alsoAtMany": "Also at {count} other shops",
+    "exploreAll": "Explore all products",
+    "replacementRow": "Replaced or refunded if not right",
+    "otherBrands": "Other brands of {name}",
+    "brandsIn": "Brands in this category",
+    "otherSizesTitle": "Other sizes",
+    "otherSizesBody": "Coming soon",
+    "anyWeightTitle": "Any weight",
+    "anyWeightBody": "In half-kilo steps",
+    "saveShort": "Save {amount}"
   },
   "state": {
     "offline": {
@@ -744,7 +790,7 @@
     "title": "If something is unavailable",
     "body": "Shops sometimes run out. Choose what we should do.",
     "swap": "Swap",
-    "swapHelp": "We send the closest match. You never pay more than for the item you chose.",
+    "swapHelp": "We send the same brand in another size first, then the same kind from another brand. Never at a higher price than the item you chose.",
     "remove": "Leave out",
     "removeHelp": "We skip it and refund that item.",
     "call": "Call me",
@@ -972,7 +1018,7 @@
       },
       "stock": {
         "q": "What if an item is out of stock?",
-        "a": "You choose in the cart: swap it for something close, or take it out. You can set it for the whole order or for one item. You only pay for what is delivered."
+        "a": "You choose in the cart: swap it (the same brand in another size first, then the same kind from another brand, never at a higher price), or take it out. You can set it for the whole order or for one item. You only pay for what is delivered."
       },
       "area": {
         "q": "Where do you deliver?",
