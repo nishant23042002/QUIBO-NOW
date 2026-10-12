@@ -30,6 +30,7 @@ const SECTIONS = [
   ['Brand names', 'brands'],
   ['Brands in search results', 'search.brands'],
   ['If something is unavailable (the swap rule)', 'substitute'],
+  ['Other brands button, on the product page picture', 'product.otherBrandsButton'],
 ];
 
 const en = read('en');

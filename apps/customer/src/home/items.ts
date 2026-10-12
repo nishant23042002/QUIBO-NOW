@@ -12,6 +12,7 @@ import {
   type UnitKind,
 } from './packs';
 import { BRAND_MARK, BRAND_OF, OTHER_SHOPS, TYPE_OF, type BrandId } from './brands';
+import { oneOfEachKind } from './product';
 
 /**
  * Whether any of these items shows a line under its pack (a low-stock warning, or the delivery window of an item that can come in
@@ -566,4 +567,13 @@ function buildHomeItems(t: Translate, samples: readonly Sample[]): readonly Home
 export function useHomeItems(): readonly HomeItem[] {
   const { t } = useLanguage();
   return useMemo(() => buildHomeItems(t, [...SAMPLES, ...ALTERNATIVE_SAMPLES]), [t]);
+}
+
+/**
+ * What Home lists: one item for each kind of product (`oneOfEachKind`), so toned milk is not there four times under four brands. The
+ * product page shows the other brands, and brand pages, search and a shop's page keep every item.
+ */
+export function useHomeListing(): readonly HomeItem[] {
+  const items = useHomeItems();
+  return useMemo(() => oneOfEachKind(items), [items]);
 }

@@ -1,6 +1,6 @@
 import { formatRupees, subtract } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import * as Linking from 'expo-linking';
 import {
   Animated,
@@ -12,6 +12,7 @@ import {
   useWindowDimensions,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
+  type ScrollView,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -30,6 +31,7 @@ import {
   Notice,
   PackPicker,
   PriceBadge,
+  OtherBrandsButton,
   ProductInsight,
   ProductRail,
   ProductStage,
@@ -267,6 +269,9 @@ export function ProductView({
   // The insight card covers most of the picture while it is open, so the saving ribbon steps aside.
   const [insightOpen, setInsightOpen] = useState(false);
   const [scrollY] = useState(() => new Animated.Value(0));
+  // The page's scroll view, and where the "Other brands" row starts in it, so the button on the picture can take the shopper there.
+  const scrollRef = useRef<ScrollView>(null);
+  const othersAt = useRef(0);
   const shop = useShop(item.shop);
   const details = useProductDetails(item, {
     id: item.shop,
@@ -320,6 +325,14 @@ export function ProductView({
   if (pack === undefined) return null;
   const quantity = cart.quantities[pack.id] ?? 0;
   const out = pack.stock?.kind === 'out';
+  // The picture's button: glide down to the other brands, leaving the row's title a little below the header. With "reduce motion" on it
+  // simply moves there.
+  const showOtherBrands = () => {
+    scrollRef.current?.scrollTo({
+      y: Math.max(0, othersAt.current - space[3]),
+      animated: !reduceMotion,
+    });
+  };
   // The same kind of product from other brands first; then what is popular in the category, without repeating those.
   const others = otherBrands(items, item);
   const brands = brandsInCategory(items, item.category);
@@ -572,6 +585,7 @@ export function ProductView({
             pointerEvents={loaded ? 'auto' : 'none'}
           >
             <Animated.ScrollView
+              ref={scrollRef}
               showsVerticalScrollIndicator={false}
               scrollEventThrottle={16}
               onScroll={Animated.event([{ nativeEvent: { contentOffset: { y: scrollY } } }], {
@@ -603,6 +617,17 @@ export function ProductView({
                         <DiscountRibbon
                           amount={pack.ribbon.amount}
                           offLabel={pack.ribbon.offLabel}
+                        />
+                      ),
+                    }
+                  : {})}
+                {...(others.length > 0
+                  ? {
+                      others: (
+                        <OtherBrandsButton
+                          count={others.length}
+                          label={t('product.otherBrandsButton', { count: others.length })}
+                          onPress={showOtherBrands}
                         />
                       ),
                     }
@@ -793,7 +818,12 @@ export function ProductView({
                 </>
               )}
               {others.length > 0 ? (
-                <View style={styles.rail}>
+                <View
+                  style={styles.rail}
+                  onLayout={(event) => {
+                    othersAt.current = event.nativeEvent.layout.y;
+                  }}
+                >
                   <ProductRail
                     title={t('product.otherBrands', { name: item.name.toLocaleLowerCase() })}
                     seeAllLabel={t('home.rails.seeAll')}

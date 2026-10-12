@@ -76,3 +76,28 @@ export function startingPackId(
   if (!preselectBestValue) return item.defaultPackId;
   return item.packs.find((pack) => pack.bestValue && pack.available)?.id ?? item.defaultPackId;
 }
+
+/**
+ * One item for each kind of product, for the lists on Home: the same kind sold under several brands ("Toned milk" from Amul, Gokul
+ * and Katraj) shows once, and the product page shows the others. The one shown is the first listed, or the first that is in stock
+ * when that one is sold out. Items keep the order of their kind's first appearance, and an item with no other brand stands alone.
+ */
+export function oneOfEachKind<T extends { type: string; stock?: { kind: 'out' | 'low' } }>(
+  items: readonly T[],
+): T[] {
+  const order: string[] = [];
+  const chosen = new Map<string, T>();
+  for (const item of items) {
+    const current = chosen.get(item.type);
+    if (current === undefined) {
+      order.push(item.type);
+      chosen.set(item.type, item);
+    } else if (current.stock?.kind === 'out' && item.stock?.kind !== 'out') {
+      chosen.set(item.type, item);
+    }
+  }
+  return order.flatMap((type) => {
+    const item = chosen.get(type);
+    return item === undefined ? [] : [item];
+  });
+}

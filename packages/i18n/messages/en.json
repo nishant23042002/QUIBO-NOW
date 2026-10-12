@@ -585,6 +585,7 @@
     "exploreAll": "Explore all products",
     "replacementRow": "Replaced or refunded if not right",
     "otherBrands": "Other brands of {name}",
+    "otherBrandsButton": "Other brands: {count}",
     "brandsIn": "Brands in this category",
     "otherSizesTitle": "Other sizes",
     "otherSizesBody": "Coming soon",

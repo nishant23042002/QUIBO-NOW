@@ -14,6 +14,7 @@ import {
   HOME_RAIL_ORDER,
   anyCardNote,
   useHomeItems,
+  useHomeListing,
   type HomeItem,
   type ItemCategory,
 } from './items';
@@ -42,7 +43,9 @@ interface HomeFeedProps {
 export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
   const { t } = useLanguage();
   const { width: screen } = useWindowDimensions();
+  // Every item (for the brand chips) and what Home lists, one for each kind of product.
   const items = useHomeItems();
+  const listing = useHomeListing();
   // Choosing another category shows the loading skeleton for a moment first, as real data would arrive.
   const [shown, setShown] = useState(category);
   useEffect(() => {
@@ -74,7 +77,7 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
       <HomeSkeleton
         label={t('common.loading')}
         grid={category !== 'all'}
-        cards={items.filter((item) => item.category === category).length}
+        cards={listing.filter((item) => item.category === category).length}
       />
     );
   }
@@ -98,7 +101,11 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
           />
         ) : null}
         <View style={styles.grid}>
-          {filterByBrand(inCategory, chosen).map((item) => tile(item, gridWidth))}
+          {/* "All" shows one of each kind; choosing a brand shows everything that brand makes here. */}
+          {(chosen === null
+            ? listing.filter((item) => item.category === category)
+            : filterByBrand(inCategory, chosen)
+          ).map((item) => tile(item, gridWidth))}
         </View>
       </View>
     );
@@ -111,7 +118,7 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
       <SmallPrices />
       <Featured onCategory={onSeeAll} />
       {HOME_RAIL_ORDER.map((key) => {
-        const row = items.filter((item) => item.category === key);
+        const row = listing.filter((item) => item.category === key);
         // Cards in a row stay one height: room for the low-stock line only when one of them has it.
         const note = anyCardNote(row);
         return (

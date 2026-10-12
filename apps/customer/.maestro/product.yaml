@@ -15,6 +15,10 @@ appId: host.exp.exponent
 - tapOn: 'Skip sign-in (testing)'
 - assertVisible: 'Delivering in.*|Arriving.*'
 
+# Home lists one of each kind: toned milk once, as Amul's. The other brands are on the product page.
+- assertVisible: 'Add Amul Toned milk'
+- assertNotVisible: 'Add Gokul Toned milk'
+
 # Open the milk from its card on Home.
 - tapOn: 'Amul Toned milk\. 500 ml.*'
 - assertVisible: 'Select Unit'
@@ -37,6 +41,11 @@ appId: host.exp.exponent
 - assertVisible: 'Packed On.*'
 - tapOn: 'Close details'
 - assertNotVisible: 'Key Information'
+
+# The button on the picture's lower right glides to the other brands.
+- tapOn: 'Other brands: 3'
+- assertVisible: 'Other brands of toned milk'
+- assertVisible: 'Gokul Toned milk.*'
 
 # Who sells it, the brand, and the other brands.
 - scrollUntilVisible:

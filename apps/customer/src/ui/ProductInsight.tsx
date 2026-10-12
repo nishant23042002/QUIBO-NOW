@@ -81,7 +81,7 @@ const makeStyles = (c: ThemeColors) =>
     layer: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 },
     button: {
       position: 'absolute',
-      right: INSET,
+      left: INSET,
       bottom: INSET,
       width: BUTTON,
       height: BUTTON,
@@ -91,11 +91,11 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.overlay,
     },
     pressed: { opacity: 0.8 },
-    // Dark glass: the picture shows through faintly. It ends one gap before the button, so the two never touch.
+    // Dark glass: the picture shows through faintly. It starts one gap after the button, so the two never touch.
     card: {
       position: 'absolute',
-      left: INSET,
-      right: INSET + BUTTON + space[2],
+      left: INSET + BUTTON + space[2],
+      right: INSET,
       bottom: INSET,
       gap: space[2],
       paddingHorizontal: space[4],
@@ -104,7 +104,7 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.overlay,
       overflow: 'hidden',
       // It grows out of the button's corner.
-      transformOrigin: 'bottom right',
+      transformOrigin: 'bottom left',
     },
     // The room for the pages: whatever is left of the card under the tabs.
     pager: { flex: 1 },

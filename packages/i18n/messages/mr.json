@@ -585,6 +585,7 @@
     "exploreAll": "सर्व उत्पादने पहा",
     "replacementRow": "योग्य नसल्यास बदलून किंवा परतावा",
     "otherBrands": "{name}: इतर ब्रँड",
+    "otherBrandsButton": "इतर ब्रँड: {count}",
     "brandsIn": "या श्रेणीतील ब्रँड",
     "otherSizesTitle": "इतर आकार",
     "otherSizesBody": "लवकरच येतील",

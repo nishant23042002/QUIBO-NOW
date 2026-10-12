@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { Chip, RowTitle, Text, space } from '@/ui';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
-import { anyCardNote, useHomeItems } from './items';
+import { anyCardNote, useHomeListing } from './items';
 import { PRICE_TIERS, pickUnder } from './priceTiers';
 
 const styles = StyleSheet.create({
@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
  */
 export function SmallPrices() {
   const { t } = useLanguage();
-  const items = useHomeItems();
+  const items = useHomeListing();
   const [chosen, setChosen] = useState(1);
   const limit = PRICE_TIERS[chosen] ?? PRICE_TIERS[0] ?? 0;
   const picked = pickUnder(items, limit);

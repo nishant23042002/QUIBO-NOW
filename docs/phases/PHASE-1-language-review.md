@@ -365,4 +365,10 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `substitute.customised` | Some items have their own choice                                                                                                      | कुछ चीज़ों के लिए अलग विकल्प चुना है                                                                                         | काही वस्तूंसाठी वेगळा पर्याय निवडला आहे                                                                                               |                 |
 | `substitute.itemLabel`  | If {name} is unavailable                                                                                                              | अगर {name} उपलब्ध न हो                                                                                                       | {name} उपलब्ध नसल्यास                                                                                                                 |                 |
 
-267 lines in all.
+## Other brands button, on the product page picture
+
+| Key                         | English               | Hindi (draft)        | Marathi (draft)    | OK or change to |
+| --------------------------- | --------------------- | -------------------- | ------------------ | --------------- |
+| `product.otherBrandsButton` | Other brands: {count} | अन्य ब्रांड: {count} | इतर ब्रँड: {count} |                 |
+
+268 lines in all.

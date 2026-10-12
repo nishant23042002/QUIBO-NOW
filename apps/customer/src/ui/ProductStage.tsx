@@ -43,7 +43,9 @@ export interface ProductStageProps {
   diet?: { kind: 'veg' | 'nonveg'; label: string };
   /** The insight button and its card (`ProductInsight`), laid over the picture. */
   insight?: ReactNode;
-  /** The insight card is open: the ribbon and the dots step aside so they do not show through it. */
+  /** The other-brands button (`OtherBrandsButton`), in the lower right corner; it steps aside while the insight card is open. */
+  others?: ReactNode;
+  /** The insight card is open: the ribbon, the diet mark, the dots and the other-brands button step aside so they do not show through it. */
   quiet?: boolean;
 }
 
@@ -54,7 +56,7 @@ export const STAGE_RATIO = 1.1;
 const TOP_EASE = 0.5;
 const DOT = 6;
 const DOT_ACTIVE = 18;
-/** The insight button is 40 dp and sits 16 dp from the corner; the dots are centred on it. */
+/** The buttons are 40 dp and sit 16 dp from the corners; the dots are centred on them. */
 const DOTS_BOTTOM = space[4] + (40 - DOT) / 2;
 
 /** The colour at the top of the stage, which is also what shows behind the header's rounded lower corners. */
@@ -96,7 +98,7 @@ const makeStyles = (c: ThemeColors) =>
  * The product's pictures as a stage: full width, in a lighter shade of the header's tint that fades into the page, so the header
  * reads as a deeper sheet laid over the picture. The picture swipes sideways; small dots under it show how many there are and which
  * one is showing (there is no thumbnail strip). The saving ribbon hangs from the top edge, the vegetarian mark sits in the top right
- * corner, and the insight button and its card (passed in) sit at the lower right. A product with one picture shows no dots. Each
+ * corner, and the insight button and its card (passed in) sit at the lower left and the other-brands button at the lower right. A product with one picture shows no dots. Each
  * picture is a photo when it has one, and a stand-in drawn from the product's emoji until then.
  */
 export function ProductStage({
@@ -107,6 +109,7 @@ export function ProductStage({
   ribbon,
   diet,
   insight,
+  others,
   quiet = false,
 }: ProductStageProps) {
   const styles = useStyles(makeStyles);
@@ -182,7 +185,7 @@ export function ProductStage({
 
       <View style={styles.over} pointerEvents="box-none">
         {ribbon !== undefined && !quiet ? <View style={styles.ribbon}>{ribbon}</View> : null}
-        {diet !== undefined ? (
+        {diet !== undefined && !quiet ? (
           <View style={styles.diet}>
             <DietMark kind={diet.kind} label={diet.label} size={20} />
           </View>
@@ -195,6 +198,7 @@ export function ProductStage({
           </View>
         ) : null}
         {insight}
+        {others !== undefined && !quiet ? others : null}
       </View>
     </View>
   );

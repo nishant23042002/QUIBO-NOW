@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   brandsInCategory,
   cheaperPerUnit,
+  oneOfEachKind,
   otherBrands,
   similarItems,
   startingPackId,
@@ -134,5 +135,41 @@ describe('startingPackId', () => {
     expect(startingPackId(out as typeof item, true)).toBe('milk:500ml');
     const none = { ...item, packs: [{ ...item.packs[0] }, { ...item.packs[1], bestValue: false }] };
     expect(startingPackId(none as typeof item, true)).toBe('milk:500ml');
+  });
+});
+
+describe('oneOfEachKind', () => {
+  const item = (id: string, type: string, out = false) => ({
+    id,
+    type,
+    ...(out ? { stock: { kind: 'out' as const } } : {}),
+  });
+
+  it('shows a kind once, as the first one listed', () => {
+    const listed = [item('milk', 'milk'), item('curd', 'curd'), item('milkGokul', 'milk')];
+    expect(oneOfEachKind(listed).map((entry) => entry.id)).toEqual(['milk', 'curd']);
+  });
+
+  it('shows the first that is in stock when the first is sold out', () => {
+    const listed = [
+      item('milk', 'milk', true),
+      item('milkGokul', 'milk'),
+      item('milkKatraj', 'milk'),
+    ];
+    expect(oneOfEachKind(listed).map((entry) => entry.id)).toEqual(['milkGokul']);
+  });
+
+  it('keeps the first listed when every brand of a kind is sold out', () => {
+    const listed = [item('milk', 'milk', true), item('milkGokul', 'milk', true)];
+    expect(oneOfEachKind(listed).map((entry) => entry.id)).toEqual(['milk']);
+  });
+
+  it('leaves single items alone and keeps the order of first appearance', () => {
+    const listed = [item('a', 'a'), item('b', 'b'), item('a2', 'a'), item('c', 'c')];
+    expect(oneOfEachKind(listed).map((entry) => entry.id)).toEqual(['a', 'b', 'c']);
+  });
+
+  it('is empty for nothing', () => {
+    expect(oneOfEachKind([])).toEqual([]);
   });
 });

@@ -30,19 +30,21 @@ rather than as passed.
 The owner checked the Home page on a phone on 2026-10-12 and it was all good: the Home sections and the product cards are marked below.
 The rest is still unchecked on a phone. Each line is one thing to look at, so it is a short list rather than a test script.
 
-| Where               | What to look at                                                                                                                                                        | Phone check      |
-| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
-| Home, top to bottom | Shop by category (tiles four across, a main one opens Home on it, a finer one opens search), shops strip, Small prices tabs, Featured, the quieter-times note, footer  | Done, 2026-10-12 |
-| Product cards       | The 128 dp card is not stretched, rows keep one height, the name and price read at 16, the ribbon and add button are not cramped                                       | Done, 2026-10-12 |
-| Tab skeletons       | Categories, Cart and Orders show their skeleton for about half a second when chosen from another tab, in the shape of the page that follows, with nothing moving after | Open             |
-| Cart taps           | Add and the plus and minus show a press at once; the number changes with no pause; nothing flashes                                                                     | Open             |
-| Floating controls   | Free delivery note and cart button sit close together; the cart and bottom bar hide after a real scroll and come back on a short scroll up                             | Open             |
-| Free delivery       | Crossing the free-delivery amount shows the moment once and for under three seconds; removing an item and adding it back does not repeat it                            | Open             |
-| Stock limit         | Tapping plus at the limit shakes the stepper and shows the few words; it does not stack toasts                                                                         | Open             |
-| Tab headers         | Categories and Orders wear the same header as Home; the compact search stays at the top while the page scrolls; the Orders chips sit under it                          | Open             |
-| Dark mode           | Lilac tint, tile colours and the footer in the dark theme                                                                                                              | Open             |
-| Hindi, Marathi      | The new lines fit in the tiles and chips at the largest text size without being cut                                                                                    | Open             |
-| Low-end phone       | Scrolling Home is smooth; the first paint after opening the app is quick; use `pnpm dev -- --no-dev --minify` or a build                                               | Open             |
+| Where               | What to look at                                                                                                                                                                                            | Phone check      |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- |
+| Home, top to bottom | Shop by category (tiles four across, a main one opens Home on it, a finer one opens search), shops strip, Small prices tabs, Featured, the quieter-times note, footer                                      | Done, 2026-10-12 |
+| Product cards       | The 128 dp card is not stretched, rows keep one height, the name and price read at 16, the ribbon and add button are not cramped                                                                           | Done, 2026-10-12 |
+| One of each kind    | Home lists toned milk once (Amul's), curd once and so on; a brand chip on a category grid shows that brand's items; search, shops and brand pages still list every brand                                   | Open             |
+| Picture buttons     | On the product page the tip button is lower left (its card opens from there) and, for a product with other brands, a stacked-sheets button with a number is lower right and glides to the Other brands row | Open             |
+| Tab skeletons       | Categories, Cart and Orders show their skeleton for about half a second when chosen from another tab, in the shape of the page that follows, with nothing moving after                                     | Open             |
+| Cart taps           | Add and the plus and minus show a press at once; the number changes with no pause; nothing flashes                                                                                                         | Open             |
+| Floating controls   | Free delivery note and cart button sit close together; the cart and bottom bar hide after a real scroll and come back on a short scroll up                                                                 | Open             |
+| Free delivery       | Crossing the free-delivery amount shows the moment once and for under three seconds; removing an item and adding it back does not repeat it                                                                | Open             |
+| Stock limit         | Tapping plus at the limit shakes the stepper and shows the few words; it does not stack toasts                                                                                                             | Open             |
+| Tab headers         | Categories and Orders wear the same header as Home; the compact search stays at the top while the page scrolls; the Orders chips sit under it                                                              | Open             |
+| Dark mode           | Lilac tint, tile colours and the footer in the dark theme                                                                                                                                                  | Open             |
+| Hindi, Marathi      | The new lines fit in the tiles and chips at the largest text size without being cut                                                                                                                        | Open             |
+| Low-end phone       | Scrolling Home is smooth; the first paint after opening the app is quick; use `pnpm dev -- --no-dev --minify` or a build                                                                                   | Open             |
 
 ## Found and fixed since the hardening pass
 

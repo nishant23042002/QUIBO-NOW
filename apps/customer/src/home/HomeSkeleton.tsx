@@ -17,7 +17,7 @@ import {
 } from '@/ui';
 import { FEATURED_CARD_WIDTH, useFeaturedCardHeight } from './Featured';
 import { FEATURED } from './featuredPicks';
-import { HOME_RAIL_ORDER, anyCardNote, useHomeItems } from './items';
+import { HOME_RAIL_ORDER, anyCardNote, useHomeListing } from './items';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder } from './priceTiers';
 import { QUIETER_NOTE_HEIGHT } from './QuieterNote';
@@ -81,7 +81,7 @@ export function HomeSkeleton({
   const { t, locale } = useLanguage();
   const { width: screen } = useWindowDimensions();
   const tiles = useHomeCategoryTiles();
-  const items = useHomeItems();
+  const items = useHomeListing();
   const featuredHeight = useFeaturedCardHeight();
   // A brand tile's name is one line of the caption text style, under its mark.
   const brandNameLine = Math.round(

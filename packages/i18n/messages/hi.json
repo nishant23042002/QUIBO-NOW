@@ -585,6 +585,7 @@
     "exploreAll": "सभी उत्पाद देखें",
     "replacementRow": "ठीक न हो तो बदला या रिफ़ंड",
     "otherBrands": "{name} के अन्य ब्रांड",
+    "otherBrandsButton": "अन्य ब्रांड: {count}",
     "brandsIn": "इस श्रेणी के ब्रांड",
     "otherSizesTitle": "अन्य साइज़",
     "otherSizesBody": "जल्द आ रहे हैं",
