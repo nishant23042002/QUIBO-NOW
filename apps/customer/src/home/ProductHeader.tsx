@@ -35,24 +35,16 @@ const FADE = 56;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    // The whole header is one block of colour with a rounded lower edge, over the soft page.
-    bar: {
-      borderBottomLeftRadius: radius.lg,
-      borderBottomRightRadius: radius.lg,
-    },
-    // A fine line all the way round the lower edge, the rounded corners included, the same thickness throughout. It is
-    // drawn in the header's own text colour at a light strength (about half of the line under Home's category tabs), so it shows
-    // on every tint and in both themes. Its top and sides are pushed one dp off the screen, so only the lower edge
-    // and the curves show.
+    // The whole header is one block of colour with a square lower edge, over the soft page.
+    bar: {},
+    // A fine line along the lower edge, drawn in the header's own text colour at a light strength, so it shows on every tint and in
+    // both themes.
     edge: {
       position: 'absolute',
-      top: -1,
-      left: -1,
-      right: -1,
+      left: 0,
+      right: 0,
       bottom: 0,
-      borderWidth: 1,
-      borderBottomLeftRadius: radius.lg,
-      borderBottomRightRadius: radius.lg,
+      height: 1,
       opacity: 0.15,
     },
     where: {
@@ -61,7 +53,18 @@ const makeStyles = (c: ThemeColors) =>
       gap: space[2],
       minHeight: 36,
     },
-    when: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
+    // The delivery time in the same green tint as the View details button, so it is the first thing seen in the header.
+    when: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[1],
+      paddingHorizontal: space[2],
+      paddingVertical: 2,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: c.accentInk,
+      backgroundColor: c.accentSubtle,
+    },
     dot: { width: 3, height: 3, borderRadius: 2 },
     address: { flex: 1, minWidth: 0 },
     row: { height: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center' },
@@ -93,7 +96,7 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /**
- * The product page's header, one block of colour with a rounded lower edge. On top, where and when the order goes:
+ * The product page's header, one block of colour with a square lower edge. On top, where and when the order goes:
  * the delivery window and the full address. Under it, a back button, the product, and search and share buttons.
  * At the top of the page the product is just its name; once the big picture has scrolled away, the name gives way
  * to a small card with the product's picture, name and price, so the shopper always sees what they are looking
@@ -155,13 +158,13 @@ export function ProductHeader({
       <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <View
         pointerEvents="none"
-        style={[styles.edge, { borderColor: colors.onHeader }]}
+        style={[styles.edge, { backgroundColor: colors.onHeader }]}
         aria-hidden
       />
       <View style={styles.where} accessible aria-label={`${deliveryLabel}. ${addressLabel}`}>
         <View style={styles.when}>
-          <Icon name="clock" color={colors.onHeader} size={16} />
-          <Text variant="strong" color="onHeader" numberOfLines={1}>
+          <Icon name="clock" color={colors.accentInk} size={16} />
+          <Text variant="strong" color="accentInk" numberOfLines={1}>
             {deliveryLabel}
           </Text>
         </View>

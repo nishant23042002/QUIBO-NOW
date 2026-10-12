@@ -9,7 +9,9 @@ import {
   unitPrice,
   type PackSize,
   type Unit,
+  type UnitKind,
 } from './packs';
+import { BRAND_MARK, BRAND_OF, OTHER_SHOPS, TYPE_OF, type BrandId } from './brands';
 
 /**
  * Whether any of these items shows a line under its pack (a low-stock warning, or the delivery window of an item that can come in
@@ -56,7 +58,14 @@ interface Sample {
     | 'biscuits'
     | 'chips'
     | 'popcorn'
-    | 'chocolate';
+    | 'chocolate'
+    // The same kinds of product under other brands (ADR 0036): see `ALTERNATIVE_SAMPLES`.
+    | 'milkGokul'
+    | 'milkKatraj'
+    | 'milkChitale'
+    | 'curdAmul'
+    | 'chocolateKitkat'
+    | 'biscuitsBritannia';
   category: ItemCategory;
   /** A stand-in for the photo, from emoji old enough for a low-end Android phone to draw. */
   emoji: string;
@@ -240,6 +249,68 @@ const SAMPLES: readonly Sample[] = [
   { id: 'chocolate', category: 'snacks', emoji: '\u{1F36B}', amount: 1, unit: 'pack', price: 1000 },
 ];
 
+/**
+ * The same kinds of product from other brands, which the product page offers as "Other brands of this" (ADR 0036). They sit after
+ * `SAMPLES`, so each category's row shows the original items first. Two of them share a name ("Toned milk"); the brand, shown
+ * with every item name (`fullName`), tells them apart.
+ */
+const ALTERNATIVE_SAMPLES: readonly Sample[] = [
+  {
+    id: 'milkGokul',
+    quick: true,
+    category: 'dairy',
+    emoji: '\u{1F95B}',
+    amount: 500,
+    unit: 'ml',
+    price: 2700,
+    mrp: 2800,
+  },
+  {
+    id: 'milkKatraj',
+    category: 'dairy',
+    emoji: '\u{1F95B}',
+    amount: 500,
+    unit: 'ml',
+    price: 2800,
+    mrp: 2900,
+  },
+  {
+    id: 'milkChitale',
+    category: 'dairy',
+    emoji: '\u{1F95B}',
+    amount: 500,
+    unit: 'ml',
+    price: 3100,
+  },
+  {
+    id: 'curdAmul',
+    quick: true,
+    category: 'dairy',
+    emoji: '\u{1F963}',
+    amount: 400,
+    unit: 'g',
+    price: 3600,
+    mrp: 3800,
+  },
+  {
+    id: 'chocolateKitkat',
+    category: 'snacks',
+    emoji: '\u{1F36B}',
+    amount: 1,
+    unit: 'pack',
+    price: 2000,
+    mrp: 2200,
+  },
+  {
+    id: 'biscuitsBritannia',
+    category: 'snacks',
+    emoji: '\u{1F36A}',
+    amount: 1,
+    unit: 'pack',
+    price: 1200,
+  },
+];
+
 /** Which of the sample shops sells each category (Sharma Dairy, Joshi Kirana, Patil Vegetables). */
 const SHOP_OF: Record<ItemCategory, 'one' | 'two' | 'three'> = {
   dairy: 'one',
@@ -273,6 +344,8 @@ interface SamplePack {
 /** The other packs of the products sold in more than one size, until the mock API supplies them (Phase 1b). */
 const EXTRA_PACKS: Readonly<Record<string, readonly SamplePack[]>> = {
   milk: [{ amount: 1, unit: 'l', price: 5600, mrp: 5800, quick: true }],
+  milkGokul: [{ amount: 1, unit: 'l', price: 5400, mrp: 5600, quick: true }],
+  milkKatraj: [{ amount: 1, unit: 'l', price: 5700, mrp: 5900 }],
   curd: [{ amount: 1, unit: 'kg', price: 8200, mrp: 9000, quick: true }],
   paneer: [{ amount: 500, unit: 'g', price: 21000, mrp: 24000 }],
   eggs: [{ amount: 12, unit: 'pcs', price: 9200, mrp: 10400 }],
@@ -281,6 +354,14 @@ const EXTRA_PACKS: Readonly<Record<string, readonly SamplePack[]>> = {
   oil: [{ amount: 500, unit: 'ml', price: 7200, mrp: 7800 }],
   sugar: [{ amount: 5, unit: 'kg', price: 21800, mrp: 23000 }],
 };
+
+/** The price of one litre, one kilogram or one piece, so items of different pack sizes can be compared. */
+export interface HomeUnit {
+  kind: UnitKind;
+  paise: number;
+  /** For example "₹58/L". */
+  label: string;
+}
 
 /** One pack of a product, as the screens show it. */
 export interface HomePack {
@@ -297,6 +378,8 @@ export interface HomePack {
   stock?: { kind: 'out' | 'low'; label: string };
   /** The price per litre, kilogram or piece, for example "₹58/L". Only on products with more than one pack. */
   unitPriceLabel?: string;
+  /** The same price per unit as a figure, on every pack that has a size to compare by. */
+  unit?: HomeUnit;
   /** The lowest price per litre, kilogram or piece of the packs that can be compared. */
   bestValue: boolean;
   /** Can be bought. False when the pack is out of stock. */
@@ -319,8 +402,23 @@ export interface HomeItem {
   shop: string;
   shopName: string;
   category: ItemCategory;
+  /**
+   * The plain kind of product it is ("milk"), the same for every brand of it. Items with the same type and different brands are
+   * each other's "other brands". Product facts (shelf life, nutrition, the description) are held by type.
+   */
+  type: string;
+  /** Who makes it, when it is branded. Absent for loose produce and a shop's own goods: screens show no brand line then. */
+  brand?: { id: BrandId; name: string; mark: string };
+  /** How many other shops also stock it. Absent when none do. */
+  otherShops?: number;
   emoji: string;
+  /** The product's own name, without its brand ("Toned milk"). */
   name: string;
+  /**
+   * The name as lists, the cart and the header show it: the brand, then the name ("Amul Toned milk"). Just the name when the item has
+   * no brand.
+   */
+  fullName: string;
   diet: { kind: 'veg' | 'nonveg'; label: string };
   /** The product's pictures, the first being the one the big picture opens on. */
   images: readonly GalleryImage[];
@@ -335,16 +433,18 @@ export interface HomeItem {
   ribbon?: { amount: string; offLabel: string };
   quick?: true;
   stock?: { kind: 'out' | 'low'; label: string };
+  /** The default pack's price per unit, as on `HomePack`. */
+  unit?: HomeUnit;
   /** The default pack's stock limit, as on `HomePack`. */
   maxQuantity?: number;
   /** Sold loose by weight, as on `HomePack`. */
   loose?: true;
 }
 
-function buildHomeItems(t: Translate): readonly HomeItem[] {
+function buildHomeItems(t: Translate, samples: readonly Sample[]): readonly HomeItem[] {
   const label = (size: PackSize) => t(`home.units.${size.unit}`, { n: size.amount });
 
-  return SAMPLES.map((sample) => {
+  return samples.map((sample) => {
     const shop = SHOP_OF[sample.category];
     const raw: readonly SamplePack[] = [
       {
@@ -367,6 +467,7 @@ function buildHomeItems(t: Translate): readonly HomeItem[] {
       const mrp = pack.mrp === undefined ? undefined : money(pack.mrp);
       const saving = mrp !== undefined && mrp > price ? subtract(mrp, price) : undefined;
       const unit = raw.length > 1 ? unitPrice(pack.price, pack) : undefined;
+      const perUnit = unitPrice(pack.price, pack);
       return {
         id:
           sample.loose === true ? `${sample.id}:loose` : `${sample.id}:${pack.amount}${pack.unit}`,
@@ -394,6 +495,17 @@ function buildHomeItems(t: Translate): readonly HomeItem[] {
               }),
             }
           : {}),
+        ...(perUnit !== undefined
+          ? {
+              unit: {
+                kind: perUnit.kind,
+                paise: perUnit.paise,
+                label: t(`home.unitPrice.${perUnit.kind}`, {
+                  amount: formatRupees(money(perUnit.paise)),
+                }),
+              },
+            }
+          : {}),
         bestValue: best === index,
         available: pack.stock !== 0,
         ...(pack.stock !== undefined && pack.stock > 0 ? { maxQuantity: pack.stock } : {}),
@@ -404,13 +516,22 @@ function buildHomeItems(t: Translate): readonly HomeItem[] {
     const first = packs[defaultPackIndex(packs)] ?? packs[0];
     // Every sample has at least its own pack, so this never happens; it keeps the types honest.
     if (first === undefined) throw new Error(`Item ${sample.id} has no packs`);
+    const brandId = BRAND_OF[sample.id];
+    const brandName = brandId === undefined ? undefined : t(`brands.${brandId}`);
+    const name = t(`home.items.${sample.id}`);
     return {
       id: sample.id,
       shop,
       shopName: t(`home.shopsSheet.sample.${shop}Name`),
       category: sample.category,
+      type: TYPE_OF[sample.id] ?? sample.id,
+      ...(brandId !== undefined && brandName !== undefined
+        ? { brand: { id: brandId, name: brandName, mark: BRAND_MARK[brandId] } }
+        : {}),
+      ...((OTHER_SHOPS[sample.id] ?? 0) > 0 ? { otherShops: OTHER_SHOPS[sample.id] ?? 0 } : {}),
       emoji: sample.emoji,
-      name: t(`home.items.${sample.id}`),
+      name,
+      fullName: brandName === undefined ? name : `${brandName} ${name}`,
       diet: {
         kind: sample.nonVeg === true ? 'nonveg' : 'veg',
         label: t(sample.nonVeg === true ? 'home.rails.nonVeg' : 'home.rails.veg'),
@@ -431,6 +552,7 @@ function buildHomeItems(t: Translate): readonly HomeItem[] {
       ...(first.ribbon !== undefined ? { ribbon: first.ribbon } : {}),
       ...(first.quick === true ? { quick: true as const } : {}),
       ...(first.stock !== undefined ? { stock: first.stock } : {}),
+      ...(first.unit !== undefined ? { unit: first.unit } : {}),
       ...(first.maxQuantity !== undefined ? { maxQuantity: first.maxQuantity } : {}),
       ...(first.loose === true ? { loose: true as const } : {}),
     };
@@ -443,5 +565,5 @@ function buildHomeItems(t: Translate): readonly HomeItem[] {
  */
 export function useHomeItems(): readonly HomeItem[] {
   const { t } = useLanguage();
-  return useMemo(() => buildHomeItems(t), [t]);
+  return useMemo(() => buildHomeItems(t, [...SAMPLES, ...ALTERNATIVE_SAMPLES]), [t]);
 }

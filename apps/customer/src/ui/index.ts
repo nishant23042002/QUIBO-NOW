@@ -46,12 +46,19 @@ export { DietMark, type DietMarkProps } from './DietMark';
 export { DiscountRibbon, type DiscountRibbonProps } from './DiscountRibbon';
 export { Price, type PriceProps } from './Price';
 export {
-  GALLERY_RATIO,
-  ProductGallery,
+  STAGE_RATIO,
+  ProductStage,
+  stageTopColor,
   type GalleryImage,
-  type ProductGalleryProps,
-} from './ProductGallery';
-export { CardTitle, FactTable, type FactRow } from './FactTable';
+  type ProductStageProps,
+} from './ProductStage';
+export { mixColor } from './mixColor';
+export { FactTable, type FactRow } from './FactTable';
+export { BRAND_TILE_HEIGHT, BRAND_TILE_WIDTH, BrandTile, type BrandTileProps } from './BrandTile';
+export { FactChip, HighlightsStrip, type HighlightsStripProps } from './HighlightsStrip';
+export { DetailSection, type DetailSectionProps } from './DetailSection';
+export { TintPill, type TintPillProps } from './TintPill';
+export { BrandChips, type BrandChipsProps } from './BrandChips';
 export { TrustTiles, type TrustTile, type TrustTilesProps } from './TrustTiles';
 export { StatePanel, type StatePanelProps } from './StatePanel';
 export { LoadGate, type LoadGateProps } from './LoadGate';
@@ -74,7 +81,6 @@ export { BrandFooter } from './BrandFooter';
 export { RowTitle, type RowTitleProps } from './RowTitle';
 export { RowTitleSkeleton } from './RowTitleSkeleton';
 export { SeeAllButtonSkeleton } from './SeeAllButtonSkeleton';
-export { ShopInfoCardSkeleton } from './ShopInfoCardSkeleton';
 export { SeeAllButton, type SeeAllButtonProps } from './SeeAllButton';
 export {
   CategoryTileGrid,

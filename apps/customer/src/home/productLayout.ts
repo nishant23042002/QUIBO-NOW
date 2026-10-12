@@ -11,7 +11,8 @@ export const ACTION_HEIGHT = 68;
  */
 export const makePageStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    content: { gap: space[3], paddingTop: space[3] },
+    // The picture stage runs from the top edge, under the header; everything else keeps the gap and the gutter.
+    content: { gap: space[3] },
     gutter: { paddingHorizontal: space[3] },
     card: {
       gap: space[2],

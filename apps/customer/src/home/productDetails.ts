@@ -78,6 +78,26 @@ const PACKERS: Readonly<Record<ItemCategory, { name: string; address: string }>>
   snacks: { name: 'Konkan Foods Pvt Ltd (sample)', address: 'MIDC, Mahad, Raigad 402301' },
 };
 
+/**
+ * The facts that tell one product of a kind from another, named the way shoppers see them named elsewhere (Fat Profile, Shelf Life,
+ * Biological Source, Processing Type), until the catalogue supplies them (Phase 1b). Only kinds that have such facts are listed;
+ * the others fall back to Product Type and Dietary Preference.
+ */
+type AttrLabel = 'fatProfile' | 'biologicalSource' | 'processingType' | 'sugarProfile';
+type AttrValue =
+  'toned' | 'fullCream' | 'cowMilk' | 'buffaloMilk' | 'hen' | 'pasteurized' | 'noAddedSugar';
+const ATTRIBUTES: Readonly<Record<string, Partial<Record<AttrLabel, AttrValue>>>> = {
+  milk: {
+    fatProfile: 'toned',
+    biologicalSource: 'cowMilk',
+    processingType: 'pasteurized',
+    sugarProfile: 'noAddedSugar',
+  },
+  curd: { fatProfile: 'toned', biologicalSource: 'cowMilk', processingType: 'pasteurized' },
+  paneer: { fatProfile: 'fullCream', biologicalSource: 'cowMilk', processingType: 'pasteurized' },
+  eggs: { biologicalSource: 'hen' },
+};
+
 const MONTH_KEYS = [
   'jan',
   'feb',
@@ -101,14 +121,22 @@ export interface SellerInfo {
 }
 
 export interface ProductDetails {
-  /** The facts shown at first: what it is, whether it is vegetarian, what it is good for and how long it keeps. */
+  /**
+   * The facts that tell it apart, most telling first. The strip on the page shows the first few as chips; the details sheet shows
+   * them all.
+   */
   highlights: readonly FactRow[];
-  /** The facts behind "View more": how to store it, where it comes from and who packed it. */
-  moreHighlights: readonly FactRow[];
-  /** The longer information: description, ingredients, when it was packed and by whom, and the label disclaimer. */
-  information: readonly FactRow[];
-  /** Who sells it, with the details a shopper expects to find on a pack. */
-  seller: readonly FactRow[];
+  /** Key Information: brand, what it is made of or how, whether it is vegetarian, what it is good for. */
+  keyInformation: readonly FactRow[];
+  /** Nutritional Information: what a helping holds. Empty when there are no figures for this product. */
+  nutrition: readonly FactRow[];
+  /**
+   * Info: the description, ingredients, how long it keeps and how to store it, where it comes from, when and by whom it was
+   * packed, who sells it with the licence and customer care details, and the label disclaimer.
+   */
+  info: readonly FactRow[];
+  /** How many days before today it was packed: 0 for fresh goods. The page says "Packed today" or "Packed yesterday" from it. */
+  packedDaysAgo: number;
   /** The facts the picture's insight card reads out, in the order it shows them. */
   glance: {
     /** What to look at when it arrives, said for this kind of product. */
@@ -138,15 +166,17 @@ export function useProductDetails(
   const { locale, t } = useLanguage();
   const entries: Readonly<Record<string, Entry | undefined>> = messages[locale].product.details;
   const addresses: Readonly<Record<string, string | undefined>> = messages[locale].product.sellers;
-  const entry = entries[item.id];
-  const shelf = SHELF[item.id];
+  // Product facts are held by kind of product, so every brand of toned milk reads the same facts.
+  const entry = entries[item.type];
+  const shelf = SHELF[item.type];
 
   const row = (key: Parameters<typeof t>[0], value: string): FactRow => ({ label: t(key), value });
 
-  const origin = t(`product.origin.${ORIGIN[item.id] ?? 'india'}`);
+  const origin = t(`product.origin.${ORIGIN[item.type] ?? 'india'}`);
   const monthNames = MONTH_KEYS.map((key) => messages[locale].product.months[key]);
   const today = new Date();
-  const packedOn = addDays(today, -(PACKED_DAYS_AGO[item.id] ?? 0));
+  const packedDaysAgo = PACKED_DAYS_AGO[item.type] ?? 0;
+  const packedOn = addDays(today, -packedDaysAgo);
   const bestBefore =
     shelf === undefined
       ? undefined
@@ -154,7 +184,7 @@ export function useProductDetails(
         ? addDays(packedOn, shelf.n)
         : addMonths(packedOn, shelf.n);
   const packer = PACKERS[item.category];
-  const facts = NUTRITION[item.id];
+  const facts = NUTRITION[item.type];
   const nutrition = (() => {
     if (facts === undefined) return undefined;
     const helping = perServing(facts.per100, facts.serving.amount);
@@ -179,43 +209,88 @@ export function useProductDetails(
     };
   })();
 
+  const attrs = ATTRIBUTES[item.type];
+  const attrRow = (label: AttrLabel): FactRow[] => {
+    const value = attrs?.[label];
+    return value === undefined
+      ? []
+      : [{ label: t(`product.rows.${label}`), value: t(`product.attr.${value}`) }];
+  };
+  const shelfRow: FactRow[] =
+    shelf === undefined
+      ? []
+      : [row('product.rows.shelfLife', t(`product.shelf.${shelf.unit}`, { n: shelf.n }))];
+  const goodFor: FactRow[] =
+    entry !== undefined ? [row('product.rows.goodFor', entry.goodFor)] : [];
+  const diet = row('product.rows.diet', item.diet.label);
+  const hasAttrs =
+    attrs !== undefined &&
+    (attrs.fatProfile !== undefined ||
+      attrs.biologicalSource !== undefined ||
+      attrs.processingType !== undefined);
+
   return {
-    highlights: [
-      row('product.rows.type', t(`home.categories.${item.category}`)),
-      row('product.rows.diet', item.diet.label),
-      ...(entry !== undefined ? [row('product.rows.goodFor', entry.goodFor)] : []),
-      ...(shelf !== undefined
-        ? [row('product.rows.shelfLife', t(`product.shelf.${shelf.unit}`, { n: shelf.n }))]
-        : []),
+    packedDaysAgo,
+    // For a kind that has them: Fat Profile, Shelf Life, Biological Source, Processing Type, in that order.
+    highlights: hasAttrs
+      ? [
+          ...attrRow('fatProfile'),
+          ...shelfRow,
+          ...attrRow('biologicalSource'),
+          ...attrRow('processingType'),
+        ]
+      : [
+          row('product.rows.type', t(`home.categories.${item.category}`)),
+          ...shelfRow,
+          diet,
+          ...goodFor,
+        ],
+    keyInformation: [
+      ...(item.brand !== undefined ? [row('product.rows.brand', item.brand.name)] : []),
+      ...(hasAttrs
+        ? [
+            ...attrRow('fatProfile'),
+            ...attrRow('processingType'),
+            ...attrRow('biologicalSource'),
+            ...attrRow('sugarProfile'),
+          ]
+        : [row('product.rows.type', t(`home.categories.${item.category}`))]),
+      diet,
+      ...goodFor,
     ],
-    moreHighlights: [
-      row('product.rows.storage', t(`product.storage.${item.category}`)),
-      row('product.rows.origin', origin),
-    ],
-    information: [
+    nutrition:
+      nutrition === undefined
+        ? []
+        : [
+            row('product.rows.servingSize', nutrition.serving),
+            row('product.rows.energy', `${nutrition.energy.value} ${nutrition.energy.unit}`),
+            ...nutrition.macros.map((macro) => ({ label: macro.label, value: macro.value })),
+          ],
+    info: [
       ...(entry !== undefined
         ? [
             row('product.rows.description', entry.about),
             row('product.rows.ingredients', entry.ingredients),
           ]
         : []),
+      ...shelfRow,
+      row('product.rows.storage', t(`product.storage.${item.category}`)),
+      row('product.rows.origin', origin),
       row('product.rows.packedOn', formatDay(packedOn, monthNames)),
       ...(bestBefore !== undefined
         ? [row('product.rows.bestBefore', formatDay(bestBefore, monthNames))]
         : []),
       row('product.rows.packedBy', packer.name),
       row('product.rows.packerAddress', packer.address),
-      row('product.rows.disclaimer', t('product.disclaimer')),
-    ],
-    seller: [
       row('product.rows.seller', seller.name),
       row('product.rows.address', addresses[seller.id] ?? ''),
       row('product.rows.licence', seller.licence),
       row('product.rows.care', seller.care),
+      row('product.rows.disclaimer', t('product.disclaimer')),
     ],
     glance: {
       check: t(
-        item.id === 'eggs'
+        item.type === 'eggs'
           ? 'product.insight.checkEggs'
           : item.category === 'vegetables' || item.category === 'fruits'
             ? 'product.insight.checkFresh'

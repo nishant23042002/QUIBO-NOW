@@ -41,9 +41,9 @@ const ItemControl = memo(function ItemControl({
       }}
       compact={compact}
       addLabel={t('home.rails.add')}
-      addAriaLabel={t('home.rails.addNamed', { name: item.name })}
-      decreaseLabel={t('home.rails.removeOneOf', { name: item.name })}
-      increaseLabel={t('home.rails.addOneOf', { name: item.name })}
+      addAriaLabel={t('home.rails.addNamed', { name: item.fullName })}
+      decreaseLabel={t('home.rails.removeOneOf', { name: item.fullName })}
+      increaseLabel={t('home.rails.addOneOf', { name: item.fullName })}
       maxLabel={t('home.rails.noMore')}
       maxNotice={t('home.rails.limitReached')}
       rule={item.loose === true ? WEIGHT_RULE : countRule(item.maxQuantity)}
@@ -62,10 +62,16 @@ export const ItemTile = memo(function ItemTile({
   width,
   onOpen,
   reserveNote,
+  compare,
 }: {
   item: HomeItem;
   width: number;
   onOpen?: (id: string) => void;
+  /**
+   * The price per unit to show beside the pack, for a row that compares brands ("500 ml · ₹54/L"), and whether it is lower than the
+   * item being compared with. It takes the place of "2 sizes".
+   */
+  compare?: { label: string; better: boolean };
   /** Whether some card beside this one carries a low-stock line, so every card in the row keeps room for it. */
   reserveNote?: boolean;
 }) {
@@ -75,8 +81,15 @@ export const ItemTile = memo(function ItemTile({
 
   return (
     <ProductCard
-      name={item.name}
-      pack={item.sizesLabel === undefined ? item.pack : `${item.pack} \u00B7 ${item.sizesLabel}`}
+      name={item.fullName}
+      pack={
+        compare !== undefined
+          ? `${item.pack} \u00B7 ${compare.label}`
+          : item.sizesLabel === undefined
+            ? item.pack
+            : `${item.pack} \u00B7 ${item.sizesLabel}`
+      }
+      {...(compare?.better === true ? { packAccent: true } : {})}
       price={item.price}
       {...(item.mrp !== undefined ? { mrp: item.mrp } : {})}
       {...(item.ribbon !== undefined ? { ribbon: item.ribbon } : {})}

@@ -3,8 +3,10 @@ import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native'
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import {
-  GALLERY_RATIO,
+  BRAND_TILE_HEIGHT,
+  BRAND_TILE_WIDTH,
   ProductCardSkeleton,
+  STAGE_RATIO,
   Skeleton,
   SkeletonScope,
   fontSize,
@@ -15,40 +17,28 @@ import {
 } from '@/ui';
 import { RAIL_CARD_WIDTH } from './ItemTile';
 import type { HomeItem } from './items';
+import { PDP_TRIAL } from './pdpTrial';
 import { makePageStyles } from './productLayout';
 
-const THUMB = 52;
-const THUMBS = 3;
 const OPTION_MIN = 104;
 const SHOP_ICON = 40;
-const PILL = 40;
 const RAIL_CARDS = 3;
+const RAIL_BRANDS = 4;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     ...makePageStyles(c),
-    picture: {
-      overflow: 'hidden',
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      borderColor: c.line,
-      backgroundColor: c.surface,
-    },
     clip: { flex: 1, overflow: 'hidden' },
-    thumbs: {
-      flexDirection: 'row',
-      gap: space[2],
-      paddingHorizontal: space[4],
-      paddingVertical: space[3],
-    },
     row: { justifyContent: 'center' },
+    strip: { padding: space[3] },
+    chipsRow: { flexDirection: 'row', gap: space[2] },
+    group: { gap: space[2] },
+    divider: { height: 1 },
+    left: { gap: space[1] },
     pair: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3] },
     between: { alignItems: 'center', justifyContent: 'space-between' },
     options: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
     option: { flexGrow: 1, flexBasis: OPTION_MIN, minWidth: OPTION_MIN },
-    tiles: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
-    tile: { flexGrow: 1, flexBasis: '47%' },
-    pillRow: { alignItems: 'center' },
     rail: { gap: space[3], paddingBottom: space[2] },
     head: {
       height: space[10],
@@ -63,10 +53,9 @@ const makeStyles = (c: ThemeColors) =>
 
 /**
  * The product page while it loads, drawn from the same numbers as the real page: the same side gutter, the same
- * gap between blocks, and inside each card the same lines at the same heights (the gallery's picture and thumbnail
- * strip, the title card, the size picker, the trust tiles, the highlights and information, the shop card and the
+ * gap between blocks, and inside each card the same lines at the same heights (the full-width picture stage, the title card, the size picker, the trust tiles, the highlights and information, the shop card and the
  * rows of items), so nothing moves when the real page replaces it. It follows the product it stands in for:
- * the strip only when it has several pictures, the size card only when it has several sizes.
+ * the size card only when it has several sizes.
  */
 export function ProductSkeleton({
   label,
@@ -75,8 +64,8 @@ export function ProductSkeleton({
 }: {
   label: string;
   item: HomeItem;
-  /** The rows of other items the real page ends with, each saying whether it has a "See all" link. */
-  rails: readonly boolean[];
+  /** The rows the real page ends with: a row of item cards or of brand tiles, and whether it has a "See all" link. */
+  rails: readonly { kind: 'cards' | 'brands'; seeAll: boolean }[];
 }) {
   const styles = useStyles(makeStyles);
   const { width } = useWindowDimensions();
@@ -94,107 +83,101 @@ export function ProductSkeleton({
       <Skeleton width={bar} height={Math.round(height * 0.6)} />
     </View>
   );
-  /** Several lines of one paragraph; the last is shorter, like the end of a paragraph. */
-  const paragraph = (key: string, lines: number, height: number) => (
-    <View key={key}>
-      {Array.from({ length: lines }, (_, index) =>
-        bar(index, height, index === lines - 1 ? '60%' : '100%'),
-      )}
-    </View>
-  );
-
-  // The picture is as wide as the gallery card's inside: the screen less the gutters and the card's two border lines.
-  const picture = Math.round((width - space[3] * 2 - 2) / GALLERY_RATIO);
+  // The picture stage is as wide as the screen, with no gutter and no card, and as tall as the real stage.
+  const picture = Math.round(width / STAGE_RATIO);
   const optionHeight = space[3] + space[2] + 3 + small * 2 + body + 4;
+  // A chip is a quiet line over a strong one, with its padding.
+  const chip = line(fontSize.xs) + small + space[2] * 2;
+  // The rows after the info card, as tall as the real ones: the icon or the text, whichever is taller, with the card's padding.
+  const rows = [
+    Math.max(SHOP_ICON, small * 2 + (item.otherShops !== undefined ? line(fontSize.xs) : 0)),
+    ...(item.brand !== undefined ? [Math.max(SHOP_ICON, small * 2)] : []),
+    Math.max(SHOP_ICON, small),
+  ];
 
   return (
     // Only the first screenful is ever seen (the page cannot be scrolled while it loads), so the rest is cut off.
     <View style={styles.clip}>
       <SkeletonScope label={label}>
         <View style={styles.content}>
-          <View style={styles.gutter}>
-            <View style={styles.picture}>
-              <Skeleton height={picture} rounded={0} />
-              {item.images.length > 1 ? (
-                <View style={styles.thumbs}>
-                  {Array.from({ length: Math.min(item.images.length, THUMBS) }, (_, index) => (
-                    <Skeleton key={index} width={THUMB} height={THUMB} rounded={radius.md} />
-                  ))}
-                </View>
-              ) : null}
-            </View>
-          </View>
+          <Skeleton height={picture} rounded={0} />
 
           <View style={styles.gutter}>
-            <View style={styles.card}>
-              {bar('diet', small, 90)}
-              {bar('name', line(fontSize['3xl'], 'tight'), '70%')}
-              {bar('net', body, '50%')}
-              <View style={[styles.pair, styles.between]}>
-                <Skeleton width={84} height={priceHeight - 4} rounded={radius.md} />
-                <Skeleton width={78} height={32} rounded={radius.md} />
+            <View style={[styles.card, styles.strip]}>
+              <View style={styles.chipsRow}>
+                {[0, 1, 2].map((chip) => (
+                  <Skeleton key={chip} width={96} height={chip} rounded={radius.md} />
+                ))}
+                <Skeleton width={72} height={chip} rounded={radius.md} />
               </View>
-              {item.mrp !== undefined && item.mrp > item.price ? bar('save', small, '36%') : null}
-              {bar('taxes', small, '42%')}
-              {item.stock?.kind === 'low' ? bar('stock', small, '40%') : null}
-              {item.quick === true ? bar('quick', small, '55%') : null}
             </View>
           </View>
 
-          {item.packs.length > 1 ? (
-            <View style={styles.gutter}>
-              <View style={styles.card}>
+          <View style={styles.gutter}>
+            <View style={[styles.card, styles.section]}>
+              {bar('meta', line(fontSize.xs), '52%')}
+              {bar('name', line(fontSize.xl, 'tight'), '66%')}
+              <View style={styles.group}>
                 {bar('size', small, 90)}
                 <View style={styles.options}>
-                  {item.packs.map((pack) => (
-                    <View key={pack.id} style={styles.option}>
+                  {Array.from({ length: Math.max(item.packs.length, 2) }, (_, option) => (
+                    <View key={option} style={styles.option}>
                       <Skeleton height={optionHeight} rounded={radius.lg} />
                     </View>
                   ))}
                 </View>
               </View>
-            </View>
-          ) : null}
-
-          <View style={styles.gutter}>
-            <View style={[styles.card, styles.section]}>
-              {bar('highlights', line(fontSize.lg, 'tight'), '38%')}
-              {[1, 1, 2, 1].map((lines, index) => (
-                <View key={index} style={styles.pair}>
-                  <View style={{ width: '32%' }}>{bar('k', small, '68%')}</View>
-                  <View style={{ flex: 1 }}>{paragraph('v', lines, body)}</View>
+              <View style={styles.divider} />
+              <View style={[styles.pair, styles.between]}>
+                <View style={styles.left}>
+                  <Skeleton width={84} height={priceHeight - 4} rounded={radius.md} />
+                  {item.mrp !== undefined && item.mrp > item.price
+                    ? bar('save', line(fontSize.xs), 96)
+                    : null}
+                  {bar('taxes', line(fontSize.xs), 130)}
                 </View>
-              ))}
-              <View style={styles.pillRow}>
-                <Skeleton width={120} height={PILL} rounded={radius.full} />
+                <Skeleton width={78} height={32} rounded={radius.md} />
+              </View>
+              {item.stock?.kind === 'low' ? bar('stock', small, '40%') : null}
+            </View>
+          </View>
+
+          {PDP_TRIAL.groupedRows ? (
+            <View style={styles.gutter}>
+              <View
+                style={[
+                  styles.card,
+                  {
+                    height:
+                      rows.reduce((sum, height) => sum + height + space[4] * 2, 0) +
+                      (rows.length - 1) +
+                      2,
+                    padding: 0,
+                    gap: 0,
+                  },
+                ]}
+              >
+                <Skeleton
+                  height={
+                    rows.reduce((sum, height) => sum + height + space[4] * 2, 0) + (rows.length - 1)
+                  }
+                  rounded={radius.lg}
+                />
               </View>
             </View>
-          </View>
-
-          <View style={styles.gutter}>
-            <View style={[styles.card, styles.section]}>
-              {bar('information', line(fontSize.lg, 'tight'), '42%')}
-              {[3, 2, 3].map((lines, index) => (
-                <View key={index} style={styles.pair}>
-                  <View style={{ width: '32%' }}>{bar('k', small, '80%')}</View>
-                  <View style={{ flex: 1 }}>{paragraph('v', lines, body)}</View>
+          ) : (
+            rows.map((height, row) => (
+              <View key={row} style={styles.gutter}>
+                <View
+                  style={[styles.card, { height: height + space[4] * 2 + 2, padding: 0, gap: 0 }]}
+                >
+                  <Skeleton height={height + space[4] * 2} rounded={radius.lg} />
                 </View>
-              ))}
-              <View style={styles.pillRow}>
-                <Skeleton width={120} height={PILL} rounded={radius.full} />
               </View>
-            </View>
-          </View>
+            ))
+          )}
 
-          <View style={styles.gutter}>
-            <View
-              style={[styles.card, { height: SHOP_ICON + space[4] * 2 + 2, padding: 0, gap: 0 }]}
-            >
-              <Skeleton height={SHOP_ICON + space[4] * 2} rounded={radius.lg} />
-            </View>
-          </View>
-
-          {rails.map((seeAll, rail) => (
+          {rails.map(({ kind, seeAll }, rail) => (
             <Fragment key={rail}>
               <View style={styles.rail}>
                 <View style={styles.head}>
@@ -203,25 +186,25 @@ export function ProductSkeleton({
                 </View>
                 <ScrollView horizontal scrollEnabled={false} showsHorizontalScrollIndicator={false}>
                   <View style={styles.cards}>
-                    {Array.from({ length: RAIL_CARDS }, (_, card) => (
-                      <ProductCardSkeleton key={card} width={RAIL_CARD_WIDTH} />
-                    ))}
+                    {Array.from(
+                      { length: kind === 'brands' ? RAIL_BRANDS : RAIL_CARDS },
+                      (_, card) =>
+                        kind === 'brands' ? (
+                          <Skeleton
+                            key={card}
+                            width={BRAND_TILE_WIDTH}
+                            height={BRAND_TILE_HEIGHT + space[2] + line(fontSize.xs)}
+                            rounded={radius.md}
+                          />
+                        ) : (
+                          <ProductCardSkeleton key={card} width={RAIL_CARD_WIDTH} />
+                        ),
+                    )}
                   </View>
                 </ScrollView>
               </View>
             </Fragment>
           ))}
-
-          <View style={styles.gutter}>
-            <View style={[styles.card, styles.section]}>
-              {bar('promises', line(fontSize.lg, 'tight'), '40%')}
-              <View style={styles.tiles}>
-                {[0, 1].map((slide) => (
-                  <Skeleton key={slide} width={176} height={92} rounded={radius.lg} />
-                ))}
-              </View>
-            </View>
-          </View>
         </View>
       </SkeletonScope>
     </View>

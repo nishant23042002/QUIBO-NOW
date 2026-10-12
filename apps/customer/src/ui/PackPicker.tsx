@@ -10,6 +10,10 @@ export interface PackOption {
   label: string;
   /** For example "₹29". */
   priceLabel: string;
+  /** The printed price, for example "₹30", shown struck through beside the price when it is higher. */
+  mrpLabel?: string;
+  /** What buying this size saves, for example "Save ₹2". Leave out when the printed price is not above the price. */
+  saveLabel?: string;
   /** For example "₹58/L". Leave out when the packs cannot be compared. */
   unitLabel?: string;
   /** For example "Best value". Leave out for the others. */
@@ -28,6 +32,13 @@ export interface PackPickerProps {
   options: readonly PackOption[];
   selectedId: string;
   onSelect: (id: string) => void;
+  /**
+   * A tile after the options that cannot be chosen, for a product that comes in one size only, so the picker has the same shape on
+   * every product. It says something meaningful, for example "Other sizes: Coming soon".
+   */
+  placeholder?: { title: string; body: string };
+  /** How the tag on the best-value size is drawn: a solid pistachio pill (the default), or the soft green tint of the page's other pills. */
+  tagTone?: 'solid' | 'soft';
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -49,6 +60,21 @@ const makeStyles = (c: ThemeColors) =>
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },
     unavailable: { opacity: 0.55, borderStyle: 'dashed' },
+    // Not a choice: dashed, quiet, and the same size as an option so the two sit side by side.
+    placeholder: {
+      minWidth: 104,
+      flexGrow: 1,
+      flexBasis: 104,
+      gap: 2,
+      paddingHorizontal: space[3],
+      paddingTop: space[3],
+      paddingBottom: space[2],
+      borderRadius: radius.lg,
+      borderWidth: 1.5,
+      borderStyle: 'dashed',
+      borderColor: c.line,
+    },
+    tagSoft: { backgroundColor: c.accentSubtle, borderWidth: 1, borderColor: c.accentInk },
     // The tag hangs over the option's top edge, so every option is the same height with or without one.
     tag: {
       position: 'absolute',
@@ -59,6 +85,7 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.accent,
     },
     pressed: { opacity: 0.8 },
+    priceLine: { flexDirection: 'row', alignItems: 'baseline', gap: space[2] },
     top: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -83,7 +110,14 @@ const makeStyles = (c: ThemeColors) =>
  * or piece so sizes can be compared, and a "Best value" tag on the cheapest per unit. The chosen one has the
  * action colour as its edge. An out-of-stock size is dimmed and cannot be chosen.
  */
-export function PackPicker({ title, options, selectedId, onSelect }: PackPickerProps) {
+export function PackPicker({
+  title,
+  options,
+  selectedId,
+  onSelect,
+  placeholder,
+  tagTone = 'solid',
+}: PackPickerProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
 
@@ -103,6 +137,8 @@ export function PackPicker({ title, options, selectedId, onSelect }: PackPickerP
               aria-label={[
                 option.label,
                 option.priceLabel,
+                option.mrpLabel,
+                option.saveLabel,
                 option.unitLabel,
                 option.tagLabel,
                 option.inCartLabel,
@@ -122,8 +158,12 @@ export function PackPicker({ title, options, selectedId, onSelect }: PackPickerP
               ]}
             >
               {option.tagLabel !== undefined ? (
-                <View style={styles.tag}>
-                  <Text variant="caption" color="onAccent" numberOfLines={1}>
+                <View style={[styles.tag, tagTone === 'soft' && styles.tagSoft]}>
+                  <Text
+                    variant="caption"
+                    color={tagTone === 'soft' ? 'accentInk' : 'onAccent'}
+                    numberOfLines={1}
+                  >
                     {option.tagLabel}
                   </Text>
                 </View>
@@ -139,13 +179,43 @@ export function PackPicker({ title, options, selectedId, onSelect }: PackPickerP
                   </View>
                 ) : null}
               </View>
-              <Text variant="label">{option.priceLabel}</Text>
+              <View style={styles.priceLine}>
+                <Text variant="label">{option.priceLabel}</Text>
+                {option.mrpLabel !== undefined ? (
+                  <Text variant="fine" color="inkMuted" strike>
+                    {option.mrpLabel}
+                  </Text>
+                ) : null}
+              </View>
+              {option.saveLabel !== undefined && option.unavailableLabel === undefined ? (
+                <Text variant="caption" color="accentInk" numberOfLines={1}>
+                  {option.saveLabel}
+                </Text>
+              ) : null}
               <Text variant="small" color="inkMuted" numberOfLines={1}>
                 {option.unavailableLabel ?? option.unitLabel ?? ' '}
               </Text>
             </Pressable>
           );
         })}
+
+        {placeholder !== undefined ? (
+          <View
+            style={styles.placeholder}
+
+            accessible
+
+            aria-label={`${placeholder.title}. ${placeholder.body}`}
+          >
+            <Text variant="strong" color="inkMuted">
+              {placeholder.title}
+            </Text>
+
+            <Text variant="small" color="inkMuted">
+              {placeholder.body}
+            </Text>
+          </View>
+        ) : null}
       </View>
     </View>
   );

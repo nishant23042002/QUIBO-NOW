@@ -21,6 +21,8 @@ export interface ProductCardProps {
   ribbon?: { amount: string; offLabel: string };
   /** For items that can come in the next delivery window: the line under the pack, for example "15–20 mins". Only some items have one. */
   quickLabel?: string;
+  /** Draws the pack line in the accent colour: a price per unit that is lower than the one being compared with. */
+  packAccent?: boolean;
   /** Vegetarian or not, with the words a screen reader says for it. Packaged food always has one. */
   diet?: { kind: 'veg' | 'nonveg'; label: string };
   /**
@@ -155,6 +157,7 @@ export const ProductCard = memo(function ProductCard({
   mrp,
   ribbon,
   quickLabel,
+  packAccent = false,
   diet,
   stock,
   emoji,
@@ -231,7 +234,7 @@ export const ProductCard = memo(function ProductCard({
         <Text
           variant={compact ? 'fine' : 'small'}
           tight={compact}
-          color="inkMuted"
+          color={packAccent ? 'accentInk' : 'inkMuted'}
           numberOfLines={1}
         >
           {pack}

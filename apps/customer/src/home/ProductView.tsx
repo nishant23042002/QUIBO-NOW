@@ -20,23 +20,25 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { useReduceMotion } from '@/ui/useReduceMotion';
 import {
   BOTTOM_BAR_HEIGHT,
-  Button,
-  CardTitle,
-  DietMark,
+  BrandFooter,
+  BrandTile,
+  DetailSection,
   DiscountRibbon,
-  FactTable,
-  GALLERY_RATIO,
+  FactChip,
+  HighlightsStrip,
   Icon,
   Notice,
   PackPicker,
   PriceBadge,
-  ProductGallery,
   ProductInsight,
   ProductRail,
+  ProductStage,
+  STAGE_RATIO,
+  Sheet,
   StatePanel,
+  TintPill,
   Stepper,
   Text,
-  TrustTiles,
   WEIGHT_RULE,
   countRule,
   radius,
@@ -55,7 +57,14 @@ import { ProductHeader } from './ProductHeader';
 import { ProductSkeleton } from './ProductSkeleton';
 import { ACTION_HEIGHT, makePageStyles } from './productLayout';
 import { anyCardNote, useHomeItems, type HomeItem } from './items';
-import { moreFromShop, similarItems } from './product';
+import { PDP_TRIAL } from './pdpTrial';
+import {
+  brandsInCategory,
+  cheaperPerUnit,
+  otherBrands,
+  similarItems,
+  startingPackId,
+} from './product';
 import { useProductDetails } from './productDetails';
 import { useShop } from './sampleShops';
 
@@ -67,8 +76,10 @@ const BAR_OUT_MS = 200;
 const BAR_EASE = Easing.bezier(0.4, 0, 0.2, 1);
 /** Once the ADD bar is showing, the page has to come back this far before it goes, so a small wobble at the edge cannot flicker it. */
 const BAR_HYSTERESIS = 24;
-/** How many rows of the information card show before "View more". */
-const INFORMATION_SHOWN = 3;
+/** How tall the details sheet opens, as a share of the screen, and stays. */
+const SHEET_HEIGHT = 72;
+/** How many of the highlights show as chips on the page; the rest are in the details sheet. */
+const STRIP_CHIPS = 3;
 /** How long the grey skeleton takes to fade into the real page. */
 const FADE_MS = 200;
 
@@ -80,16 +91,34 @@ const makeStyles = (c: ThemeColors) =>
     fill: { flex: 1 },
     // The skeleton, laid over the real page while it fades in.
     cover: { position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: c.bg },
-    ribbon: { position: 'absolute', top: 0, left: space[4] },
-    hidden: { opacity: 0 },
-    packRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    noticeTop: { paddingTop: space[3] },
     priceRow: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
       gap: space[3],
     },
-    fact: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    fact: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
+    meta: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      columnGap: space[4],
+      rowGap: space[1],
+    },
+    divider: { height: 1, backgroundColor: c.line },
+    alsoAt: { marginTop: space[1] },
+    strip: { padding: space[3] },
+    chipsWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2] },
+    sheetFooter: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: space[3],
+    },
+    // The price, the saving and the tax line stack at the left; the ADD control keeps its place at the right.
+    priceLeft: { flexShrink: 1, minWidth: 0, gap: space[1] },
     shop: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     shopIcon: {
       width: 40,
@@ -100,6 +129,25 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.lilac,
     },
     shopText: { flex: 1, minWidth: 0 },
+    // The three rows as one card: a flush box with dividers between rows, the rows carrying the card's padding.
+    groupCard: {
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: c.line,
+      backgroundColor: c.surface,
+      overflow: 'hidden',
+    },
+    groupRow: { padding: space[4] },
+    brandMark: {
+      width: 40,
+      height: 40,
+      borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: c.line,
+      backgroundColor: c.surface,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     pressed: { opacity: 0.8 },
     action: {
       position: 'absolute',
@@ -120,20 +168,7 @@ const makeStyles = (c: ThemeColors) =>
     },
     // The price block takes what the control leaves, but not less than a readable line.
     actionInfo: { flexGrow: 1, flexShrink: 1, flexBasis: 120, minWidth: 0 },
-    add: { minWidth: 140 },
     rail: { paddingBottom: space[2] },
-    more: {
-      minHeight: 40,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: space[1],
-      alignSelf: 'center',
-      paddingHorizontal: space[4],
-      borderRadius: radius.full,
-      backgroundColor: c.accentSubtle,
-    },
-    flipped: { transform: [{ rotate: '180deg' }] },
     shopName: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
   });
 
@@ -168,9 +203,10 @@ export function ProductView({
   const reduceMotion = useReduceMotion();
   const hideBar = useChromeProgress();
   const reportScroll = useChromeReport();
-  // The ADD bar only shows once the price and ADD in the page itself have scrolled out of sight, so the same control is never on
-  // screen twice. `inlineEnd` is where that row ends, from three measurements; `barIn` is 0 hidden to 1 shown, on the animation thread.
-  const [barShown, setBarShown] = useState(false);
+  // The ADD bar only shows once the price and ADD in the page itself have scrolled out of sight above, so the same control is
+  // never on screen twice and the bar is never there for nothing. `rowEnd` is where that row ends, from three measurements;
+  // `barIn` is 0 hidden to 1 shown, on the animation thread.
+  const [scrollShown, setScrollShown] = useState(false);
   const [barIn] = useState(() => new Animated.Value(0));
   const [inline, setInline] = useState({ section: 0, card: 0, row: 0, height: 0 });
 
@@ -179,18 +215,29 @@ export function ProductView({
     setInline((current) => (current[key] === value ? current : { ...current, [key]: value }));
   };
 
+  const online = useOnline();
+  // loading, then ready; or offline / failed, with a way to try again.
+  const [phase, setPhase] = useState<'loading' | 'ready' | 'offline' | 'failed'>('loading');
+  const [attempt, setAttempt] = useState(0);
+  const loaded = phase === 'ready';
+  // Nothing to show: there is no network or the load failed. The price bar goes too, since the price may be out of date.
+  const blocked = phase === 'offline' || phase === 'failed';
+
+  const rowEnd = inline.section + inline.card + inline.row + inline.height;
+  const measured = loaded && inline.height > 0;
+  const barShown = measured && scrollShown;
+
   const onPageScroll = useCallback(
     (event: NativeSyntheticEvent<NativeScrollEvent>) => {
       const y = event.nativeEvent.contentOffset.y;
       // Scrolling down hides the bottom bar and brings the cart bar down to its small form, as on Home.
       if (!reduceMotion) reportScroll(y);
-      // The ADD bar comes once the page's own price and ADD are out of sight, and goes when they are back. State changes only
-      // when the answer changes, not on every frame of the scroll.
-      const end = inline.section + inline.card + inline.row + inline.height;
-      const past = inline.height > 0 && y >= (barShown ? end - BAR_HYSTERESIS : end);
-      if (past !== barShown) setBarShown(past);
+      // The ADD bar comes once the page's own price and ADD are out of sight above, and goes when they are back. Once it is
+      // showing, the row has to come back a little further before it goes, so a small wobble at the edge cannot flicker it.
+      // State changes only when the answer changes, not on every frame of the scroll.
+      setScrollShown(measured && y >= (barShown ? rowEnd - BAR_HYSTERESIS : rowEnd));
     },
-    [reduceMotion, reportScroll, inline, barShown],
+    [reduceMotion, reportScroll, barShown, rowEnd, measured],
   );
 
   useEffect(() => {
@@ -209,19 +256,12 @@ export function ProductView({
       slide.stop();
     };
   }, [barShown, reduceMotion, barIn]);
-  const online = useOnline();
-  // loading, then ready; or offline / failed, with a way to try again.
-  const [phase, setPhase] = useState<'loading' | 'ready' | 'offline' | 'failed'>('loading');
-  const [attempt, setAttempt] = useState(0);
-  const loaded = phase === 'ready';
-  // Nothing to show: there is no network or the load failed. The price bar goes too, since the price may be out of date.
-  const blocked = phase === 'offline' || phase === 'failed';
   // 0 while the skeleton shows, 1 once the real page has faded in over it. The skeleton goes when the fade is done.
   const [reveal] = useState(() => new Animated.Value(0));
   const [skeletonOn, setSkeletonOn] = useState(true);
-  const [expanded, setExpanded] = useState(false);
-  // The information card shows its first rows until opened, like the highlights.
-  const [infoOpen, setInfoOpen] = useState(false);
+  // The details sheet, and which of its sections are open: the key facts first, the rest on request.
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [sectionsOpen, setSectionsOpen] = useState({ key: true, nutrition: false, info: false });
   // How tall the price and ADD bar really is, so the page's end and the cart bar clear it at any text size.
   const [actionHeight, setActionHeight] = useState(ACTION_HEIGHT);
   // The insight card covers most of the picture while it is open, so the saving ribbon steps aside.
@@ -274,15 +314,25 @@ export function ProductView({
     };
   }, [loaded, reduceMotion, reveal]);
 
-  // The size chosen on this page; it starts as the one the card showed.
-  const [packId, setPackId] = useState(item.defaultPackId);
+  // The size chosen on this page; it starts as the best-value size, or the one the card showed (the trial switch).
+  const [packId, setPackId] = useState(() => startingPackId(item, PDP_TRIAL.preselectBestValue));
   const pack = item.packs.find((candidate) => candidate.id === packId) ?? item.packs[0];
   if (pack === undefined) return null;
   const quantity = cart.quantities[pack.id] ?? 0;
   const out = pack.stock?.kind === 'out';
-  const more = moreFromShop(items, item);
-  const allInformation = [...details.information, ...details.seller];
-  const similar = similarItems(items, item);
+  // The same kind of product from other brands first; then what is popular in the category, without repeating those.
+  const others = otherBrands(items, item);
+  const brands = brandsInCategory(items, item.category);
+  const similar = similarItems(items, item).filter(
+    (candidate) => !others.some((other) => other.id === candidate.id),
+  );
+  // "Packed today" for fresh goods, "Packed yesterday" for one day old; older goods say nothing here (the sheet has the date).
+  const packedLabel =
+    details.packedDaysAgo === 0
+      ? t('product.packedToday')
+      : details.packedDaysAgo === 1
+        ? t('product.packedYesterday')
+        : undefined;
   const saved =
     pack.mrp !== undefined && pack.mrp > pack.price ? subtract(pack.mrp, pack.price) : undefined;
   const dock = insets.bottom + BOTTOM_BAR_HEIGHT;
@@ -298,9 +348,9 @@ export function ProductView({
   const cartLift = barIn.interpolate({ inputRange: [0, 1], outputRange: [0, -actionHeight] });
   const stepper = {
     addLabel: t('home.rails.add'),
-    addAriaLabel: t('home.rails.addNamed', { name: item.name }),
-    decreaseLabel: t('home.rails.removeOneOf', { name: item.name }),
-    increaseLabel: t('home.rails.addOneOf', { name: item.name }),
+    addAriaLabel: t('home.rails.addNamed', { name: item.fullName }),
+    decreaseLabel: t('home.rails.removeOneOf', { name: item.fullName }),
+    increaseLabel: t('home.rails.addOneOf', { name: item.fullName }),
     maxLabel: t('home.rails.noMore'),
     rule: pack.loose === true ? WEIGHT_RULE : countRule(pack.maxQuantity),
     ...(pack.loose === true ? { unitLabel: t('weights.kg') } : {}),
@@ -362,8 +412,8 @@ export function ProductView({
         ]
       : []),
   ];
-  // The header turns into the product card once most of the big picture has scrolled away.
-  const revealAt = Math.round(((width - space[3] * 2) / GALLERY_RATIO) * 0.75);
+  // The header turns into the product card once most of the picture stage has scrolled away.
+  const revealAt = Math.round((width / STAGE_RATIO) * 0.75);
 
   // Opens the phone's own share sheet with a line about the product. Cancelling it, or a phone with nothing to
   // share to, is not an error worth showing.
@@ -371,7 +421,7 @@ export function ProductView({
     try {
       await Share.share({
         message: t('product.shareMessage', {
-          name: item.name,
+          name: item.fullName,
           pack: pack.label,
           price: formatRupees(pack.price),
           shop: item.shopName,
@@ -387,10 +437,105 @@ export function ProductView({
     router.push({ pathname: '/shop/[id]', params: { id: item.shop } });
   };
 
+  // A kind of product opens search with its name already in the box; a brand opens its own page (ADR 0036).
+  const openSearch = (query: string) => {
+    router.push({ pathname: '/search', params: { fresh: String(Date.now()), q: query } });
+  };
+  const openBrandPage = (brandId: string) => {
+    router.push({ pathname: '/brand/[id]', params: { id: brandId } });
+  };
+  const openBrand = () => {
+    if (item.brand !== undefined) openBrandPage(item.brand.id);
+  };
+
+  // The three rows under the info card. Drawn as three cards, or (the trial switch) as the rows of one card with dividers.
+  const brandOfItem = item.brand;
+  const alsoAt =
+    item.otherShops === undefined
+      ? undefined
+      : item.otherShops === 1
+        ? t('product.alsoAtOne')
+        : t('product.alsoAtMany', { count: item.otherShops });
+  const soldByRow = (grouped: boolean) => (
+    <Pressable
+      role="button"
+      aria-label={`${t('product.soldBy', { shop: item.shopName })}. ${t('product.openShop')}`}
+      onPress={openShop}
+      style={({ pressed }) => [
+        grouped ? styles.groupRow : styles.card,
+        styles.shop,
+        pressed && styles.pressed,
+      ]}
+    >
+      <View style={styles.shopIcon}>
+        <Icon name="store" color={colors.action} size={20} />
+      </View>
+      <View style={styles.shopText}>
+        <View style={styles.shopName}>
+          <Text variant="strong" numberOfLines={1}>
+            {t('product.soldBy', { shop: item.shopName })}
+          </Text>
+          <Icon name="shield" color={colors.accentInk} size={16} />
+        </View>
+        <Text variant="small" color="inkMuted" numberOfLines={2}>
+          {[shop?.statusLabel, shop?.sinceLabel]
+            .filter((part) => part !== undefined)
+            .join(' \u00B7 ')}
+        </Text>
+        {alsoAt === undefined ? null : PDP_TRIAL.singleGreen ? (
+          <View style={styles.alsoAt}>
+            <TintPill label={alsoAt} />
+          </View>
+        ) : (
+          <Text variant="caption" color="accentInk" numberOfLines={1}>
+            {alsoAt}
+          </Text>
+        )}
+      </View>
+      <Icon name="chevronRight" color={colors.accentInk} size={18} />
+    </Pressable>
+  );
+  const brandRow = (grouped: boolean) =>
+    brandOfItem === undefined ? null : (
+      <Pressable
+        role="button"
+        aria-label={`${brandOfItem.name}. ${t('product.exploreAll')}`}
+        onPress={openBrand}
+        style={({ pressed }) => [
+          grouped ? styles.groupRow : styles.card,
+          styles.shop,
+          pressed && styles.pressed,
+        ]}
+      >
+        <View style={styles.brandMark}>
+          <Text variant="label">{brandOfItem.mark}</Text>
+        </View>
+        <View style={styles.shopText}>
+          <Text variant="strong" numberOfLines={1}>
+            {brandOfItem.name}
+          </Text>
+          <Text variant="small" color="inkMuted" numberOfLines={1}>
+            {t('product.exploreAll')}
+          </Text>
+        </View>
+        <Icon name="chevronRight" color={colors.accentInk} size={18} />
+      </Pressable>
+    );
+  const replacementRow = (grouped: boolean) => (
+    <View style={[grouped ? styles.groupRow : styles.card, styles.shop]} accessible>
+      <View style={styles.shopIcon}>
+        <Icon name="repeat" color={colors.action} size={20} />
+      </View>
+      <View style={styles.shopText}>
+        <Text variant="strong">{t('product.replacementRow')}</Text>
+      </View>
+    </View>
+  );
+
   return (
     <View style={styles.page}>
       <ProductHeader
-        name={item.name}
+        name={item.fullName}
         emoji={item.emoji}
         tint={tintOf(item.category)}
         price={pack.price}
@@ -441,37 +586,50 @@ export function ProductView({
               ]}
             >
               {online ? null : (
-                <View style={styles.gutter}>
+                <View style={[styles.gutter, styles.noticeTop]}>
                   <Notice tone="warning" icon="wifiOff" message={t('state.offline.banner')} />
                 </View>
               )}
+              <ProductStage
+                images={item.images}
+                tint={tintOf(item.category)}
+                photoLabel={(position, total) => t('product.photoOf', { n: position, total })}
+                faded={out}
+                quiet={insightOpen}
+                diet={item.diet}
+                {...(pack.ribbon !== undefined && !out
+                  ? {
+                      ribbon: (
+                        <DiscountRibbon
+                          amount={pack.ribbon.amount}
+                          offLabel={pack.ribbon.offLabel}
+                        />
+                      ),
+                    }
+                  : {})}
+                insight={
+                  <ProductInsight
+                    title={t('product.insight.title')}
+                    pages={insightPages}
+                    openLabel={t('product.insight.open')}
+                    closeLabel={t('product.insight.close')}
+                    onOpenChange={setInsightOpen}
+                  />
+                }
+              />
               <View style={styles.gutter}>
-                <ProductGallery
-                  images={item.images}
-                  initialWidth={width - space[3] * 2}
-                  tint={tintOf(item.category)}
-                  photoLabel={(position, total) => t('product.photoOf', { n: position, total })}
-                  faded={out}
-                  overlay={
-                    <>
-                      {pack.ribbon !== undefined && !out ? (
-                        <View style={[styles.ribbon, insightOpen && styles.hidden]}>
-                          <DiscountRibbon
-                            amount={pack.ribbon.amount}
-                            offLabel={pack.ribbon.offLabel}
-                          />
-                        </View>
-                      ) : null}
-                      <ProductInsight
-                        title={t('product.insight.title')}
-                        pages={insightPages}
-                        openLabel={t('product.insight.open')}
-                        closeLabel={t('product.insight.close')}
-                        onOpenChange={setInsightOpen}
-                      />
-                    </>
-                  }
-                />
+                <View style={[styles.card, styles.strip]}>
+                  <HighlightsStrip
+                    slim={PDP_TRIAL.singleGreen}
+                    chips={details.highlights.slice(0, STRIP_CHIPS)}
+                    actionLabel={t('product.viewDetails')}
+                    onAction={() => {
+                      // Each time the sheet opens it starts the same way: the key facts open, the rest shut.
+                      setSectionsOpen({ key: true, nutrition: false, info: false });
+                      setDetailsOpen(true);
+                    }}
+                  />
+                </View>
               </View>
               <View
                 style={styles.gutter}
@@ -480,23 +638,87 @@ export function ProductView({
                 }}
               >
                 <View
-                  style={styles.card}
+                  style={[styles.card, styles.section]}
                   onLayout={(event) => {
                     measure('card', event.nativeEvent.layout.y);
                   }}
                 >
-                  <View style={styles.packRow}>
-                    <DietMark kind={item.diet.kind} label={item.diet.label} size={18} />
-                    <Text variant="small" color="inkMuted">
-                      {item.diet.label}
-                    </Text>
-                  </View>
-                  <Text variant="title">{item.name}</Text>
-                  <Text color="inkMuted">
-                    {pack.loose === true
-                      ? t('weights.netLine')
-                      : t('product.netQuantity', { pack: pack.label })}
-                  </Text>
+                  {out ? null : (
+                    <View style={styles.meta}>
+                      <View style={styles.fact}>
+                        <Icon name="clock" color={colors.ink} size={16} />
+                        <Text variant="caption">{when.short}</Text>
+                      </View>
+                      {packedLabel !== undefined ? (
+                        PDP_TRIAL.singleGreen ? (
+                          <TintPill icon="check" label={packedLabel} />
+                        ) : (
+                          <View style={styles.fact}>
+                            <Icon name="check" color={colors.accentInk} size={16} />
+                            <Text variant="caption" color="accentInk">
+                              {packedLabel}
+                            </Text>
+                          </View>
+                        )
+                      ) : null}
+                    </View>
+                  )}
+                  <Text variant="heading">{item.fullName}</Text>
+                  {pack.loose === true ? (
+                    <Text color="inkMuted">{t('weights.netLine')}</Text>
+                  ) : null}
+                  <PackPicker
+                    tagTone={PDP_TRIAL.singleGreen ? 'soft' : 'solid'}
+                    title={t('product.pickSize')}
+                    selectedId={pack.id}
+                    onSelect={setPackId}
+                    options={item.packs.map((option) => ({
+                      id: option.id,
+                      label: option.label,
+                      priceLabel: formatRupees(option.price),
+                      ...(option.mrp !== undefined && option.mrp > option.price
+                        ? { mrpLabel: formatRupees(option.mrp) }
+                        : {}),
+                      ...(PDP_TRIAL.sizeSavings &&
+                      option.mrp !== undefined &&
+                      option.mrp > option.price
+                        ? {
+                            saveLabel: t('product.saveShort', {
+                              amount: formatRupees(subtract(option.mrp, option.price)),
+                            }),
+                          }
+                        : {}),
+                      ...(option.unitPriceLabel !== undefined
+                        ? { unitLabel: option.unitPriceLabel }
+                        : {}),
+                      ...(option.bestValue ? { tagLabel: t('product.bestValue') } : {}),
+                      inCart: cart.quantities[option.id] ?? 0,
+                      ...((cart.quantities[option.id] ?? 0) > 0
+                        ? {
+                            inCartLabel: t('product.inCart', {
+                              count: cart.quantities[option.id] ?? 0,
+                            }),
+                          }
+                        : {}),
+                      ...(option.available ? {} : { unavailableLabel: t('home.rails.outOfStock') }),
+                    }))}
+
+                    {...(item.packs.length === 1
+                      ? {
+                          placeholder:
+                            pack.loose === true
+                              ? {
+                                  title: t('product.anyWeightTitle'),
+                                  body: t('product.anyWeightBody'),
+                                }
+                              : {
+                                  title: t('product.otherSizesTitle'),
+                                  body: t('product.otherSizesBody'),
+                                },
+                        }
+                      : {})}
+                  />
+                  <View style={styles.divider} />
                   <View
                     style={styles.priceRow}
                     onLayout={(event) => {
@@ -504,16 +726,27 @@ export function ProductView({
                       measure('height', event.nativeEvent.layout.height);
                     }}
                   >
-                    <PriceBadge
-                      amount={pack.price}
-                      {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
-                    />
+                    <View style={styles.priceLeft}>
+                      <PriceBadge
+                        amount={pack.price}
+                        {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
+                      />
+                      {saved !== undefined ? (
+                        <Text variant="caption" color="accentInk">
+                          {t('product.save', { amount: formatRupees(saved) })}
+                        </Text>
+                      ) : null}
+                      <Text variant="fine" color="inkMuted">
+                        {t('product.taxes')}
+                      </Text>
+                    </View>
                     {out ? (
                       <Text variant="strong" color="inkMuted">
                         {pack.stock?.label}
                       </Text>
                     ) : (
                       <Stepper
+                        large
                         value={quantity}
                         onChange={(next) => {
                           cart.setQuantity(pack.id, next);
@@ -522,14 +755,6 @@ export function ProductView({
                       />
                     )}
                   </View>
-                  {saved !== undefined ? (
-                    <Text variant="strong" color="accentInk">
-                      {t('product.save', { amount: formatRupees(saved) })}
-                    </Text>
-                  ) : null}
-                  <Text variant="small" color="inkMuted">
-                    {t('product.taxes')}
-                  </Text>
                   {pack.loose === true ? (
                     <Text variant="small" color="inkMuted">
                       {t('weights.pdpNote', { percent: ZONE.weights.tolerancePercent })}
@@ -542,139 +767,55 @@ export function ProductView({
                         : pack.stock.label}
                     </Text>
                   ) : null}
-                  {pack.quick === true && !out ? (
-                    <View style={styles.fact}>
-                      <Icon name="clock" color={colors.accentInk} size={18} />
-                      <Text variant="strong">{when.short}</Text>
-                    </View>
-                  ) : null}
                 </View>
               </View>
-              {item.packs.length > 1 ? (
+              {PDP_TRIAL.groupedRows ? (
                 <View style={styles.gutter}>
-                  <View style={styles.card}>
-                    <PackPicker
-                      title={t('product.pickSize')}
-                      selectedId={pack.id}
-                      onSelect={setPackId}
-                      options={item.packs.map((option) => ({
-                        id: option.id,
-                        label: option.label,
-                        priceLabel: formatRupees(option.price),
-                        ...(option.unitPriceLabel !== undefined
-                          ? { unitLabel: option.unitPriceLabel }
-                          : {}),
-                        ...(option.bestValue ? { tagLabel: t('product.bestValue') } : {}),
-                        inCart: cart.quantities[option.id] ?? 0,
-                        ...((cart.quantities[option.id] ?? 0) > 0
-                          ? {
-                              inCartLabel: t('product.inCart', {
-                                count: cart.quantities[option.id] ?? 0,
-                              }),
-                            }
-                          : {}),
-                        ...(option.available
-                          ? {}
-                          : { unavailableLabel: t('home.rails.outOfStock') }),
-                      }))}
-                    />
+                  <View style={styles.groupCard}>
+                    {soldByRow(true)}
+                    {brandOfItem !== undefined ? (
+                      <>
+                        <View style={styles.divider} />
+                        {brandRow(true)}
+                      </>
+                    ) : null}
+                    <View style={styles.divider} />
+                    {replacementRow(true)}
                   </View>
                 </View>
-              ) : null}
-              <View style={styles.gutter}>
-                <View style={[styles.card, styles.section]}>
-                  <CardTitle>{t('product.highlights')}</CardTitle>
-                  <FactTable
-                    rows={
-                      expanded
-                        ? [...details.highlights, ...details.moreHighlights]
-                        : details.highlights
-                    }
-                  />
-                  <Pressable
-                    role="button"
-                    aria-expanded={expanded}
-                    aria-label={expanded ? t('product.viewLess') : t('product.viewMore')}
-                    onPress={() => {
-                      setExpanded((current) => !current);
-                    }}
-                    style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-                  >
-                    <Text variant="strong" color="accentInk">
-                      {expanded ? t('product.viewLess') : t('product.viewMore')}
-                    </Text>
-                    <View style={expanded ? styles.flipped : undefined}>
-                      <Icon name="chevron" color={colors.accentInk} size={16} />
-                    </View>
-                  </Pressable>
-                </View>
-              </View>
-              <View style={styles.gutter}>
-                <View style={[styles.card, styles.section]}>
-                  <CardTitle>{t('product.information')}</CardTitle>
-                  <FactTable
-                    rows={infoOpen ? allInformation : allInformation.slice(0, INFORMATION_SHOWN)}
-                  />
-                  {allInformation.length > INFORMATION_SHOWN ? (
-                    <Pressable
-                      role="button"
-                      aria-expanded={infoOpen}
-                      aria-label={infoOpen ? t('product.viewLess') : t('product.viewMore')}
-                      onPress={() => {
-                        setInfoOpen((current) => !current);
-                      }}
-                      style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-                    >
-                      <Text variant="strong" color="accentInk">
-                        {infoOpen ? t('product.viewLess') : t('product.viewMore')}
-                      </Text>
-                      <View style={infoOpen ? styles.flipped : undefined}>
-                        <Icon name="chevron" color={colors.accentInk} size={16} />
-                      </View>
-                    </Pressable>
+              ) : (
+                <>
+                  <View style={styles.gutter}>{soldByRow(false)}</View>
+                  {brandOfItem !== undefined ? (
+                    <View style={styles.gutter}>{brandRow(false)}</View>
                   ) : null}
-                </View>
-              </View>
-              <View style={styles.gutter}>
-                <Pressable
-                  role="button"
-                  aria-label={`${t('product.soldBy', { shop: item.shopName })}. ${t('product.openShop')}`}
-                  onPress={openShop}
-                  style={({ pressed }) => [styles.card, styles.shop, pressed && styles.pressed]}
-                >
-                  <View style={styles.shopIcon}>
-                    <Icon name="store" color={colors.action} size={20} />
-                  </View>
-                  <View style={styles.shopText}>
-                    <View style={styles.shopName}>
-                      <Text variant="strong" numberOfLines={1}>
-                        {t('product.soldBy', { shop: item.shopName })}
-                      </Text>
-                      <Icon name="shield" color={colors.accentInk} size={16} />
-                    </View>
-                    <Text variant="small" color="inkMuted" numberOfLines={2}>
-                      {[shop?.statusLabel, shop?.sinceLabel]
-                        .filter((part) => part !== undefined)
-                        .join(' \u00B7 ')}
-                    </Text>
-                  </View>
-                  <Icon name="chevronRight" color={colors.accentInk} size={18} />
-                </Pressable>
-              </View>
-              {more.length > 0 ? (
+                  <View style={styles.gutter}>{replacementRow(false)}</View>
+                </>
+              )}
+              {others.length > 0 ? (
                 <View style={styles.rail}>
                   <ProductRail
-                    title={t('product.moreFrom', { shop: item.shopName })}
+                    title={t('product.otherBrands', { name: item.name.toLocaleLowerCase() })}
                     seeAllLabel={t('home.rails.seeAll')}
-                    onSeeAll={openShop}
+                    onSeeAll={() => {
+                      openSearch(item.name);
+                    }}
                   >
-                    {more.map((other) => (
+                    {others.map((other) => (
                       <ItemTile
                         key={other.id}
                         item={other}
                         width={RAIL_CARD_WIDTH}
-                        reserveNote={anyCardNote(more)}
+                        reserveNote={anyCardNote(others)}
                         onOpen={onOpenRelated}
+                        {...(PDP_TRIAL.unitPriceOnBrands && other.unit !== undefined
+                          ? {
+                              compare: {
+                                label: other.unit.label,
+                                better: cheaperPerUnit(other.unit, pack.unit),
+                              },
+                            }
+                          : {})}
                       />
                     ))}
                   </ProductRail>
@@ -699,41 +840,24 @@ export function ProductView({
                   </ProductRail>
                 </View>
               ) : null}
-              <View style={styles.gutter}>
-                <View style={[styles.card, styles.section]}>
-                  <CardTitle>{t('product.trust.title')}</CardTitle>
-                  <TrustTiles
-                    scroll
-                    bleed={space[4]}
-                    tiles={[
-                      {
-                        key: 'verified',
-                        icon: 'shield',
-                        title: t('product.trust.verified.title'),
-                        body: t('product.trust.verified.body'),
-                      },
-                      {
-                        key: 'packed',
-                        icon: 'store',
-                        title: t('product.trust.packed.title'),
-                        body: t('product.trust.packed.body', { shop: item.shopName }),
-                      },
-                      {
-                        key: 'window',
-                        icon: 'clock',
-                        title: t('product.trust.window.title'),
-                        body: t('product.trust.window.body'),
-                      },
-                      {
-                        key: 'replace',
-                        icon: 'repeat',
-                        title: t('product.trust.replace.title'),
-                        body: t('product.trust.replace.body'),
-                      },
-                    ]}
-                  />
+              {brands.length > 1 ? (
+                <View style={styles.rail}>
+                  <ProductRail title={t('product.brandsIn')}>
+                    {brands.map((brand) => (
+                      <BrandTile
+                        key={brand.id}
+                        mark={brand.mark}
+                        name={brand.name}
+                        label={`${brand.name}. ${t('product.exploreAll')}`}
+                        onPress={() => {
+                          openBrandPage(brand.id);
+                        }}
+                      />
+                    ))}
+                  </ProductRail>
                 </View>
-              </View>
+              ) : null}
+              <BrandFooter />
             </Animated.ScrollView>
           </Animated.View>
           {skeletonOn ? (
@@ -747,7 +871,11 @@ export function ProductView({
               <ProductSkeleton
                 label={t('common.loading')}
                 item={item}
-                rails={[...(more.length > 0 ? [true] : []), ...(similar.length > 0 ? [false] : [])]}
+                rails={[
+                  ...(others.length > 0 ? [{ kind: 'cards' as const, seeAll: true }] : []),
+                  ...(similar.length > 0 ? [{ kind: 'cards' as const, seeAll: false }] : []),
+                  ...(brands.length > 1 ? [{ kind: 'brands' as const, seeAll: false }] : []),
+                ]}
               />
             </Animated.View>
           ) : null}
@@ -770,7 +898,7 @@ export function ProductView({
                 ...(quantity > 0 && pack.loose !== true
                   ? [t('product.inCart', { count: quantity })]
                   : []),
-                item.name,
+                item.fullName,
               ].join(' · ')}
             </Text>
             <PriceBadge
@@ -782,17 +910,9 @@ export function ProductView({
             <Text variant="strong" color="inkMuted">
               {pack.stock?.label}
             </Text>
-          ) : quantity === 0 ? (
-            <View style={styles.add}>
-              <Button
-                label={t('home.rails.add')}
-                onPress={() => {
-                  cart.setQuantity(pack.id, stepper.rule.min);
-                }}
-              />
-            </View>
           ) : (
             <Stepper
+              large
               value={quantity}
               onChange={(next) => {
                 cart.setQuantity(pack.id, next);
@@ -809,6 +929,83 @@ export function ProductView({
       >
         <CartLayer follow={followsBar} bottom={dock} />
       </Animated.View>
+      <Sheet
+        open={detailsOpen}
+        onClose={() => {
+          setDetailsOpen(false);
+        }}
+        title={item.fullName}
+        heightPercent={SHEET_HEIGHT}
+        closeLabel={t('product.closeDetails')}
+        footer={
+          <View style={styles.sheetFooter}>
+            <View style={styles.actionInfo}>
+              <Text variant="fine" color="inkMuted" numberOfLines={1}>
+                {pack.label}
+              </Text>
+              <PriceBadge
+                amount={pack.price}
+                {...(pack.mrp !== undefined ? { mrp: pack.mrp } : {})}
+              />
+              <Text variant="fine" color="inkMuted">
+                {t('product.taxes')}
+              </Text>
+            </View>
+            {out ? (
+              <Text variant="strong" color="inkMuted">
+                {pack.stock?.label}
+              </Text>
+            ) : (
+              <Stepper
+                large
+                value={quantity}
+                onChange={(next) => {
+                  cart.setQuantity(pack.id, next);
+                }}
+                {...stepper}
+              />
+            )}
+          </View>
+        }
+      >
+        <Text variant="subheading" role="heading">
+          {t('product.highlights')}
+        </Text>
+        <View style={styles.chipsWrap}>
+          {details.highlights.map((chip) => (
+            <FactChip key={chip.label} chip={chip} />
+          ))}
+        </View>
+        <Text variant="subheading" role="heading">
+          {t('product.allDetails')}
+        </Text>
+        <DetailSection
+          title={t('product.keyInformation')}
+          rows={details.keyInformation}
+          open={sectionsOpen.key}
+          onToggle={() => {
+            setSectionsOpen((current) => ({ ...current, key: !current.key }));
+          }}
+        />
+        {details.nutrition.length > 0 ? (
+          <DetailSection
+            title={t('product.nutritionalInformation')}
+            rows={details.nutrition}
+            open={sectionsOpen.nutrition}
+            onToggle={() => {
+              setSectionsOpen((current) => ({ ...current, nutrition: !current.nutrition }));
+            }}
+          />
+        ) : null}
+        <DetailSection
+          title={t('product.information')}
+          rows={details.info}
+          open={sectionsOpen.info}
+          onToggle={() => {
+            setSectionsOpen((current) => ({ ...current, info: !current.info }));
+          }}
+        />
+      </Sheet>
     </View>
   );
 }

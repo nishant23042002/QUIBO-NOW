@@ -1,12 +1,13 @@
 import { memo, useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { BrandFooter, ProductRail, space } from '@/ui';
+import { BrandChips, BrandFooter, ProductRail, space } from '@/ui';
+import { activeBrand, brandsOfItems, filterByBrand } from './brandPage';
 import { HomeSkeleton } from './HomeSkeleton';
 import { Featured } from './Featured';
 import { QuieterNote } from './QuieterNote';
+import { ShopByBrand } from './ShopByBrand';
 import { ShopByCategory } from './ShopByCategory';
-import { ShopsStrip } from './ShopsStrip';
 import { SmallPrices } from './SmallPrices';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import {
@@ -54,6 +55,11 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
     };
   }, [category, shown]);
   const loading = shown !== category;
+  // The brand chosen to narrow a category's grid, remembered with the category it was chosen in (another category starts on All).
+  const [pick, setPick] = useState<{ category: string; brand: string | null }>({
+    category,
+    brand: null,
+  });
 
   const tile = (item: HomeItem, width: number, reserveNote?: boolean) => (
     <ItemTile
@@ -75,10 +81,24 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
 
   if (category !== 'all') {
     const gridWidth = gridCardWidth(screen);
+    const inCategory = items.filter((item) => item.category === category);
+    const brands = brandsOfItems(inCategory);
+    const chosen = activeBrand(pick.category === category ? pick.brand : null, brands);
     return (
       <View style={styles.feed}>
+        {brands.length > 1 ? (
+          <BrandChips
+            brands={brands}
+            selected={chosen}
+            onSelect={(brand) => {
+              setPick({ category, brand });
+            }}
+            allLabel={t('brandPage.all')}
+            label={t('brandPage.filterByBrand')}
+          />
+        ) : null}
         <View style={styles.grid}>
-          {items.filter((item) => item.category === category).map((item) => tile(item, gridWidth))}
+          {filterByBrand(inCategory, chosen).map((item) => tile(item, gridWidth))}
         </View>
       </View>
     );
@@ -87,7 +107,7 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
   return (
     <View style={styles.rails}>
       <ShopByCategory onCategory={onSeeAll} />
-      <ShopsStrip />
+      <ShopByBrand />
       <SmallPrices />
       <Featured onCategory={onSeeAll} />
       {HOME_RAIL_ORDER.map((key) => {

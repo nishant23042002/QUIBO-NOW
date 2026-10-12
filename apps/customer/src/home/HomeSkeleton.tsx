@@ -5,8 +5,9 @@ import {
   CategoryTileGridSkeleton,
   ProductCardSkeleton,
   RowTitleSkeleton,
+  BRAND_TILE_HEIGHT,
+  BRAND_TILE_WIDTH,
   SeeAllButtonSkeleton,
-  ShopInfoCardSkeleton,
   Skeleton,
   SkeletonScope,
   fontSize,
@@ -21,13 +22,14 @@ import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder } from './priceTiers';
 import { QUIETER_NOTE_HEIGHT } from './QuieterNote';
 import type { HomeItem } from './items';
-import { useSampleShops } from './sampleShops';
 import { useHomeCategoryTiles } from './useCategoryTiles';
 
 /** How many cards of a rail show before the edge of the screen, and how many a grid shows when it is not known. */
 const RAIL_CARDS = 3;
 const GRID_CARDS = 4;
 const GRID_CARDS_MAX = 8;
+/** How many brand tiles show before the edge of the screen. */
+const BRAND_TILES = 4;
 /** The chip of the price tabs: as tall as the real one, about as wide as "Under ₹30". */
 const CHIP_WIDTH = 96;
 const CHIP_HEIGHT = 36;
@@ -79,9 +81,12 @@ export function HomeSkeleton({
   const { t, locale } = useLanguage();
   const { width: screen } = useWindowDimensions();
   const tiles = useHomeCategoryTiles();
-  const shops = useSampleShops();
   const items = useHomeItems();
   const featuredHeight = useFeaturedCardHeight();
+  // A brand tile's name is one line of the caption text style, under its mark.
+  const brandNameLine = Math.round(
+    fontSize.xs * leading[locale === 'en' ? 'latin' : 'devanagari'].normal,
+  );
   // As tall as the section title it stands in for (the `subheading` text style), so the cards start at the same place.
   const titleLine = Math.round(
     fontSize.lg * leading[locale === 'en' ? 'latin' : 'devanagari'].tight,
@@ -132,11 +137,16 @@ export function HomeSkeleton({
 
         <View style={styles.section}>
           <View style={styles.pad}>
-            <RowTitleSkeleton title={t('home.shopsStrip.title')} />
+            <RowTitleSkeleton title={t('home.shopByBrand.title')} />
           </View>
           <StaticRow>
-            {shops.slice(0, 3).map((shop) => (
-              <ShopInfoCardSkeleton key={shop.id} />
+            {Array.from({ length: BRAND_TILES }, (_, tile) => (
+              <Skeleton
+                key={tile}
+                width={BRAND_TILE_WIDTH}
+                height={BRAND_TILE_HEIGHT + space[2] + brandNameLine}
+                rounded={radius.md}
+              />
             ))}
           </StaticRow>
         </View>

@@ -10,28 +10,13 @@ export interface FactRow {
   value: string;
 }
 
-const makeStyles = (c: ThemeColors) =>
+const makeStyles = (_c: ThemeColors) =>
   StyleSheet.create({
     table: { gap: space[3] },
     row: { flexDirection: 'row', alignItems: 'flex-start', gap: space[3] },
     label: { width: '32%' },
     value: { flex: 1, minWidth: 0 },
-    head: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-    line: { flex: 1, height: 1, backgroundColor: c.line },
   });
-
-/** A card's heading with a fine line running on after it, like a label on a printed pack. */
-export function CardTitle({ children }: { children: string }) {
-  const styles = useStyles(makeStyles);
-  return (
-    <View style={styles.head}>
-      <Text variant="subheading" role="heading">
-        {children}
-      </Text>
-      <View style={styles.line} aria-hidden />
-    </View>
-  );
-}
 
 /** Facts as two columns: what it is in a quiet colour on the left, its value on the right. */
 export function FactTable({ rows }: { rows: readonly FactRow[] }) {

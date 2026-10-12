@@ -35,6 +35,11 @@ export interface SheetProps {
   error?: string | undefined;
   /** Something inside is loading: announces busy. */
   busy?: boolean;
+  /**
+   * Open to this share of the screen's height (for example 72) and stay there, instead of growing with its content up to 90%. For a
+   * sheet that is read rather than filled in, so it does not jump as parts of it open and close.
+   */
+  heightPercent?: number;
 }
 
 const OPEN_MS = 320;
@@ -88,6 +93,7 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.dangerBg,
     },
     body: { flexGrow: 0 },
+    bodyFill: { flex: 1 },
     bodyContent: { paddingHorizontal: space[5], paddingVertical: space[4], gap: space[3] },
     footer: {
       paddingHorizontal: space[5],
@@ -116,6 +122,7 @@ export function Sheet({
   footer,
   error,
   busy = false,
+  heightPercent,
 }: SheetProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
@@ -175,6 +182,10 @@ export function Sheet({
                 aria-busy={busy}
                 style={[
                   styles.sheet,
+                  heightPercent !== undefined && {
+                    height: `${heightPercent}%`,
+                    maxHeight: `${heightPercent}%`,
+                  },
                   {
                     paddingBottom: bottom,
                     transform: [
@@ -208,7 +219,10 @@ export function Sheet({
                     </Text>
                   </View>
                 ) : null}
-                <ScrollView style={styles.body} contentContainerStyle={styles.bodyContent}>
+                <ScrollView
+                  style={heightPercent !== undefined ? styles.bodyFill : styles.body}
+                  contentContainerStyle={styles.bodyContent}
+                >
                   {children}
                 </ScrollView>
                 {footer !== undefined ? <View style={styles.footer}>{footer}</View> : null}

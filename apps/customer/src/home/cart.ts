@@ -273,7 +273,7 @@ export function useDraftCart(): DraftCart {
     const previous = quantities[packId] ?? 0;
     const allowed = allowedQuantity(packId, next);
     apply(packId, allowed);
-    if (allowed === 0 && previous > 0) setRemoval({ packId, name: found.item.name, previous });
+    if (allowed === 0 && previous > 0) setRemoval({ packId, name: found.item.fullName, previous });
     else if (allowed > previous) setRemoval(null);
   };
 
@@ -368,7 +368,7 @@ export function useDraftCart(): DraftCart {
     const loose = pack.loose === true;
     return {
       id: packId,
-      name: item.name,
+      name: item.fullName,
       pack: loose ? t('weights.cartLine', { price: formatRupees(pack.price) }) : pack.label,
       emoji: item.emoji,
       category: item.category,
@@ -432,7 +432,7 @@ export function useDraftCart(): DraftCart {
         return [
           {
             id: packId,
-            name: found.item.name,
+            name: found.item.fullName,
             pack: found.pack.label,
             emoji: found.item.emoji,
             category: found.item.category,

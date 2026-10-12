@@ -6,6 +6,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
+  BrandChips,
   Icon,
   Notice,
   SectionDivider,
@@ -19,6 +20,7 @@ import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
 import { FREE_DELIVERY_FROM } from './delivery';
 import { HomeSkeleton } from './HomeSkeleton';
+import { activeBrand, brandsOfItems, filterByBrand } from './brandPage';
 import { ItemTile, gridCardWidth } from './ItemTile';
 import { useHomeItems, type ItemCategory } from './items';
 import type { ShopDetails } from './sampleShops';
@@ -64,6 +66,10 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
   const cart = useCart();
   const items = useHomeItems().filter((item) => item.shop === shop.id);
   const [loaded, setLoaded] = useState(false);
+  // The brand chosen to narrow the shop's items; the shop's own items with no brand drop out while one is chosen.
+  const [chosenBrand, setChosenBrand] = useState<string | null>(null);
+  const brands = brandsOfItems(items);
+  const brand = activeBrand(chosenBrand, brands);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -77,7 +83,7 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
   const width = gridCardWidth(screen);
   const sections = ORDER.map((key) => ({
     key,
-    items: items.filter((item) => item.category === key),
+    items: filterByBrand(items, brand).filter((item) => item.category === key),
   })).filter((section) => section.items.length > 0);
 
   return (
@@ -126,6 +132,15 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
             </Text>
           </View>
         </View>
+        {brands.length > 1 ? (
+          <BrandChips
+            brands={brands}
+            selected={brand}
+            onSelect={setChosenBrand}
+            allLabel={t('brandPage.all')}
+            label={t('brandPage.filterByBrand')}
+          />
+        ) : null}
         {!loaded ? (
           <HomeSkeleton label={t('common.loading')} grid titled />
         ) : sections.length === 0 ? (
