@@ -7,6 +7,7 @@ import {
   normalise,
   parseRecent,
   searchDocs,
+  searchNames,
   type SearchDoc,
 } from './search';
 
@@ -105,6 +106,37 @@ describe('searchDocs', () => {
     expect(searchDocs('milk', docs)).toEqual(['a', 'b']);
     expect(searchDocs('   ', docs)).toEqual([]);
     expect(searchDocs('', docs)).toEqual([]);
+  });
+});
+
+describe('searchNames', () => {
+  const BRANDS: readonly SearchDoc[] = [
+    { id: 'amul', terms: ['Amul', 'अमूल'] },
+    { id: 'dairymilk', terms: ['Dairy Milk', 'डेरी मिल्क'] },
+    { id: 'kitkat', terms: ['Kit Kat', 'किटकैट'] },
+  ];
+
+  it('finds a brand by its whole name, in any language', () => {
+    expect(searchNames('Amul', BRANDS)).toEqual(['amul']);
+    expect(searchNames('अमूल', BRANDS)).toEqual(['amul']);
+  });
+
+  it('finds a brand by the start of its name, once two letters are typed', () => {
+    expect(searchNames('am', BRANDS)).toEqual(['amul']);
+    expect(searchNames('dairy m', BRANDS)).toEqual(['dairymilk']);
+    expect(searchNames('a', BRANDS)).toEqual([]);
+  });
+
+  it('ignores the space inside a name and forgives a slip', () => {
+    expect(searchNames('kitkat', BRANDS)).toEqual(['kitkat']);
+    expect(searchNames('kit kat', BRANDS)).toEqual(['kitkat']);
+    expect(searchNames('amool', BRANDS)).toEqual(['amul']);
+  });
+
+  it('does not treat a word inside a name, or a kind of product, as the name', () => {
+    expect(searchNames('milk', BRANDS)).toEqual([]);
+    expect(searchNames('toned milk', BRANDS)).toEqual([]);
+    expect(searchNames('', BRANDS)).toEqual([]);
   });
 });
 

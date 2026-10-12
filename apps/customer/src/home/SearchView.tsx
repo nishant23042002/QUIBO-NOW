@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import type { Ref } from 'react';
+import { useState, type Ref } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -13,6 +13,8 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
+  BrandChips,
+  BrandTile,
   Chip,
   Icon,
   IconButton,
@@ -26,10 +28,11 @@ import {
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
+import { activeBrand, brandsOfItems, filterByBrand } from './brandPage';
 import { ItemTile, gridCardWidth } from './ItemTile';
 import { useHomeItems } from './items';
 import { useSampleShops } from './sampleShops';
-import { searchDocs } from './search';
+import { searchDocs, searchNames } from './search';
 import { useSearchIndex } from './searchData';
 import { useRecentSearches } from './useRecentSearches';
 
@@ -70,6 +73,12 @@ const makeStyles = (c: ThemeColors) =>
     recentText: { flex: 1, minWidth: 0 },
     chips: { flexDirection: 'row', flexWrap: 'wrap', gap: space[2], paddingHorizontal: space[4] },
     shops: { gap: space[2], paddingHorizontal: space[4] },
+    brandTiles: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: space[3],
+      paddingHorizontal: space[4],
+    },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
     empty: { alignItems: 'center', gap: space[2], paddingVertical: space[8] },
     pressed: { opacity: 0.7 },
@@ -103,6 +112,8 @@ export function SearchView({
   const allItems = useHomeItems();
   const allShops = useSampleShops();
   const { recent, remember, clear } = useRecentSearches();
+  // The brand chosen to narrow the items found; it falls back to All when a new search no longer has that brand.
+  const [chosenBrand, setChosenBrand] = useState<string | null>(null);
 
   const typed = query.trim();
   const itemIds = searchDocs(typed, index.items);
@@ -113,6 +124,13 @@ export function SearchView({
   const shops = shopIds
     .map((id) => allShops.find((shop) => shop.id === id))
     .filter((shop) => shop !== undefined);
+  // A query that is a brand's name (or the start of it) puts the brand first, as a tile that opens its page.
+  const brandHits = searchNames(typed, index.brands)
+    .map((id) => brandsOfItems(allItems).find((brand) => brand.id === id))
+    .filter((brand) => brand !== undefined);
+  const brands = brandsOfItems(items);
+  const brand = activeBrand(chosenBrand, brands);
+  const shownItems = filterByBrand(items, brand);
   const width = gridCardWidth(screen);
 
   // The bars are away while the keyboard is up, so the page only needs room for what is really there.
@@ -185,7 +203,7 @@ export function SearchView({
         </View>
       </>
     );
-  } else if (items.length === 0 && shops.length === 0) {
+  } else if (items.length === 0 && shops.length === 0 && brandHits.length === 0) {
     content = (
       <View style={[styles.empty, styles.gutter]}>
         <Icon name="search" color={colors.inkMuted} size={40} />
@@ -201,6 +219,29 @@ export function SearchView({
   } else {
     content = (
       <>
+        {brandHits.length > 0 ? (
+          <View style={styles.section}>
+            <View style={styles.sectionHead}>
+              <Text variant="subheading" role="heading">
+                {t('search.brands')}
+              </Text>
+            </View>
+            <View style={styles.brandTiles}>
+              {brandHits.map((hit) => (
+                <BrandTile
+                  key={hit.id}
+                  mark={hit.mark}
+                  name={hit.name}
+                  label={`${hit.name}. ${t('product.exploreAll')}`}
+                  onPress={() => {
+                    remember(typed);
+                    router.push({ pathname: '/brand/[id]', params: { id: hit.id } });
+                  }}
+                />
+              ))}
+            </View>
+          </View>
+        ) : null}
         {shops.length > 0 ? (
           <View style={styles.section}>
             <View style={styles.sectionHead}>
@@ -233,8 +274,17 @@ export function SearchView({
                 {t('search.items')}
               </Text>
             </View>
+            {brands.length > 1 ? (
+              <BrandChips
+                brands={brands}
+                selected={brand}
+                onSelect={setChosenBrand}
+                allLabel={t('brandPage.all')}
+                label={t('brandPage.filterByBrand')}
+              />
+            ) : null}
             <View style={styles.grid}>
-              {items.map((item) => (
+              {shownItems.map((item) => (
                 <ItemTile
                   key={item.id}
                   item={item}

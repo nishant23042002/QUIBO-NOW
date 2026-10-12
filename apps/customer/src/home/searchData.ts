@@ -1,5 +1,6 @@
 import { LOCALES, messages } from '@quibo/i18n';
 import { useMemo } from 'react';
+import { brandsOfItems } from './brandPage';
 import { useHomeItems, type ItemCategory } from './items';
 import type { SearchDoc } from './search';
 
@@ -52,6 +53,8 @@ const SHOP_IDS = ['one', 'two', 'three', 'four'] as const;
 
 export interface SearchIndex {
   items: readonly SearchDoc[];
+  /** The brands that have items, each found by its name in every language (see `searchNames`). */
+  brands: readonly SearchDoc[];
   shops: readonly SearchDoc[];
 }
 
@@ -69,10 +72,17 @@ export function useSearchIndex(): SearchIndex {
         id: item.id,
         terms: [
           ...LOCALES.map((locale) => lookupItemName(locale, item.id)),
-          ...(ITEM_ALIASES[item.id] ?? []),
+          // A branded item is also found by its brand ("amul", in any language) and by brand and name together.
+          ...(item.brand === undefined ? [] : brandTerms(item.brand.id, item.id)),
+          // Spellings are held by kind of product, so every brand of milk is found by "dudh".
+          ...(ITEM_ALIASES[item.type] ?? []),
           ...LOCALES.map((locale) => messages[locale].home.categories[item.category]),
           ...CATEGORY_ALIASES[item.category],
         ],
+      })),
+      brands: brandsOfItems(items).map((brand) => ({
+        id: brand.id,
+        terms: LOCALES.map((locale) => brandName(locale, brand.id)),
       })),
       shops: SHOP_IDS.map((id) => ({
         id,
@@ -87,6 +97,20 @@ export function useSearchIndex(): SearchIndex {
     }),
     [items],
   );
+}
+
+/** The brand's name in every language, and the brand with the item's name in every language ("Amul Toned milk"). */
+function brandTerms(brandId: string, itemId: string): string[] {
+  return LOCALES.flatMap((locale) => {
+    const brands: Readonly<Record<string, string>> = messages[locale].brands;
+    const brand = brands[brandId] ?? '';
+    return [brand, `${brand} ${lookupItemName(locale, itemId)}`];
+  });
+}
+
+function brandName(locale: (typeof LOCALES)[number], brandId: string): string {
+  const brands: Readonly<Record<string, string>> = messages[locale].brands;
+  return brands[brandId] ?? '';
 }
 
 function lookupItemName(locale: (typeof LOCALES)[number], id: string): string {

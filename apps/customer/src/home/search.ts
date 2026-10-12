@@ -115,6 +115,41 @@ export function searchDocs(query: string, docs: readonly SearchDoc[]): string[] 
   return scored.sort((a, b) => b.score - a.score || a.index - b.index).map((entry) => entry.id);
 }
 
+/** A word typed, or a name, as one run of folded letters with no spaces, so "kit kat" and "kitkat" are the same. */
+function compact(text: string): string {
+  return normalise(text).split(' ').map(fold).join('');
+}
+
+/** A name needs at least this many letters typed before half a name counts, so one letter does not offer every brand. */
+const MIN_NAME_PREFIX = 2;
+
+/**
+ * The ids of what is *named* by the query: the whole name, the start of it (a name half typed), or the name with a slip. It is
+ * stricter than `searchDocs`, which matches a word anywhere: "milk" finds every milk but is not the name "Dairy Milk". It is what
+ * decides whether a brand is a result in its own right, above the items. Best first; ties keep the order given.
+ */
+export function searchNames(query: string, docs: readonly SearchDoc[]): string[] {
+  const typed = compact(query);
+  if (typed.length < MIN_NAME_PREFIX) return [];
+
+  const slips = allowedSlips(typed.length);
+  const scored: { id: string; score: number; index: number }[] = [];
+  docs.forEach((doc, index) => {
+    let best = 0;
+    for (const term of doc.terms) {
+      const name = compact(term);
+      if (name === '') continue;
+      if (name === typed) best = Math.max(best, EXACT);
+      else if (name.startsWith(typed)) best = Math.max(best, PREFIX);
+      else if (slips > 0 && editDistance(typed, name.slice(0, typed.length)) <= slips) {
+        best = Math.max(best, SLIP);
+      }
+    }
+    if (best > 0) scored.push({ id: doc.id, score: best, index });
+  });
+  return scored.sort((a, b) => b.score - a.score || a.index - b.index).map((entry) => entry.id);
+}
+
 /** How many recent searches are kept. */
 export const MAX_RECENT = 6;
 /** A search shorter than this is not worth remembering. */
