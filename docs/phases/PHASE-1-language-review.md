@@ -286,10 +286,28 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.smallPrices.under` | Under {amount}                    | {amount} से कम                       | {amount} पेक्षा कमी                   |                 |
 | `home.smallPrices.empty` | Nothing under {amount} right now. | अभी {amount} से कम की कोई चीज़ नहीं। | सध्या {amount} पेक्षा कमी काहीच नाही. |                 |
 
+## Featured, on Home
+
+| Key                         | English                  | Hindi (draft)            | Marathi (draft)             | OK or change to |
+| --------------------------- | ------------------------ | ------------------------ | --------------------------- | --------------- |
+| `home.featured.title`       | Featured this week       | इस हफ़्ते की खास चीज़ें  | या आठवड्याच्या खास निवडी    |                 |
+| `home.featured.rationTitle` | Monthly ration           | महीने का राशन            | महिन्याचे किराणा            |                 |
+| `home.featured.rationBody`  | Atta, rice, oil and dal  | आटा, चावल, तेल और दाल    | आटा, तांदूळ, तेल आणि डाळ    |                 |
+| `home.featured.tiffinTitle` | Tiffin and lunchbox      | टिफ़िन और लंचबॉक्स       | डबा आणि लंचबॉक्स            |                 |
+| `home.featured.tiffinBody`  | Quick bites and biscuits | झटपट खाना और बिस्कुट     | झटपट खाणे आणि बिस्किटे      |                 |
+| `home.featured.chaiTitle`   | Morning chai             | सुबह की चाय              | सकाळचा चहा                  |                 |
+| `home.featured.chaiBody`    | Tea, biscuits and more   | चाय, बिस्कुट और बहुत कुछ | चहा, बिस्किटे आणि बरेच काही |                 |
+
+## Quieter times note, on Home
+
+| Key                | English                                                    | Hindi (draft)                                      | Marathi (draft)                                           | OK or change to |
+| ------------------ | ---------------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------------- | --------------- |
+| `home.quieterNote` | Quieter times cost less. Pick a window and see the saving. | शांत समय पर डिलीवरी सस्ती है। समय चुनकर बचत देखें। | शांत वेळेला डिलिव्हरी स्वस्त असते. वेळ निवडा आणि बचत पहा. |                 |
+
 ## Footer
 
 | Key           | English                                          | Hindi (draft)                                 | Marathi (draft)                                    | OK or change to |
 | ------------- | ------------------------------------------------ | --------------------------------------------- | -------------------------------------------------- | --------------- |
 | `footer.line` | Packed by shops in Roha. Delivered to your door. | रोहा की दुकानों से पैक, सीधे आपके दरवाज़े तक। | रोह्यातील दुकानांकडून पॅक, थेट तुमच्या दारापर्यंत. |                 |
 
-224 lines in all.
+232 lines in all.

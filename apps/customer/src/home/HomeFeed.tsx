@@ -3,6 +3,8 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { BrandFooter, ProductRail, space } from '@/ui';
 import { HomeSkeleton } from './HomeSkeleton';
+import { Featured } from './Featured';
+import { QuieterNote } from './QuieterNote';
 import { ShopByCategory } from './ShopByCategory';
 import { ShopsStrip } from './ShopsStrip';
 import { SmallPrices } from './SmallPrices';
@@ -78,6 +80,7 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
       <ShopByCategory onCategory={onSeeAll} />
       <ShopsStrip />
       <SmallPrices />
+      <Featured onCategory={onSeeAll} />
       {ORDER.map((key) => {
         const row = items.filter((item) => item.category === key);
         // Cards in a row stay one height: room for the low-stock line only when one of them has it.
@@ -95,6 +98,7 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
           </ProductRail>
         );
       })}
+      <QuieterNote />
       <BrandFooter />
     </View>
   );

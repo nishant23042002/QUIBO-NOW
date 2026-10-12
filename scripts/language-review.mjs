@@ -23,6 +23,8 @@ const SECTIONS = [
   ['Shop by category, on Home', 'home.shopByCategory'],
   ['Shops in your town, on Home', 'home.shopsStrip'],
   ['Small prices, on Home', 'home.smallPrices'],
+  ['Featured, on Home', 'home.featured'],
+  ['Quieter times note, on Home', 'home.quieterNote'],
   ['Footer', 'footer'],
 ];
 
