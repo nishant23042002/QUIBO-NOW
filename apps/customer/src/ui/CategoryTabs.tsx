@@ -60,7 +60,7 @@ const makeStyles = (c: ThemeColors) =>
       right: 0,
       bottom: 0,
       height: 1,
-      backgroundColor: c.onChrome,
+      backgroundColor: c.onHeader,
       opacity: 0.25,
     },
     dimmed: { opacity: 0.75 },
@@ -74,7 +74,7 @@ const makeStyles = (c: ThemeColors) =>
       height: UNDERLINE,
       borderTopLeftRadius: UNDERLINE,
       borderTopRightRadius: UNDERLINE,
-      backgroundColor: c.onChrome,
+      backgroundColor: c.onHeader,
     },
   });
 
@@ -179,7 +179,11 @@ export function CategoryTabs({ tabs, selectedKey, onSelect, label }: CategoryTab
                     {tab.emoji}
                   </NativeText>
                 </View>
-                <Text variant="strong" color="onChrome" numberOfLines={1}>
+                <Text
+                  variant="strong"
+                  color={selected ? 'onHeader' : 'onHeaderMuted'}
+                  numberOfLines={1}
+                >
                   {tab.label}
                 </Text>
               </Pressable>

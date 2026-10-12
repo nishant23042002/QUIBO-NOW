@@ -42,8 +42,7 @@ const makeStyles = (_colors: ThemeColors) =>
 
 /**
  * The top of the header on Home and on the tabs that share it: the delivery promise, where it is going, and the profile
- * button. One piece, so the tabs can never drift from Home. It sits on the dark top of the header's gradient, so its text is
- * white in both themes.
+ * button. One piece, so the tabs can never drift from Home. It sits on the header's tint and uses its text colours.
  */
 export function HeaderIdentity({
   deliveryLine,
@@ -66,7 +65,7 @@ export function HeaderIdentity({
     >
       <View style={styles.row}>
         <View style={styles.text}>
-          <Text variant="heading" color="onChrome" numberOfLines={2}>
+          <Text variant="heading" color="onHeader" numberOfLines={2}>
             {deliveryLine}
           </Text>
           <Pressable
@@ -76,13 +75,13 @@ export function HeaderIdentity({
             hitSlop={6}
             style={({ pressed }) => [styles.address, pressed && styles.pressed]}
           >
-            <Icon name="pin" color={colors.onChrome} size={16} />
+            <Icon name="pin" color={colors.onHeader} size={16} />
             <View style={styles.addressText}>
-              <Text variant="strong" color="onChrome" numberOfLines={1}>
+              <Text variant="strong" color="onHeader" numberOfLines={1}>
                 {address}
               </Text>
             </View>
-            <Icon name="chevron" color={colors.onChrome} size={16} />
+            <Icon name="chevron" color={colors.onHeader} size={16} />
           </Pressable>
         </View>
         <View style={styles.button}>

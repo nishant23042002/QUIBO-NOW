@@ -26,13 +26,7 @@ same app showed three headers, and the search bar at 52 dp was taller than it ne
 5. **Only Categories and Orders adopt it now.** The cart and every secondary screen (checkout, delivery time, coupons, addresses,
    Help, Settings, an order's page, the item and shop pages) keep their own headers. A further tab-like screen can adopt `TabHeader`
    later if it is searched or browsed first; that is a decision to make then, not a default.
-6. **The header is deep: the dark aubergine fades into a rich colour of the same depth, not into a pale one.** A gradient from the
-   app's dark colour to nothing (`HeaderGlow`) lies over the header's deep colour (`headerDeep`, an orchid, for "All"; each category has
-   its own, `deepDairy` and so on), and that colour carries on behind the search bar and the category tabs. Both ends are saturated
-   and close in lightness, so the middle stays a real colour and the fade reads as the same colour getting lighter. All of it carries
-   white text, so the heading, address, tabs and dots are white in both themes and the status bar text is always light. The pale
-   category tints stay for item pictures and the item page; only the header uses the deep ones.
-7. **Tabs that are kept do not replay their skeleton** (`quietReturn`, `backgroundReady`), as before.
+6. **Tabs that are kept do not replay their skeleton** (`quietReturn`, `backgroundReady`), as before.
 
 ## Consequences
 

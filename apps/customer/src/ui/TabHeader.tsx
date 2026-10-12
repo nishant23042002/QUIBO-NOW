@@ -9,7 +9,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import { HeaderGlow } from './HeaderGlow';
 import { HeaderIdentity, type HeaderIdentityProps } from './HeaderIdentity';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { SearchBar, type SearchHint } from './SearchBar';
@@ -82,9 +81,9 @@ export function TabHeader({
   children,
 }: TabHeaderProps) {
   const insets = useSafeAreaInsets();
-  const { colors } = useTheme();
+  const { colors, scheme } = useTheme();
   const styles = useStyles(makeStyles);
-  const tint = colors.headerDeep;
+  const tint = colors.headerBg;
   const [scrollY] = useState(() => new Animated.Value(0));
   // How tall the two pieces are, measured, so the page can start below them and the upper part knows how far to travel.
   const [topHeight, setTopHeight] = useState(0);
@@ -126,8 +125,7 @@ export function TabHeader({
 
   return (
     <View style={styles.frame}>
-      {/* The header is deep in both themes, so the status bar's text is light. */}
-      <ScreenStatusBar style="light" />
+      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <Animated.ScrollView
         // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit at
         // the top and then drop; held back, it appears where it belongs.
@@ -166,7 +164,6 @@ export function TabHeader({
         style={[styles.overlay, { top: insets.top, transform: [{ translateY: slideTop }] }]}
       >
         <View style={{ backgroundColor: tint }}>
-          <HeaderGlow lift={insets.top} />
           <Animated.View
             style={[styles.top, { opacity: fadeOut }]}
             onLayout={(event) => {

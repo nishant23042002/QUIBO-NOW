@@ -11,7 +11,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
 import { HomeScrollContext } from './HomeScroll';
-import { HeaderGlow } from './HeaderGlow';
 import { HeaderIdentity } from './HeaderIdentity';
 import { PromoCarousel, type PromoSlide } from './PromoCarousel';
 import { SearchBar, type SearchHint } from './SearchBar';
@@ -49,7 +48,7 @@ export interface HomeHeaderProps {
   /** The search bar's hint: a fixed part ("Search") and example words that type themselves in. */
   searchHint: SearchHint;
   /** The category tabs. Each carries the colour the header turns into while it is chosen. */
-  categories: readonly (CategoryTab & { deep: string })[];
+  categories: readonly (CategoryTab & { tint: string })[];
   selectedCategory: string;
   /** Names the row of tabs for a screen reader, for example "Categories". */
   categoriesLabel: string;
@@ -133,7 +132,7 @@ export function HomeHeader({
   children,
 }: HomeHeaderProps) {
   const insets = useSafeAreaInsets();
-  const { colors } = useTheme();
+  const { colors, scheme } = useTheme();
   const styles = useStyles(makeStyles);
   const [shopsOpen, setShopsOpen] = useState(false);
   const reduceMotion = useReduceMotion();
@@ -192,9 +191,9 @@ export function HomeHeader({
     categories.length > 1
       ? tintAt.interpolate({
           inputRange: categories.map((_, index) => index),
-          outputRange: categories.map((category) => category.deep),
+          outputRange: categories.map((category) => category.tint),
         })
-      : (categories[0]?.deep ?? colors.headerDeep);
+      : (categories[0]?.tint ?? colors.headerBg);
 
   // The scroll position never goes below 0, so pulling the page down past the top (some phones let it
   // bounce) cannot drag the search bar and tabs away from the upper part.
@@ -247,8 +246,7 @@ export function HomeHeader({
 
   return (
     <View style={styles.frame}>
-      {/* The header is deep in both themes, so the status bar's text is light. */}
-      <ScreenStatusBar style="light" />
+      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <Animated.ScrollView
         // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit
         // at the top and then drop; held back, it appears where it belongs.
@@ -324,7 +322,6 @@ export function HomeHeader({
         style={[styles.overlay, { top: insets.top, transform: [{ translateY: slideTop }] }]}
       >
         <Animated.View style={{ backgroundColor: background }}>
-          <HeaderGlow lift={insets.top} />
           <Animated.View
             style={[styles.top, { opacity: fadeOut }]}
             onLayout={(event) => {

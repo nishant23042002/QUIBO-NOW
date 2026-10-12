@@ -45,17 +45,6 @@ export interface ThemeColors {
   tintFruits: string;
   tintStaples: string;
   tintSnacks: string;
-  /**
-   * The deep colour the home header (and the tabs that share it) fades into from the app's dark aubergine, and keeps behind its search
-   * bar and tabs. `headerDeep` is the "All" one; the others are the same idea in each category's hue. Every one is dark enough to
-   * carry white text.
-   */
-  headerDeep: string;
-  deepDairy: string;
-  deepVegetables: string;
-  deepFruits: string;
-  deepStaples: string;
-  deepSnacks: string;
   /** The round buttons on the header (profile, theme), and the icon on them. */
   headerControl: string;
   onHeaderControl: string;
@@ -119,12 +108,6 @@ export const palettes: Record<Scheme, ThemeColors> = {
     headerBg: '#E9D8F0',
     onHeader: '#2A1033',
     onHeaderMuted: '#563E60',
-    headerDeep: '#8B5FA6',
-    deepDairy: '#4F6FA0',
-    deepVegetables: '#4F7A3E',
-    deepFruits: '#A9533F',
-    deepStaples: '#8C6A1F',
-    deepSnacks: '#A24A87',
     headerControl: '#FFFFFF',
     onHeaderControl: '#2A1033',
     tintDairy: '#DCE8F5',
@@ -170,12 +153,6 @@ export const palettes: Record<Scheme, ThemeColors> = {
     headerBg: '#3E1A4C',
     onHeader: '#FFFFFF',
     onHeaderMuted: '#DCCBE4',
-    headerDeep: '#4A2360',
-    deepDairy: '#2A4A78',
-    deepVegetables: '#2F5A3C',
-    deepFruits: '#7A3A30',
-    deepStaples: '#6A5220',
-    deepSnacks: '#733560',
     headerControl: '#F6EEF8',
     onHeaderControl: '#2A1033',
     tintDairy: '#1F3350',
