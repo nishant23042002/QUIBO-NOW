@@ -21,7 +21,8 @@ export interface ToastProps {
   shift?: Animated.AnimatedNode;
 }
 
-const SHOWN_FOR_MS = 4500;
+/** Long enough to read a short line and reach for Undo, and no longer: it should not sit over the cart. */
+const SHOWN_FOR_MS = 2800;
 const HIDDEN_BY = 80;
 
 const makeStyles = (c: ThemeColors) =>

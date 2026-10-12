@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Animated, Pressable, StyleSheet, View } from 'react-native';
+import { Animated, Easing, Pressable, StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
 import { COUNT_RULE, formatQuantity, stepQuantity, type QuantityRule } from './logic/quantity';
@@ -77,6 +77,18 @@ const makeStyles = (c: ThemeColors) =>
     pressedAdd: { transform: [{ scale: 0.92 }], backgroundColor: c.lilac },
     pressedSide: { transform: [{ scale: 0.82 }], opacity: 0.6 },
     atMax: { opacity: 0.35 },
+    // The ring that goes out from the control the instant it is pressed. It is only an outline over the control, so it costs nothing
+    // to lay out, and it moves by transform and opacity on the animation thread.
+    ripple: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      borderWidth: 2,
+      borderRadius: radius.md,
+      borderColor: c.action,
+    },
   });
 
 /** ADD that turns into a - and + stepper once the item is in the cart. Every target has a 48 dp touch area. */
@@ -96,7 +108,34 @@ export function Stepper({
   const { colors } = useTheme();
   const reduceMotion = useReduceMotion();
   const [bounce] = useState(() => new Animated.Value(1));
+  const [ripple] = useState(() => new Animated.Value(1));
   const before = useRef(value);
+
+  // The press shows at the first instant, before the cart has done anything: a ring goes out from the control and fades. It runs
+  // from the press's start, on the animation thread, and does nothing at all with "reduce motion" on.
+  const press = () => {
+    if (reduceMotion) return;
+    ripple.setValue(0);
+    Animated.timing(ripple, {
+      toValue: 1,
+      duration: 260,
+      easing: Easing.out(Easing.quad),
+      useNativeDriver: true,
+    }).start();
+  };
+  const ring = (
+    <Animated.View
+      pointerEvents="none"
+      aria-hidden
+      style={[
+        styles.ripple,
+        {
+          opacity: ripple.interpolate({ inputRange: [0, 1], outputRange: [0.55, 0] }),
+          transform: [{ scale: ripple.interpolate({ inputRange: [0, 1], outputRange: [1, 1.3] }) }],
+        },
+      ]}
+    />
+  );
 
   // A quick bounce each time the count changes, including when ADD turns into the stepper.
   useEffect(() => {
@@ -119,10 +158,12 @@ export function Stepper({
   if (value === 0) {
     return (
       <Animated.View style={{ transform: [{ scale: bounce }] }}>
+        {ring}
         <Pressable
           role="button"
           aria-label={addAriaLabel ?? addLabel}
           hitSlop={reach}
+          onPressIn={press}
           onPress={() => {
             onChange(stepQuantity(0, 1, rule));
           }}
@@ -151,10 +192,12 @@ export function Stepper({
     <Animated.View
       style={[compact ? styles.stepperCompact : styles.stepper, { transform: [{ scale: bounce }] }]}
     >
+      {ring}
       <Pressable
         role="button"
         aria-label={decreaseLabel}
         hitSlop={reach}
+        onPressIn={press}
         onPress={() => {
           onChange(stepQuantity(value, -1, rule));
         }}
@@ -180,6 +223,7 @@ export function Stepper({
         aria-disabled={atMax}
         disabled={atMax}
         hitSlop={reach}
+        onPressIn={press}
         onPress={() => {
           onChange(stepQuantity(value, 1, rule));
         }}

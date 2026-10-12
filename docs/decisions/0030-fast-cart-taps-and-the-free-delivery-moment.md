@@ -20,9 +20,12 @@ cards redrawn for one tap, so ADD and + answered late.
 3. **The catalogue is built once per language** and indexed once, not on every change. When the order arrives (`useDeliveryWhen`)
    is worded once by the provider and shared; reading it does not subscribe to the cart.
 4. **The press is seen at once.** ADD dips and takes the lilac under the finger, and - and + dip and dim, before the cart has
-   changed anything; the count still bounces when it does.
+   changed anything, and a thin ring goes out from the control and fades (260 ms, from the press's start). The ring is an outline
+   moved by transform and opacity on the animation thread, so it costs nothing to lay out; with "reduce motion" on it does not play.
+   The count still bounces when it changes.
 5. **Crossing into free delivery is a moment.** When the cart goes from not free to free while it is in use, a note rises above the
-   cart bar (scooter, pistachio tick, a few flecks flying out) and goes by itself after a few seconds, or on a tap. It follows the
+   cart bar (scooter, pistachio tick, a few flecks flying out) and goes by itself after under three seconds, or on a tap. The undo note goes after the same time: long enough to read and reach
+   for Undo, no longer, so neither sits over the cart. It follows the
    same rule as the undo note for where it rests, and says nothing when the app opens on a cart that was already free. With "reduce
    motion" on it simply appears. The cart bar and its note say it for as long as it is true.
 

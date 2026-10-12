@@ -110,7 +110,7 @@ export function UndoToast({
   );
 }
 
-const SHOWN_FOR_MS = 3600;
+const SHOWN_FOR_MS = 2800;
 
 const makePopStyles = (c: ThemeColors) =>
   StyleSheet.create({
