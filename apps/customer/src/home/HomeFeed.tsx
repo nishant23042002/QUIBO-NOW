@@ -9,13 +9,16 @@ import { ShopByCategory } from './ShopByCategory';
 import { ShopsStrip } from './ShopsStrip';
 import { SmallPrices } from './SmallPrices';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
-import { anyCardNote, useHomeItems, type HomeItem, type ItemCategory } from './items';
+import {
+  HOME_RAIL_ORDER,
+  anyCardNote,
+  useHomeItems,
+  type HomeItem,
+  type ItemCategory,
+} from './items';
 
 /** How long the loading skeleton shows after a category is chosen. */
 const LOAD_MS = 200;
-
-/** The order the rows come in when "All" is chosen. */
-const ORDER: readonly ItemCategory[] = ['dairy', 'vegetables', 'fruits', 'staples', 'snacks'];
 
 const styles = StyleSheet.create({
   feed: { gap: space[5], paddingVertical: space[5] },
@@ -61,7 +64,13 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
     />
   );
   if (loading) {
-    return <HomeSkeleton label={t('common.loading')} grid={category !== 'all'} />;
+    return (
+      <HomeSkeleton
+        label={t('common.loading')}
+        grid={category !== 'all'}
+        cards={items.filter((item) => item.category === category).length}
+      />
+    );
   }
 
   if (category !== 'all') {
@@ -81,7 +90,7 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
       <ShopsStrip />
       <SmallPrices />
       <Featured onCategory={onSeeAll} />
-      {ORDER.map((key) => {
+      {HOME_RAIL_ORDER.map((key) => {
         const row = items.filter((item) => item.category === key);
         // Cards in a row stay one height: room for the low-stock line only when one of them has it.
         const note = anyCardNote(row);

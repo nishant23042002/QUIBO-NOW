@@ -5,8 +5,14 @@ import type { LoadPolicy } from '@/ui';
  * connection does to it.
  */
 
+/**
+ * How long a tab's skeleton shows each time it is chosen from another tab (the cart, the categories, orders): long enough to
+ * register as arriving, short enough not to be waiting. The page then fades in over it.
+ */
+export const TAB_LOAD_MS = 350;
+
 /** The cart lives on the phone, so with no network it still shows (with its notice); a failed load does not. */
-export const CART_LOAD_MS = 200;
+export const CART_LOAD_MS = TAB_LOAD_MS;
 export const CART_POLICY: LoadPolicy = { offline: 'allow', failure: 'block' };
 
 /** The cart's steps need the server (which delivery windows are full, which coupons are on offer), so they need a network. */
@@ -17,7 +23,7 @@ export const STEP_POLICY: LoadPolicy = { offline: 'block', failure: 'block' };
  * The categories are a short list the app keeps, so with no network they still show; a failed load does not (it says so, with a
  * way to try again).
  */
-export const CATEGORIES_LOAD_MS = 200;
+export const CATEGORIES_LOAD_MS = TAB_LOAD_MS;
 export const CATEGORIES_POLICY: LoadPolicy = { offline: 'allow', failure: 'block' };
 
 /**

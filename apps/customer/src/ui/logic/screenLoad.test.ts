@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { asksNetwork, phaseAfter, settle, type LoadPolicy } from './screenLoad';
+import {
+  asksNetwork,
+  phaseAfter,
+  settle,
+  shouldRestartOnFocus,
+  type FocusFacts,
+  type LoadPolicy,
+} from './screenLoad';
 
 const needsServer: LoadPolicy = { offline: 'block', failure: 'block' };
 const onThePhone: LoadPolicy = { offline: 'allow', failure: 'block' };
@@ -39,5 +46,40 @@ describe('settle', () => {
     expect(settle('loading', 'offline')).toBe('offline');
     expect(settle('offline', 'ready')).toBe('ready');
     expect(settle('failed', 'ready')).toBe('ready');
+  });
+});
+
+describe('shouldRestartOnFocus', () => {
+  const base: FocusFacts = {
+    seenBefore: true,
+    quiet: false,
+    everLoaded: true,
+    freshOnOpen: false,
+    builtInFront: false,
+    leftForAnotherTab: false,
+  };
+
+  it('shows a tab built in the background its skeleton the first time it is chosen', () => {
+    const tab = { ...base, seenBefore: false, freshOnOpen: true };
+    expect(shouldRestartOnFocus(tab)).toBe(true);
+    expect(shouldRestartOnFocus({ ...tab, builtInFront: true })).toBe(false);
+    expect(shouldRestartOnFocus({ ...base, seenBefore: false })).toBe(false);
+  });
+
+  it('loads a tab again when it is chosen from another tab, even if its own rule is quiet', () => {
+    const tab = { ...base, freshOnOpen: true, quiet: true };
+    expect(shouldRestartOnFocus({ ...tab, leftForAnotherTab: true })).toBe(true);
+  });
+
+  it('leaves a tab as it was when it is only uncovered, if its rule is quiet', () => {
+    const tab = { ...base, freshOnOpen: true, quiet: true };
+    expect(shouldRestartOnFocus(tab)).toBe(false);
+    expect(shouldRestartOnFocus({ ...tab, quiet: false })).toBe(true);
+  });
+
+  it('follows the quiet rule for a screen that is not a tab', () => {
+    expect(shouldRestartOnFocus(base)).toBe(true);
+    expect(shouldRestartOnFocus({ ...base, quiet: true })).toBe(false);
+    expect(shouldRestartOnFocus({ ...base, quiet: true, everLoaded: false })).toBe(true);
   });
 });

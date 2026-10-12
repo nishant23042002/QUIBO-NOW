@@ -4,11 +4,14 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon, Text, radius, space } from '@/ui';
 
+/** The note's least height, shared with the loading skeleton. */
+export const QUIETER_NOTE_HEIGHT = 56;
+
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     note: {
       marginHorizontal: space[4],
-      minHeight: 56,
+      minHeight: QUIETER_NOTE_HEIGHT,
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[3],

@@ -819,8 +819,8 @@ function CartPage() {
  * load shows a message to try again.
  */
 /**
- * Coming back to the cart never shows its skeleton again: it is a tab, its data is on the phone, and it is built early. (A return
- * from one of its own steps used to be the only quiet one; that flag is still taken so it does not linger.)
+ * Uncovering the cart (back from one of its steps) leaves it as it was; choosing it from another tab shows its skeleton again
+ * (`freshOnOpen`). The flag a step used to set is still taken so it does not linger.
  */
 function quietCartReturn(): boolean {
   takeQuietCartReturn();
@@ -836,6 +836,7 @@ export function CartView() {
     hold: !cart.ready,
     quietReturn: quietCartReturn,
     backgroundReady: true,
+    freshOnOpen: true,
   });
   const { ready } = cart;
   const known = cartShape({

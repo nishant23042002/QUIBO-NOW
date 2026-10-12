@@ -34,3 +34,30 @@ export function phaseAfter(result: LoadResult, policy: LoadPolicy): LoadPhase {
 export function settle(current: LoadPhase, next: LoadPhase): LoadPhase {
   return current === 'ready' ? current : next;
 }
+
+/** What is known when a screen comes to the front. */
+export interface FocusFacts {
+  /** It has been in front before. */
+  seenBefore: boolean;
+  /** The screen's own rule says a return should leave it as it is (a return from a step opened from it). */
+  quiet: boolean;
+  /** It has loaded at least once. */
+  everLoaded: boolean;
+  /** A tab: it loads again each time it is chosen from another tab, and the first time after it was built early. */
+  freshOnOpen: boolean;
+  /** It was built while it was in front, so the load that began with it is the one. */
+  builtInFront: boolean;
+  /** It went out of front because another tab was chosen, not because a screen was opened over it. */
+  leftForAnotherTab: boolean;
+}
+
+/**
+ * Whether a screen that has come to the front loads again, showing its skeleton. A screen built in the background has not been
+ * seen, so a tab shows its skeleton the first time it is chosen. After that a tab loads again when it is chosen from another tab, and
+ * stays as it was when it is only uncovered (back from a screen opened over it). Any other screen follows its own quiet rule.
+ */
+export function shouldRestartOnFocus(facts: FocusFacts): boolean {
+  if (!facts.seenBefore) return facts.freshOnOpen && !facts.builtInFront;
+  if (facts.freshOnOpen && facts.leftForAnotherTab) return true;
+  return !(facts.quiet && facts.everLoaded);
+}

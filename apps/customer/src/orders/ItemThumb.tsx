@@ -4,7 +4,7 @@ import { useTintOf } from '@/home/categories';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import { Text, formatQuantity, radius, space } from '@/ui';
-import { thumbRow } from './split';
+import { THUMBS_FIT, thumbRow } from './split';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -57,7 +57,7 @@ export function ItemThumb({
  */
 export function ThumbRow({
   items,
-  fit = 4,
+  fit = THUMBS_FIT,
   size = 36,
   ring,
 }: {

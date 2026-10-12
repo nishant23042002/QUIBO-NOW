@@ -2,7 +2,7 @@ import { formatRupees } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
-import { SETTINGS_LOAD_MS, SETTINGS_POLICY } from '@/home/loading';
+import { SETTINGS_POLICY, TAB_LOAD_MS } from '@/home/loading';
 import { useTabHeaderProps } from '@/home/useTabHeader';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
@@ -23,6 +23,7 @@ import {
   useScreenLoad,
 } from '@/ui';
 import { orderNumber } from './ids';
+import { FIRST_ORDERS_SHAPE, ordersShape, type OrdersShape } from './ordersShape';
 import { ThumbRow } from './ItemThumb';
 import type { TrackedOrder } from './machine';
 import { useOrders } from './OrdersProvider';
@@ -59,27 +60,101 @@ const makeStyles = (c: ThemeColors) =>
       borderStyle: 'dashed',
     },
     empty: { minHeight: 360 },
+    emptySkeleton: {
+      minHeight: 360,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[3],
+      paddingHorizontal: space[6],
+    },
+    headTitle: { flex: 1, minWidth: 0 },
+    thumbs: { flexDirection: 'row', alignItems: 'center' },
+    thumbRing: {
+      borderRadius: radius.md + 2,
+      borderWidth: 2,
+      borderColor: c.surface,
+      backgroundColor: c.surface,
+    },
+    thumbOverlap: { marginLeft: -THUMB * 0.28 },
     skeleton: { flex: 1, overflow: 'hidden' },
   });
 
-/** Grey blocks in the shape of the list: two orders, so it does not jump when the saved orders arrive. */
-function OrdersSkeleton() {
+/** The widths of the lines of the card, as a share of it: the state line and the money line. */
+const STATE_WIDTH = '62%';
+const MONEY_WIDTH = '48%';
+const THUMB = 36;
+/** About how many letters the shops line holds before it takes the whole width ("Items from ..." is the longer line). */
+const SHOPS_LINE_LETTERS = 40;
+
+/**
+ * Grey blocks in the shape of the list the page will show: a card for each order under the chosen filter (up to three), each with its
+ * number and total, its row of pictures (as many as the order has), the state line, the shops line (as long as the shop names) and
+ * the money line, and the "Track" line only for an order in progress. With no orders it is the empty page's picture and words; with
+ * none under the filter, the dashed note.
+ */
+function OrdersSkeleton({ shape }: { shape: OrdersShape }) {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
+
+  if (shape.kind === 'empty') {
+    return (
+      <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
+        <View style={styles.emptySkeleton}>
+          <Skeleton width={72} height={72} rounded={radius.full} />
+          <SkeletonLine size="lg" tight width="55%" align="center" />
+          <SkeletonLine size="sm" width="75%" align="center" />
+          <Skeleton width={160} height={48} rounded={radius.lg} />
+        </View>
+      </SkeletonScope>
+    );
+  }
+
+  if (shape.kind === 'none') {
+    return (
+      <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
+        <View style={styles.content}>
+          <View style={styles.quiet}>
+            <SkeletonLine size="sm" width="60%" />
+          </View>
+        </View>
+      </SkeletonScope>
+    );
+  }
+
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
       <View style={styles.content}>
-        {[0, 1].map((index) => (
-          <View key={index} style={styles.card}>
-            <View style={styles.head}>
-              <SkeletonLine size="base" width="40%" />
-              <Skeleton width={56} height={20} rounded={radius.full} />
+        {shape.cards.map((card, index) => {
+          const shopsShare = Math.min(
+            1,
+            Math.max(0.35, (card.shopLetters + 12) / SHOPS_LINE_LETTERS),
+          );
+          return (
+            <View key={index} style={[styles.card, card.active && styles.cardActive]}>
+              <View style={styles.head}>
+                <View style={styles.headTitle}>
+                  <SkeletonLine size="lg" tight width="55%" />
+                </View>
+                <SkeletonLine size="sm" width={56} align="end" />
+              </View>
+              <View style={styles.thumbs}>
+                {Array.from({ length: card.thumbs + (card.more ? 1 : 0) }, (_, thumb) => (
+                  <View key={thumb} style={[styles.thumbRing, thumb > 0 && styles.thumbOverlap]}>
+                    <Skeleton width={THUMB} height={THUMB} rounded={radius.md} />
+                  </View>
+                ))}
+              </View>
+              <SkeletonLine size="sm" width={STATE_WIDTH} />
+              <SkeletonLine size="sm" width={`${Math.round(shopsShare * 100)}%`} />
+              <SkeletonLine size="sm" width={MONEY_WIDTH} />
+              {card.active ? (
+                <View style={styles.track}>
+                  <SkeletonLine size="sm" width="30%" />
+                </View>
+              ) : null}
             </View>
-            <Skeleton width={120} height={36} rounded={radius.md} />
-            <SkeletonLine size="sm" width="65%" />
-            <SkeletonLine size="sm" width="80%" />
-          </View>
-        ))}
+          );
+        })}
       </View>
     </SkeletonScope>
   );
@@ -201,7 +276,7 @@ function OrdersList({ filter }: { filter: Filter }) {
   );
 }
 
-/** Orders is a tab and its list is on the phone: coming back to it never shows its skeleton again. */
+/** Uncovering the tab (back from an order) leaves it as it was; choosing it from another tab shows its skeleton. */
 const alwaysQuiet = (): boolean => true;
 
 /**
@@ -217,15 +292,24 @@ export function OrdersView() {
   const { orders, loaded } = useOrders();
   const [picked, setPicked] = useState<Filter | null>(null);
   const load = useScreenLoad({
-    loadMs: SETTINGS_LOAD_MS,
+    loadMs: TAB_LOAD_MS,
     policy: SETTINGS_POLICY,
     hold: !loaded,
     quietReturn: alwaysQuiet,
     backgroundReady: true,
+    freshOnOpen: true,
   });
 
   const { active, past } = splitOrders(orders);
   const filter: Filter = picked ?? (active.length > 0 || past.length === 0 ? 'progress' : 'past');
+  const shown = filter === 'progress' ? active : past;
+  const shape = loaded
+    ? ordersShape(
+        orders.map((tracked) => tracked.order),
+        shown.map((tracked) => tracked.order),
+        filter === 'progress',
+      )
+    : FIRST_ORDERS_SHAPE;
   const rail =
     orders.length > 0 ? (
       <View style={styles.filters} role="radiogroup">
@@ -257,7 +341,7 @@ export function OrdersView() {
       onScrollY={reportScroll}
       bottomSpace={BOTTOM_BAR_HEIGHT}
     >
-      <LoadGate inFlow load={load} skeleton={<OrdersSkeleton />}>
+      <LoadGate inFlow load={load} skeleton={<OrdersSkeleton shape={shape} />}>
         <OrdersList filter={filter} />
       </LoadGate>
     </TabHeader>

@@ -6,6 +6,7 @@ import {
   asksNetwork,
   phaseAfter,
   settle,
+  shouldRestartOnFocus,
   type LoadPhase,
   type LoadPolicy,
 } from './logic/screenLoad';
@@ -32,6 +33,11 @@ export interface ScreenLoadOptions {
    * for a screen built as it opens.
    */
   backgroundReady?: boolean;
+  /**
+   * For a tab: it shows its skeleton each time it is chosen from another tab (and the first time, if it was built early), so a tap
+   * on the bar always feels like arriving somewhere. Coming back to it from a screen opened over it still follows `quietReturn`.
+   */
+  freshOnOpen?: boolean;
 }
 
 export interface ScreenLoad {
@@ -59,17 +65,21 @@ export function useScreenLoad({
   hold = false,
   quietReturn,
   backgroundReady = false,
+  freshOnOpen = false,
 }: ScreenLoadOptions): ScreenLoad {
   const online = useOnline();
   const reduceMotion = useReduceMotion();
   const navigation = useNavigation();
-  const [readyAtStart] = useState(() => backgroundReady && !hold && !navigation.isFocused());
+  const [builtInFront] = useState(() => navigation.isFocused());
+  const [readyAtStart] = useState(() => backgroundReady && !hold && !builtInFront);
   const [phase, setPhase] = useState<LoadPhase>(() => (readyAtStart ? 'ready' : 'loading'));
   const [attempt, setAttempt] = useState(0);
   const [reveal] = useState(() => new Animated.Value(readyAtStart ? 1 : 0));
   const [skeletonOn, setSkeletonOn] = useState(!readyAtStart);
   const everLoaded = useRef(readyAtStart);
   const seenBefore = useRef(false);
+  // Whether the last time it went out of front it was for another tab (a tab's own state names the tab in front).
+  const leftForAnotherTab = useRef(false);
 
   const restart = useCallback(() => {
     reveal.setValue(0);
@@ -79,14 +89,31 @@ export function useScreenLoad({
   }, [reveal]);
 
   // The first time the screen is in front, the load that began with it is the one. After that, each time it comes back to
-  // the front it loads again, unless it is a quiet return.
+  // the front it loads again, unless it is a quiet return. A tab built early has not been seen, so it loads (and shows its
+  // skeleton) when first chosen.
   useFocusEffect(
     useCallback(() => {
       const quiet = quietReturn?.() ?? false;
-      if (seenBefore.current && !(quiet && everLoaded.current)) restart();
+      if (
+        shouldRestartOnFocus({
+          seenBefore: seenBefore.current,
+          quiet,
+          everLoaded: everLoaded.current,
+          freshOnOpen,
+          builtInFront,
+          leftForAnotherTab: leftForAnotherTab.current,
+        })
+      ) {
+        restart();
+      }
       seenBefore.current = true;
-      return undefined;
-    }, [quietReturn, restart]),
+      const state = navigation.getState();
+      const ownKey = state?.routes[state.index]?.key;
+      return () => {
+        const now = navigation.getState();
+        leftForAnotherTab.current = now?.routes[now.index]?.key !== ownKey;
+      };
+    }, [quietReturn, restart, freshOnOpen, builtInFront, navigation]),
   );
 
   useEffect(() => {

@@ -2,13 +2,29 @@ import { useRouter } from 'expo-router';
 import { Pressable, Text as NativeText, ScrollView, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import { RowTitle, Text, radius, space } from '@/ui';
+import { RowTitle, Text, fontSize, leading, radius, space } from '@/ui';
 import { tileRoute, tintColor } from './categoryGroups';
 import { FEATURED } from './featuredPicks';
 import type { ItemCategory } from './items';
 
-const CARD_WIDTH = 232;
+export const FEATURED_CARD_WIDTH = 232;
 const PICTURE = 56;
+
+/**
+ * The height of a card whose title and line each take two lines: the padding and border around them, the two lines of each in the
+ * chosen script, and the gap between. The loading skeleton uses it too, so the row is as tall before the cards arrive as after.
+ */
+export function useFeaturedCardHeight(): number {
+  const { locale } = useLanguage();
+  const lead = leading[locale === 'en' ? 'latin' : 'devanagari'].normal;
+  return (
+    space[4] * 2 +
+    2 +
+    Math.round(fontSize.sm * lead) * 2 +
+    Math.round(fontSize.xs * lead) * 2 +
+    space[1]
+  );
+}
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -16,8 +32,7 @@ const makeStyles = (c: ThemeColors) =>
     pad: { paddingHorizontal: space[4] },
     row: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
     card: {
-      width: CARD_WIDTH,
-      minHeight: 96,
+      width: FEATURED_CARD_WIDTH,
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[2],
@@ -40,6 +55,7 @@ export function Featured({ onCategory }: { onCategory: (category: ItemCategory) 
   const router = useRouter();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
+  const cardHeight = useFeaturedCardHeight();
 
   return (
     <View style={styles.section}>
@@ -59,7 +75,7 @@ export function Featured({ onCategory }: { onCategory: (category: ItemCategory) 
               }}
               style={({ pressed }) => [
                 styles.card,
-                { backgroundColor: tintColor(colors, pick.tint) },
+                { minHeight: cardHeight, backgroundColor: tintColor(colors, pick.tint) },
                 pressed && styles.pressed,
               ]}
             >

@@ -1,6 +1,7 @@
 import { StyleSheet, View } from 'react-native';
 import { CategoryTile } from './CategoryTile';
 import { Skeleton, SkeletonLine } from './Skeleton';
+import { tileNameLines } from './logic/tileNames';
 import { radius, space } from './tokens';
 
 /** One tile of the grid: a picture, its colour, and its name. */
@@ -30,7 +31,6 @@ const styles = StyleSheet.create({
   },
   cell: { width: '25%', paddingHorizontal: GAP / 2 },
   cellSkeleton: { width: '25%', paddingHorizontal: GAP / 2, gap: space[2] },
-  label: { gap: 2 },
 });
 
 /** The tiles of a group or of Home's "Shop by category", four across. */
@@ -53,26 +53,42 @@ export function CategoryTileGrid({ tiles, onPress }: CategoryTileGridProps) {
   );
 }
 
-/** How wide each placeholder name is, as a share of the tile: some names fill two lines, some one, as the real ones do. */
+/** The widths of the placeholder names when the real ones are not known: some fill two lines, some one. */
 const NAME_LINES = [['90%', '55%'], ['70%'], ['85%', '50%']] as const;
 
 /**
  * The tiles while they load: squares with their one or two lines of name, in the same cells as the real grid, so nothing moves when
- * they arrive. Put it inside a `SkeletonScope`. `shift` starts the pattern of names at a different tile.
+ * they arrive. Put it inside a `SkeletonScope`. Give `names` (the real names, in order) and each tile draws the lines its own name
+ * will take; without them a pattern of names stands in, starting at tile `shift`.
  */
-export function CategoryTileGridSkeleton({ count, shift = 0 }: { count: number; shift?: number }) {
+export function CategoryTileGridSkeleton({
+  count,
+  shift = 0,
+  names,
+}: {
+  count: number;
+  shift?: number;
+  names?: readonly string[];
+}) {
   return (
     <View style={styles.grid}>
-      {Array.from({ length: count }, (_, tile) => (
-        <View key={tile} style={styles.cellSkeleton}>
-          <Skeleton aspectRatio={1} rounded={radius.lg} />
-          <View style={styles.label}>
-            {(NAME_LINES[(tile + shift) % NAME_LINES.length] ?? []).map((width, line) => (
-              <SkeletonLine key={line} size="xs" width={width} align="center" />
-            ))}
+      {Array.from({ length: count }, (_, tile) => {
+        const known = names?.[tile];
+        const widths: readonly `${number}%`[] =
+          known !== undefined
+            ? tileNameLines(known).map((share) => `${Math.round(share * 100)}%` as const)
+            : (NAME_LINES[(tile + shift) % NAME_LINES.length] ?? []);
+        return (
+          <View key={tile} style={styles.cellSkeleton}>
+            <Skeleton aspectRatio={1} rounded={radius.lg} />
+            <View>
+              {widths.map((width, line) => (
+                <SkeletonLine key={line} size="xs" width={width} align="center" />
+              ))}
+            </View>
           </View>
-        </View>
-      ))}
+        );
+      })}
     </View>
   );
 }

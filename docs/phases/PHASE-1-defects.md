@@ -29,18 +29,19 @@ rather than as passed.
 
 None of this has been seen on a phone. Each line is one thing to look at, so it is a short list rather than a test script.
 
-| Where               | What to look at                                                                                                                                                       |
-| ------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Home, top to bottom | Shop by category (tiles four across, a main one opens Home on it, a finer one opens search), shops strip, Small prices tabs, Featured, the quieter-times note, footer |
-| Product cards       | The 128 dp card is not stretched, rows keep one height, the name and price read at 16, the ribbon and add button are not cramped                                      |
-| Cart taps           | Add and the plus and minus show a press at once; the number changes with no pause; nothing flashes                                                                    |
-| Floating controls   | Free delivery note and cart button sit close together; the cart and bottom bar hide after a real scroll and come back on a short scroll up                            |
-| Free delivery       | Crossing the free-delivery amount shows the moment once and for under three seconds; removing an item and adding it back does not repeat it                           |
-| Stock limit         | Tapping plus at the limit shakes the stepper and shows the few words; it does not stack toasts                                                                        |
-| Tab headers         | Categories and Orders wear the same header as Home; the compact search stays at the top while the page scrolls; the Orders chips sit under it                         |
-| Dark mode           | Lilac tint, tile colours and the footer in the dark theme                                                                                                             |
-| Hindi, Marathi      | The new lines fit in the tiles and chips at the largest text size without being cut                                                                                   |
-| Low-end phone       | Scrolling Home is smooth; the first paint after opening the app is quick; use `pnpm dev -- --no-dev --minify` or a build                                              |
+| Where               | What to look at                                                                                                                                                        |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Home, top to bottom | Shop by category (tiles four across, a main one opens Home on it, a finer one opens search), shops strip, Small prices tabs, Featured, the quieter-times note, footer  |
+| Product cards       | The 128 dp card is not stretched, rows keep one height, the name and price read at 16, the ribbon and add button are not cramped                                       |
+| Tab skeletons       | Categories, Cart and Orders show their skeleton for about half a second when chosen from another tab, in the shape of the page that follows, with nothing moving after |
+| Cart taps           | Add and the plus and minus show a press at once; the number changes with no pause; nothing flashes                                                                     |
+| Floating controls   | Free delivery note and cart button sit close together; the cart and bottom bar hide after a real scroll and come back on a short scroll up                             |
+| Free delivery       | Crossing the free-delivery amount shows the moment once and for under three seconds; removing an item and adding it back does not repeat it                            |
+| Stock limit         | Tapping plus at the limit shakes the stepper and shows the few words; it does not stack toasts                                                                         |
+| Tab headers         | Categories and Orders wear the same header as Home; the compact search stays at the top while the page scrolls; the Orders chips sit under it                          |
+| Dark mode           | Lilac tint, tile colours and the footer in the dark theme                                                                                                              |
+| Hindi, Marathi      | The new lines fit in the tiles and chips at the largest text size without being cut                                                                                    |
+| Low-end phone       | Scrolling Home is smooth; the first paint after opening the app is quick; use `pnpm dev -- --no-dev --minify` or a build                                               |
 
 ## Found and fixed since the hardening pass
 
@@ -51,6 +52,9 @@ None of this has been seen on a phone. Each line is one thing to look at, so it 
   2.8 seconds and sits close above the cart controls.
 - The item page's promise tiles were laid out differently from the cart's; they now match (`7f7cf4d`).
 - Switching to the Categories or Orders tab could flash the skeleton; the tabs are built early and never show it on a return.
+- The Categories, Cart and Orders tabs had lost their skeleton (ADR 0025); they show it again each time they are chosen from another
+  tab, and the skeletons of Home, Categories and Orders are drawn from what their page holds, with the same row heights and positions
+  (ADR 0035).
 - The header gradient was tried twice and removed because it did not look right (`938d87b`).
 
 ## Found and fixed in the hardening pass
@@ -81,7 +85,6 @@ None of this has been seen on a phone. Each line is one thing to look at, so it 
 | 10  | The Home sections added in 1i (category groups, price tiers, featured picks) use sample data kept inside the app, not contract-parsed fixtures from `packages/mocks`                                                               | Minor    | Phase 2 (move to the API with the real catalogue)            |
 | 11  | The Featured picks use emoji as stand-in pictures, which can look different from one Android version to another                                                                                                                    | Minor    | Phase 2 (real pictures from the shop or the town's settings) |
 | 12  | Opening a category from a tile on the very first load of Home may not switch the tab, because Home reads the choice after it mounts                                                                                                | Minor    | Owner to confirm on a phone; fix is small if it shows        |
-| 13  | Haptics on add and on the stock-limit shake are not built; they need `expo-haptics`                                                                                                                                                | Minor    | Owner (a yes to the dependency)                              |
 | 14  | Speed figures for 1i come from a production web bundle; no native Android release build has been run here                                                                                                                          | Minor    | Owner, on a phone                                            |
 
 ## Decided and parked

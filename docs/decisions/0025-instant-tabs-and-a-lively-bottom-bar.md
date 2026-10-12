@@ -1,6 +1,6 @@
 # 0025. Instant tabs and a lively bottom bar
 
-- **Status:** Accepted (Phase 1)
+- **Status:** Accepted (Phase 1). Point 3 is reversed for Categories, Cart and Orders by [0035](./0035-tab-skeletons-return-and-mirror-their-content.md)
 - **Date:** 2026-10-11
 - **Source:** the owner, after screen-recording another grocery app's bottom bar next to ours
 

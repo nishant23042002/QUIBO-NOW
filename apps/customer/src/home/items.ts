@@ -26,6 +26,15 @@ type Translate = ReturnType<typeof useLanguage>['t'];
 /** The categories that hold items. "All" is not one of them: it shows every category's row. */
 export type ItemCategory = 'dairy' | 'vegetables' | 'fruits' | 'staples' | 'snacks';
 
+/** The order the rows come in on Home when "All" is chosen; the loading skeleton draws the same rows. */
+export const HOME_RAIL_ORDER: readonly ItemCategory[] = [
+  'dairy',
+  'vegetables',
+  'fruits',
+  'staples',
+  'snacks',
+];
+
 interface Sample {
   id:
     | 'milk'

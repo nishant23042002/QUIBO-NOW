@@ -21,6 +21,9 @@ export function lastEventAt(order: Order): Date {
   return new Date(last?.at ?? order.placedAt);
 }
 
+/** How many pictures an order card shows in its row before "+N". */
+export const THUMBS_FIT = 4;
+
 /** How many pictures to show in a row of overlapping ones, and how many more there are than fit. */
 export function thumbRow<T>(items: readonly T[], fit: number): { shown: T[]; more: number } {
   const shown = items.slice(0, fit);

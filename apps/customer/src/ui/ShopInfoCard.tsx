@@ -26,18 +26,18 @@ export interface ShopInfoCardProps {
 }
 
 /** Every card is the same width and height, so a row of them lines up and the next one peeks in. */
-const SHOP_INFO_CARD_WIDTH = 180;
-const PHOTO_RATIO = 1.55;
-const INSET = space[2];
+export const SHOP_INFO_CARD_WIDTH = 180;
+export const SHOP_INFO_CARD_PHOTO_RATIO = 1.55;
+export const SHOP_INFO_CARD_INSET = space[2];
 const CORNER = space[1] + 2;
 /** The name keeps one line and the description two, and both always keep their room. */
-const TYPE_LINES = 2;
+export const SHOP_INFO_CARD_TYPE_LINES = 2;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     card: {
       width: SHOP_INFO_CARD_WIDTH,
-      padding: INSET,
+      padding: SHOP_INFO_CARD_INSET,
       gap: space[2],
       borderRadius: radius.lg,
       borderWidth: 1,
@@ -53,7 +53,7 @@ const makeStyles = (c: ThemeColors) =>
       position: 'absolute',
       top: CORNER,
       left: CORNER,
-      maxWidth: SHOP_INFO_CARD_WIDTH - INSET * 2 - CORNER * 2,
+      maxWidth: SHOP_INFO_CARD_WIDTH - SHOP_INFO_CARD_INSET * 2 - CORNER * 2,
       paddingHorizontal: space[2],
       paddingVertical: 1,
       borderRadius: radius.full,
@@ -105,7 +105,7 @@ export function ShopInfoCard({
       <View style={styles.photo}>
         <ProductImage
           name={name}
-          ratio={PHOTO_RATIO}
+          ratio={SHOP_INFO_CARD_PHOTO_RATIO}
           {...(photoUri !== undefined ? { uri: photoUri } : {})}
         />
         <View style={[styles.tag, open ? styles.openTag : styles.closedTag]}>
@@ -123,8 +123,8 @@ export function ShopInfoCard({
           </View>
           <Icon name="shield" color={colors.accentInk} size={16} />
         </View>
-        <View style={{ minHeight: line(fontSize.sm) * TYPE_LINES }}>
-          <Text variant="small" color="inkMuted" numberOfLines={TYPE_LINES}>
+        <View style={{ minHeight: line(fontSize.sm) * SHOP_INFO_CARD_TYPE_LINES }}>
+          <Text variant="small" color="inkMuted" numberOfLines={SHOP_INFO_CARD_TYPE_LINES}>
             {type}
           </Text>
         </View>

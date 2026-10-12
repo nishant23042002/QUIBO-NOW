@@ -9,19 +9,17 @@ import {
   CategoryTileGridSkeleton,
   LoadGate,
   RowTitle,
-  Skeleton,
-  SkeletonLine,
+  RowTitleSkeleton,
   SkeletonScope,
   StatePanel,
   TabHeader,
-  radius,
   space,
   useChromeReport,
   useScreenLoad,
 } from '@/ui';
 import { CART_ROOM } from './CartLayer';
 import { useCart } from './CartProvider';
-import { CATEGORY_GROUPS, tileRoute } from './categoryGroups';
+import { tileRoute } from './categoryGroups';
 import { CATEGORIES_LOAD_MS, CATEGORIES_POLICY } from './loading';
 import { useTabHeaderProps } from './useTabHeader';
 import { useCategoryGroups, type CategoryTile as TileData } from './useCategoryTiles';
@@ -34,8 +32,6 @@ const makeStyles = (c: ThemeColors) =>
     group: { gap: space[3] },
     skeleton: { flex: 1, overflow: 'hidden' },
     empty: { minHeight: 360 },
-    titleRow: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
-    titleLine: { flex: 1 },
   });
 
 /** Opens what a tile points at: Home on a category, or search for a word. */
@@ -45,34 +41,28 @@ function openTile(router: ReturnType<typeof useRouter>, tile: TileData): void {
   else router.push(route);
 }
 
-/** Groups of this many tiles, cut into rows of four: the same shapes as the first groups the tab really shows. */
-const SKELETON_GROUPS: readonly number[] = CATEGORY_GROUPS.slice(0, 3).map(
-  (group) => group.tiles.length,
-);
-
 /**
- * Grey blocks in the shape of the page: each group's title with its dotted line, then rows of four square tiles with their one
- * or two lines of name, in the same group sizes and spacing as the real tiles. The header is real and stays put, so the skeleton
- * is only the page under it and nothing moves when the tiles arrive.
+ * Grey blocks in the shape of the page: each group's title as long as the real one with its dotted line, then its tiles four across
+ * with the lines of name each real name will take, in the same groups, order and spacing as the real tiles. The header is real and
+ * stays put, so the skeleton is only the page under it and nothing moves when the tiles arrive.
  */
 function CategoriesSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
+  const groups = useCategoryGroups();
 
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
       <View style={styles.content}>
-        {SKELETON_GROUPS.map((count, group) => (
-          <View key={group} style={styles.group}>
-            <View style={[styles.pad, styles.titleRow]}>
-              <View style={{ width: group % 2 === 0 ? '46%' : '38%' }}>
-                <SkeletonLine size="lg" tight />
-              </View>
-              <View style={styles.titleLine}>
-                <Skeleton height={2} rounded={radius.full} />
-              </View>
+        {groups.map((group) => (
+          <View key={group.title} style={styles.group}>
+            <View style={styles.pad}>
+              <RowTitleSkeleton title={group.title} />
             </View>
-            <CategoryTileGridSkeleton count={count} shift={group} />
+            <CategoryTileGridSkeleton
+              count={group.tiles.length}
+              names={group.tiles.map((tile) => tile.label)}
+            />
           </View>
         ))}
       </View>
@@ -119,7 +109,7 @@ function CategoryGroups() {
   );
 }
 
-/** The Categories tab is a tab and its list is kept: coming back to it never shows its skeleton again. */
+/** Uncovering the tab (back from a search a tile opened) leaves it as it was; choosing it from another tab shows its skeleton. */
 const alwaysQuiet = (): boolean => true;
 
 /**
@@ -137,6 +127,7 @@ export function CategoriesView() {
     policy: CATEGORIES_POLICY,
     quietReturn: alwaysQuiet,
     backgroundReady: true,
+    freshOnOpen: true,
   });
 
   return (
