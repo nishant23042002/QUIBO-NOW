@@ -81,6 +81,7 @@ export {
 export { SectionDivider } from './SectionDivider';
 export { Screen } from './Screen';
 export { SearchBar, type SearchBarProps, type SearchHint } from './SearchBar';
+export { SearchHeader, useSearchHeaderHeight, type SearchHeaderProps } from './SearchHeader';
 export { SearchField, type SearchFieldProps } from './SearchField';
 export { ShopHero, type ShopHeroProps } from './ShopHero';
 export { ShopRow, type ShopRowProps } from './ShopRow';

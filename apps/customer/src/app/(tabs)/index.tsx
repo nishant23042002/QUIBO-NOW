@@ -7,6 +7,7 @@ import { useDeliveryAddress, useDeliveryWhen } from '@/home/deliveryInfo';
 import { useHomeCategories } from '@/home/categories';
 import { HomeFeed } from '@/home/HomeFeed';
 import { useHomeOffers } from '@/home/offers';
+import { useSearchHint } from '@/home/searchHint';
 import { useSampleShops } from '@/home/sampleShops';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
@@ -16,14 +17,6 @@ import { BOTTOM_BAR_HEIGHT, HomeHeader, useChromeReport } from '@/ui';
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
 
-/** The words the search bar types out in turn. They are examples, and the search screen opens from the bar. */
-const SEARCH_ITEMS = [
-  'home.search.itemMilk',
-  'home.search.itemAtta',
-  'home.search.itemVegetables',
-  'home.search.itemBread',
-] as const;
-
 // Phase 1a is built one section at a time. So far: the header (with the shops row it opens), the search bar, the category tabs, the sliding offers, and the item rows.
 export default function HomeScreen() {
   const { t } = useLanguage();
@@ -32,6 +25,7 @@ export default function HomeScreen() {
   const shops = useSampleShops();
   const categories = useHomeCategories();
   const offers = useHomeOffers();
+  const searchHint = useSearchHint();
   const [category, setCategory] = useState('all');
   // The Categories tab can open Home on a category. Each press carries a new stamp, so choosing the same one again still counts.
   const { category: wanted, at } = useLocalSearchParams<{ category?: string; at?: string }>();
@@ -59,10 +53,7 @@ export default function HomeScreen() {
         shopsLabel={t('home.header.shopsOpen', { count: openCount })}
         shopsTitle={t('home.shopsSheet.title')}
         searchLabel={t('home.search.label')}
-        searchHint={{
-          label: t('home.search.hintLabel'),
-          words: SEARCH_ITEMS.map((item) => t(item)),
-        }}
+        searchHint={searchHint}
         categories={categories}
         selectedCategory={category}
         categoriesLabel={t('home.categories.label')}

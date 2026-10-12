@@ -75,20 +75,37 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({ block: { backgroundCo
 
 export interface SkeletonProps {
   width?: DimensionValue;
-  height: number;
+  /** A fixed height. Leave it out and give `aspectRatio` for a block whose height follows its width (a square tile). */
+  height?: number;
+  /** Width over height, for example 1 for a square. Used when there is no `height`. */
+  aspectRatio?: number;
   /** Corner radius; defaults to a small rounding. */
   rounded?: number;
 }
 
 /** A grey block standing in for something that is still loading. Put it inside a `SkeletonScope`. */
-export function Skeleton({ width = '100%', height, rounded = radius.sm }: SkeletonProps) {
+export function Skeleton({
+  width = '100%',
+  height,
+  aspectRatio,
+  rounded = radius.sm,
+}: SkeletonProps) {
   const styles = useStyles(makeStyles);
   const pulse = useContext(PulseContext);
 
   return (
     <Animated.View
       aria-hidden
-      style={[styles.block, { width, height, borderRadius: rounded, opacity: pulse ?? 1 }]}
+      style={[
+        styles.block,
+        {
+          width,
+          ...(height !== undefined ? { height } : {}),
+          ...(height === undefined && aspectRatio !== undefined ? { aspectRatio } : {}),
+          borderRadius: rounded,
+          opacity: pulse ?? 1,
+        },
+      ]}
     />
   );
 }
