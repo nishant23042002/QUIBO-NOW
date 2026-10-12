@@ -87,9 +87,12 @@ export function useProductCardMetrics(width?: number, reserveNote?: boolean): Pr
   const { locale } = useLanguage();
   const script = locale === 'en' ? 'latin' : 'devanagari';
   const compact = width !== undefined && isCompactCard(width);
-  const textSize = compact ? fontSize.xs : fontSize.sm;
-  const line = Math.round(textSize * leading[script][compact ? 'tight' : 'normal']);
-  const nameLine = Math.round(textSize * leading[script][compact ? 'tight' : 'normal']);
+  // The name is what tells a shopper which item it is, so it keeps the full 16 even on a compact card (its lines packed close);
+  // only the pack and the low-stock line step down to 14.
+  const line = Math.round(
+    (compact ? fontSize.xs : fontSize.sm) * leading[script][compact ? 'tight' : 'normal'],
+  );
+  const nameLine = Math.round(fontSize.sm * leading[script][compact ? 'tight' : 'normal']);
   const priceHeight =
     Math.round((compact ? fontSize.sm : fontSize.base) * leading[script].normal) +
     (compact ? 6 : 8);
@@ -129,8 +132,10 @@ const makeStyles = (c: ThemeColors) =>
     },
     // The ADD button sits on the picture's lower right corner, and turns into the stepper there.
     control: { position: 'absolute', right: space[2], bottom: space[2] },
+    controlCompact: { position: 'absolute', right: space[1] + 2, bottom: space[1] + 2 },
     // The ribbon hangs from the top edge, a little in from the left.
     ribbon: { position: 'absolute', top: 0, left: space[2] },
+    ribbonCompact: { position: 'absolute', top: 0, left: space[1] + 2 },
     // The "out of stock" label sits across the lower part of the picture, where ADD would have been.
     unavailable: {
       position: 'absolute',
@@ -201,8 +206,8 @@ export function ProductCard({
             {emoji}
           </NativeText>
           {ribbon !== undefined && !out ? (
-            <View style={styles.ribbon}>
-              <DiscountRibbon amount={ribbon.amount} offLabel={ribbon.offLabel} />
+            <View style={compact ? styles.ribbonCompact : styles.ribbon}>
+              <DiscountRibbon amount={ribbon.amount} offLabel={ribbon.offLabel} compact={compact} />
             </View>
           ) : null}
         </Pressable>
@@ -213,8 +218,8 @@ export function ProductCard({
             </Text>
           </View>
         ) : (
-          <View style={styles.control}>
-            <Stepper value={quantity} onChange={onQuantityChange} {...stepper} />
+          <View style={compact ? styles.controlCompact : styles.control}>
+            <Stepper value={quantity} onChange={onQuantityChange} compact={compact} {...stepper} />
           </View>
         )}
       </View>
@@ -233,11 +238,7 @@ export function ProductCard({
             </View>
           ) : null}
           <View style={styles.name}>
-            <Text
-              variant={compact ? 'caption' : 'strong'}
-              tight={compact}
-              numberOfLines={NAME_LINES}
-            >
+            <Text variant="strong" tight={compact} numberOfLines={NAME_LINES}>
               {name}
             </Text>
           </View>

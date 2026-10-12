@@ -17,7 +17,6 @@ export { CategoryTile, type CategoryTileProps } from './CategoryTile';
 export { ComingSoon } from './ComingSoon';
 export { Chip, type ChipProps } from './Chip';
 export { HomeHeader, type HomeHeaderProps } from './HomeHeader';
-export { HomeScrollContext, useHomeScroll, type HomeScrollValue } from './HomeScroll';
 export { Icon, type IconName } from './Icon';
 export { IconButton, type IconButtonProps } from './IconButton';
 export { Input, type InputProps } from './Input';

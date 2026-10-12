@@ -10,7 +10,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
-import { HomeScrollContext } from './HomeScroll';
 import { HeaderIdentity } from './HeaderIdentity';
 import { PromoCarousel, type PromoSlide } from './PromoCarousel';
 import { SearchBar, type SearchHint } from './SearchBar';
@@ -145,7 +144,6 @@ export function HomeHeader({
   // How tall the two pieces are, measured, so the page can start below them and the upper part knows how far to travel.
   const [topHeight, setTopHeight] = useState(0);
   const [lowerHeight, setLowerHeight] = useState(0);
-  const [offersHeight, setOffersHeight] = useState(0);
   // The shops row: how tall it is (measured once), and how open it is (0 to 1, driven natively).
   const [panelHeight, setPanelHeight] = useState(0);
   const [panelAt] = useState(() => new Animated.Value(0));
@@ -227,17 +225,9 @@ export function HomeHeader({
     extrapolate: 'clamp',
   });
 
-  // Where the lower part (search bar and tabs) starts when the page is at the top, and where the page's own
-  // content starts under the offers.
+  // Where the lower part (search bar and tabs) starts when the page is at the top.
   const lowerTop = insets.top + topHeight - SEAM;
-  // The page itself: its scroll, less how far the open shops row has pushed it down. Rows below use it to stick.
-  const pageScroll = Animated.subtract(scroll, push);
   const riseWithPage = scroll.interpolate({ inputRange: [0, 1], outputRange: [0, -1] });
-  const scrollInfo = {
-    scroll: pageScroll,
-    childrenTop: lowerTop + lowerHeight - SEAM + offersHeight,
-    pin: insets.top + lowerHeight - SEAM,
-  };
 
   const gutter = {
     paddingLeft: insets.left + space[4],
@@ -268,19 +258,14 @@ export function HomeHeader({
         }}
       >
         <Animated.View style={{ transform: [{ translateY: push }] }}>
-          <Animated.View
-            style={[styles.offers, { backgroundColor: background }]}
-            onLayout={(event) => {
-              setOffersHeight(Math.round(event.nativeEvent.layout.height));
-            }}
-          >
+          <Animated.View style={[styles.offers, { backgroundColor: background }]}>
             <Animated.View
               pointerEvents="none"
               style={[styles.bleed, { backgroundColor: background }]}
             />
             <PromoCarousel slides={offers} label={offersLabel} onPress={onOfferPress} />
           </Animated.View>
-          <HomeScrollContext value={scrollInfo}>{children}</HomeScrollContext>
+          {children}
         </Animated.View>
       </Animated.ScrollView>
 

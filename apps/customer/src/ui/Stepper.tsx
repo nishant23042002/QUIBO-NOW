@@ -27,6 +27,8 @@ export interface StepperProps {
   maxLabel?: string;
   /** Written after the number for a weight, for example "kg". */
   unitLabel?: string;
+  /** A smaller control for a compact card: 28 dp tall with 14 text, and slop around it that still makes a 48 dp touch target. */
+  compact?: boolean;
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -51,6 +53,25 @@ const makeStyles = (c: ThemeColors) =>
     // 32 wide with 8 of reach on each side makes the 48 dp a thumb needs.
     side: { width: 32, height: 32, alignItems: 'center', justifyContent: 'center' },
     value: { minWidth: 22, alignItems: 'center' },
+    addCompact: {
+      minHeight: 28,
+      paddingHorizontal: space[3],
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderWidth: 1.5,
+      borderRadius: radius.md,
+      borderColor: c.action,
+      backgroundColor: c.surface,
+    },
+    stepperCompact: {
+      minHeight: 28,
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderRadius: radius.md,
+      backgroundColor: c.action,
+    },
+    sideCompact: { width: 26, height: 28, alignItems: 'center', justifyContent: 'center' },
+    valueCompact: { minWidth: 18, alignItems: 'center' },
     pressed: { opacity: 0.8 },
     atMax: { opacity: 0.35 },
   });
@@ -66,6 +87,7 @@ export function Stepper({
   increaseLabel,
   maxLabel,
   unitLabel,
+  compact = false,
 }: StepperProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
@@ -87,19 +109,30 @@ export function Stepper({
     }).start();
   }, [value, reduceMotion, bounce]);
 
+  // Extra reach on each side of a control: 8 on a full one (32 tall), 10 on a compact one (28 tall), to make 48 dp.
+  const slop = compact ? 10 : 8;
+  const reach = { top: slop, bottom: slop, left: slop, right: slop };
+
   if (value === 0) {
     return (
       <Animated.View style={{ transform: [{ scale: bounce }] }}>
         <Pressable
           role="button"
           aria-label={addAriaLabel ?? addLabel}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          hitSlop={reach}
           onPress={() => {
             onChange(stepQuantity(0, 1, rule));
           }}
-          style={({ pressed }) => [styles.add, pressed && styles.pressed]}
+          style={({ pressed }) => [
+            compact ? styles.addCompact : styles.add,
+            pressed && styles.pressed,
+          ]}
         >
-          <Text variant="strong" color="action" maxFontSizeMultiplier={CONTROL_SCALE_MAX}>
+          <Text
+            variant={compact ? 'caption' : 'strong'}
+            color="action"
+            maxFontSizeMultiplier={CONTROL_SCALE_MAX}
+          >
             {addLabel}
           </Text>
         </Pressable>
@@ -112,20 +145,29 @@ export function Stepper({
     unitLabel === undefined ? formatQuantity(value) : `${formatQuantity(value)} ${unitLabel}`;
 
   return (
-    <Animated.View style={[styles.stepper, { transform: [{ scale: bounce }] }]}>
+    <Animated.View
+      style={[compact ? styles.stepperCompact : styles.stepper, { transform: [{ scale: bounce }] }]}
+    >
       <Pressable
         role="button"
         aria-label={decreaseLabel}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        hitSlop={reach}
         onPress={() => {
           onChange(stepQuantity(value, -1, rule));
         }}
-        style={({ pressed }) => [styles.side, pressed && styles.pressed]}
+        style={({ pressed }) => [
+          compact ? styles.sideCompact : styles.side,
+          pressed && styles.pressed,
+        ]}
       >
-        <Icon name="minus" color={colors.onAction} size={14} />
+        <Icon name="minus" color={colors.onAction} size={compact ? 12 : 14} />
       </Pressable>
-      <View style={styles.value} aria-live="polite">
-        <Text variant="strong" color="onAction" maxFontSizeMultiplier={CONTROL_SCALE_MAX}>
+      <View style={compact ? styles.valueCompact : styles.value} aria-live="polite">
+        <Text
+          variant={compact ? 'caption' : 'strong'}
+          color="onAction"
+          maxFontSizeMultiplier={CONTROL_SCALE_MAX}
+        >
           {shown}
         </Text>
       </View>
@@ -134,13 +176,17 @@ export function Stepper({
         aria-label={atMax ? (maxLabel ?? increaseLabel) : increaseLabel}
         aria-disabled={atMax}
         disabled={atMax}
-        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        hitSlop={reach}
         onPress={() => {
           onChange(stepQuantity(value, 1, rule));
         }}
-        style={({ pressed }) => [styles.side, atMax && styles.atMax, pressed && styles.pressed]}
+        style={({ pressed }) => [
+          compact ? styles.sideCompact : styles.side,
+          atMax && styles.atMax,
+          pressed && styles.pressed,
+        ]}
       >
-        <Icon name="plus" color={colors.onAction} size={14} />
+        <Icon name="plus" color={colors.onAction} size={compact ? 12 : 14} />
       </Pressable>
     </Animated.View>
   );

@@ -17,17 +17,21 @@ The row card was 148 dp wide with a square picture and a text block that always 
    the row plainly swipes.
 2. **The picture is a rectangle wider than tall** (1.2 across for a compact card, 1.1 for a wide one), so the card is not stretched.
    The picture rests a little above its middle, clear of the ADD button.
-3. **Text is sized for the card, never below 14.** A compact card sets its name (up to two lines, packed close) and its pack at 14,
-   the smallest size the app uses, and the price badge at 16 with the printed price at 14. A wide card in the grid keeps 16.
-   Hindi and Marathi keep their taller line room; the measurements are in `useProductCardMetrics`, shared with the loading
-   skeleton so the two always line up.
+3. **The name keeps the full 16; the rest steps down to 14.** The name is the only way a shopper knows which item it is, so on a
+   compact card it stays at 16, semibold, in up to two lines packed close. The pack and the low-stock line are 14, the smallest
+   size the app uses, and the price badge is 16 with the printed price at 14. A wide card in the grid keeps 16 throughout. Hindi and
+   Marathi keep their taller line room; the measurements are in `useProductCardMetrics`, shared with the loading skeleton.
+   **The controls shrink with the card.** The ribbon is shorter with its amount at 14 and a shallower cut; ADD and the stepper are
+   28 dp tall with 14 text and sit closer to the corner, each with slop around it that still makes a 48 dp touch target.
 4. **No per-card delivery estimate.** The header carries it (ADR 0012); the card shows only what is special to the item.
 5. **Room for the low-stock line is kept only in a row that has one.** `anyLowStock` tells a row whether one of its cards shows
    "Only 3 left", and then every card in that row keeps the room, so a row is one height. Other rows stay short.
-6. **The change is app-wide for rows**: Home, the item page's "more from this shop" and "popular", and the cart's suggestions.
+6. **Row titles do not stick.** A row's title and dotted line scroll away with its row instead of staying under the tabs, so
+   nothing lies over the items (`HomeScroll` is gone).
+7. **The change is app-wide for rows**: Home, the item page's "more from this shop" and "popular", and the cart's suggestions.
 
 ## Consequences
 
 - A compact card is about 190 dp tall, down from about 300.
-- A name longer than two lines at 14 is cut with an ellipsis on the card; its full name is on the item's page.
+- A name longer than two lines at 16 is cut with an ellipsis on the card; its full name is on the item's page.
 - `ProductCard` no longer takes a delivery line (`quickLabel`).

@@ -10,10 +10,15 @@ export interface DiscountRibbonProps {
   amount: string;
   /** The word under it, for example "OFF". */
   offLabel: string;
+  /** A smaller ribbon for a compact card: shorter, with the amount at 14 and the word packed under it. */
+  compact?: boolean;
 }
 
 /** How deep the swallowtail cut is at the bottom, in dp. */
 const NOTCH = 6;
+
+/** The compact ribbon's cut is shallower. */
+const NOTCH_COMPACT = 4;
 
 const makeStyles = (_c: ThemeColors) =>
   StyleSheet.create({
@@ -25,6 +30,13 @@ const makeStyles = (_c: ThemeColors) =>
       // Room under the words for the cut.
       paddingBottom: NOTCH + 2,
     },
+    ribbonCompact: {
+      minWidth: 30,
+      alignItems: 'center',
+      paddingHorizontal: space[1],
+      paddingTop: 2,
+      paddingBottom: NOTCH_COMPACT + 1,
+    },
     shape: { position: 'absolute', top: 0, left: 0 },
   });
 
@@ -32,17 +44,18 @@ const makeStyles = (_c: ThemeColors) =>
  * A ribbon that hangs from the top edge of a picture, aubergine with a swallowtail cut, saying how many
  * rupees are saved. Its shape is drawn to match its own size, so any amount fits.
  */
-export function DiscountRibbon({ amount, offLabel }: DiscountRibbonProps) {
+export function DiscountRibbon({ amount, offLabel, compact = false }: DiscountRibbonProps) {
   const styles = useStyles(makeStyles);
   const { colors, scheme } = useTheme();
   // Dark aubergine on the light theme; the brighter header aubergine on the dark theme, so the ribbon stands out from the deep picture tints.
   const fill = scheme === 'dark' ? colors.headerBg : colors.chrome;
   const [size, setSize] = useState({ width: 0, height: 0 });
   const { width, height } = size;
+  const notch = compact ? NOTCH_COMPACT : NOTCH;
 
   return (
     <View
-      style={styles.ribbon}
+      style={compact ? styles.ribbonCompact : styles.ribbon}
       accessible
       aria-label={`${amount} ${offLabel}`}
       onLayout={(event) => {
@@ -55,15 +68,20 @@ export function DiscountRibbon({ amount, offLabel }: DiscountRibbonProps) {
       {width > 0 ? (
         <Svg style={styles.shape} width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
           <Path
-            d={`M0 0H${width}V${height}L${width / 2} ${height - NOTCH}L0 ${height}Z`}
+            d={`M0 0H${width}V${height}L${width / 2} ${height - notch}L0 ${height}Z`}
             fill={fill}
           />
         </Svg>
       ) : null}
-      <Text variant="strong" color="onChrome" numberOfLines={1}>
+      <Text
+        variant={compact ? 'caption' : 'strong'}
+        tight={compact}
+        color="onChrome"
+        numberOfLines={1}
+      >
         {amount}
       </Text>
-      <Text variant="caption" color="onChromeMuted" numberOfLines={1}>
+      <Text variant="caption" tight={compact} color="onChromeMuted" numberOfLines={1}>
         {offLabel}
       </Text>
     </View>
