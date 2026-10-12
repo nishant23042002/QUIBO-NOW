@@ -523,7 +523,7 @@ export function TipAndNotes() {
 
 /**
  * "If something is unavailable": shops sometimes run out, so the shopper says in advance what should happen: swap it for the
- * closest match (never at a higher price), leave it out and refund it, or call first. One choice covers the whole order, and
+ * same brand in another size first, then the same kind from another brand (never at a higher price), leave it out and refund it, or call first. One choice covers the whole order, and
  * "Choose for each item" opens a row per item to give any of them a choice of its own. Kept on the phone.
  */
 export function SubstitutionCard() {
