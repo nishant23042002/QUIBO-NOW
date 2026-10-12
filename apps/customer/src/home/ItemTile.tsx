@@ -1,7 +1,8 @@
 import { useRouter } from 'expo-router';
+import { memo } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductCard, WEIGHT_RULE, countRule, gridCardWidth as gridWidth, space } from '@/ui';
-import { useCart } from './CartProvider';
+import { useCartActions, useQuantity } from './CartProvider';
 import { useDeliveryWhen } from './deliveryInfo';
 import { useTintOf } from './categories';
 import type { HomeItem } from './items';
@@ -13,7 +14,7 @@ export const RAIL_CARD_WIDTH = 128;
  * One item as a card, wired to the cart: ADD and the stepper write to it, and a tap on the picture or the text
  * opens the item's own page. `onOpen` runs first, for a screen that wants to note the tap (search remembers its query).
  */
-export function ItemTile({
+export const ItemTile = memo(function ItemTile({
   item,
   width,
   onOpen,
@@ -27,7 +28,8 @@ export function ItemTile({
 }) {
   const { t } = useLanguage();
   const router = useRouter();
-  const cart = useCart();
+  const { setQuantity } = useCartActions();
+  const quantity = useQuantity(item.defaultPackId);
   const tintOf = useTintOf();
   const when = useDeliveryWhen();
 
@@ -49,9 +51,9 @@ export function ItemTile({
         onOpen?.(item.id);
         router.push({ pathname: '/product/[id]', params: { id: item.id } });
       }}
-      quantity={cart.quantities[item.defaultPackId] ?? 0}
+      quantity={quantity}
       onQuantityChange={(next) => {
-        cart.setQuantity(item.defaultPackId, next);
+        setQuantity(item.defaultPackId, next);
       }}
       stepper={{
         addLabel: t('home.rails.add'),
@@ -64,7 +66,7 @@ export function ItemTile({
       }}
     />
   );
-}
+});
 
 /** The width of a card in the two-column grid used on Home and on a shop page. */
 export function gridCardWidth(screen: number): number {

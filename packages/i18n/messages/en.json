@@ -122,6 +122,8 @@
       "pillMoreSub": "for free delivery",
       "pillFree": "Free delivery",
       "pillFreeSub": "unlocked",
+      "freeUnlockedTitle": "Free delivery unlocked",
+      "freeUnlockedBody": "Your delivery is on us for this order.",
       "saved": "You saved {amount}",
       "removed": "{name} removed",
       "undo": "Undo",

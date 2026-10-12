@@ -2,7 +2,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { CART_ROOM, CartLayer } from '@/home/CartLayer';
-import { useCart } from '@/home/CartProvider';
+import { useCartCount } from '@/home/CartProvider';
 import { useDeliveryAddress, useDeliveryWhen } from '@/home/deliveryInfo';
 import { useHomeCategories } from '@/home/categories';
 import { HomeFeed } from '@/home/HomeFeed';
@@ -36,7 +36,7 @@ export default function HomeScreen() {
       setCategory(wanted);
     }
   }
-  const cart = useCart();
+  const cartCount = useCartCount();
   const reportScroll = useChromeReport();
   const when = useDeliveryWhen();
   const address = useDeliveryAddress();
@@ -77,7 +77,7 @@ export default function HomeScreen() {
         // The bottom bar hides while the page is read and comes back on the way up.
         onScrollY={reportScroll}
         // The floating cart bar covers the bottom of the page when it shows, so the page leaves room for it.
-        bottomSpace={BOTTOM_BAR_HEIGHT + (cart.count > 0 ? CART_ROOM : 0)}
+        bottomSpace={BOTTOM_BAR_HEIGHT + (cartCount > 0 ? CART_ROOM : 0)}
       >
         <HomeFeed category={category} onSeeAll={setCategory} />
       </HomeHeader>

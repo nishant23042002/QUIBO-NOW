@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductRail, space } from '@/ui';
@@ -30,7 +30,7 @@ interface HomeFeedProps {
  * With one category chosen: that category's items in a two-column grid. ADD turns into a stepper in place.
  * The quantities live in the cart, which the floating cart bar reads.
  */
-export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
+export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
   const { t } = useLanguage();
   const { width: screen } = useWindowDimensions();
   const items = useHomeItems();
@@ -91,4 +91,4 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
       })}
     </View>
   );
-}
+});

@@ -72,7 +72,10 @@ const makeStyles = (c: ThemeColors) =>
     },
     sideCompact: { width: 26, height: 28, alignItems: 'center', justifyContent: 'center' },
     valueCompact: { minWidth: 18, alignItems: 'center' },
-    pressed: { opacity: 0.8 },
+    // The press is seen the moment the finger lands: ADD dips and takes the lilac, and a - or + dips and dims, so the control
+    // plainly answers before the cart has done anything.
+    pressedAdd: { transform: [{ scale: 0.92 }], backgroundColor: c.lilac },
+    pressedSide: { transform: [{ scale: 0.82 }], opacity: 0.6 },
     atMax: { opacity: 0.35 },
   });
 
@@ -125,7 +128,7 @@ export function Stepper({
           }}
           style={({ pressed }) => [
             compact ? styles.addCompact : styles.add,
-            pressed && styles.pressed,
+            pressed && styles.pressedAdd,
           ]}
         >
           <Text
@@ -157,7 +160,7 @@ export function Stepper({
         }}
         style={({ pressed }) => [
           compact ? styles.sideCompact : styles.side,
-          pressed && styles.pressed,
+          pressed && styles.pressedSide,
         ]}
       >
         <Icon name="minus" color={colors.onAction} size={compact ? 12 : 14} />
@@ -183,7 +186,7 @@ export function Stepper({
         style={({ pressed }) => [
           compact ? styles.sideCompact : styles.side,
           atMax && styles.atMax,
-          pressed && styles.pressed,
+          pressed && styles.pressedSide,
         ]}
       >
         <Icon name="plus" color={colors.onAction} size={compact ? 12 : 14} />

@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { formatRupees, money, subtract, type Money } from '@quibo/contracts';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { WEIGHT_RULE, type GalleryImage } from '@/ui';
@@ -19,6 +20,8 @@ export function anyCardNote(
 ): boolean {
   return items.some((item) => item.stock?.kind === 'low' || item.quick === true);
 }
+
+type Translate = ReturnType<typeof useLanguage>['t'];
 
 /** The categories that hold items. "All" is not one of them: it shows every category's row. */
 export type ItemCategory = 'dairy' | 'vegetables' | 'fruits' | 'staples' | 'snacks';
@@ -329,9 +332,7 @@ export interface HomeItem {
   loose?: true;
 }
 
-export function useHomeItems(): readonly HomeItem[] {
-  const { t } = useLanguage();
-
+function buildHomeItems(t: Translate): readonly HomeItem[] {
   const label = (size: PackSize) => t(`home.units.${size.unit}`, { n: size.amount });
 
   return SAMPLES.map((sample) => {
@@ -425,4 +426,13 @@ export function useHomeItems(): readonly HomeItem[] {
       ...(first.loose === true ? { loose: true as const } : {}),
     };
   });
+}
+
+/**
+ * The sample items, worded in the chosen language. Built once per language and shared, so a change to the cart does not rebuild the
+ * whole catalogue and every list that holds it can tell that nothing changed.
+ */
+export function useHomeItems(): readonly HomeItem[] {
+  const { t } = useLanguage();
+  return useMemo(() => buildHomeItems(t), [t]);
 }

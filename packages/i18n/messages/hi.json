@@ -122,6 +122,8 @@
       "pillMoreSub": "फ्री डिलीवरी के लिए",
       "pillFree": "फ्री डिलीवरी",
       "pillFreeSub": "मिल गई",
+      "freeUnlockedTitle": "फ्री डिलीवरी मिल गई",
+      "freeUnlockedBody": "इस ऑर्डर की डिलीवरी हमारी तरफ़ से फ्री है।",
       "saved": "आपने {amount} बचाए",
       "removed": "{name} हटाया गया",
       "undo": "वापस",

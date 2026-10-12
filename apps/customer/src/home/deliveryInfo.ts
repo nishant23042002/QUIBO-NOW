@@ -1,7 +1,9 @@
+import { useContext } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useAddresses } from './AddressProvider';
 import { formatAddress } from './addresses';
-import { useCart } from './CartProvider';
+import type { DraftCart } from './cart';
+import { DeliveryWhenContext } from './deliveryWhenContext';
 import { useSlotText } from './slotText';
 
 /** When the order arrives, in words, for the places that say so. */
@@ -15,13 +17,12 @@ export interface DeliveryWhen {
 }
 
 /**
- * When the order arrives: the one delivery choice the cart holds, in words. Home's header, the product page, the item cards
- * and the cart all say it through this, so they can never disagree: quick delivery with its estimate in minutes, or the
- * window the shopper picked. If quick delivery has closed and there is no window to fall back on, it says so.
+ * Works out when the order arrives from the cart's delivery choice, in words: quick delivery with its estimate in minutes, or the
+ * window the shopper picked. If quick delivery has closed and there is no window to fall back on, it says so. The cart's provider
+ * calls this once and shares the result (see `useDeliveryWhen`).
  */
-export function useDeliveryWhen(): DeliveryWhen {
+export function useDeliveryWhenFor(delivery: DraftCart['delivery']): DeliveryWhen {
   const { t } = useLanguage();
-  const { delivery } = useCart();
   const slotText = useSlotText();
   const { current, eta } = delivery;
 
@@ -41,6 +42,17 @@ export function useDeliveryWhen(): DeliveryWhen {
     short: slotText.dayWindow(current.slot),
     quick: false,
   };
+}
+
+/**
+ * When the order arrives, as the cart's provider has worded it. Home's header, the product page, the item cards and the cart all say
+ * it through this, so they can never disagree. It changes only when the words do, so reading it does not redraw a screen each time
+ * something is added to the cart.
+ */
+export function useDeliveryWhen(): DeliveryWhen {
+  const when = useContext(DeliveryWhenContext);
+  if (when === null) throw new Error('useDeliveryWhen must be used inside CartProvider');
+  return when;
 }
 
 /** What an address is called, in the app's language: "Home", "Work" or "Other". */

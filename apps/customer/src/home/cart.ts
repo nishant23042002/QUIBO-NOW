@@ -1,5 +1,5 @@
 import { formatRupees, money, multiplyByQuantity, subtract, type Money } from '@quibo/contracts';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { readSetting, writeSetting } from '@/storage';
 import { computeBill, type Bill } from './bill';
@@ -193,7 +193,7 @@ export function useDraftCart(): DraftCart {
   }>({ order: [], quantities: {} });
   const [savedLoaded, setSavedLoaded] = useState(false);
   const [restored, setRestored] = useState<{ gone: number; lowered: number } | null>(null);
-  const packs = packIndex(homeItems);
+  const packs = useMemo(() => packIndex(homeItems), [homeItems]);
 
   // The catalogue as it is when the app opens, for the read-back below to check the saved cart against.
   const [limits] = useState<ReadonlyMap<string, PackLimit>>(
