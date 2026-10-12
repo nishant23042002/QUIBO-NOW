@@ -1,6 +1,11 @@
 import { messages } from '@quibo/i18n';
 import { describe, expect, it } from 'vitest';
-import { CATEGORY_GROUPS, HOME_CATEGORY_TILES, type CategoryTileSample } from './categoryGroups';
+import {
+  CATEGORY_GROUPS,
+  HOME_CATEGORY_TILES,
+  tileRoute,
+  type CategoryTileSample,
+} from './categoryGroups';
 
 const LANGUAGES = ['en', 'hi', 'mr'] as const;
 
@@ -65,5 +70,21 @@ describe('every tile', () => {
         expect((words as string).length).toBeGreaterThan(0);
       }
     }
+  });
+});
+
+describe('where a tile goes', () => {
+  it('opens Home on a category, with the press stamped', () => {
+    expect(tileRoute({ kind: 'category', category: 'dairy' }, '7')).toEqual({
+      pathname: '/',
+      params: { category: 'dairy', at: '7' },
+    });
+  });
+
+  it('opens search holding the tile word, with the press stamped', () => {
+    expect(tileRoute({ kind: 'search', term: 'atta' }, '9')).toEqual({
+      pathname: '/search',
+      params: { fresh: '9', q: 'atta' },
+    });
   });
 });

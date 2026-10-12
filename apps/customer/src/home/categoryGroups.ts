@@ -27,6 +27,20 @@ export interface CategoryGroupSample {
   tiles: readonly CategoryTileSample[];
 }
 
+/**
+ * The screen a tile opens, with a stamp that makes each press new (so choosing the same tile twice still reacts). A category
+ * opens Home with that tab chosen; a word opens search for it.
+ */
+export type TileRoute =
+  | { pathname: '/'; params: { category: ItemCategory; at: string } }
+  | { pathname: '/search'; params: { fresh: string; q: string } };
+
+export function tileRoute(target: TileTarget, stamp: string): TileRoute {
+  return target.kind === 'category'
+    ? { pathname: '/', params: { category: target.category, at: stamp } }
+    : { pathname: '/search', params: { fresh: stamp, q: target.term } };
+}
+
 const category = (value: ItemCategory): TileTarget => ({ kind: 'category', category: value });
 const search = (term: string): TileTarget => ({ kind: 'search', term });
 

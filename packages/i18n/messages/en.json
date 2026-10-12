@@ -1029,6 +1029,8 @@
   },
   "categoriesTab": {
     "searchHint": "Search for atta, dal, milk and more",
+    "emptyTitle": "Nothing to show yet",
+    "emptyBody": "The shops have not listed their categories yet. Please check back soon.",
     "groups": {
       "market": "Fresh from the market",
       "dairy": "Dairy and eggs",

@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { CART_ROOM, CartLayer } from '@/home/CartLayer';
@@ -33,6 +33,15 @@ export default function HomeScreen() {
   const categories = useHomeCategories();
   const offers = useHomeOffers();
   const [category, setCategory] = useState('all');
+  // The Categories tab can open Home on a category. Each press carries a new stamp, so choosing the same one again still counts.
+  const { category: wanted, at } = useLocalSearchParams<{ category?: string; at?: string }>();
+  const [seenAt, setSeenAt] = useState(at);
+  if (at !== seenAt) {
+    setSeenAt(at);
+    if (wanted !== undefined && categories.some((candidate) => candidate.key === wanted)) {
+      setCategory(wanted);
+    }
+  }
   const cart = useCart();
   const reportScroll = useChromeReport();
   const when = useDeliveryWhen();

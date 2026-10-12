@@ -14,6 +14,13 @@ export const STEP_LOAD_MS = 200;
 export const STEP_POLICY: LoadPolicy = { offline: 'block', failure: 'block' };
 
 /**
+ * The categories are a short list the app keeps, so with no network they still show; a failed load does not (it says so, with a
+ * way to try again).
+ */
+export const CATEGORIES_LOAD_MS = 200;
+export const CATEGORIES_POLICY: LoadPolicy = { offline: 'allow', failure: 'block' };
+
+/**
  * The settings are on the phone and cannot fail. They must stay reachable offline: the switch that brings the network back
  * is on this screen.
  */

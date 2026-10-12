@@ -5,8 +5,8 @@
 - **Status:** the whole customer app is built and every automated check passes in a fresh clone (install from the lockfile, then
   lint, typecheck, test and build). **Nothing has run on a phone, with TalkBack, on a throttled network or with people.** Those are
   the open gate items below, and they are yours.
-- **One thing inside Phase 1 was not built: the Categories tab.** It is still a "coming soon" page. I found it during hardening, not
-  earlier, and it is logged as the one open major defect (`PHASE-1-defects.md`, M1). It needs your decision before sign-off.
+- **The Categories tab was not built at first, and now is.** It was a "coming soon" page, found during hardening and logged as
+  the one open major defect (`PHASE-1-defects.md`, M1). It was built on 2026-10-12 as grouped tiles; it needs your check on a phone.
 - **Nothing outside Phase 1 was built.** "Order again" was cut by decision and is parked. What was found and not built is in
   `PHASE-1-notes.md`, and what is open is in `PHASE-1-defects.md`.
 
@@ -44,7 +44,7 @@ loading, empty, error and offline state on each screen.
 | No serious accessibility issues: contrast tests, a TalkBack pass, the largest font size        | **Partly met.** Contrast tests pass in both themes for every pair in use. Every screen's controls have names and roles. TalkBack and the real text-size setting are not done |
 | Bundle size inside the budget; a cold start recorded on a 2 GB phone                           | **Half met.** The Android bundle is 4.1 MB against 5.0 MB. No cold start has been recorded: that needs the phone                                                             |
 | Tested by hand on a real low-end Android phone with a throttled network                        | **Not met.** Needs the phone                                                                                                                                                 |
-| No open blocker or major defects; minor ones logged with an owner                              | **Not met.** One major: the Categories tab is a placeholder (M1). Minor ones are in `PHASE-1-defects.md`, each with an owner                                                 |
+| No open blocker or major defects; minor ones logged with an owner                              | **Not yet confirmed.** The one major (M1, the Categories tab) is fixed and waits for your phone check. Minor ones are in `PHASE-1-defects.md`, each with an owner            |
 | `PHASE-1-report.md` written, demo done, human sign-off recorded, tag `phase-1-complete` pushed | **Report written.** Demo, sign-off and tag are yours                                                                                                                         |
 
 ## 4. Numbers
@@ -72,7 +72,7 @@ loading, empty, error and offline state on each screen.
 
 ## 6. What is yours to do, in the order I would do it
 
-0. **Decide the Categories tab** (M1): build a small listing, or take the tab out of the bar.
+0. **Check the Categories tab** (M1, now built) on your phone: tiles four across, a main category opens Home on it, a finer tile opens search.
 1. **Run the app on your phone** and go through the "Your check" lists in `PHASE-1.md` for 1f and 1g.
 2. **Record a cold start** on a low-end phone, with the network throttled, and look at memory.
 3. **A TalkBack pass** on the main flow: Home, an item, the cart, checkout, the order page, Help.

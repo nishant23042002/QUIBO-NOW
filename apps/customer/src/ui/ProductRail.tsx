@@ -1,9 +1,9 @@
 import { useState, type ReactNode } from 'react';
 import { Animated, Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import Svg, { Line } from 'react-native-svg';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { useHomeScroll } from './HomeScroll';
 import { Icon } from './Icon';
+import { RowTitle } from './RowTitle';
 import { Text } from './Text';
 import { TAP_MIN, radius, space } from './tokens';
 
@@ -28,9 +28,6 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[4],
       backgroundColor: c.bg,
     },
-    title: { flexShrink: 1, minWidth: 0 },
-    // A dotted line carries on from the title to the edge of the page.
-    dots: { flex: 1, minWidth: space[6], height: 2 },
     // Under the row, the width of the page: the way into the whole category.
     more: {
       marginHorizontal: space[4],
@@ -90,26 +87,7 @@ export function ProductRail({ title, seeAllLabel, onSeeAll, children }: ProductR
           setHeadHeight(Math.round(event.nativeEvent.layout.height));
         }}
       >
-        <View style={styles.title}>
-          <Text variant="subheading" numberOfLines={2}>
-            {title}
-          </Text>
-        </View>
-        <View style={styles.dots} aria-hidden>
-          <Svg width="100%" height={2}>
-            <Line
-              x1="1"
-              y1="1"
-              x2="100%"
-              y2="1"
-              stroke={colors.ctl}
-              strokeOpacity={0.55}
-              strokeWidth={1.5}
-              strokeLinecap="round"
-              strokeDasharray="0.1 5"
-            />
-          </Svg>
-        </View>
+        <RowTitle title={title} />
       </Animated.View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.row}>{children}</View>

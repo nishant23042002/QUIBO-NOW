@@ -66,6 +66,7 @@ export { PriceBadge, type PriceBadgeProps } from './PriceBadge';
 export { ProductCard, useProductCardMetrics, type ProductCardProps } from './ProductCard';
 export { ProductCardSkeleton } from './ProductCardSkeleton';
 export { ProductRail, type ProductRailProps } from './ProductRail';
+export { RowTitle, type RowTitleProps } from './RowTitle';
 export { ProductImage, type ProductImageProps } from './ProductImage';
 export { useKeyboardVisible } from './useKeyboardVisible';
 export { Toast, type ToastProps } from './Toast';

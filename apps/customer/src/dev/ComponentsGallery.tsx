@@ -1,5 +1,5 @@
 import { formatRupees, money, type Money } from '@quibo/contracts';
-import { messages, translate, type MessageKey } from '@quibo/i18n';
+import type { MessageKey } from '@quibo/i18n';
 import { handleMockRequest } from '@quibo/mocks';
 import { useState, type ReactNode } from 'react';
 import { StyleSheet, View } from 'react-native';
@@ -116,7 +116,7 @@ function attempt(run: () => string): { ok: boolean; text: string } {
 type SheetDemo = 'default' | 'error' | 'busy';
 
 export function ComponentsGallery() {
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
   const { colors } = useTheme();
   const themed = useStyles(makeStyles);
   const [phone, setPhone] = useState('');
@@ -131,10 +131,6 @@ export function ComponentsGallery() {
   const badge = t('components.sampleBadge');
   const loading = t('common.loading');
   const sample = (key: Sample) => t(`components.sample.${key}`);
-  // The same word in the other script, to see two scripts side by side. English shows Hindi;
-  // Hindi and Marathi show English.
-  const otherScript = (key: Sample) =>
-    translate(messages[locale === 'en' ? 'hi' : 'en'], `components.sample.${key}`);
 
   const stepperText = {
     addLabel: sample('add'),
@@ -432,11 +428,12 @@ export function ComponentsGallery() {
       </Section>
 
       <Section name="CategoryTile">
-        <Demo name="with the same name in the other script">
+        <Demo name="a picture on its colour, with its name under it">
           <View style={styles.small}>
             <CategoryTile
-              name={sample('categoryDairy')}
-              otherName={otherScript('categoryDairy')}
+              label={sample('categoryDairy')}
+              emoji={'\u{1F95B}'}
+              tint={colors.tintDairy}
               onPress={noop}
             />
           </View>

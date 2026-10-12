@@ -222,39 +222,41 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 ## Categories tab
 
-| Key                                   | English                             | Hindi (draft)                   | Marathi (draft)                  | OK or change to |
-| ------------------------------------- | ----------------------------------- | ------------------------------- | -------------------------------- | --------------- |
-| `categoriesTab.searchHint`            | Search for atta, dal, milk and more | आटा, दाल, दूध और बहुत कुछ खोजें | आटा, डाळ, दूध आणि बरेच काही शोधा |                 |
-| `categoriesTab.groups.market`         | Fresh from the market               | बाज़ार से ताज़ा                 | बाजारातून ताजे                   |                 |
-| `categoriesTab.groups.dairy`          | Dairy and eggs                      | डेयरी और अंडे                   | दुग्धजन्य आणि अंडी               |                 |
-| `categoriesTab.groups.staples`        | Kitchen staples                     | रसोई का राशन                    | स्वयंपाकघरातील किराणा            |                 |
-| `categoriesTab.groups.snacks`         | Snacks and drinks                   | स्नैक्स और पेय                  | स्नॅक्स आणि पेये                 |                 |
-| `categoriesTab.groups.home`           | Home and care                       | घर और देखभाल                    | घर आणि निगा                      |                 |
-| `categoriesTab.tiles.dailyVegetables` | Daily vegetables                    | रोज़ की सब्ज़ियाँ               | रोजच्या भाज्या                   |                 |
-| `categoriesTab.tiles.potatoOnion`     | Potato and onion                    | आलू और प्याज़                   | बटाटा आणि कांदा                  |                 |
-| `categoriesTab.tiles.fruits`          | Fruits                              | फल                              | फळे                              |                 |
-| `categoriesTab.tiles.rootsLeaves`     | Roots and leaves                    | कंद और पत्तेदार                 | कंद आणि पालेभाज्या               |                 |
-| `categoriesTab.tiles.milk`            | Milk                                | दूध                             | दूध                              |                 |
-| `categoriesTab.tiles.curd`            | Curd                                | दही                             | दही                              |                 |
-| `categoriesTab.tiles.paneer`          | Paneer                              | पनीर                            | पनीर                             |                 |
-| `categoriesTab.tiles.eggs`            | Eggs                                | अंडे                            | अंडी                             |                 |
-| `categoriesTab.tiles.butterGhee`      | Butter and ghee                     | मक्खन और घी                     | लोणी आणि तूप                     |                 |
-| `categoriesTab.tiles.atta`            | Atta                                | आटा                             | आटा                              |                 |
-| `categoriesTab.tiles.rice`            | Rice                                | चावल                            | तांदूळ                           |                 |
-| `categoriesTab.tiles.cookingOil`      | Cooking oil                         | खाने का तेल                     | खाद्यतेल                         |                 |
-| `categoriesTab.tiles.dal`             | Dal and pulses                      | दाल और दलहन                     | डाळी आणि कडधान्य                 |                 |
-| `categoriesTab.tiles.masala`          | Masala                              | मसाले                           | मसाले                            |                 |
-| `categoriesTab.tiles.sugarSalt`       | Sugar and salt                      | चीनी और नमक                     | साखर आणि मीठ                     |                 |
-| `categoriesTab.tiles.chips`           | Chips                               | चिप्स                           | चिप्स                            |                 |
-| `categoriesTab.tiles.biscuits`        | Biscuits                            | बिस्कुट                         | बिस्किटे                         |                 |
-| `categoriesTab.tiles.sweets`          | Sweets                              | मिठाई                           | मिठाई                            |                 |
-| `categoriesTab.tiles.teaCoffee`       | Tea and coffee                      | चाय और कॉफ़ी                    | चहा आणि कॉफी                     |                 |
-| `categoriesTab.tiles.instant`         | Instant food                        | इंस्टेंट खाना                   | इन्स्टंट पदार्थ                  |                 |
-| `categoriesTab.tiles.coldDrinks`      | Cold drinks                         | कोल्ड ड्रिंक                    | थंड पेये                         |                 |
-| `categoriesTab.tiles.soap`            | Soap                                | साबुन                           | साबण                             |                 |
-| `categoriesTab.tiles.cleaning`        | Cleaning                            | सफ़ाई                           | स्वच्छता                         |                 |
-| `categoriesTab.tiles.kitchenNeeds`    | Kitchen needs                       | रसोई का सामान                   | स्वयंपाकघर सामान                 |                 |
-| `categoriesTab.tiles.pooja`           | Pooja                               | पूजा                            | पूजा                             |                 |
+| Key                                   | English                                                                 | Hindi (draft)                                                        | Marathi (draft)                                                          | OK or change to |
+| ------------------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------- |
+| `categoriesTab.searchHint`            | Search for atta, dal, milk and more                                     | आटा, दाल, दूध और बहुत कुछ खोजें                                      | आटा, डाळ, दूध आणि बरेच काही शोधा                                         |                 |
+| `categoriesTab.emptyTitle`            | Nothing to show yet                                                     | अभी दिखाने के लिए कुछ नहीं है                                        | अजून दाखवण्यासाठी काही नाही                                              |                 |
+| `categoriesTab.emptyBody`             | The shops have not listed their categories yet. Please check back soon. | दुकानों ने अभी अपनी श्रेणियाँ नहीं जोड़ी हैं। कृपया जल्दी फिर देखें। | दुकानांनी अजून त्यांच्या श्रेणी जोडलेल्या नाहीत. कृपया लवकरच पुन्हा पहा. |                 |
+| `categoriesTab.groups.market`         | Fresh from the market                                                   | बाज़ार से ताज़ा                                                      | बाजारातून ताजे                                                           |                 |
+| `categoriesTab.groups.dairy`          | Dairy and eggs                                                          | डेयरी और अंडे                                                        | दुग्धजन्य आणि अंडी                                                       |                 |
+| `categoriesTab.groups.staples`        | Kitchen staples                                                         | रसोई का राशन                                                         | स्वयंपाकघरातील किराणा                                                    |                 |
+| `categoriesTab.groups.snacks`         | Snacks and drinks                                                       | स्नैक्स और पेय                                                       | स्नॅक्स आणि पेये                                                         |                 |
+| `categoriesTab.groups.home`           | Home and care                                                           | घर और देखभाल                                                         | घर आणि निगा                                                              |                 |
+| `categoriesTab.tiles.dailyVegetables` | Daily vegetables                                                        | रोज़ की सब्ज़ियाँ                                                    | रोजच्या भाज्या                                                           |                 |
+| `categoriesTab.tiles.potatoOnion`     | Potato and onion                                                        | आलू और प्याज़                                                        | बटाटा आणि कांदा                                                          |                 |
+| `categoriesTab.tiles.fruits`          | Fruits                                                                  | फल                                                                   | फळे                                                                      |                 |
+| `categoriesTab.tiles.rootsLeaves`     | Roots and leaves                                                        | कंद और पत्तेदार                                                      | कंद आणि पालेभाज्या                                                       |                 |
+| `categoriesTab.tiles.milk`            | Milk                                                                    | दूध                                                                  | दूध                                                                      |                 |
+| `categoriesTab.tiles.curd`            | Curd                                                                    | दही                                                                  | दही                                                                      |                 |
+| `categoriesTab.tiles.paneer`          | Paneer                                                                  | पनीर                                                                 | पनीर                                                                     |                 |
+| `categoriesTab.tiles.eggs`            | Eggs                                                                    | अंडे                                                                 | अंडी                                                                     |                 |
+| `categoriesTab.tiles.butterGhee`      | Butter and ghee                                                         | मक्खन और घी                                                          | लोणी आणि तूप                                                             |                 |
+| `categoriesTab.tiles.atta`            | Atta                                                                    | आटा                                                                  | आटा                                                                      |                 |
+| `categoriesTab.tiles.rice`            | Rice                                                                    | चावल                                                                 | तांदूळ                                                                   |                 |
+| `categoriesTab.tiles.cookingOil`      | Cooking oil                                                             | खाने का तेल                                                          | खाद्यतेल                                                                 |                 |
+| `categoriesTab.tiles.dal`             | Dal and pulses                                                          | दाल और दलहन                                                          | डाळी आणि कडधान्य                                                         |                 |
+| `categoriesTab.tiles.masala`          | Masala                                                                  | मसाले                                                                | मसाले                                                                    |                 |
+| `categoriesTab.tiles.sugarSalt`       | Sugar and salt                                                          | चीनी और नमक                                                          | साखर आणि मीठ                                                             |                 |
+| `categoriesTab.tiles.chips`           | Chips                                                                   | चिप्स                                                                | चिप्स                                                                    |                 |
+| `categoriesTab.tiles.biscuits`        | Biscuits                                                                | बिस्कुट                                                              | बिस्किटे                                                                 |                 |
+| `categoriesTab.tiles.sweets`          | Sweets                                                                  | मिठाई                                                                | मिठाई                                                                    |                 |
+| `categoriesTab.tiles.teaCoffee`       | Tea and coffee                                                          | चाय और कॉफ़ी                                                         | चहा आणि कॉफी                                                             |                 |
+| `categoriesTab.tiles.instant`         | Instant food                                                            | इंस्टेंट खाना                                                        | इन्स्टंट पदार्थ                                                          |                 |
+| `categoriesTab.tiles.coldDrinks`      | Cold drinks                                                             | कोल्ड ड्रिंक                                                         | थंड पेये                                                                 |                 |
+| `categoriesTab.tiles.soap`            | Soap                                                                    | साबुन                                                                | साबण                                                                     |                 |
+| `categoriesTab.tiles.cleaning`        | Cleaning                                                                | सफ़ाई                                                                | स्वच्छता                                                                 |                 |
+| `categoriesTab.tiles.kitchenNeeds`    | Kitchen needs                                                           | रसोई का सामान                                                        | स्वयंपाकघर सामान                                                         |                 |
+| `categoriesTab.tiles.pooja`           | Pooja                                                                   | पूजा                                                                 | पूजा                                                                     |                 |
 
 ## Shop by category, on Home
 
@@ -270,4 +272,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.shopByCategory.tiles.snacksBiscuits` | Snacks and biscuits | स्नैक्स और बिस्कुट        | स्नॅक्स आणि बिस्किटे |                 |
 | `home.shopByCategory.tiles.teaMore`        | Tea and more        | चाय और बहुत कुछ           | चहा आणि बरेच काही    |                 |
 
-217 lines in all.
+219 lines in all.
