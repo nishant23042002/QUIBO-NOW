@@ -1,11 +1,14 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { CART_ROOM, CartLayer } from '@/home/CartLayer';
 import { useCartCount } from '@/home/CartProvider';
 import { useDeliveryAddress, useDeliveryWhen } from '@/home/deliveryInfo';
-import { useHomeCategories } from '@/home/categories';
+import { useHomeIntents } from '@/home/useHomeIntents';
+import { seeAllTarget } from '@/home/catalogueTree';
 import { HomeFeed } from '@/home/HomeFeed';
+import { isIntent, type IntentId } from '@/home/homeIntents';
+import type { ItemCategory } from '@/home/items';
 import { useHomeOffers } from '@/home/offers';
 import { useSearchHint } from '@/home/searchHint';
 import { useSampleShops } from '@/home/sampleShops';
@@ -23,25 +26,24 @@ export default function HomeScreen() {
   const router = useRouter();
   const styles = useStyles(makeStyles);
   const shops = useSampleShops();
-  const categories = useHomeCategories();
+  const intents = useHomeIntents();
   const offers = useHomeOffers();
   const searchHint = useSearchHint();
-  const [category, setCategory] = useState('all');
-  // The Categories tab can open Home on a category. Each press carries a new stamp, so choosing the same one again still counts.
-  const { category: wanted, at } = useLocalSearchParams<{ category?: string; at?: string }>();
-  const [seenAt, setSeenAt] = useState(at);
-  if (at !== seenAt) {
-    setSeenAt(at);
-    if (wanted !== undefined && categories.some((candidate) => candidate.key === wanted)) {
-      setCategory(wanted);
-    }
-  }
+  const [intent, setIntent] = useState<IntentId>('all');
   const cartCount = useCartCount();
   const reportScroll = useChromeReport();
   const when = useDeliveryWhen();
   const address = useDeliveryAddress();
   const insets = useSafeAreaInsets();
   const openCount = shops.filter((shop) => shop.open).length;
+  // A row's "See all" and a featured pick open the category's own screen (kinds in a rail, filters, a grid).
+  const openCategory = (picked: ItemCategory) => {
+    const target = seeAllTarget(picked);
+    router.push({
+      pathname: '/category/[id]',
+      params: { id: target.id, ...(target.sub !== undefined ? { sub: target.sub } : {}) },
+    });
+  };
 
   return (
     <View style={styles.page}>
@@ -54,10 +56,12 @@ export default function HomeScreen() {
         shopsTitle={t('home.shopsSheet.title')}
         searchLabel={t('home.search.label')}
         searchHint={searchHint}
-        categories={categories}
-        selectedCategory={category}
-        categoriesLabel={t('home.categories.label')}
-        onCategoryChange={setCategory}
+        categories={intents}
+        selectedCategory={intent}
+        categoriesLabel={t('home.intents.label')}
+        onCategoryChange={(key) => {
+          if (isIntent(key)) setIntent(key);
+        }}
         offers={offers}
         offersLabel={t('home.offers.label')}
         onOfferPress={() => undefined}
@@ -79,7 +83,7 @@ export default function HomeScreen() {
         // The floating cart bar covers the bottom of the page when it shows, so the page leaves room for it.
         bottomSpace={BOTTOM_BAR_HEIGHT + (cartCount > 0 ? CART_ROOM : 0)}
       >
-        <HomeFeed category={category} onSeeAll={setCategory} />
+        <HomeFeed intent={intent} onSeeAll={openCategory} />
       </HomeHeader>
       <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
     </View>

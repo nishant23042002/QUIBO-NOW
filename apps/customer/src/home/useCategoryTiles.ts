@@ -1,6 +1,7 @@
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { CATEGORY_GROUPS, HOME_CATEGORY_TILES, tintColor, type TileTarget } from './categoryGroups';
+import { MAIN_CATEGORIES, SECTIONS, mainsOfSection } from './catalogueTree';
+import { tintColor, type TileTarget } from './categoryGroups';
 
 export interface CategoryTile {
   label: string;
@@ -15,29 +16,32 @@ export interface CategoryGroup {
   tiles: readonly CategoryTile[];
 }
 
-/** The Categories tab's groups, worded in the chosen language and coloured for the current theme. */
+/**
+ * The Categories tab's sections, each with its main categories as tiles that open the category's own screen, worded in the chosen
+ * language and coloured for the current theme.
+ */
 export function useCategoryGroups(): readonly CategoryGroup[] {
   const { t } = useLanguage();
   const { colors } = useTheme();
-  return CATEGORY_GROUPS.map((group) => ({
-    title: t(group.title),
-    tiles: group.tiles.map((tile) => ({
-      label: t(tile.label),
-      emoji: tile.emoji,
-      tint: tintColor(colors, tile.tint),
-      target: tile.target,
+  return SECTIONS.map((section) => ({
+    title: t(section.label),
+    tiles: mainsOfSection(section.id).map((main) => ({
+      label: t(main.label),
+      emoji: main.emoji,
+      tint: tintColor(colors, main.tint),
+      target: { kind: 'main' as const, id: main.id },
     })),
   }));
 }
 
-/** Home's "Shop by category" tiles, worded and coloured the same way. */
+/** Home's "Shop by category" tiles: every main category, the same tiles as the Categories tab. */
 export function useHomeCategoryTiles(): readonly CategoryTile[] {
   const { t } = useLanguage();
   const { colors } = useTheme();
-  return HOME_CATEGORY_TILES.map((tile) => ({
-    label: t(tile.label),
-    emoji: tile.emoji,
-    tint: tintColor(colors, tile.tint),
-    target: tile.target,
+  return MAIN_CATEGORIES.map((main) => ({
+    label: t(main.label),
+    emoji: main.emoji,
+    tint: tintColor(colors, main.tint),
+    target: { kind: 'main' as const, id: main.id },
   }));
 }

@@ -1,6 +1,6 @@
 # 0028. The tabs share Home's header
 
-- **Status:** Accepted (Phase 1). Replaces [0027](./0027-search-lives-in-the-categories-header.md) and, for the tab screens only, the
+- **Status:** Accepted (Phase 1). The Home header's category tabs were later replaced by intent chips ([0043](./0043-home-header-chips-are-intents.md)). Replaces [0027](./0027-search-lives-in-the-categories-header.md) and, for the tab screens only, the
   header rule of [0026](./0026-one-header-on-every-secondary-screen.md).
 - **Date:** 2026-10-12
 - **Source:** the owner, who wants the tabs to wear the same header as Home, as the big grocery apps do

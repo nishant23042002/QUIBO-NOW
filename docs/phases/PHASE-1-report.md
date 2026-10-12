@@ -1,12 +1,13 @@
 # Phase 1 report: the customer app on mock data
 
-- **Branch:** `phase-1/customer-ui` (180 commits ahead of `master`), pushed. Not merged, not tagged.
-- **Status:** the whole customer app is built and the automated gate was re-run on 2026-10-12 after the Home redesign and the speed
-  pass (lint, typecheck, test and build all pass; section 3). **Nothing has run on a phone, with TalkBack, on a throttled network or
+- **Branch:** `phase-1/customer-ui` (about 200 small commits ahead of `master`), pushed. Not merged, not tagged.
+- **Status:** the whole customer app is built and the automated gate was re-run on 2026-10-13 after the category screens, and before
+  that on 2026-10-12 after the Home redesign and the speed pass (lint, typecheck, test and build all pass; section 3). **Nothing has run on a phone, with TalkBack, on a throttled network or
   with people.** Those are the open gate items below, and they are yours.
 - **Since the hardening pass the Home screen was redesigned and the cart made faster** (sub-phase 1i, section 2): a shared tab
   header, a compact 128 dp product card, Shop by category, a shops strip, Small prices, Featured picks, a quieter-times note and a
   brand footer and a skeleton on each tab that mirrors its page, ADRs 0027 to 0035. All of it is on mock data and none of it has been seen on a phone yet.
+- **After that (1j to 1l)**: the product page was redesigned and brands became a way to browse (reports: `PHASE-1-pdp-redesign-report.md` and `PHASE-1-brands-and-polish-report.md`); official brand logos were added (ADR 0040); Home lists one of each kind of product and the product page has an other-brands button (ADR 0039); and categories got their own screens with a left rail of kinds, filters that depend on the category, and a sort that includes the biggest saving (ADRs 0041 to 0043). The Home header's chips are now Quick, Offers, Under ₹50 and Veg. None of it has been seen on a phone yet, except the Home page.
 - **The Categories tab was not built at first, and now is.** It was a "coming soon" page, found during hardening and logged as
   the one open major defect (`PHASE-1-defects.md`, M1). It was built on 2026-10-12 as grouped tiles; it needs your check on a phone.
 - **Nothing outside Phase 1 was built.** "Order again" was cut by decision and is parked. What was found and not built is in
@@ -54,10 +55,10 @@ loading, empty, error and offline state on each screen.
 
 | Measure               | Result                                                                                                                                                                         |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Automated tests       | 788 in all: 531 in the customer app (52 files), 200 contracts, 30 i18n, 16 config, 11 mocks                                                                                    |
-| Android Hermes bundle | 4.2 MB (3.5 MB at the end of Phase 0c). Budget 5.0 MB. The module count and shares below are from the hardening run                                                            |
+| Automated tests       | 862 in all: 605 in the customer app, 200 contracts, 30 i18n, 16 config, 11 mocks                                                                                               |
+| Android Hermes bundle | 4.3 MB (3.5 MB at the end of Phase 0c). Budget 5.0 MB. The logos (about 0.6 MB) are assets, not in the bundle                                                                  |
 | Largest shares        | React Native 32%, expo-router 19%, the app's own source 13%, Zod 13% of the pre-minified source                                                                                |
-| Decisions recorded    | 35 ADRs; this phase added 0009 to 0035 (0027 was replaced by 0028 the same day)                                                                                                |
+| Decisions recorded    | 43 ADRs; this phase added 0009 to 0043 (0027 was replaced by 0028 the same day)                                                                                                |
 | Screens               | Home, categories, shop, item, search, cart, coupons, delivery time, address list and form, checkout, order placed, Orders, order page, Help, report, Settings, first-run steps |
 | Languages             | English, Hindi, Marathi: the review sheet is regenerated to include every 1i line (313 lines in the file)                                                                      |
 
@@ -97,7 +98,7 @@ loading, empty, error and offline state on each screen.
 
 ## 7. Where the evidence is
 
-- Decisions: `docs/decisions/` (0009 to 0035 are this phase; 0027 to 0035 are the Home redesign, speed pass and tab skeletons).
+- Decisions: `docs/decisions/` (0009 to 0043 are this phase; 0027 to 0043 are the Home redesign, brands, logos and category screens).
 - Open issues and known limits: `docs/phases/PHASE-1-defects.md`.
 - Parked and for later: `docs/phases/PHASE-1-notes.md`.
 - Wording for review: `docs/phases/PHASE-1-language-review.md`, made by `node scripts/language-review.mjs`.

@@ -3,7 +3,6 @@ import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { CategoryTileGrid, RowTitle, SeeAllButton, space } from '@/ui';
 import { tileRoute } from './categoryGroups';
-import type { ItemCategory } from './items';
 import { useHomeCategoryTiles } from './useCategoryTiles';
 
 const styles = StyleSheet.create({
@@ -16,7 +15,7 @@ const styles = StyleSheet.create({
  * "See all" button under them that opens the Categories tab. A main category switches Home to its tab in place (no new screen); a finer
  * tile opens search for its word.
  */
-export function ShopByCategory({ onCategory }: { onCategory: (category: ItemCategory) => void }) {
+export function ShopByCategory() {
   const { t } = useLanguage();
   const router = useRouter();
   const tiles = useHomeCategoryTiles();
@@ -32,8 +31,7 @@ export function ShopByCategory({ onCategory }: { onCategory: (category: ItemCate
         onPress={(index) => {
           const tile = tiles[index];
           if (tile === undefined) return;
-          if (tile.target.kind === 'category') onCategory(tile.target.category);
-          else router.push(tileRoute(tile.target, String(Date.now())));
+          router.push(tileRoute(tile.target, String(Date.now())));
         }}
       />
       <SeeAllButton

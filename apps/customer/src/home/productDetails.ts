@@ -2,6 +2,7 @@ import { messages } from '@quibo/i18n';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import type { FactRow } from '@/ui';
 import { addDays, addMonths, formatDay } from './dates';
+import { ATTRIBUTES, ORIGIN, type AttrLabel } from './productAttributes';
 import { NUTRITION, formatNutrient, macroShares, perServing } from './nutrition';
 import type { HomeItem, ItemCategory } from './items';
 
@@ -29,22 +30,6 @@ const SHELF: Readonly<Record<string, { n: number; unit: 'days' | 'months' }>> = 
   chips: { n: 3, unit: 'months' },
   popcorn: { n: 4, unit: 'months' },
   chocolate: { n: 8, unit: 'months' },
-};
-
-/** Where each product comes from, until the catalogue supplies it (Phase 1b). */
-const ORIGIN: Readonly<Record<string, 'india' | 'maharashtra' | 'local'>> = {
-  milk: 'local',
-  curd: 'local',
-  paneer: 'local',
-  eggs: 'local',
-  tomato: 'local',
-  potato: 'local',
-  carrot: 'local',
-  brinjal: 'local',
-  banana: 'maharashtra',
-  orange: 'maharashtra',
-  grapes: 'maharashtra',
-  apple: 'india',
 };
 
 /** How many days before today each product was packed, until the catalogue supplies it (Phase 1b). Fresh things are packed today. */
@@ -78,26 +63,6 @@ const PACKERS: Readonly<Record<ItemCategory, { name: string; address: string }>>
   snacks: { name: 'Konkan Foods Pvt Ltd (sample)', address: 'MIDC, Mahad, Raigad 402301' },
 };
 
-/**
- * The facts that tell one product of a kind from another, named the way shoppers see them named elsewhere (Fat Profile, Shelf Life,
- * Biological Source, Processing Type), until the catalogue supplies them (Phase 1b). Only kinds that have such facts are listed;
- * the others fall back to Product Type and Dietary Preference.
- */
-type AttrLabel = 'fatProfile' | 'biologicalSource' | 'processingType' | 'sugarProfile';
-type AttrValue =
-  'toned' | 'fullCream' | 'cowMilk' | 'buffaloMilk' | 'hen' | 'pasteurized' | 'noAddedSugar';
-const ATTRIBUTES: Readonly<Record<string, Partial<Record<AttrLabel, AttrValue>>>> = {
-  milk: {
-    fatProfile: 'toned',
-    biologicalSource: 'cowMilk',
-    processingType: 'pasteurized',
-    sugarProfile: 'noAddedSugar',
-  },
-  curd: { fatProfile: 'toned', biologicalSource: 'cowMilk', processingType: 'pasteurized' },
-  paneer: { fatProfile: 'fullCream', biologicalSource: 'cowMilk', processingType: 'pasteurized' },
-  eggs: { biologicalSource: 'hen' },
-};
-
 const MONTH_KEYS = [
   'jan',
   'feb',
@@ -112,13 +77,6 @@ const MONTH_KEYS = [
   'nov',
   'dec',
 ] as const;
-
-export interface SellerInfo {
-  name: string;
-  address: string;
-  licence: string;
-  care: string;
-}
 
 export interface ProductDetails {
   /**

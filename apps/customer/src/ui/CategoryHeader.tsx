@@ -1,0 +1,81 @@
+import { StyleSheet, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { IconButton } from './IconButton';
+import { ScreenStatusBar } from './ScreenStatusBar';
+import { Text } from './Text';
+import { HEADER_HEIGHT, space } from './tokens';
+
+export interface CategoryHeaderProps {
+  title: string;
+  /** Under the title, for example when the order arrives. */
+  subtitle?: string;
+  backLabel: string;
+  onBack: () => void;
+  searchLabel: string;
+  onSearch: () => void;
+}
+
+/** An icon button's circle is 38 dp inside a 48 dp touch area, so the circle sits this far in from the area's edge. */
+const CIRCLE_INSET = 5;
+
+const makeStyles = (c: ThemeColors) =>
+  StyleSheet.create({
+    // The same lilac the Home header wears, with a square lower edge: the screen under it is a list that runs up to it.
+    bar: { backgroundColor: c.headerBg },
+    row: { minHeight: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center', gap: space[2] },
+    back: { marginLeft: -CIRCLE_INSET },
+    title: { flex: 1, minWidth: 0 },
+    end: { marginRight: -CIRCLE_INSET },
+  });
+
+/**
+ * The header of a category screen: lilac like Home's, with a back button, the category's name with a line under it, and a search
+ * button. The colour of the category itself lives in the page under it (the right-hand side), not here.
+ */
+export function CategoryHeader({
+  title,
+  subtitle,
+  backLabel,
+  onBack,
+  searchLabel,
+  onSearch,
+}: CategoryHeaderProps) {
+  const insets = useSafeAreaInsets();
+  const { scheme } = useTheme();
+  const styles = useStyles(makeStyles);
+
+  return (
+    <View
+      role="banner"
+      style={[
+        styles.bar,
+        {
+          paddingTop: insets.top + space[1],
+          paddingLeft: insets.left + space[3],
+          paddingRight: insets.right + space[3],
+        },
+      ]}
+    >
+      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+      <View style={styles.row}>
+        <View style={styles.back}>
+          <IconButton icon="back" label={backLabel} onPress={onBack} ground="header" />
+        </View>
+        <View style={styles.title}>
+          <Text variant="label" color="onHeader" numberOfLines={2} role="heading">
+            {title}
+          </Text>
+          {subtitle !== undefined ? (
+            <Text variant="caption" color="onHeaderMuted" numberOfLines={1}>
+              {subtitle}
+            </Text>
+          ) : null}
+        </View>
+        <View style={styles.end}>
+          <IconButton icon="search" label={searchLabel} onPress={onSearch} ground="header" />
+        </View>
+      </View>
+    </View>
+  );
+}

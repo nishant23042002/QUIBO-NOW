@@ -1,11 +1,7 @@
 import { messages } from '@quibo/i18n';
 import { describe, expect, it } from 'vitest';
-import {
-  CATEGORY_GROUPS,
-  HOME_CATEGORY_TILES,
-  tileRoute,
-  type CategoryTileSample,
-} from './categoryGroups';
+import { MAIN_CATEGORIES, SECTIONS, seeAllTarget } from './catalogueTree';
+import { tileRoute } from './categoryGroups';
 
 const LANGUAGES = ['en', 'hi', 'mr'] as const;
 
@@ -22,46 +18,11 @@ function lookup(tree: unknown, key: string): unknown {
     );
 }
 
-const ALL_TILES: readonly CategoryTileSample[] = [
-  ...CATEGORY_GROUPS.flatMap((group) => group.tiles),
-  ...HOME_CATEGORY_TILES,
-];
-
-describe('the Categories tab groups', () => {
-  it('has groups with a few tiles each, so a group never grows into a long list', () => {
-    expect(CATEGORY_GROUPS.length).toBeGreaterThanOrEqual(4);
-    for (const group of CATEGORY_GROUPS) {
-      expect(group.tiles.length).toBeGreaterThanOrEqual(3);
-      expect(group.tiles.length).toBeLessThanOrEqual(6);
-    }
-  });
-
-  it('never repeats a title or a tile label', () => {
-    const titles = CATEGORY_GROUPS.map((group) => group.title);
-    expect(new Set(titles).size).toBe(titles.length);
-    const labels = CATEGORY_GROUPS.flatMap((group) => group.tiles.map((tile) => tile.label));
-    expect(new Set(labels).size).toBe(labels.length);
-  });
-});
-
-describe('Home category tiles', () => {
-  it('is two full rows of four', () => {
-    expect(HOME_CATEGORY_TILES).toHaveLength(8);
-  });
-});
-
-describe('every tile', () => {
-  it('has a picture and somewhere to go', () => {
-    for (const tile of ALL_TILES) {
-      expect(tile.emoji.length).toBeGreaterThan(0);
-      if (tile.target.kind === 'search') expect(tile.target.term.trim().length).toBeGreaterThan(0);
-    }
-  });
-
-  it('is worded in English, Hindi and Marathi', () => {
+describe('the words of the catalogue tree', () => {
+  it('has every section, main category and kind worded in English, Hindi and Marathi', () => {
     const keys = [
-      ...CATEGORY_GROUPS.map((group) => group.title),
-      ...ALL_TILES.map((tile) => tile.label),
+      ...SECTIONS.map((section) => section.label),
+      ...MAIN_CATEGORIES.flatMap((main) => [main.label, ...main.subs.map((sub) => sub.label)]),
     ];
     for (const language of LANGUAGES) {
       for (const key of keys) {
@@ -71,9 +32,27 @@ describe('every tile', () => {
       }
     }
   });
+
+  it('gives every main category and kind a picture', () => {
+    for (const main of MAIN_CATEGORIES) {
+      expect(main.emoji.length).toBeGreaterThan(0);
+      for (const sub of main.subs) expect(sub.emoji.length).toBeGreaterThan(0);
+    }
+  });
 });
 
 describe('where a tile goes', () => {
+  it('opens a main category on its own screen, optionally on one of its kinds', () => {
+    expect(tileRoute({ kind: 'main', id: 'dairyEggs' }, '1')).toEqual({
+      pathname: '/category/[id]',
+      params: { id: 'dairyEggs' },
+    });
+    expect(tileRoute({ kind: 'main', id: 'vegFruit', sub: 'freshFruits' }, '1')).toEqual({
+      pathname: '/category/[id]',
+      params: { id: 'vegFruit', sub: 'freshFruits' },
+    });
+  });
+
   it('opens Home on a category, with the press stamped', () => {
     expect(tileRoute({ kind: 'category', category: 'dairy' }, '7')).toEqual({
       pathname: '/',
@@ -86,5 +65,21 @@ describe('where a tile goes', () => {
       pathname: '/search',
       params: { fresh: '9', q: 'atta' },
     });
+  });
+});
+
+describe('where a Home row\'s "See all" goes', () => {
+  it('opens a category that exists, and a kind that exists in it', () => {
+    for (const category of ['dairy', 'vegetables', 'fruits', 'staples', 'snacks'] as const) {
+      const target = seeAllTarget(category);
+      const main = MAIN_CATEGORIES.find((candidate) => candidate.id === target.id);
+      expect(main, category).toBeDefined();
+      if (target.sub !== undefined) {
+        expect(
+          main?.subs.some((sub) => sub.id === target.sub),
+          category,
+        ).toBe(true);
+      }
+    }
   });
 });

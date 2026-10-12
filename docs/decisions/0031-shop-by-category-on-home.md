@@ -1,6 +1,6 @@
 # 0031. "Shop by category" opens Home's rows
 
-- **Status:** Accepted (Phase 1)
+- **Status:** Accepted (Phase 1). The tiles now open a category's own screen ([0041](./0041-categories-have-their-own-screen-and-a-two-section-tree.md)).
 - **Date:** 2026-10-12
 - **Source:** the owner's Home redesign, inspired by the quick-commerce apps and drawn in Quibo's own style
 

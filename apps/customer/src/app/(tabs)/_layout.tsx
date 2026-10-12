@@ -160,6 +160,8 @@ export default function TabsLayout() {
       <Tabs.Screen name="shop/[id]" options={{ href: null }} />
       {/* A brand's page, the same: reached from an item's page, with the bottom bar kept (ADR 0036). */}
       <Tabs.Screen name="brand/[id]" options={{ href: null }} />
+      {/* A main category's screen (a rail of its kinds, filters and a grid), reached from the Categories tab and Home, with the bar kept. */}
+      <Tabs.Screen name="category/[id]" options={{ href: null }} />
       {/* An item's page, the same: reached from a card, with the bottom bar kept. */}
       <Tabs.Screen name="product/[id]" options={{ href: null }} />
       {/* The search screen is the same: reached from the search bar on Home, with the bottom bar kept. */}

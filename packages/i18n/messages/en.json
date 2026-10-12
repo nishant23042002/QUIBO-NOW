@@ -1,7 +1,6 @@
 {
   "app": {
     "name": "Quibo Now",
-    "description": "Order groceries from the shops in your own town.",
     "tagline": "Dukaan se ghar tak."
   },
   "home": {
@@ -154,17 +153,7 @@
       "pc": "{amount}/pc"
     },
     "shopByCategory": {
-      "title": "Shop by category",
-      "tiles": {
-        "milkCurd": "Milk and curd",
-        "eggsPaneer": "Eggs and paneer",
-        "vegetables": "Vegetables",
-        "fruits": "Fruits",
-        "attaRice": "Atta and rice",
-        "oilMasala": "Oil and masala",
-        "snacksBiscuits": "Snacks and biscuits",
-        "teaMore": "Tea and more"
-      }
+      "title": "Shop by category"
     },
     "shopByBrand": {
       "title": "Shop by brand"
@@ -183,7 +172,17 @@
       "chaiTitle": "Morning chai",
       "chaiBody": "Tea, biscuits and more"
     },
-    "quieterNote": "Quieter times cost less. Pick a window and see the saving."
+    "quieterNote": "Quieter times cost less. Pick a window and see the saving.",
+    "intents": {
+      "label": "Quick filters",
+      "quick": "Quick",
+      "offers": "Offers",
+      "veg": "Veg",
+      "empty": {
+        "title": "Nothing like this right now",
+        "body": "Check back soon, or choose All."
+      }
+    }
   },
   "brands": {
     "amul": "Amul",
@@ -277,7 +276,6 @@
     }
   },
   "profile": {
-    "title": "Profile",
     "appearance": "Appearance",
     "dev": {
       "network": "Network (testing)",
@@ -306,8 +304,6 @@
       "endCancelled": "We cancel it",
       "endUndelivered": "Rider cannot deliver"
     },
-    "account": "Your account",
-    "signedIn": "Signed in as {phone}",
     "logout": "Log out"
   },
   "nav": {
@@ -652,7 +648,6 @@
     "savingsPrinted": "Discount on printed price",
     "savingsDelivery": "Free delivery",
     "continue": "Continue",
-    "checkout": "Checkout",
     "forgot": "Forgot something?",
     "addItems": "Add more items",
     "darkStore": "Quibo Store",
@@ -789,7 +784,6 @@
     "tripTitle": "One trip, one rider",
     "tripBody": "Everything arrives together, packed with care.",
     "deliveringTo": "Delivering to",
-    "addressTitle": "Delivery address",
     "saveForLater": "Save {name} for later",
     "savedTitle": "Saved for later",
     "moveToCart": "Move to cart",
@@ -862,9 +856,7 @@
     "save": "Save address",
     "required": "Please fill this in",
     "badPhone": "Enter a 10-digit mobile number",
-    "pinMissing": "Place the pin on the map",
-    "selectedNote": "Your order will be delivered to this address.",
-    "savedNote": "Address saved"
+    "pinMissing": "Place the pin on the map"
   },
   "checkout": {
     "title": "Checkout",
@@ -898,7 +890,6 @@
   },
   "orders": {
     "title": "Orders",
-    "activeCount": "{count} in progress",
     "emptyTitle": "No orders yet",
     "emptyBody": "Your orders will show up here once you place one.",
     "emptyAction": "Start shopping",
@@ -977,7 +968,6 @@
     "notFoundTitle": "We could not find this order",
     "notFoundBody": "It may have been removed from this phone.",
     "notFoundAction": "See your orders",
-    "viewOrder": "Track order",
     "cancel": "Cancel order",
     "cancelTitle": "Cancel this order?",
     "cancelBodyUpi": "You can cancel until the shop has packed it. Your {amount} goes back to your UPI account in 3 to 5 working days.",
@@ -1119,43 +1109,85 @@
   },
   "categoriesTab": {
     "emptyTitle": "Nothing to show yet",
-    "emptyBody": "The shops have not listed their categories yet. Please check back soon.",
-    "groups": {
-      "market": "Fresh from the market",
-      "dairy": "Dairy and eggs",
-      "staples": "Kitchen staples",
-      "snacks": "Snacks and drinks",
-      "home": "Home and care"
-    },
-    "tiles": {
-      "dailyVegetables": "Daily vegetables",
-      "potatoOnion": "Potato and onion",
-      "fruits": "Fruits",
-      "rootsLeaves": "Roots and leaves",
-      "milk": "Milk",
-      "curd": "Curd",
-      "paneer": "Paneer",
-      "eggs": "Eggs",
-      "butterGhee": "Butter and ghee",
-      "atta": "Atta",
-      "rice": "Rice",
-      "cookingOil": "Cooking oil",
-      "dal": "Dal and pulses",
-      "masala": "Masala",
-      "sugarSalt": "Sugar and salt",
-      "chips": "Chips",
-      "biscuits": "Biscuits",
-      "sweets": "Sweets",
-      "teaCoffee": "Tea and coffee",
-      "instant": "Instant food",
-      "coldDrinks": "Cold drinks",
-      "soap": "Soap",
-      "cleaning": "Cleaning",
-      "kitchenNeeds": "Kitchen needs",
-      "pooja": "Pooja"
-    }
+    "emptyBody": "The shops have not listed their categories yet. Please check back soon."
   },
   "footer": {
     "line": "Packed by shops in Roha. Delivered to your door."
+  },
+  "catalogue": {
+    "sections": {
+      "grocery": "Grocery & Kitchen",
+      "snacks": "Snacks & Drinks"
+    },
+    "mains": {
+      "vegFruit": "Vegetables & Fruits",
+      "dairyEggs": "Dairy & Eggs",
+      "attaRice": "Atta, Rice & Dal",
+      "oilMasala": "Oil, Ghee & Masala",
+      "chips": "Chips & Namkeen",
+      "biscuits": "Biscuits & Bakery",
+      "sweets": "Sweets & Chocolates"
+    },
+    "subs": {
+      "freshVegetables": "Fresh Vegetables",
+      "freshFruits": "Fresh Fruits",
+      "milk": "Milk",
+      "curd": "Curd & Yogurt",
+      "paneer": "Paneer & Cheese",
+      "eggs": "Eggs",
+      "atta": "Atta",
+      "rice": "Rice",
+      "sugar": "Sugar & Salt",
+      "oil": "Cooking Oil",
+      "chips": "Chips",
+      "popcorn": "Popcorn",
+      "biscuits": "Biscuits",
+      "chocolates": "Chocolates"
+    },
+    "all": "All",
+    "rail": "Kinds in this category",
+    "searchLabel": "Search",
+    "empty": {
+      "title": "Nothing here right now",
+      "body": "Try another kind from the list."
+    },
+    "notFound": {
+      "title": "We couldn't find that category",
+      "body": "It may have moved. Pick one from the Categories tab.",
+      "back": "See categories"
+    },
+    "sort": {
+      "chip": "Sort",
+      "title": "Sort by",
+      "relevance": "Relevance",
+      "priceLow": "Price: low to high",
+      "priceHigh": "Price: high to low",
+      "saving": "Biggest saving"
+    },
+    "filters": {
+      "chip": "Filters",
+      "title": "Filters",
+      "brand": "Brand",
+      "price": "Price",
+      "under": "Under {amount}",
+      "veg": "Veg",
+      "nonveg": "Non-veg",
+      "clearAll": "Clear all",
+      "close": "Close",
+      "noMatch": {
+        "title": "No items match",
+        "body": "Try taking a filter off.",
+        "clear": "Clear filters"
+      },
+      "type": "Type",
+      "properties": "Properties",
+      "onOffer": "On offer",
+      "apply": "Apply ({count})",
+      "quantity": "Quantity",
+      "origin": "Country of Origin",
+      "fat": "Fat Profile",
+      "source": "Source",
+      "processing": "Processing Type"
+    }
   }
 }

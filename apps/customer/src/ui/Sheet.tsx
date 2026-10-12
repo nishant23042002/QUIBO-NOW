@@ -40,6 +40,13 @@ export interface SheetProps {
    * sheet that is read rather than filled in, so it does not jump as parts of it open and close.
    */
   heightPercent?: number;
+  /**
+   * The content lays itself out and scrolls itself: no scroll view and no padding around it. For a sheet with panes of its own, such
+   * as a list of filters beside the choices of the open one. Needs `heightPercent` so the panes have a height to fill.
+   */
+  bare?: boolean;
+  /** A rule under the heading. A plain list of choices leaves it off. */
+  ruled?: boolean;
 }
 
 const OPEN_MS = 320;
@@ -76,6 +83,7 @@ const makeStyles = (c: ThemeColors) =>
       borderBottomWidth: 2,
       borderBottomColor: c.line,
     },
+    headerPlain: { borderBottomWidth: 0 },
     title: { flex: 1 },
     close: {
       width: TAP_MIN,
@@ -123,6 +131,8 @@ export function Sheet({
   error,
   busy = false,
   heightPercent,
+  bare = false,
+  ruled = true,
 }: SheetProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
@@ -199,7 +209,7 @@ export function Sheet({
                   },
                 ]}
               >
-                <View style={styles.header}>
+                <View style={[styles.header, !ruled && styles.headerPlain]}>
                   <View style={styles.title}>
                     <Text variant="heading">{title}</Text>
                   </View>
@@ -219,12 +229,16 @@ export function Sheet({
                     </Text>
                   </View>
                 ) : null}
-                <ScrollView
-                  style={heightPercent !== undefined ? styles.bodyFill : styles.body}
-                  contentContainerStyle={styles.bodyContent}
-                >
-                  {children}
-                </ScrollView>
+                {bare ? (
+                  <View style={styles.bodyFill}>{children}</View>
+                ) : (
+                  <ScrollView
+                    style={heightPercent !== undefined ? styles.bodyFill : styles.body}
+                    contentContainerStyle={styles.bodyContent}
+                  >
+                    {children}
+                  </ScrollView>
+                )}
                 {footer !== undefined ? <View style={styles.footer}>{footer}</View> : null}
               </Animated.View>
             </View>

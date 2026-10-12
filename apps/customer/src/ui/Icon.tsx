@@ -41,6 +41,10 @@ const SHAPES = {
   close: [path('M6 6l12 12M18 6L6 18')],
   // An arrow curling back on itself: take it back, make it right.
   undo: [path('M4 12a8 8 0 1 0 2.4-5.7'), path('M4 4.2v4.6h4.6')],
+  // Two sliders: narrow the list.
+  filter: [path('M4 7h9M18 7h2'), ring(15.5, 7, 2.5), path('M4 17h2M11 17h9'), ring(8.5, 17, 2.5)],
+  // An up arrow and a down arrow side by side: put the list in another order.
+  sort: [path('M8 19V5M4.5 8.5L8 5l3.5 3.5'), path('M16 5v14M12.5 15.5L16 19l3.5-3.5')],
   // Two sheets, one over the other: the same thing from another maker.
   layers: [path('M9 8V4.5h11V15.5h-4'), path('M4 9.5h11V20.5H4z')],
   // A bookmark ribbon: keep this for later.

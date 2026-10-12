@@ -1,8 +1,10 @@
 import { memo, useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { BrandChips, BrandFooter, ProductRail, space } from '@/ui';
-import { activeBrand, brandsOfItems, filterByBrand } from './brandPage';
+import { useTheme } from '@/theme';
+import { BrandFooter, Icon, ProductRail, Text, space } from '@/ui';
+import { matchesIntent, type IntentId } from './homeIntents';
+import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
 import { Featured } from './Featured';
 import { QuieterNote } from './QuieterNote';
@@ -19,7 +21,7 @@ import {
   type ItemCategory,
 } from './items';
 
-/** How long the loading skeleton shows after a category is chosen. */
+/** How long the loading skeleton shows after a chip is chosen. */
 const LOAD_MS = 200;
 
 const styles = StyleSheet.create({
@@ -27,42 +29,43 @@ const styles = StyleSheet.create({
   // The category rows, one under another with room between them: no divider line.
   rails: { gap: space[6], paddingVertical: space[5] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
+  empty: {
+    alignItems: 'center',
+    gap: space[2],
+    paddingVertical: space[8],
+    paddingHorizontal: space[4],
+  },
 });
 
 interface HomeFeedProps {
-  /** The chosen category tab. "all" shows a row per category; any other shows that category's items in a grid. */
-  category: string;
+  /** The chosen chip. "all" is the usual page, a row per category; any other shows the items that suit it in a grid. */
+  intent: IntentId;
   onSeeAll: (category: ItemCategory) => void;
 }
 
 /**
- * The items on Home. With "All" chosen: a swipeable row for each category, each with a "See all" link.
- * With one category chosen: that category's items in a two-column grid. ADD turns into a stepper in place.
- * The quantities live in the cart, which the floating cart bar reads.
+ * The items on Home. With "All" chosen: the usual page, a swipeable row for each category with a "See all" button. With another chip
+ * chosen (Quick, Offers, Under ₹50, Veg): the items that suit it, from every shelf, one of each kind, in a two-column grid. ADD turns
+ * into a stepper in place. The quantities live in the cart, which the floating cart bar reads.
  */
-export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
+export const HomeFeed = memo(function HomeFeed({ intent, onSeeAll }: HomeFeedProps) {
   const { t } = useLanguage();
+  const { colors } = useTheme();
   const { width: screen } = useWindowDimensions();
-  // Every item (for the brand chips) and what Home lists, one for each kind of product.
   const items = useHomeItems();
   const listing = useHomeListing();
-  // Choosing another category shows the loading skeleton for a moment first, as real data would arrive.
-  const [shown, setShown] = useState(category);
+  // Choosing another chip shows the loading skeleton for a moment first, as real data would arrive.
+  const [shown, setShown] = useState<IntentId>(intent);
   useEffect(() => {
-    if (shown === category) return undefined;
+    if (shown === intent) return undefined;
     const timer = setTimeout(() => {
-      setShown(category);
+      setShown(intent);
     }, LOAD_MS);
     return () => {
       clearTimeout(timer);
     };
-  }, [category, shown]);
-  const loading = shown !== category;
-  // The brand chosen to narrow a category's grid, remembered with the category it was chosen in (another category starts on All).
-  const [pick, setPick] = useState<{ category: string; brand: string | null }>({
-    category,
-    brand: null,
-  });
+  }, [intent, shown]);
+  const loading = shown !== intent;
 
   const tile = (item: HomeItem, width: number, reserveNote?: boolean) => (
     <ItemTile
@@ -72,48 +75,41 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
       {...(reserveNote !== undefined ? { reserveNote } : {})}
     />
   );
+  // The items that suit the chip, one of each kind: the first listed of a kind that suits it, so an offer shows the brand that has it.
+  const matching =
+    intent === 'all' ? [] : oneOfEachKind(items.filter((item) => matchesIntent(item, intent)));
+
   if (loading) {
     return (
-      <HomeSkeleton
-        label={t('common.loading')}
-        grid={category !== 'all'}
-        cards={listing.filter((item) => item.category === category).length}
-      />
+      <HomeSkeleton label={t('common.loading')} grid={intent !== 'all'} cards={matching.length} />
     );
   }
 
-  if (category !== 'all') {
+  if (intent !== 'all') {
     const gridWidth = gridCardWidth(screen);
-    const inCategory = items.filter((item) => item.category === category);
-    const brands = brandsOfItems(inCategory);
-    const chosen = activeBrand(pick.category === category ? pick.brand : null, brands);
+    if (matching.length === 0) {
+      return (
+        <View style={styles.empty}>
+          <Icon name="search" color={colors.inkMuted} size={40} />
+          <Text variant="heading" align="center">
+            {t('home.intents.empty.title')}
+          </Text>
+          <Text color="inkMuted" align="center">
+            {t('home.intents.empty.body')}
+          </Text>
+        </View>
+      );
+    }
     return (
       <View style={styles.feed}>
-        {brands.length > 1 ? (
-          <BrandChips
-            brands={brands}
-            selected={chosen}
-            onSelect={(brand) => {
-              setPick({ category, brand });
-            }}
-            allLabel={t('brandPage.all')}
-            label={t('brandPage.filterByBrand')}
-          />
-        ) : null}
-        <View style={styles.grid}>
-          {/* "All" shows one of each kind; choosing a brand shows everything that brand makes here. */}
-          {(chosen === null
-            ? listing.filter((item) => item.category === category)
-            : filterByBrand(inCategory, chosen)
-          ).map((item) => tile(item, gridWidth))}
-        </View>
+        <View style={styles.grid}>{matching.map((item) => tile(item, gridWidth))}</View>
       </View>
     );
   }
 
   return (
     <View style={styles.rails}>
-      <ShopByCategory onCategory={onSeeAll} />
+      <ShopByCategory />
       <ShopByBrand />
       <SmallPrices />
       <Featured onCategory={onSeeAll} />

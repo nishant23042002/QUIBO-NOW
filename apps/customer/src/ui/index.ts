@@ -68,6 +68,15 @@ export { MockMap, type MapBounds, type MapPoint, type MockMapProps } from './Moc
 export { ScreenStatusBar } from './ScreenStatusBar';
 export { ProductInsight, type InsightPage, type ProductInsightProps } from './ProductInsight';
 export { BrandMark, BRAND_LOGOS, type BrandMarkProps } from './BrandMark';
+export { CategoryHeader, type CategoryHeaderProps } from './CategoryHeader';
+export { FilterButton, FILTER_BUTTON_HEIGHT, type FilterButtonProps } from './FilterButton';
+export {
+  SubCategoryRail,
+  SUB_RAIL_CIRCLE,
+  SUB_RAIL_WIDTH,
+  type SubCategoryRailItem,
+  type SubCategoryRailProps,
+} from './SubCategoryRail';
 export { OtherBrandsButton, type OtherBrandsButtonProps } from './OtherBrandsButton';
 export { PackPicker, type PackOption, type PackPickerProps } from './PackPicker';
 export { PriceBadge, type PriceBadgeProps } from './PriceBadge';
