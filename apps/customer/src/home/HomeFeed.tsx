@@ -3,6 +3,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductRail, space } from '@/ui';
 import { HomeSkeleton } from './HomeSkeleton';
+import { ShopByCategory } from './ShopByCategory';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { anyCardNote, useHomeItems, type HomeItem, type ItemCategory } from './items';
 
@@ -72,6 +73,7 @@ export const HomeFeed = memo(function HomeFeed({ category, onSeeAll }: HomeFeedP
 
   return (
     <View style={styles.rails}>
+      <ShopByCategory onCategory={onSeeAll} />
       {ORDER.map((key) => {
         const row = items.filter((item) => item.category === key);
         // Cards in a row stay one height: room for the low-stock line only when one of them has it.

@@ -4,7 +4,8 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
-  CategoryTile,
+  CategoryTileGrid,
+  CategoryTileGridSkeleton,
   LoadGate,
   RowTitle,
   Skeleton,
@@ -24,28 +25,16 @@ import { CATEGORIES_LOAD_MS, CATEGORIES_POLICY } from './loading';
 import { useTabHeaderProps } from './useTabHeader';
 import { useCategoryGroups, type CategoryTile as TileData } from './useCategoryTiles';
 
-const GAP = space[3];
-
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     page: { flex: 1, backgroundColor: c.bg },
     content: { gap: space[6], paddingTop: space[4] },
     pad: { paddingHorizontal: space[4] },
     group: { gap: space[3] },
-    // Four equal cells to a row, by percentage: a cell's own side padding makes the gap between tiles, so the row always fits
-    // the width the phone gives it.
-    grid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      rowGap: space[3],
-      paddingHorizontal: space[4] - GAP / 2,
-    },
-    cell: { width: '25%', paddingHorizontal: GAP / 2 },
     skeleton: { flex: 1, overflow: 'hidden' },
     empty: { minHeight: 360 },
     titleRow: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     titleLine: { flex: 1 },
-    label: { gap: 2 },
   });
 
 /** Opens what a tile points at: Home on a category, or search for a word. */
@@ -54,9 +43,6 @@ function openTile(router: ReturnType<typeof useRouter>, tile: TileData): void {
   if (route.pathname === '/') router.navigate(route);
   else router.push(route);
 }
-
-/** How wide each placeholder name is, as a share of the tile: some names fill two lines, some only one, as the real ones do. */
-const NAME_LINES = [['90%', '55%'], ['70%'], ['85%', '50%']] as const;
 
 /** Groups of this many tiles, cut into rows of four: the same shapes as the first groups the tab really shows. */
 const SKELETON_GROUPS: readonly number[] = CATEGORY_GROUPS.slice(0, 3).map(
@@ -85,18 +71,7 @@ function CategoriesSkeleton() {
                 <Skeleton height={2} rounded={radius.full} />
               </View>
             </View>
-            <View style={styles.grid}>
-              {Array.from({ length: count }, (_, tile) => (
-                <View key={tile} style={[styles.cell, { gap: space[2] }]}>
-                  <Skeleton aspectRatio={1} rounded={radius.lg} />
-                  <View style={styles.label}>
-                    {(NAME_LINES[(tile + group) % NAME_LINES.length] ?? []).map((width, line) => (
-                      <SkeletonLine key={line} size="xs" width={width} align="center" />
-                    ))}
-                  </View>
-                </View>
-              ))}
-            </View>
+            <CategoryTileGridSkeleton count={count} shift={group} />
           </View>
         ))}
       </View>
@@ -129,20 +104,13 @@ function CategoryGroups() {
           <View style={styles.pad}>
             <RowTitle title={group.title} />
           </View>
-          <View style={styles.grid}>
-            {group.tiles.map((tile) => (
-              <View key={tile.label} style={styles.cell}>
-                <CategoryTile
-                  label={tile.label}
-                  emoji={tile.emoji}
-                  tint={tile.tint}
-                  onPress={() => {
-                    openTile(router, tile);
-                  }}
-                />
-              </View>
-            ))}
-          </View>
+          <CategoryTileGrid
+            tiles={group.tiles}
+            onPress={(index) => {
+              const tile = group.tiles[index];
+              if (tile !== undefined) openTile(router, tile);
+            }}
+          />
         </View>
       ))}
     </View>

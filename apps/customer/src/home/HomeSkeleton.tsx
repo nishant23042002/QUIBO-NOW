@@ -1,6 +1,14 @@
 import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { ProductCardSkeleton, Skeleton, SkeletonScope, fontSize, leading, space } from '@/ui';
+import {
+  CategoryTileGridSkeleton,
+  ProductCardSkeleton,
+  Skeleton,
+  SkeletonScope,
+  fontSize,
+  leading,
+  space,
+} from '@/ui';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 
 /** The widths of the five rails' titles, so they do not all look alike. */
@@ -76,6 +84,12 @@ export function HomeSkeleton({
   return (
     <SkeletonScope label={label}>
       <View style={styles.rails}>
+        <View style={styles.rail}>
+          <View style={styles.head}>
+            <Skeleton width={170} height={20} />
+          </View>
+          <CategoryTileGridSkeleton count={8} />
+        </View>
         {RAIL_TITLES.map((title) => (
           <View key={title} style={styles.rail}>
             <View style={styles.head}>

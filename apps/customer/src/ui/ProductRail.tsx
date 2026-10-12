@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react';
-import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
-import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import { Icon } from './Icon';
+import { ScrollView, StyleSheet, View } from 'react-native';
+import { useStyles, type ThemeColors } from '@/theme';
 import { RowTitle } from './RowTitle';
-import { Text } from './Text';
-import { TAP_MIN, radius, space } from './tokens';
+import { SeeAllButton } from './SeeAllButton';
+import { space } from './tokens';
 
 export interface ProductRailProps {
   title: string;
@@ -15,7 +14,7 @@ export interface ProductRailProps {
   children: ReactNode;
 }
 
-const makeStyles = (c: ThemeColors) =>
+const makeStyles = (_colors: ThemeColors) =>
   StyleSheet.create({
     rail: { gap: space[3] },
     head: {
@@ -24,20 +23,6 @@ const makeStyles = (c: ThemeColors) =>
       gap: space[3],
       paddingHorizontal: space[4],
     },
-    // Under the row, the width of the page: the way into the whole category.
-    more: {
-      marginHorizontal: space[4],
-      minHeight: TAP_MIN,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: space[1],
-      borderWidth: 1.5,
-      borderRadius: radius.lg,
-      borderColor: c.ctl,
-      backgroundColor: c.surface,
-    },
-    pressed: { backgroundColor: c.muted },
     row: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
   });
 
@@ -47,7 +32,6 @@ const makeStyles = (c: ThemeColors) =>
  */
 export function ProductRail({ title, seeAllLabel, onSeeAll, children }: ProductRailProps) {
   const styles = useStyles(makeStyles);
-  const { colors } = useTheme();
 
   return (
     <View style={styles.rail}>
@@ -58,15 +42,7 @@ export function ProductRail({ title, seeAllLabel, onSeeAll, children }: ProductR
         <View style={styles.row}>{children}</View>
       </ScrollView>
       {seeAllLabel !== undefined && onSeeAll !== undefined ? (
-        <Pressable
-          role="button"
-          aria-label={`${seeAllLabel}: ${title}`}
-          onPress={onSeeAll}
-          style={({ pressed }) => [styles.more, pressed && styles.pressed]}
-        >
-          <Text variant="strong">{seeAllLabel}</Text>
-          <Icon name="chevronRight" color={colors.ink} size={16} />
-        </Pressable>
+        <SeeAllButton label={seeAllLabel} title={title} onPress={onSeeAll} />
       ) : null}
     </View>
   );
