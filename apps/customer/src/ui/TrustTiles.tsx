@@ -21,8 +21,9 @@ export interface TrustTilesProps {
    */
   tone?: 'soft' | 'brand';
   /**
-   * Lay the tiles in one row that slides sideways, each a compact card (a small icon beside the title, the line under it), for
-   * a place that has little room. Without it they are a two-column grid.
+   * Lay the tiles in one row that slides sideways, for a place that has little room. Each is the same tile as in the grid (the round
+   * icon on top, the title and the line under it, with the same room around and between), only in a row. Without it they are a
+   * two-column grid.
    */
   scroll?: boolean;
   /** With `scroll`: how far the row runs past its container on each side, so it reaches the container's edges. */
@@ -50,19 +51,9 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     words: { gap: space[1] },
-    // The compact card of the sideways row.
-    slide: { width: SLIDE_WIDTH, gap: space[2], padding: space[3], borderRadius: radius.lg },
-    slideHead: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-    slideIcon: {
-      width: 32,
-      height: 32,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: radius.full,
-      backgroundColor: c.surface,
-    },
-    slideTitle: { flex: 1, minWidth: 0 },
-    slides: { flexDirection: 'row', gap: space[2] },
+    // The tile of the sideways row: the grid's tile (same padding, gap, icon and words), at a fixed width so the next one peeks in.
+    slide: { width: SLIDE_WIDTH, gap: space[2], padding: space[4], borderRadius: radius.lg },
+    slides: { flexDirection: 'row', gap: space[3] },
   });
 
 /** How wide a compact card is: two and a bit show at once on a phone, so the row plainly slides. */
@@ -92,19 +83,17 @@ export function TrustTiles({ tiles, tone = 'soft', scroll = false, bleed = 0 }: 
             accessible
             aria-label={`${tile.title}. ${tile.body}`}
           >
-            <View style={styles.slideHead}>
-              <View style={styles.slideIcon}>
-                <Icon name={tile.icon} color={brand ? colors.onHeader : colors.action} size={18} />
-              </View>
-              <View style={styles.slideTitle}>
-                <Text variant="strong" color={brand ? 'onHeader' : 'ink'} numberOfLines={2}>
-                  {tile.title}
-                </Text>
-              </View>
+            <View style={styles.icon}>
+              <Icon name={tile.icon} color={brand ? colors.onHeader : colors.action} size={20} />
             </View>
-            <Text variant="small" color={brand ? 'onHeaderMuted' : 'inkMuted'}>
-              {tile.body}
-            </Text>
+            <View style={styles.words}>
+              <Text variant="strong" color={brand ? 'onHeader' : 'ink'}>
+                {tile.title}
+              </Text>
+              <Text variant="small" color={brand ? 'onHeaderMuted' : 'inkMuted'}>
+                {tile.body}
+              </Text>
+            </View>
           </View>
         ))}
       </ScrollView>
