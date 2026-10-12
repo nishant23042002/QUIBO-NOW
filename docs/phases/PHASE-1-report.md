@@ -84,8 +84,9 @@ loading, empty, error and offline state on each screen.
 
 ## 6. What is yours to do, in the order I would do it
 
-0. **Look at 1i on your phone** (the whole list is in `PHASE-1-defects.md`, "Phone checks for 1i"): the Home sections top to bottom,
-   the Categories and Orders headers, add and stepper taps, the free-delivery moment and the stock-limit shake.
+0. **Finish the 1i phone checks** (the list is in `PHASE-1-defects.md`, "Phone checks for 1i"). The Home sections and the product
+   cards are done (2026-10-12). Still open: the Categories and Orders headers and tab skeletons, add and stepper taps, the
+   free-delivery moment, the stock-limit shake, the floating controls, dark mode and Hindi or Marathi at the largest text.
 1. **Run the app on your phone** and go through the "Your check" lists in `PHASE-1.md` for 1f and 1g.
 2. **Record a cold start** on a low-end phone, with the network throttled, and look at memory.
 3. **A TalkBack pass** on the main flow: Home, an item, the cart, checkout, the order page, Help.
