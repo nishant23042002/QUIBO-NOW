@@ -32,6 +32,7 @@ export function ShopByBrand() {
           {brands.map((brand) => (
             <BrandTile
               key={brand.id}
+              brandId={brand.id}
               mark={brand.mark}
               name={brand.name}
               label={`${brand.name}. ${t('product.exploreAll')}`}

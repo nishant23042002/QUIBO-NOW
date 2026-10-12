@@ -1,10 +1,13 @@
-import { Pressable, StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet } from 'react-native';
 import { useStyles, type ThemeColors } from '@/theme';
+import { BrandMark } from './BrandMark';
 import { Text } from './Text';
-import { radius, space } from './tokens';
+import { space } from './tokens';
 
 export interface BrandTileProps {
-  /** The letter drawn on the tile, until there is a logo (ADR 0036). */
+  /** The brand's id, which picks its logo (ADR 0040). */
+  brandId: string;
+  /** The letter drawn on the tile when the brand has no logo yet (ADR 0036). */
   mark: string;
   /** The brand's name, in the shopper's language. */
   name: string;
@@ -17,24 +20,14 @@ export interface BrandTileProps {
 export const BRAND_TILE_WIDTH = 88;
 export const BRAND_TILE_HEIGHT = 72;
 
-const makeStyles = (c: ThemeColors) =>
+const makeStyles = (_colors: ThemeColors) =>
   StyleSheet.create({
     tile: { width: BRAND_TILE_WIDTH, alignItems: 'center', gap: space[2] },
-    mark: {
-      width: BRAND_TILE_WIDTH,
-      height: BRAND_TILE_HEIGHT,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: radius.md,
-      borderWidth: 1,
-      borderColor: c.line,
-      backgroundColor: c.surface,
-    },
     pressed: { opacity: 0.8 },
   });
 
-/** A brand as a tile with its letter and its name under it: one of a row of "Brands in this category". */
-export function BrandTile({ mark, name, label, onPress }: BrandTileProps) {
+/** A brand as a tile with its logo (or letter) on a white plate and its name under it: one of a row of brands. */
+export function BrandTile({ brandId, mark, name, label, onPress }: BrandTileProps) {
   const styles = useStyles(makeStyles);
 
   return (
@@ -44,9 +37,13 @@ export function BrandTile({ mark, name, label, onPress }: BrandTileProps) {
       onPress={onPress}
       style={({ pressed }) => [styles.tile, pressed && styles.pressed]}
     >
-      <View style={styles.mark}>
-        <Text variant="heading">{mark}</Text>
-      </View>
+      <BrandMark
+        brandId={brandId}
+        mark={mark}
+        width={BRAND_TILE_WIDTH}
+        height={BRAND_TILE_HEIGHT}
+        inset={space[2]}
+      />
       <Text variant="caption" align="center" numberOfLines={2}>
         {name}
       </Text>

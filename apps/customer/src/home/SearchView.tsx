@@ -230,6 +230,7 @@ export function SearchView({
               {brandHits.map((hit) => (
                 <BrandTile
                   key={hit.id}
+                  brandId={hit.id}
                   mark={hit.mark}
                   name={hit.name}
                   label={`${hit.name}. ${t('product.exploreAll')}`}

@@ -1,6 +1,6 @@
 # 0036. Products carry a brand, and brands are a way to browse and compare
 
-- **Status:** Proposed (Phase 1, waiting for the owner's sign-off on the product page mock)
+- **Status:** Proposed (Phase 1, waiting for the owner's sign-off on the product page mock) Logos: the owner supplied official marks on 2026-10-12; see [0040](./0040-brand-logos-on-a-white-plate.md).
 - **Date:** 2026-10-12
 - **Source:** the owner, while reviewing the product page redesign
 

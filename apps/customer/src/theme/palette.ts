@@ -62,6 +62,8 @@ export interface ThemeColors {
    * (chip, size, delivery window, address, the active tab), and icon bubbles and promise tiles. Text on it uses `ink` and `inkMuted`.
    */
   lilac: string;
+  /** The plate a brand's logo sits on: white in both themes, because logos are made for white. Not used for text. */
+  logoPlate: string;
 
   /** The deeper olive of the price badge's edge and the divider's mark: a decorative shape, not text. */
   accentEdge: string;
@@ -121,6 +123,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     accentSubtle: '#EAF8CF',
     accentInk: '#4C7A12',
     lilac: '#EFE4F5',
+    logoPlate: '#FFFFFF',
     accentEdge: '#5E8F17',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',
@@ -166,6 +169,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     accentSubtle: '#33481A',
     accentInk: '#B8E86B',
     lilac: '#2A1836',
+    logoPlate: '#FFFFFF',
     accentEdge: '#7BA531',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',

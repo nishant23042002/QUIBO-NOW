@@ -4,7 +4,17 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useOnline } from '@/network';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import { BOTTOM_BAR_HEIGHT, Chip, Icon, Notice, Text, radius, space, useChromeScroll } from '@/ui';
+import {
+  BOTTOM_BAR_HEIGHT,
+  BrandMark,
+  Chip,
+  Icon,
+  Notice,
+  Text,
+  radius,
+  space,
+  useChromeScroll,
+} from '@/ui';
 import { itemsOfBrand, kindsOfBrand, shopsOfBrand } from './brandPage';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -14,7 +24,8 @@ import { useHomeItems } from './items';
 
 /** How long the loading skeleton shows when a brand page opens, as real items would take to arrive. */
 const LOAD_MS = 200;
-const MARK = 64;
+const MARK_WIDTH = 112;
+const MARK_HEIGHT = 80;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -30,16 +41,6 @@ const makeStyles = (c: ThemeColors) =>
       borderWidth: 1,
       borderColor: c.line,
       backgroundColor: c.surface,
-    },
-    mark: {
-      width: MARK,
-      height: MARK,
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: radius.lg,
-      borderWidth: 1,
-      borderColor: c.line,
-      backgroundColor: c.lilac,
     },
     text: { flex: 1, minWidth: 0, gap: 2 },
     chips: { flexDirection: 'row', gap: space[2], paddingHorizontal: space[4] },
@@ -110,9 +111,14 @@ export function BrandView({ brandId }: { brandId: string }) {
                 : t('brandPage.products', { count: items.length })
             }. ${shops === 1 ? t('brandPage.soldByOne') : t('brandPage.soldBy', { count: shops })}`}
           >
-            <View style={styles.mark} aria-hidden>
-              <Text variant="heading">{brand.mark}</Text>
-            </View>
+            <BrandMark
+              brandId={brand.id}
+              mark={brand.mark}
+              width={MARK_WIDTH}
+              height={MARK_HEIGHT}
+              rounded={radius.lg}
+              inset={space[2]}
+            />
             <View style={styles.text}>
               <Text variant="heading" role="heading">
                 {brand.name}

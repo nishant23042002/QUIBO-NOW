@@ -31,6 +31,7 @@ import {
   Notice,
   PackPicker,
   PriceBadge,
+  BrandMark,
   OtherBrandsButton,
   ProductInsight,
   ProductRail,
@@ -140,16 +141,6 @@ const makeStyles = (c: ThemeColors) =>
       overflow: 'hidden',
     },
     groupRow: { padding: space[4] },
-    brandMark: {
-      width: 40,
-      height: 40,
-      borderRadius: radius.md,
-      borderWidth: 1,
-      borderColor: c.line,
-      backgroundColor: c.surface,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
     pressed: { opacity: 0.8 },
     action: {
       position: 'absolute',
@@ -520,9 +511,14 @@ export function ProductView({
           pressed && styles.pressed,
         ]}
       >
-        <View style={styles.brandMark}>
-          <Text variant="label">{brandOfItem.mark}</Text>
-        </View>
+        <BrandMark
+          brandId={brandOfItem.id}
+          mark={brandOfItem.mark}
+          width={64}
+          height={40}
+          inset={space[2]}
+          letter="label"
+        />
         <View style={styles.shopText}>
           <Text variant="strong" numberOfLines={1}>
             {brandOfItem.name}
@@ -876,6 +872,7 @@ export function ProductView({
                     {brands.map((brand) => (
                       <BrandTile
                         key={brand.id}
+                        brandId={brand.id}
                         mark={brand.mark}
                         name={brand.name}
                         label={`${brand.name}. ${t('product.exploreAll')}`}
