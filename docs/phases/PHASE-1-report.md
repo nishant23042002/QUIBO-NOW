@@ -1,10 +1,12 @@
 # Phase 1 report: the customer app on mock data
 
-- **Branch:** `phase-1/customer-ui` (133 commits ahead of `master`). Pushed up to the last commit before the hardening pass; the
-  hardening commits are local until you say "push". Not merged, not tagged.
-- **Status:** the whole customer app is built and every automated check passes in a fresh clone (install from the lockfile, then
-  lint, typecheck, test and build). **Nothing has run on a phone, with TalkBack, on a throttled network or with people.** Those are
-  the open gate items below, and they are yours.
+- **Branch:** `phase-1/customer-ui` (180 commits ahead of `master`), pushed. Not merged, not tagged.
+- **Status:** the whole customer app is built and the automated gate was re-run on 2026-10-12 after the Home redesign and the speed
+  pass (lint, typecheck, test and build all pass; section 3). **Nothing has run on a phone, with TalkBack, on a throttled network or
+  with people.** Those are the open gate items below, and they are yours.
+- **Since the hardening pass the Home screen was redesigned and the cart made faster** (sub-phase 1i, section 2): a shared tab
+  header, a compact 128 dp product card, Shop by category, a shops strip, Small prices, Featured picks, a quieter-times note and a
+  brand footer, ADRs 0027 to 0034. All of it is on mock data and none of it has been seen on a phone yet.
 - **The Categories tab was not built at first, and now is.** It was a "coming soon" page, found during hardening and logged as
   the one open major defect (`PHASE-1-defects.md`, M1). It was built on 2026-10-12 as grouped tiles; it needs your check on a phone.
 - **Nothing outside Phase 1 was built.** "Order again" was cut by decision and is parked. What was found and not built is in
@@ -33,16 +35,17 @@ loading, empty, error and offline state on each screen.
 | 1f        | Checkout and tracking: payment choice and cash limit, test UPI, place once, live timeline, cancel, the three endings, refunds (ADR 0018, 0019) |
 | 1g        | Orders with pictures of what was bought, Help with FAQ, call, WhatsApp and reports, Settings, testing tools kept out of release builds         |
 | 1h        | Hardening: storage safety, phone connection state (ADR 0020), contrast tests, accessibility and wrapping sweeps, this gate run                 |
+| 1i        | After hardening, on your design feedback: Home redesign, shared tab header, compact card, fast cart taps, the free-delivery moment (0027-0034) |
 
 ## 3. The gate (PLAN section 16)
 
 | Gate item                                                                                      | State                                                                                                                                                                        |
 | ---------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Plan approved before coding; nothing outside the phase built                                   | **Met.** Every piece was planned and approved before it was built                                                                                                            |
-| `lint`, `typecheck`, `test` and `build` pass on a clean install, with no unexplained warnings  | **Met.** Fresh clone, `pnpm install --frozen-lockfile`, all four exit 0, no warnings                                                                                         |
+| `lint`, `typecheck`, `test` and `build` pass on a clean install, with no unexplained warnings  | **Met.** Fresh clone at hardening; re-run in the working tree on 2026-10-12 at `b8bc9ca` after 1i: all four exit 0, no warnings                                              |
 | Maestro flows pass in both fulfilment modes                                                    | **Not met.** Seven flows are written; none has been run, because Maestro is not installed here and you chose not to install it                                               |
 | No serious accessibility issues: contrast tests, a TalkBack pass, the largest font size        | **Partly met.** Contrast tests pass in both themes for every pair in use. Every screen's controls have names and roles. TalkBack and the real text-size setting are not done |
-| Bundle size inside the budget; a cold start recorded on a 2 GB phone                           | **Half met.** The Android bundle is 4.1 MB against 5.0 MB. No cold start has been recorded: that needs the phone                                                             |
+| Bundle size inside the budget; a cold start recorded on a 2 GB phone                           | **Half met.** The Android bundle is 4.2 MB against 5.0 MB. No cold start has been recorded: that needs the phone                                                             |
 | Tested by hand on a real low-end Android phone with a throttled network                        | **Not met.** Needs the phone                                                                                                                                                 |
 | No open blocker or major defects; minor ones logged with an owner                              | **Not yet confirmed.** The one major (M1, the Categories tab) is fixed and waits for your phone check. Minor ones are in `PHASE-1-defects.md`, each with an owner            |
 | `PHASE-1-report.md` written, demo done, human sign-off recorded, tag `phase-1-complete` pushed | **Report written.** Demo, sign-off and tag are yours                                                                                                                         |
@@ -51,12 +54,12 @@ loading, empty, error and offline state on each screen.
 
 | Measure               | Result                                                                                                                                                                         |
 | --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Automated tests       | 725 in all: 468 in the customer app, 200 contracts, 30 i18n, 16 config, 11 mocks                                                                                               |
-| Android Hermes bundle | 4.1 MB (3.5 MB at the end of Phase 0c), 1,639 modules. Budget 5.0 MB                                                                                                           |
+| Automated tests       | 774 in all: 517 in the customer app (50 files), 200 contracts, 30 i18n, 16 config, 11 mocks                                                                                    |
+| Android Hermes bundle | 4.2 MB (3.5 MB at the end of Phase 0c). Budget 5.0 MB. The module count and shares below are from the hardening run                                                            |
 | Largest shares        | React Native 32%, expo-router 19%, the app's own source 13%, Zod 13% of the pre-minified source                                                                                |
-| Decisions recorded    | 20 ADRs; this phase added 0009 to 0020                                                                                                                                         |
+| Decisions recorded    | 34 ADRs; this phase added 0009 to 0034 (0027 was replaced by 0028 the same day)                                                                                                |
 | Screens               | Home, categories, shop, item, search, cart, coupons, delivery time, address list and form, checkout, order placed, Orders, order page, Help, report, Settings, first-run steps |
-| Languages             | English, Hindi, Marathi: 176 lines for review on the sheet, plus the older screens                                                                                             |
+| Languages             | English, Hindi, Marathi: the review sheet is regenerated to include every 1i line (313 lines in the file)                                                                      |
 
 ## 5. Things I would want you to know before you sign
 
@@ -68,11 +71,22 @@ loading, empty, error and offline state on each screen.
 - **The phone's connection state is real now** (ADR 0020). Airplane mode shows the offline screens. The testing switches remain.
 - **The contact number for Help is `+91 90112 85958`**, held in the zone settings in the code, so it is in the repository.
 - **The Hindi and Marathi are drafts.** A few were corrected during this pass for how time and grammar read; the rest is as I
-  wrote it.
+  wrote it. The 1i sections (Categories, Shop by category, Shops, Small prices, Featured, the quieter-times note, the footer line, the
+  free-delivery and limit messages) are new drafts on the same sheet.
+- **The new Home sections run on sample data kept inside the app** (category groups, price tiers, featured picks), not on
+  `packages/contracts`. They are labelled as samples in the code. Phase 2 moves them to the API; no screen changes.
+- **Speed was measured on a production web bundle, not on a phone.** Tapping add or a stepper redraws one control; I measured a
+  single tile re-render and about 3 to 7 ms for the control. A native Android release build could not be run here, so the feel on a
+  low-end phone is yours to judge. Use `pnpm dev -- --no-dev --minify` to get closer to release behaviour on the phone.
+- **The "Free delivery" moment, the stock-limit shake and the cart and bottom-bar hiding are time and scroll rules** (ADR 0030). They
+  are unit-tested as rules; how they feel needs a thumb.
+- **Not built, by decision:** the header gradient (tried, disliked, removed; `938d87b`), the Bestsellers collage, and haptics
+  (needs a package, `expo-haptics`, so it waits for your yes).
 
 ## 6. What is yours to do, in the order I would do it
 
-0. **Check the Categories tab** (M1, now built) on your phone: tiles four across, a main category opens Home on it, a finer tile opens search.
+0. **Look at 1i on your phone** (the whole list is in `PHASE-1-defects.md`, "Phone checks for 1i"): the Home sections top to bottom,
+   the Categories and Orders headers, add and stepper taps, the free-delivery moment and the stock-limit shake.
 1. **Run the app on your phone** and go through the "Your check" lists in `PHASE-1.md` for 1f and 1g.
 2. **Record a cold start** on a low-end phone, with the network throttled, and look at memory.
 3. **A TalkBack pass** on the main flow: Home, an item, the cart, checkout, the order page, Help.
@@ -83,7 +97,7 @@ loading, empty, error and offline state on each screen.
 
 ## 7. Where the evidence is
 
-- Decisions: `docs/decisions/` (0009 to 0020 are this phase).
+- Decisions: `docs/decisions/` (0009 to 0034 are this phase; 0027 to 0034 are the Home redesign and speed pass).
 - Open issues and known limits: `docs/phases/PHASE-1-defects.md`.
 - Parked and for later: `docs/phases/PHASE-1-notes.md`.
 - Wording for review: `docs/phases/PHASE-1-language-review.md`, made by `node scripts/language-review.mjs`.
