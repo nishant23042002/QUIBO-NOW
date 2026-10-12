@@ -110,7 +110,8 @@
       "veg": "Vegetarian",
       "nonVeg": "Non-vegetarian",
       "sizes": "{count} sizes",
-      "noMore": "No more available"
+      "noMore": "No more available",
+      "limitReached": "Limit reached"
     },
     "cart": {
       "itemsOne": "{count} item",

@@ -45,6 +45,7 @@ const ItemControl = memo(function ItemControl({
       decreaseLabel={t('home.rails.removeOneOf', { name: item.name })}
       increaseLabel={t('home.rails.addOneOf', { name: item.name })}
       maxLabel={t('home.rails.noMore')}
+      maxNotice={t('home.rails.limitReached')}
       rule={item.loose === true ? WEIGHT_RULE : countRule(item.maxQuantity)}
       {...(item.loose === true ? { unitLabel: t('weights.kg') } : {})}
     />

@@ -25,6 +25,11 @@ export interface StepperProps {
   increaseLabel: string;
   /** Name of the plus button once the limit in the rule is reached, for example "No more available". */
   maxLabel?: string;
+  /**
+   * A few words shown above the control, with a small shake, when + is pressed at the limit, for example "Limit reached". Give it
+   * where a shopper would otherwise wonder why + does nothing. Without it, + is simply dimmed and cannot be pressed at the limit.
+   */
+  maxNotice?: string;
   /** Written after the number for a weight, for example "kg". */
   unitLabel?: string;
   /** A smaller control for a compact card: 28 dp tall with 14 text, and slop around it that still makes a 48 dp touch target. */
@@ -77,6 +82,17 @@ const makeStyles = (c: ThemeColors) =>
     pressedAdd: { transform: [{ scale: 0.92 }], backgroundColor: c.lilac },
     pressedSide: { transform: [{ scale: 0.82 }], opacity: 0.6 },
     atMax: { opacity: 0.35 },
+    // The few words that rise above the control when + is pressed at the limit.
+    notice: {
+      position: 'absolute',
+      right: 0,
+      bottom: '100%',
+      marginBottom: space[1] + 2,
+      paddingHorizontal: space[2],
+      paddingVertical: space[1],
+      borderRadius: radius.sm,
+      backgroundColor: c.chrome,
+    },
     // The ring that goes out from the control the instant it is pressed. It is only an outline over the control, so it costs nothing
     // to lay out, and it moves by transform and opacity on the animation thread.
     ripple: {
@@ -101,6 +117,7 @@ export function Stepper({
   decreaseLabel,
   increaseLabel,
   maxLabel,
+  maxNotice,
   unitLabel,
   compact = false,
 }: StepperProps) {
@@ -109,6 +126,9 @@ export function Stepper({
   const reduceMotion = useReduceMotion();
   const [bounce] = useState(() => new Animated.Value(1));
   const [ripple] = useState(() => new Animated.Value(1));
+  // The limit reached: the notice (0 hidden, 1 shown) and the small shake of the control (0 to 1 across its length).
+  const [notice] = useState(() => new Animated.Value(0));
+  const [shake] = useState(() => new Animated.Value(0));
   const before = useRef(value);
 
   // The press shows at the first instant, before the cart has done anything: a ring goes out from the control and fades. It runs
@@ -123,6 +143,48 @@ export function Stepper({
       useNativeDriver: true,
     }).start();
   };
+  // + was pressed with nothing more to add: say so, once, and let go of it again. Transform and opacity only.
+  const limitHit = () => {
+    if (reduceMotion) {
+      notice.setValue(1);
+      Animated.sequence([
+        Animated.delay(1400),
+        Animated.timing(notice, { toValue: 0, duration: 0, useNativeDriver: true }),
+      ]).start();
+      return;
+    }
+    shake.setValue(0);
+    Animated.timing(shake, { toValue: 1, duration: 240, useNativeDriver: true }).start();
+    Animated.sequence([
+      Animated.timing(notice, { toValue: 1, duration: 120, useNativeDriver: true }),
+      Animated.delay(1400),
+      Animated.timing(notice, { toValue: 0, duration: 200, useNativeDriver: true }),
+    ]).start();
+  };
+  const noticeView =
+    maxNotice === undefined ? null : (
+      <Animated.View
+        pointerEvents="none"
+        aria-hidden
+        style={[
+          styles.notice,
+          {
+            opacity: notice,
+            transform: [
+              { translateY: notice.interpolate({ inputRange: [0, 1], outputRange: [4, 0] }) },
+            ],
+          },
+        ]}
+      >
+        <Text variant="caption" color="onChrome" numberOfLines={1}>
+          {maxNotice}
+        </Text>
+      </Animated.View>
+    );
+  const shakeX = shake.interpolate({
+    inputRange: [0, 0.2, 0.4, 0.6, 0.8, 1],
+    outputRange: [0, -4, 4, -3, 2, 0],
+  });
   const ring = (
     <Animated.View
       pointerEvents="none"
@@ -190,9 +252,13 @@ export function Stepper({
 
   return (
     <Animated.View
-      style={[compact ? styles.stepperCompact : styles.stepper, { transform: [{ scale: bounce }] }]}
+      style={[
+        compact ? styles.stepperCompact : styles.stepper,
+        { transform: [{ translateX: shakeX }, { scale: bounce }] },
+      ]}
     >
       {ring}
+      {noticeView}
       <Pressable
         role="button"
         aria-label={decreaseLabel}
@@ -221,11 +287,12 @@ export function Stepper({
         role="button"
         aria-label={atMax ? (maxLabel ?? increaseLabel) : increaseLabel}
         aria-disabled={atMax}
-        disabled={atMax}
+        disabled={atMax && maxNotice === undefined}
         hitSlop={reach}
-        onPressIn={press}
+        onPressIn={atMax ? undefined : press}
         onPress={() => {
-          onChange(stepQuantity(value, 1, rule));
+          if (atMax) limitHit();
+          else onChange(stepQuantity(value, 1, rule));
         }}
         style={({ pressed }) => [
           compact ? styles.sideCompact : styles.side,

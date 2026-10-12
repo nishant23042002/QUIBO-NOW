@@ -110,7 +110,8 @@
       "veg": "शाकाहारी",
       "nonVeg": "मांसाहारी",
       "sizes": "{count} साइज़",
-      "noMore": "और उपलब्ध नहीं"
+      "noMore": "और उपलब्ध नहीं",
+      "limitReached": "सीमा पूरी"
     },
     "cart": {
       "itemsOne": "{count} चीज़",

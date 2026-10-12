@@ -34,7 +34,10 @@ cards redrawn for one tap, so ADD and + answered late.
    same rule as the undo note for where it rests, and says nothing when the app opens on a cart that was already free. With "reduce
    motion" on it simply appears. The cart bar and its note say it for as long as it is true.
 
-7. **The bottom bar hides after a real stretch of scrolling.** It goes only after the page has been scrolled about 96 dp down from
+7. **The limit is said, not just shown.** At the most that can be added, + stays dim but can be pressed: it gives a small shake and a
+   few words above the control ("Limit reached"), once, and fades. It is named "No more available" for a screen reader. Transform and
+   opacity only; with "reduce motion" on it shows the words without the shake.
+8. **The bottom bar hides after a real stretch of scrolling.** It goes only after the page has been scrolled about 96 dp down from
    where the shopper last turned, and not at all in the first 48 dp; it returns after 32 dp back up, so it is easy to get back. A
    nudge or a bounce never moves it. The control and bar motions are short and firm (the bar 220 ms in, 180 ms out, the control's
    bounce about 200 ms) so they move together.

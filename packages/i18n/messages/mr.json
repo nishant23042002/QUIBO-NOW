@@ -110,7 +110,8 @@
       "veg": "शाकाहारी",
       "nonVeg": "मांसाहारी",
       "sizes": "{count} आकार",
-      "noMore": "आणखी उपलब्ध नाही"
+      "noMore": "आणखी उपलब्ध नाही",
+      "limitReached": "मर्यादा पूर्ण"
     },
     "cart": {
       "itemsOne": "{count} वस्तू",
