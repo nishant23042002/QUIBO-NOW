@@ -1,9 +1,10 @@
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Animated,
   Easing,
   StyleSheet,
   View,
+  type ScrollView,
   type NativeScrollEvent,
   type NativeSyntheticEvent,
 } from 'react-native';
@@ -140,6 +141,8 @@ export function HomeHeader({
     categories.findIndex((category) => category.key === selectedCategory),
   );
   const [tintAt] = useState(() => new Animated.Value(selectedIndex));
+  const scrollRef = useRef<ScrollView>(null);
+  const shownCategory = useRef(selectedCategory);
   const [scrollY] = useState(() => new Animated.Value(0));
   // How tall the two pieces are, measured, so the page can start below them and the upper part knows how far to travel.
   const [topHeight, setTopHeight] = useState(0);
@@ -166,6 +169,14 @@ export function HomeHeader({
       move.stop();
     };
   }, [shopsOpen, reduceMotion, panelAt]);
+
+  // Choosing another category shows that category from the top, not from wherever the last one was left scrolled to. The page
+  // under it is replaced at once (by its skeleton), so the jump is not animated.
+  useEffect(() => {
+    if (shownCategory.current === selectedCategory) return;
+    shownCategory.current = selectedCategory;
+    scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [selectedCategory]);
 
   // The whole block, status bar area included, fades to the chosen category's colour.
   useEffect(() => {
@@ -238,6 +249,7 @@ export function HomeHeader({
     <View style={styles.frame}>
       <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <Animated.ScrollView
+        ref={scrollRef}
         // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit
         // at the top and then drop; held back, it appears where it belongs.
         style={{ opacity: topHeight > 0 && lowerHeight > 0 ? 1 : 0 }}
