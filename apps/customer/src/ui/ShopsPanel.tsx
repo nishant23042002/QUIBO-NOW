@@ -71,7 +71,7 @@ export function ShopsPanel({
         <Animated.View style={{ backgroundColor: background }}>
           <View style={styles.panel}>
             <View style={styles.title}>
-              <Text variant="strong" color="onHeaderMuted">
+              <Text variant="strong" color="onChrome">
                 {title}
               </Text>
             </View>

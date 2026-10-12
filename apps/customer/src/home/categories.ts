@@ -7,8 +7,10 @@ import type { CategoryTab } from '@/ui';
  * header takes when the tab is chosen. "All" keeps the header's usual colour.
  */
 export interface HomeCategory extends CategoryTab {
-  /** The colour the header turns into. */
+  /** The pale colour of the category: behind its item pictures, and the old header tint. */
   tint: string;
+  /** The deep colour the header fades into while the tab is chosen. */
+  deep: string;
 }
 
 export function useHomeCategories(): readonly HomeCategory[] {
@@ -21,36 +23,42 @@ export function useHomeCategories(): readonly HomeCategory[] {
       label: t('home.categories.all'),
       emoji: '\u{1F6D2}',
       tint: colors.headerBg,
+      deep: colors.headerDeep,
     },
     {
       key: 'dairy',
       label: t('home.categories.dairy'),
       emoji: '\u{1F95B}',
       tint: colors.tintDairy,
+      deep: colors.deepDairy,
     },
     {
       key: 'vegetables',
       label: t('home.categories.vegetables'),
       emoji: '\u{1F955}',
       tint: colors.tintVegetables,
+      deep: colors.deepVegetables,
     },
     {
       key: 'fruits',
       label: t('home.categories.fruits'),
       emoji: '\u{1F34E}',
       tint: colors.tintFruits,
+      deep: colors.deepFruits,
     },
     {
       key: 'staples',
       label: t('home.categories.staples'),
       emoji: '\u{1F33E}',
       tint: colors.tintStaples,
+      deep: colors.deepStaples,
     },
     {
       key: 'snacks',
       label: t('home.categories.snacks'),
       emoji: '\u{1F36A}',
       tint: colors.tintSnacks,
+      deep: colors.deepSnacks,
     },
   ];
 }
