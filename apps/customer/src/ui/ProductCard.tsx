@@ -1,4 +1,5 @@
 import type { Money } from '@quibo/contracts';
+import { memo, type ReactNode } from 'react';
 import { Pressable, Text as NativeText, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
@@ -6,7 +7,6 @@ import { DietMark } from './DietMark';
 import { DiscountRibbon } from './DiscountRibbon';
 import { Icon } from './Icon';
 import { PriceBadge } from './PriceBadge';
-import { Stepper, type StepperProps } from './Stepper';
 import { Text } from './Text';
 import { fontSize, leading, radius, space } from './tokens';
 
@@ -39,20 +39,13 @@ export interface ProductCardProps {
    * a row that holds a card with the line passes true for all of them, so its cards stay the same height. Wide cards always keep it.
    */
   reserveNote?: boolean;
-  quantity: number;
-  onQuantityChange: (next: number) => void;
+  /**
+   * The ADD button that turns into the stepper, in the picture's lower corner. It is a slot, built and kept up to date by whoever
+   * holds the cart, so a change to the count redraws only this control and never the card.
+   */
+  control: ReactNode;
   /** Tapping the picture or the text opens the item's detail. ADD and the stepper do not. */
   onPress?: () => void;
-  stepper: Pick<
-    StepperProps,
-    | 'addLabel'
-    | 'addAriaLabel'
-    | 'decreaseLabel'
-    | 'increaseLabel'
-    | 'maxLabel'
-    | 'rule'
-    | 'unitLabel'
-  >;
 }
 
 const NAME_LINES = 2;
@@ -155,7 +148,7 @@ const makeStyles = (c: ThemeColors) =>
  * then the price badge, the vegetarian mark with the name (up to two lines), the pack size and, when stock is short, a warning.
  * The picture is a square, and a narrow card sets its pack and notes at 14, so cards stay short for their width.
  */
-export function ProductCard({
+export const ProductCard = memo(function ProductCard({
   name,
   pack,
   price,
@@ -168,10 +161,8 @@ export function ProductCard({
   tint,
   width,
   reserveNote,
-  quantity,
-  onQuantityChange,
+  control,
   onPress,
-  stepper,
 }: ProductCardProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
@@ -214,9 +205,7 @@ export function ProductCard({
             </Text>
           </View>
         ) : (
-          <View style={compact ? styles.controlCompact : styles.control}>
-            <Stepper value={quantity} onChange={onQuantityChange} compact={compact} {...stepper} />
-          </View>
+          <View style={compact ? styles.controlCompact : styles.control}>{control}</View>
         )}
       </View>
       <Pressable
@@ -262,4 +251,4 @@ export function ProductCard({
       </Pressable>
     </View>
   );
-}
+});

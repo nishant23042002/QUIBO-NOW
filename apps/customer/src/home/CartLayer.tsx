@@ -17,7 +17,7 @@ import {
   useReduceMotion,
   type CartThumb,
 } from '@/ui';
-import { useCart } from './CartProvider';
+import { useCart, useHasItems } from './CartProvider';
 import { useTintOf } from './categories';
 
 /** About the height of the docked cart bar: how much room a page keeps under its last row while the bar shows. */
@@ -36,10 +36,9 @@ const MAX_THUMBS = 3;
  * (a screen whose bar never hides) there is nothing to move.
  */
 function useLiftAboveCart(follow: boolean): Animated.AnimatedNode | undefined {
-  const cart = useCart();
   const reduceMotion = useReduceMotion();
   const hide = useChromeProgress();
-  const filled = cart.count > 0;
+  const filled = useHasItems();
   const [bar] = useState(() => new Animated.Value(filled ? 1 : 0));
 
   // 0 with an empty cart, 1 with something in it, eased so a note does not jump when the first item comes or the last one goes.
@@ -95,7 +94,7 @@ export function UndoToast({
   const { t } = useLanguage();
   const cart = useCart();
   const shift = useLiftAboveCart(follow);
-  const filled = cart.count > 0;
+  const filled = useHasItems();
 
   return (
     <Toast
@@ -224,7 +223,7 @@ function FreeDeliveryPop({
     };
   }, [visible, reduceMotion, show, burst]);
 
-  const filled = cart.count > 0;
+  const filled = useHasItems();
 
   return (
     <Animated.View
@@ -307,6 +306,8 @@ export function CartLayer({ bottom, follow = false }: { bottom: number; follow?:
   const cart = useCart();
   const tintOf = useTintOf();
   const router = useRouter();
+  // Whether the bar shows follows the press itself, so it comes up in the frame the control changes, not after the cart is worked out.
+  const filled = useHasItems();
 
   const room = cart.lines.length > MAX_THUMBS ? MAX_THUMBS - 1 : cart.lines.length;
   const thumbs: CartThumb[] = cart.lines
@@ -317,7 +318,7 @@ export function CartLayer({ bottom, follow = false }: { bottom: number; follow?:
   return (
     <>
       <CartFloat
-        visible={cart.count > 0}
+        visible={filled}
         thumbs={thumbs}
         {...(moreCount > 0 ? { moreLabel: `+${moreCount}` } : {})}
         itemsLabel={cart.itemsLabel}

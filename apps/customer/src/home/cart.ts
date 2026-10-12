@@ -72,6 +72,8 @@ export interface DraftCart {
   quantities: Readonly<Record<string, number>>;
   /** Sets how many of a pack (by pack id) are in the cart. More than are in stock is cut down to what is in stock. */
   setQuantity: (packId: string, next: number) => void;
+  /** What `setQuantity` would settle on for this request: the number cut down to stock and to what one order may hold. */
+  allowedQuantity: (packId: string, next: number) => number;
   /** How many items are in the cart, from all shops. */
   count: number;
   /** For example "3 items". */
@@ -259,11 +261,17 @@ export function useDraftCart(): DraftCart {
     setOrder((current) => (current.includes(packId) ? current : [...current, packId]));
   };
 
+  const allowedQuantity = (packId: string, next: number): number => {
+    const found = packs.get(packId);
+    if (found === undefined) return 0;
+    return capQuantity(next, found.pack.maxQuantity, found.pack.mostPerOrder ?? COUNT_MAX);
+  };
+
   const setQuantity = (packId: string, next: number) => {
     const found = packs.get(packId);
     if (found === undefined) return;
     const previous = quantities[packId] ?? 0;
-    const allowed = capQuantity(next, found.pack.maxQuantity, found.pack.mostPerOrder ?? COUNT_MAX);
+    const allowed = allowedQuantity(packId, next);
     apply(packId, allowed);
     if (allowed === 0 && previous > 0) setRemoval({ packId, name: found.item.name, previous });
     else if (allowed > previous) setRemoval(null);
@@ -388,6 +396,7 @@ export function useDraftCart(): DraftCart {
   return {
     quantities,
     setQuantity,
+    allowedQuantity,
     count: sum.count,
     itemsLabel: t(sum.count === 1 ? 'home.cart.itemsOne' : 'home.cart.itemsMany', {
       count: sum.count,

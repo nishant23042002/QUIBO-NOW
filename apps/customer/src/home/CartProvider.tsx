@@ -1,5 +1,6 @@
 import {
   createContext,
+  startTransition,
   useContext,
   useLayoutEffect,
   useMemo,
@@ -46,11 +47,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const actions = useMemo<CartActions>(
     () => ({
+      // The control shows the new number in the same frame as the press (it draws alone, and is cheap). The cart works out the rest
+      // (totals, the bill, the bar's words) as a transition: the finger and the control are never made to wait for it.
       setQuantity: (packId, next) => {
-        latest.current.setQuantity(packId, next);
+        store.expect(packId, latest.current.allowedQuantity(packId, next));
+        startTransition(() => {
+          latest.current.setQuantity(packId, next);
+        });
       },
     }),
-    [],
+    [store],
   );
 
   return (
@@ -80,6 +86,12 @@ function useStore(): QuantityStore {
 export function useQuantity(packId: string): number {
   const store = useStore();
   return useSyncExternalStore(store.subscribe, () => store.get(packId));
+}
+
+/** Whether anything is in the cart, the instant a tap has asked for it. Only a change to that redraws the reader. */
+export function useHasItems(): boolean {
+  const store = useStore();
+  return useSyncExternalStore(store.subscribe, store.hasItems);
 }
 
 /** How many items are in the cart. Only a change to the count redraws the reader. */

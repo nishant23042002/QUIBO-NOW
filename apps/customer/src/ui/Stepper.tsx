@@ -142,11 +142,11 @@ export function Stepper({
     if (before.current === value) return;
     before.current = value;
     if (reduceMotion) return;
-    bounce.setValue(0.82);
+    bounce.setValue(0.86);
     Animated.spring(bounce, {
       toValue: 1,
-      friction: 3.5,
-      tension: 260,
+      friction: 5,
+      tension: 320,
       useNativeDriver: true,
     }).start();
   }, [value, reduceMotion, bounce]);

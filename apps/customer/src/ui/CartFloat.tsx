@@ -276,8 +276,9 @@ export function CartFloat({
     }
     const slide = Animated.timing(shown, {
       toValue: visible ? 1 : 0,
-      duration: visible ? 320 : 220,
-      easing: visible ? Easing.out(Easing.back(1.1)) : Easing.in(Easing.cubic),
+      // Short and firm in both directions, so the bar and the control that caused it move together.
+      duration: visible ? 220 : 180,
+      easing: visible ? Easing.out(Easing.cubic) : Easing.in(Easing.cubic),
       useNativeDriver: true,
     });
     slide.start();

@@ -62,7 +62,12 @@ export { ScreenStatusBar } from './ScreenStatusBar';
 export { ProductInsight, type InsightPage, type ProductInsightProps } from './ProductInsight';
 export { PackPicker, type PackOption, type PackPickerProps } from './PackPicker';
 export { PriceBadge, type PriceBadgeProps } from './PriceBadge';
-export { ProductCard, useProductCardMetrics, type ProductCardProps } from './ProductCard';
+export {
+  ProductCard,
+  isCompactCard,
+  useProductCardMetrics,
+  type ProductCardProps,
+} from './ProductCard';
 export { ProductCardSkeleton } from './ProductCardSkeleton';
 export { ProductRail, type ProductRailProps } from './ProductRail';
 export { RowTitle, type RowTitleProps } from './RowTitle';
