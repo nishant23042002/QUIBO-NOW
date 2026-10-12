@@ -327,20 +327,29 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 ## Brand names
 
-| Key                 | English    | Hindi (draft) | Marathi (draft) | OK or change to |
-| ------------------- | ---------- | ------------- | --------------- | --------------- |
-| `brands.amul`       | Amul       | अमूल          | अमूल            |                 |
-| `brands.gokul`      | Gokul      | गोकुल         | गोकुळ           |                 |
-| `brands.katraj`     | Katraj     | कात्रज        | कात्रज          |                 |
-| `brands.chitale`    | Chitale    | चितले         | चितळे           |                 |
-| `brands.aashirvaad` | Aashirvaad | आशीर्वाद      | आशीर्वाद        |                 |
-| `brands.indiaGate`  | India Gate | इंडिया गेट    | इंडिया गेट      |                 |
-| `brands.fortune`    | Fortune    | फ़ॉर्च्यून    | फॉर्च्युन       |                 |
-| `brands.parle`      | Parle      | पारले         | पारले           |                 |
-| `brands.lays`       | Lay's      | लेज़          | लेज             |                 |
-| `brands.dairyMilk`  | Dairy Milk | डेयरी मिल्क   | डेअरी मिल्क     |                 |
-| `brands.kitKat`     | KitKat     | किटकैट        | किटकॅट          |                 |
-| `brands.britannia`  | Britannia  | ब्रिटानिया    | ब्रिटानिया      |                 |
+| Key                  | English      | Hindi (draft) | Marathi (draft) | OK or change to |
+| -------------------- | ------------ | ------------- | --------------- | --------------- |
+| `brands.amul`        | Amul         | अमूल          | अमूल            |                 |
+| `brands.gokul`       | Gokul        | गोकुल         | गोकुळ           |                 |
+| `brands.chitale`     | Chitale      | चितले         | चितळे           |                 |
+| `brands.aashirvaad`  | Aashirvaad   | आशीर्वाद      | आशीर्वाद        |                 |
+| `brands.indiaGate`   | India Gate   | इंडिया गेट    | इंडिया गेट      |                 |
+| `brands.fortune`     | Fortune      | फ़ॉर्च्यून    | फॉर्च्युन       |                 |
+| `brands.parle`       | Parle        | पारले         | पारले           |                 |
+| `brands.lays`        | Lay's        | लेज़          | लेज             |                 |
+| `brands.dairyMilk`   | Dairy Milk   | डेयरी मिल्क   | डेअरी मिल्क     |                 |
+| `brands.kitKat`      | KitKat       | किटकैट        | किटकॅट          |                 |
+| `brands.britannia`   | Britannia    | ब्रिटानिया    | ब्रिटानिया      |                 |
+| `brands.motherDairy` | Mother Dairy | मदर डेयरी     | मदर डेअरी       |                 |
+| `brands.warana`      | Warana       | वारणा         | वारणा           |                 |
+| `brands.gowardhan`   | Gowardhan    | गोवर्धन       | गोवर्धन         |                 |
+| `brands.pillsbury`   | Pillsbury    | पिल्सबरी      | पिल्सबरी        |                 |
+| `brands.daawat`      | Daawat       | दावत          | दावत            |                 |
+| `brands.kohinoor`    | Kohinoor     | कोहिनूर       | कोहिनूर         |                 |
+| `brands.saffola`     | Saffola      | सफोला         | सफोला           |                 |
+| `brands.sunfeast`    | Sunfeast     | सनफीस्ट       | सनफीस्ट         |                 |
+| `brands.haldirams`   | Haldiram's   | हल्दीराम्स    | हल्दीराम्स      |                 |
+| `brands.bingo`       | Bingo        | बिंगो         | बिंगो           |                 |
 
 ## Brands in search results
 
@@ -371,4 +380,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | --------------------------- | --------------------- | -------------------- | ------------------ | --------------- |
 | `product.otherBrandsButton` | Other brands: {count} | अन्य ब्रांड: {count} | इतर ब्रँड: {count} |                 |
 
-268 lines in all.
+277 lines in all.

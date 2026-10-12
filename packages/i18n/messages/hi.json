@@ -82,11 +82,23 @@
       "popcorn": "पॉपकॉर्न",
       "chocolate": "चॉकलेट",
       "milkGokul": "टोंड दूध",
-      "milkKatraj": "टोंड दूध",
       "milkChitale": "टोंड दूध",
       "curdAmul": "मस्ती दही",
       "chocolateKitkat": "वेफ़र चॉकलेट",
-      "biscuitsBritannia": "चाय बिस्किट"
+      "biscuitsBritannia": "चाय बिस्किट",
+      "milkMotherDairy": "टोंड दूध",
+      "milkWarana": "टोंड दूध",
+      "curdMotherDairy": "ताज़ा दही",
+      "paneerGowardhan": "पनीर",
+      "attaPillsbury": "गेहूँ का आटा",
+      "attaFortune": "गेहूँ का आटा",
+      "riceDaawat": "चावल",
+      "riceKohinoor": "चावल",
+      "oilSaffola": "सूरजमुखी तेल",
+      "biscuitsSunfeast": "चाय बिस्किट",
+      "chipsHaldirams": "आलू चिप्स",
+      "chipsBingo": "आलू चिप्स",
+      "chocolateAmul": "चॉकलेट"
     },
     "units": {
       "ml": "{n} मिली",
@@ -176,7 +188,6 @@
   "brands": {
     "amul": "अमूल",
     "gokul": "गोकुल",
-    "katraj": "कात्रज",
     "chitale": "चितले",
     "aashirvaad": "आशीर्वाद",
     "indiaGate": "इंडिया गेट",
@@ -185,7 +196,17 @@
     "lays": "लेज़",
     "dairyMilk": "डेयरी मिल्क",
     "kitKat": "किटकैट",
-    "britannia": "ब्रिटानिया"
+    "britannia": "ब्रिटानिया",
+    "motherDairy": "मदर डेयरी",
+    "warana": "वारणा",
+    "gowardhan": "गोवर्धन",
+    "pillsbury": "पिल्सबरी",
+    "daawat": "दावत",
+    "kohinoor": "कोहिनूर",
+    "saffola": "सफोला",
+    "sunfeast": "सनफीस्ट",
+    "haldirams": "हल्दीराम्स",
+    "bingo": "बिंगो"
   },
   "brandPage": {
     "products": "{count} उत्पाद",

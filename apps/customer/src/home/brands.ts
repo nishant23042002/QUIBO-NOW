@@ -7,7 +7,6 @@
 export const BRAND_IDS = [
   'amul',
   'gokul',
-  'katraj',
   'chitale',
   'aashirvaad',
   'indiaGate',
@@ -17,6 +16,16 @@ export const BRAND_IDS = [
   'dairyMilk',
   'kitKat',
   'britannia',
+  'motherDairy',
+  'warana',
+  'gowardhan',
+  'pillsbury',
+  'daawat',
+  'kohinoor',
+  'saffola',
+  'sunfeast',
+  'haldirams',
+  'bingo',
 ] as const;
 
 export type BrandId = (typeof BRAND_IDS)[number];
@@ -25,7 +34,6 @@ export type BrandId = (typeof BRAND_IDS)[number];
 export const BRAND_MARK: Readonly<Record<BrandId, string>> = {
   amul: 'A',
   gokul: 'G',
-  katraj: 'K',
   chitale: 'C',
   aashirvaad: 'A',
   indiaGate: 'I',
@@ -35,6 +43,16 @@ export const BRAND_MARK: Readonly<Record<BrandId, string>> = {
   dairyMilk: 'D',
   kitKat: 'K',
   britannia: 'B',
+  motherDairy: 'M',
+  warana: 'W',
+  gowardhan: 'G',
+  pillsbury: 'P',
+  daawat: 'D',
+  kohinoor: 'K',
+  saffola: 'S',
+  sunfeast: 'S',
+  haldirams: 'H',
+  bingo: 'B',
 };
 
 /** Which brand each sample item carries. An item that is missing here has no brand. */
@@ -49,11 +67,23 @@ export const BRAND_OF: Readonly<Record<string, BrandId | undefined>> = {
   chips: 'lays',
   chocolate: 'dairyMilk',
   milkGokul: 'gokul',
-  milkKatraj: 'katraj',
   milkChitale: 'chitale',
   curdAmul: 'amul',
   chocolateKitkat: 'kitKat',
   biscuitsBritannia: 'britannia',
+  milkMotherDairy: 'motherDairy',
+  milkWarana: 'warana',
+  curdMotherDairy: 'motherDairy',
+  paneerGowardhan: 'gowardhan',
+  attaPillsbury: 'pillsbury',
+  attaFortune: 'fortune',
+  riceDaawat: 'daawat',
+  riceKohinoor: 'kohinoor',
+  oilSaffola: 'saffola',
+  biscuitsSunfeast: 'sunfeast',
+  chipsHaldirams: 'haldirams',
+  chipsBingo: 'bingo',
+  chocolateAmul: 'amul',
 };
 
 /**
@@ -62,11 +92,23 @@ export const BRAND_OF: Readonly<Record<string, BrandId | undefined>> = {
  */
 export const TYPE_OF: Readonly<Record<string, string | undefined>> = {
   milkGokul: 'milk',
-  milkKatraj: 'milk',
   milkChitale: 'milk',
   curdAmul: 'curd',
   chocolateKitkat: 'chocolate',
   biscuitsBritannia: 'biscuits',
+  milkMotherDairy: 'milk',
+  milkWarana: 'milk',
+  curdMotherDairy: 'curd',
+  paneerGowardhan: 'paneer',
+  attaPillsbury: 'atta',
+  attaFortune: 'atta',
+  riceDaawat: 'rice',
+  riceKohinoor: 'rice',
+  oilSaffola: 'oil',
+  biscuitsSunfeast: 'biscuits',
+  chipsHaldirams: 'chips',
+  chipsBingo: 'chips',
+  chocolateAmul: 'chocolate',
 };
 
 /**

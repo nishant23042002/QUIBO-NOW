@@ -82,11 +82,23 @@
       "popcorn": "Popcorn",
       "chocolate": "Chocolate",
       "milkGokul": "Toned milk",
-      "milkKatraj": "Toned milk",
       "milkChitale": "Toned milk",
       "curdAmul": "Masti dahi",
       "chocolateKitkat": "Wafer chocolate",
-      "biscuitsBritannia": "Tea biscuits"
+      "biscuitsBritannia": "Tea biscuits",
+      "milkMotherDairy": "Toned milk",
+      "milkWarana": "Toned milk",
+      "curdMotherDairy": "Fresh curd",
+      "paneerGowardhan": "Paneer",
+      "attaPillsbury": "Wheat atta",
+      "attaFortune": "Wheat atta",
+      "riceDaawat": "Rice",
+      "riceKohinoor": "Rice",
+      "oilSaffola": "Sunflower oil",
+      "biscuitsSunfeast": "Tea biscuits",
+      "chipsHaldirams": "Potato chips",
+      "chipsBingo": "Potato chips",
+      "chocolateAmul": "Chocolate"
     },
     "units": {
       "ml": "{n} ml",
@@ -176,7 +188,6 @@
   "brands": {
     "amul": "Amul",
     "gokul": "Gokul",
-    "katraj": "Katraj",
     "chitale": "Chitale",
     "aashirvaad": "Aashirvaad",
     "indiaGate": "India Gate",
@@ -185,7 +196,17 @@
     "lays": "Lay's",
     "dairyMilk": "Dairy Milk",
     "kitKat": "KitKat",
-    "britannia": "Britannia"
+    "britannia": "Britannia",
+    "motherDairy": "Mother Dairy",
+    "warana": "Warana",
+    "gowardhan": "Gowardhan",
+    "pillsbury": "Pillsbury",
+    "daawat": "Daawat",
+    "kohinoor": "Kohinoor",
+    "saffola": "Saffola",
+    "sunfeast": "Sunfeast",
+    "haldirams": "Haldiram's",
+    "bingo": "Bingo"
   },
   "brandPage": {
     "products": "{count} products",

@@ -43,7 +43,7 @@ appId: host.exp.exponent
 - assertNotVisible: 'Key Information'
 
 # The button on the picture's lower right glides to the other brands.
-- tapOn: 'Other brands: 3'
+- tapOn: 'Other brands: 4'
 - assertVisible: 'Other brands of toned milk'
 - assertVisible: 'Gokul Toned milk.*'
 

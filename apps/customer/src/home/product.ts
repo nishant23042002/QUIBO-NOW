@@ -79,7 +79,7 @@ export function startingPackId(
 
 /**
  * One item for each kind of product, for the lists on Home: the same kind sold under several brands ("Toned milk" from Amul, Gokul
- * and Katraj) shows once, and the product page shows the others. The one shown is the first listed, or the first that is in stock
+ * and Chitale) shows once, and the product page shows the others. The one shown is the first listed, or the first that is in stock
  * when that one is sold out. Items keep the order of their kind's first appearance, and an item with no other brand stands alone.
  */
 export function oneOfEachKind<T extends { type: string; stock?: { kind: 'out' | 'low' } }>(

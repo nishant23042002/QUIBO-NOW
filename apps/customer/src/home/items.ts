@@ -62,11 +62,23 @@ interface Sample {
     | 'chocolate'
     // The same kinds of product under other brands (ADR 0036): see `ALTERNATIVE_SAMPLES`.
     | 'milkGokul'
-    | 'milkKatraj'
     | 'milkChitale'
     | 'curdAmul'
     | 'chocolateKitkat'
-    | 'biscuitsBritannia';
+    | 'biscuitsBritannia'
+    | 'milkMotherDairy'
+    | 'milkWarana'
+    | 'curdMotherDairy'
+    | 'paneerGowardhan'
+    | 'attaPillsbury'
+    | 'attaFortune'
+    | 'riceDaawat'
+    | 'riceKohinoor'
+    | 'oilSaffola'
+    | 'biscuitsSunfeast'
+    | 'chipsHaldirams'
+    | 'chipsBingo'
+    | 'chocolateAmul';
   category: ItemCategory;
   /** A stand-in for the photo, from emoji old enough for a low-end Android phone to draw. */
   emoji: string;
@@ -267,15 +279,6 @@ const ALTERNATIVE_SAMPLES: readonly Sample[] = [
     mrp: 2800,
   },
   {
-    id: 'milkKatraj',
-    category: 'dairy',
-    emoji: '\u{1F95B}',
-    amount: 500,
-    unit: 'ml',
-    price: 2800,
-    mrp: 2900,
-  },
-  {
     id: 'milkChitale',
     category: 'dairy',
     emoji: '\u{1F95B}',
@@ -309,6 +312,121 @@ const ALTERNATIVE_SAMPLES: readonly Sample[] = [
     amount: 1,
     unit: 'pack',
     price: 1200,
+  },
+  {
+    id: 'milkMotherDairy',
+    quick: true,
+    category: 'dairy',
+    emoji: '\u{1F95B}',
+    amount: 500,
+    unit: 'ml',
+    price: 3000,
+    mrp: 3100,
+  },
+  {
+    id: 'milkWarana',
+    category: 'dairy',
+    emoji: '\u{1F95B}',
+    amount: 500,
+    unit: 'ml',
+    price: 2800,
+    mrp: 2900,
+  },
+  {
+    id: 'curdMotherDairy',
+    quick: true,
+    category: 'dairy',
+    emoji: '\u{1F963}',
+    amount: 400,
+    unit: 'g',
+    price: 3400,
+  },
+  {
+    id: 'paneerGowardhan',
+    category: 'dairy',
+    emoji: '\u{1F9C0}',
+    amount: 200,
+    unit: 'g',
+    price: 9500,
+    mrp: 10500,
+  },
+  {
+    id: 'attaPillsbury',
+    category: 'staples',
+    emoji: '\u{1F33E}',
+    amount: 1,
+    unit: 'kg',
+    price: 5400,
+    mrp: 5800,
+  },
+  {
+    id: 'attaFortune',
+    category: 'staples',
+    emoji: '\u{1F33E}',
+    amount: 1,
+    unit: 'kg',
+    price: 5100,
+    mrp: 5500,
+  },
+  {
+    id: 'riceDaawat',
+    category: 'staples',
+    emoji: '\u{1F35A}',
+    amount: 1,
+    unit: 'kg',
+    price: 7600,
+    mrp: 8200,
+  },
+  {
+    id: 'riceKohinoor',
+    category: 'staples',
+    emoji: '\u{1F35A}',
+    amount: 1,
+    unit: 'kg',
+    price: 7200,
+  },
+  {
+    id: 'oilSaffola',
+    category: 'staples',
+    emoji: '\u{1F33B}',
+    amount: 1,
+    unit: 'l',
+    price: 15900,
+    mrp: 17000,
+  },
+  {
+    id: 'biscuitsSunfeast',
+    category: 'snacks',
+    emoji: '\u{1F36A}',
+    amount: 1,
+    unit: 'pack',
+    price: 1000,
+    mrp: 1100,
+  },
+  {
+    id: 'chipsHaldirams',
+    category: 'snacks',
+    emoji: '\u{1F35F}',
+    amount: 1,
+    unit: 'pack',
+    price: 2000,
+  },
+  {
+    id: 'chipsBingo',
+    category: 'snacks',
+    emoji: '\u{1F35F}',
+    amount: 1,
+    unit: 'pack',
+    price: 2000,
+  },
+  {
+    id: 'chocolateAmul',
+    category: 'snacks',
+    emoji: '\u{1F36B}',
+    amount: 1,
+    unit: 'pack',
+    price: 2500,
+    mrp: 2800,
   },
 ];
 
@@ -346,7 +464,6 @@ interface SamplePack {
 const EXTRA_PACKS: Readonly<Record<string, readonly SamplePack[]>> = {
   milk: [{ amount: 1, unit: 'l', price: 5600, mrp: 5800, quick: true }],
   milkGokul: [{ amount: 1, unit: 'l', price: 5400, mrp: 5600, quick: true }],
-  milkKatraj: [{ amount: 1, unit: 'l', price: 5700, mrp: 5900 }],
   curd: [{ amount: 1, unit: 'kg', price: 8200, mrp: 9000, quick: true }],
   paneer: [{ amount: 500, unit: 'g', price: 21000, mrp: 24000 }],
   eggs: [{ amount: 12, unit: 'pcs', price: 9200, mrp: 10400 }],

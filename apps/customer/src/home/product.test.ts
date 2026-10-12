@@ -39,10 +39,10 @@ const BRANDED = [
     brand: { id: 'gokul', name: 'Gokul', mark: 'G' },
   },
   {
-    id: 'milkKatraj',
+    id: 'milkChitale',
     type: 'milk',
     category: 'dairy',
-    brand: { id: 'katraj', name: 'Katraj', mark: 'K' },
+    brand: { id: 'chitale', name: 'Chitale', mark: 'C' },
   },
   {
     id: 'paneer',
@@ -58,11 +58,11 @@ describe('otherBrands', () => {
   it('lists the same kind of product from other brands, in their given order', () => {
     expect(ids(otherBrands(BRANDED, BRANDED[0] as (typeof BRANDED)[number]))).toEqual([
       'milkGokul',
-      'milkKatraj',
+      'milkChitale',
     ]);
     expect(ids(otherBrands(BRANDED, BRANDED[1] as (typeof BRANDED)[number]))).toEqual([
       'milk',
-      'milkKatraj',
+      'milkChitale',
     ]);
   });
 
@@ -89,7 +89,7 @@ describe('brandsInCategory', () => {
     expect(brandsInCategory(BRANDED, 'dairy')).toEqual([
       { id: 'amul', name: 'Amul', mark: 'A', count: 2 },
       { id: 'gokul', name: 'Gokul', mark: 'G', count: 1 },
-      { id: 'katraj', name: 'Katraj', mark: 'K', count: 1 },
+      { id: 'chitale', name: 'Chitale', mark: 'C', count: 1 },
     ]);
   });
 
@@ -154,7 +154,7 @@ describe('oneOfEachKind', () => {
     const listed = [
       item('milk', 'milk', true),
       item('milkGokul', 'milk'),
-      item('milkKatraj', 'milk'),
+      item('milkChitale', 'milk'),
     ];
     expect(oneOfEachKind(listed).map((entry) => entry.id)).toEqual(['milkGokul']);
   });
