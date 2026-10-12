@@ -138,16 +138,18 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     text: { gap: space[1], paddingHorizontal: space[1] },
-    nameRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[1] },
-    mark: { paddingTop: 3 },
-    name: { flex: 1, minWidth: 0 },
+    name: { minWidth: 0 },
+    // The vegetarian mark sits on the picture's upper right corner, with nothing behind it, which leaves the whole width under the
+    // picture to the name.
+    diet: { position: 'absolute', top: space[1] + 2, right: space[1] + 2 },
     line: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
   });
 
 /**
  * One item in a row or a grid: a picture on the category's tint with an aubergine ribbon for the saving
  * hanging from its top edge, ADD turning into a stepper in its lower corner (or "out of stock" in its place),
- * then the price badge, the vegetarian mark with the name (up to two lines), the pack size and, when stock is short, a warning.
+ * then the price badge, the name (up to two lines), the pack size and, when stock is short, a warning. The vegetarian mark sits on the
+ * picture's upper right corner.
  * The picture is a square, and a narrow card sets its pack and notes at 14, so cards stay short for their width.
  */
 export const ProductCard = memo(function ProductCard({
@@ -210,6 +212,11 @@ export const ProductCard = memo(function ProductCard({
         ) : (
           <View style={compact ? styles.controlCompact : styles.control}>{control}</View>
         )}
+        {diet !== undefined ? (
+          <View style={styles.diet} pointerEvents="none">
+            <DietMark kind={diet.kind} label={diet.label} size={14} />
+          </View>
+        ) : null}
       </View>
       <Pressable
         accessible
@@ -219,17 +226,10 @@ export const ProductCard = memo(function ProductCard({
         style={[styles.text, { minHeight: textHeight, opacity: out ? 0.6 : 1 }]}
       >
         <PriceBadge amount={price} compact={compact} {...(mrp !== undefined ? { mrp } : {})} />
-        <View style={styles.nameRow}>
-          {diet !== undefined ? (
-            <View style={styles.mark}>
-              <DietMark kind={diet.kind} label={diet.label} size={14} />
-            </View>
-          ) : null}
-          <View style={styles.name}>
-            <Text variant="strong" tight={compact} numberOfLines={NAME_LINES}>
-              {name}
-            </Text>
-          </View>
+        <View style={styles.name}>
+          <Text variant="strong" tight={compact} numberOfLines={NAME_LINES}>
+            {name}
+          </Text>
         </View>
         <Text
           variant={compact ? 'fine' : 'small'}
