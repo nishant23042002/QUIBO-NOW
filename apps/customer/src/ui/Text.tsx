@@ -75,6 +75,8 @@ export interface TextProps extends Omit<NativeTextProps, 'style'> {
   strike?: boolean;
   /** Where the lines sit when the text wraps. Centred text is for empty and error states. */
   align?: 'left' | 'center';
+  /** Set the lines closer together, for a short block of small text such as a card's name. Hindi and Marathi still keep their room. */
+  tight?: boolean;
 }
 
 /**
@@ -86,13 +88,14 @@ export function Text({
   color = 'ink',
   strike = false,
   align = 'left',
+  tight = false,
   ...rest
 }: TextProps) {
   const { locale } = useLanguage();
   const { colors } = useTheme();
   const { fontSize: size, role, leading: spacing } = variants[variant];
   const script = locale === 'en' ? 'latin' : 'devanagari';
-  const lineHeight = Math.round(size * leading[script][spacing]);
+  const lineHeight = Math.round(size * leading[script][tight ? 'tight' : spacing]);
   const isHeading = variant === 'title' || variant === 'heading';
 
   return (

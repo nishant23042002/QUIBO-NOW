@@ -1,10 +1,9 @@
 import type { Money } from '@quibo/contracts';
 import { Pressable, Text as NativeText, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { useStyles, type ThemeColors } from '@/theme';
 import { DietMark } from './DietMark';
 import { DiscountRibbon } from './DiscountRibbon';
-import { Icon } from './Icon';
 import { PriceBadge } from './PriceBadge';
 import { Stepper, type StepperProps } from './Stepper';
 import { Text } from './Text';
@@ -19,21 +18,24 @@ export interface ProductCardProps {
   mrp?: Money;
   /** The ribbon on the picture: what is saved, in rupees, for example "₹6", and the word "OFF". Leave out when there is no saving. */
   ribbon?: { amount: string; offLabel: string };
-  /** For items that can come in the next delivery window: the line under the pack, for example "Today 4–6 PM". Only some items have one. */
-  quickLabel?: string;
   /** Vegetarian or not, with the words a screen reader says for it. Packaged food always has one. */
   diet?: { kind: 'veg' | 'nonveg'; label: string };
   /**
    * When stock is short. "out": the item cannot be added, and says so on its picture. "low": a warning line
-   * under the pack, for example "Only 3 left", in place of the delivery line.
+   * under the pack, for example "Only 3 left".
    */
   stock?: { kind: 'out' | 'low'; label: string };
   /** One emoji standing in for the photo until real photos exist. */
   emoji: string;
   /** The colour behind the picture. */
   tint: string;
-  /** The card's width. The picture is a square of the same size. */
+  /** The card's width. The picture is a little wider than tall, so the card is not stretched. */
   width: number;
+  /**
+   * Keep room under the pack for the low-stock line. A compact card has no such room unless asked, so cards stay short; a row that
+   * holds a card with the line passes true for all of them, so its cards stay the same height. Wide cards always keep the room.
+   */
+  reserveNote?: boolean;
   quantity: number;
   onQuantityChange: (next: number) => void;
   /** Tapping the picture or the text opens the item's detail. ADD and the stepper do not. */
@@ -51,30 +53,65 @@ export interface ProductCardProps {
 }
 
 const NAME_LINES = 2;
+/** Cards narrower than this are compact: smaller text (never under 14) and a shorter picture, so a narrow card is not a tall one. */
+const COMPACT_UNDER = 150;
+const COMPACT_PICTURE = 1.2;
+const WIDE_PICTURE = 1.1;
+
+/** Whether a card of this width is the compact kind. */
+export function isCompactCard(width: number): boolean {
+  return width < COMPACT_UNDER;
+}
+
+export interface ProductCardMetrics {
+  compact: boolean;
+  /** One small line of text: the pack, or the low-stock line. */
+  line: number;
+  /** One line of the name. */
+  nameLine: number;
+  /** The price badge's row. */
+  priceHeight: number;
+  /** The whole text block under the picture. */
+  textHeight: number;
+  /** The picture's width over its height. */
+  pictureRatio: number;
+}
 
 /**
- * The measurements of a card's text block, shared with the loading skeleton so the two always line up: the height
- * of one small line, of the price badge's row, and of the whole block. The block keeps room for the price badge,
- * a two-line name, the pack and the last line, so every card is the same height and each line sits straight under
- * the one before, whatever the name's length.
+ * The measurements of a card's text block, shared with the loading skeleton so the two always line up. A compact card (under 150
+ * wide) sets its name and pack at 14, the smallest size the app uses, with the name's lines packed close, and keeps room only for the
+ * price, a two-line name and the pack, so it does not grow tall. A wide card keeps the roomier 16 and room for a low-stock line.
+ * Without a width, the wide measurements.
  */
-export function useProductCardMetrics(): {
-  line: number;
-  priceHeight: number;
-  textHeight: number;
-} {
+export function useProductCardMetrics(width?: number, reserveNote?: boolean): ProductCardMetrics {
   const { locale } = useLanguage();
-  const rhythm = leading[locale === 'en' ? 'latin' : 'devanagari'].normal;
-  const line = Math.round(fontSize.sm * rhythm);
-  const priceHeight = Math.round(fontSize.base * rhythm) + 8;
-  return { line, priceHeight, textHeight: priceHeight + line * (NAME_LINES + 2) + space[1] * 3 };
+  const script = locale === 'en' ? 'latin' : 'devanagari';
+  const compact = width !== undefined && isCompactCard(width);
+  const textSize = compact ? fontSize.xs : fontSize.sm;
+  const line = Math.round(textSize * leading[script][compact ? 'tight' : 'normal']);
+  const nameLine = Math.round(textSize * leading[script][compact ? 'tight' : 'normal']);
+  const priceHeight =
+    Math.round((compact ? fontSize.sm : fontSize.base) * leading[script].normal) +
+    (compact ? 6 : 8);
+  const note = reserveNote ?? !compact;
+  // The price, the name, the pack, and the low-stock line when there is room for it, with a small gap between each.
+  const rows = 3 + (note ? 1 : 0);
+  const textHeight =
+    priceHeight + nameLine * NAME_LINES + line * (note ? 2 : 1) + space[1] * (rows - 1);
+  return {
+    compact,
+    line,
+    nameLine,
+    priceHeight,
+    textHeight,
+    pictureRatio: compact ? COMPACT_PICTURE : WIDE_PICTURE,
+  };
 }
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     card: { gap: space[2] },
     picture: {
-      aspectRatio: 1,
       overflow: 'hidden',
       borderRadius: radius.lg,
       borderWidth: 1,
@@ -110,17 +147,15 @@ const makeStyles = (c: ThemeColors) =>
     },
     text: { gap: space[1], paddingHorizontal: space[1] },
     nameRow: { flexDirection: 'row', alignItems: 'flex-start', gap: space[1] },
-    mark: { paddingTop: 4 },
+    mark: { paddingTop: 3 },
     name: { flex: 1, minWidth: 0 },
-    line: { flexDirection: 'row', alignItems: 'center', gap: space[1] },
   });
 
 /**
  * One item in a row or a grid: a picture on the category's tint with an aubergine ribbon for the saving
  * hanging from its top edge, ADD turning into a stepper in its lower corner (or "out of stock" in its place),
- * then the price badge, the vegetarian mark with the name (up to two lines), the pack size and one line
- * more: a low-stock warning, or when the item can come in the next window. The text block keeps room for
- * all of it, so every card is the same height.
+ * then the price badge, the vegetarian mark with the name (up to two lines), the pack size and, when stock is short, a warning.
+ * The picture is a little wider than tall, and a narrow card sets its text at 14, so cards are short for their width.
  */
 export function ProductCard({
   name,
@@ -128,31 +163,36 @@ export function ProductCard({
   price,
   mrp,
   ribbon,
-  quickLabel,
   diet,
   stock,
   emoji,
   tint,
   width,
+  reserveNote,
   quantity,
   onQuantityChange,
   onPress,
   stepper,
 }: ProductCardProps) {
   const styles = useStyles(makeStyles);
-  const { colors } = useTheme();
-  const { textHeight } = useProductCardMetrics();
+  const { compact, textHeight, pictureRatio } = useProductCardMetrics(width, reserveNote);
   const out = stock?.kind === 'out';
+  const pictureHeight = Math.round(width / pictureRatio);
 
   return (
     <View style={[styles.card, { width }]}>
-      <View style={[styles.picture, { backgroundColor: tint }]}>
-        <Pressable accessible={false} onPress={onPress} style={styles.open}>
+      <View style={[styles.picture, { backgroundColor: tint, height: pictureHeight }]}>
+        <Pressable
+          accessible={false}
+          onPress={onPress}
+          // The picture rests a little above its middle, clear of the ADD button in the lower corner.
+          style={[styles.open, { paddingBottom: Math.round(pictureHeight * 0.2) }]}
+        >
           <NativeText
             allowFontScaling={false}
             style={{
-              fontSize: width * 0.42,
-              lineHeight: width * 0.52,
+              fontSize: Math.round(pictureHeight * 0.46),
+              lineHeight: Math.round(pictureHeight * 0.56),
               textAlign: 'center',
               opacity: out ? 0.35 : 1,
             }}
@@ -168,7 +208,7 @@ export function ProductCard({
         </Pressable>
         {out ? (
           <View style={styles.unavailable} accessible aria-label={stock.label}>
-            <Text variant="strong" color="inkMuted" numberOfLines={1}>
+            <Text variant={compact ? 'caption' : 'strong'} color="inkMuted" numberOfLines={1}>
               {stock.label}
             </Text>
           </View>
@@ -185,7 +225,7 @@ export function ProductCard({
         onPress={onPress}
         style={[styles.text, { minHeight: textHeight, opacity: out ? 0.6 : 1 }]}
       >
-        <PriceBadge amount={price} {...(mrp !== undefined ? { mrp } : {})} />
+        <PriceBadge amount={price} compact={compact} {...(mrp !== undefined ? { mrp } : {})} />
         <View style={styles.nameRow}>
           {diet !== undefined ? (
             <View style={styles.mark}>
@@ -193,25 +233,27 @@ export function ProductCard({
             </View>
           ) : null}
           <View style={styles.name}>
-            <Text variant="strong" numberOfLines={NAME_LINES}>
+            <Text
+              variant={compact ? 'caption' : 'strong'}
+              tight={compact}
+              numberOfLines={NAME_LINES}
+            >
               {name}
             </Text>
           </View>
         </View>
-        <Text variant="small" color="inkMuted" numberOfLines={1}>
+        <Text
+          variant={compact ? 'fine' : 'small'}
+          tight={compact}
+          color="inkMuted"
+          numberOfLines={1}
+        >
           {pack}
         </Text>
         {stock?.kind === 'low' ? (
-          <Text variant="strong" color="warning" numberOfLines={1}>
+          <Text variant={compact ? 'caption' : 'strong'} color="warning" numberOfLines={1}>
             {stock.label}
           </Text>
-        ) : quickLabel !== undefined && !out ? (
-          <View style={styles.line} accessible aria-label={quickLabel}>
-            <Icon name="clock" color={colors.accentInk} size={14} />
-            <Text variant="strong" color="accentInk" numberOfLines={1}>
-              {quickLabel}
-            </Text>
-          </View>
         ) : null}
       </Pressable>
     </View>

@@ -8,6 +8,8 @@ export interface PriceBadgeProps {
   amount: Money;
   /** The printed price, shown struck through beside the badge when it is higher than the amount. */
   mrp?: Money;
+  /** A smaller badge, for a narrow card: the amount at 16 and the printed price at 14. */
+  compact?: boolean;
 }
 
 /** How far the hard edge sticks out below and to the right of the badge. */
@@ -40,7 +42,7 @@ const makeStyles = (c: ThemeColors) =>
  * The price as a pistachio badge with a deeper olive edge cut under its lower right corner, like a stamped
  * tag, and the printed price struck through beside it. Money is always integer paise.
  */
-export function PriceBadge({ amount, mrp }: PriceBadgeProps) {
+export function PriceBadge({ amount, mrp, compact = false }: PriceBadgeProps) {
   const styles = useStyles(makeStyles);
 
   return (
@@ -48,13 +50,13 @@ export function PriceBadge({ amount, mrp }: PriceBadgeProps) {
       <View style={styles.wrap}>
         <View style={styles.edge} />
         <View style={styles.face}>
-          <Text variant="label" color="onAccent" numberOfLines={1}>
+          <Text variant={compact ? 'strong' : 'label'} color="onAccent" numberOfLines={1}>
             {formatRupees(amount)}
           </Text>
         </View>
       </View>
       {mrp !== undefined && mrp > amount ? (
-        <Text variant="small" color="inkMuted" strike numberOfLines={1}>
+        <Text variant={compact ? 'fine' : 'small'} color="inkMuted" strike numberOfLines={1}>
           {formatRupees(mrp)}
         </Text>
       ) : null}

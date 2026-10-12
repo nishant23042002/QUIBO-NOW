@@ -2,12 +2,11 @@ import { useRouter } from 'expo-router';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductCard, WEIGHT_RULE, countRule, gridCardWidth as gridWidth, space } from '@/ui';
 import { useCart } from './CartProvider';
-import { useDeliveryWhen } from './deliveryInfo';
 import { useTintOf } from './categories';
 import type { HomeItem } from './items';
 
-/** How wide a card is in a swipeable row. */
-export const RAIL_CARD_WIDTH = 148;
+/** How wide a card is in a swipeable row: narrow enough that the next card peeks in, and short for its width (see `ProductCard`). */
+export const RAIL_CARD_WIDTH = 128;
 
 /**
  * One item as a card, wired to the cart: ADD and the stepper write to it, and a tap on the picture or the text
@@ -17,16 +16,18 @@ export function ItemTile({
   item,
   width,
   onOpen,
+  reserveNote,
 }: {
   item: HomeItem;
   width: number;
   onOpen?: (id: string) => void;
+  /** Whether some card beside this one carries a low-stock line, so every card in the row keeps room for it. */
+  reserveNote?: boolean;
 }) {
   const { t } = useLanguage();
   const router = useRouter();
   const cart = useCart();
   const tintOf = useTintOf();
-  const when = useDeliveryWhen();
 
   return (
     <ProductCard
@@ -35,12 +36,12 @@ export function ItemTile({
       price={item.price}
       {...(item.mrp !== undefined ? { mrp: item.mrp } : {})}
       {...(item.ribbon !== undefined ? { ribbon: item.ribbon } : {})}
-      {...(item.quick === true ? { quickLabel: when.short } : {})}
       diet={item.diet}
       {...(item.stock !== undefined ? { stock: item.stock } : {})}
       emoji={item.emoji}
       tint={tintOf(item.category)}
       width={width}
+      {...(reserveNote !== undefined ? { reserveNote } : {})}
       onPress={() => {
         onOpen?.(item.id);
         router.push({ pathname: '/product/[id]', params: { id: item.id } });

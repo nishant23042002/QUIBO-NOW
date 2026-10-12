@@ -10,6 +10,11 @@ import {
   type Unit,
 } from './packs';
 
+/** Whether any of these items shows a low-stock line, so a row of cards keeps room for it in every card. */
+export function anyLowStock(items: readonly { stock?: { kind: 'out' | 'low' } }[]): boolean {
+  return items.some((item) => item.stock?.kind === 'low');
+}
+
 /** The categories that hold items. "All" is not one of them: it shows every category's row. */
 export type ItemCategory = 'dairy' | 'vegetables' | 'fruits' | 'staples' | 'snacks';
 

@@ -4,7 +4,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { ProductRail, space } from '@/ui';
 import { HomeSkeleton } from './HomeSkeleton';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
-import { useHomeItems, type HomeItem, type ItemCategory } from './items';
+import { anyLowStock, useHomeItems, type HomeItem, type ItemCategory } from './items';
 
 /** How long the loading skeleton shows after a category is chosen. */
 const LOAD_MS = 200;
@@ -47,8 +47,13 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
   }, [category, shown]);
   const loading = shown !== category;
 
-  const tile = (item: HomeItem, width: number) => (
-    <ItemTile key={item.id} item={item} width={width} />
+  const tile = (item: HomeItem, width: number, reserveNote?: boolean) => (
+    <ItemTile
+      key={item.id}
+      item={item}
+      width={width}
+      {...(reserveNote !== undefined ? { reserveNote } : {})}
+    />
   );
   if (loading) {
     return <HomeSkeleton label={t('common.loading')} grid={category !== 'all'} />;
@@ -67,18 +72,23 @@ export function HomeFeed({ category, onSeeAll }: HomeFeedProps) {
 
   return (
     <View style={styles.rails}>
-      {ORDER.map((key) => (
-        <ProductRail
-          key={key}
-          title={t(`home.rails.${key}`)}
-          seeAllLabel={t('home.rails.seeAll')}
-          onSeeAll={() => {
-            onSeeAll(key);
-          }}
-        >
-          {items.filter((item) => item.category === key).map((item) => tile(item, RAIL_CARD_WIDTH))}
-        </ProductRail>
-      ))}
+      {ORDER.map((key) => {
+        const row = items.filter((item) => item.category === key);
+        // Cards in a row stay one height: room for the low-stock line only when one of them has it.
+        const note = anyLowStock(row);
+        return (
+          <ProductRail
+            key={key}
+            title={t(`home.rails.${key}`)}
+            seeAllLabel={t('home.rails.seeAll')}
+            onSeeAll={() => {
+              onSeeAll(key);
+            }}
+          >
+            {row.map((item) => tile(item, RAIL_CARD_WIDTH, note))}
+          </ProductRail>
+        );
+      })}
     </View>
   );
 }
