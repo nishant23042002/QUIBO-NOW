@@ -22,6 +22,9 @@ advance what to do rather than be surprised.
 3. **Unavailable items.** The shopper chooses once for the order, and may choose differently for any item: swap it for the
    closest match (never at a higher price than the item chosen), leave it out and refund it, or call the shopper first.
    The default is to swap. The choices are kept on the phone and the per-item ones are forgotten when the cart is emptied.
+   > **Amended 2026-10-12 ([ADR 0036](0036-products-carry-a-brand-and-brands-are-browsable.md) point 6):** "the closest match" now has
+   > an order: the same brand in another size, then the same kind from another brand, never at a higher price. The shopper's
+   > per-item choice still comes first. The app words and records the choice; the matching is the shop's and ops' (Phases 3 and 4).
 4. **Not built here.** Weighing, the swap and the refund happen in the store portal (Phase 3 and 4) and the driver app
    (Phase 5 and 6). The customer app records the choice and shows the promise.
 

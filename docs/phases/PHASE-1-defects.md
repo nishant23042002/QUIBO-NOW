@@ -92,3 +92,12 @@ The rest is still unchecked on a phone. Each line is one thing to look at, so it
 
 - **"Order again" (one-tap reorder).** Parked by the owner on 2026-10-10. The order now keeps its items; the cart side is left.
   See `PHASE-1-notes.md`.
+
+## Product page redesign (1j), added 2026-10-12
+
+Nothing is blocker or major. Found and fixed in the close-out: the Maestro flows' item names, the skeleton's chip and row heights, one
+Marathi title. Still to check on a phone: each of the nine steps (the lists are in `PHASE-1-pdp-redesign.md`), the drape behind
+the header's rounded corners in light and dark, the skeleton against the loaded page, the largest font size, TalkBack on the
+strip, sheet and rails, and every Maestro flow including `product.yaml`. Hindi and Marathi wording for the new labels is listed at the end of
+`PHASE-1-pdp-redesign-report.md`. The open decisions (which shop is "Sold by", brand logos, the brand page and the rest of ADR 0036) are listed in
+`PHASE-1-pdp-redesign-report.md`.

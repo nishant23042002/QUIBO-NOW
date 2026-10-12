@@ -26,6 +26,8 @@ the item page fixed because it has its own ADD bar. The result was that the same
    24 dp margin stops it flickering at the edge. The slide, the cart bar's lift above it and the drop with the bottom bar are all
    native animations. While it is away it takes no touches and is hidden from a screen reader. With "reduce motion" on it shows
    and hides without sliding. The cart bar rests just above the bottom bar while the ADD bar is away.
+   _(History, 2026-10-12: it was changed for a few hours to show also while the row was below the first screen, and went back the same
+   day. It flickered as the row came into view, and a bar with nothing to say is noise: the in-page ADD is one scroll away.)_
 
 ## Consequences
 

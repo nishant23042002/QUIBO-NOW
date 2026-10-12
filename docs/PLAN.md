@@ -146,7 +146,8 @@ Build in this order: customer web app, then the admin panel (which includes the 
 
 ### Customer web app (Next.js PWA)
 
-- **Screens:** language and phone OTP; home with "Your shops", categories and a reorder strip; shop page with in-shop search; global search; cart; address; checkout; order tracking; past orders; help.
+- **Screens:** language and phone OTP; home with "Shop by category", "Shop by brand" and a reorder strip (the shops are in the header); shop page with in-shop search; brand page; global search (brands are results and filters); cart; address; checkout; order tracking; past orders; help.
+- **Brands:** every branded item shows its brand above its name; the brand opens a brand page; a category, a search and a shop page can be filtered by brand; the item page offers "Other brands of this" and "More from this brand" (ADR 0036).
 - **Search:** typed-in-English-letters Hindi and Marathi ("dudh", "aata"), spelling tolerance, voice search in V2.
 - **Address:** map pin, landmark text, ward or mohalla, alternate phone number; serviceability checked against zone polygons.
 - **Checkout rules:** no minimum order (ADR 0011), a delivery fee from the trip's distance band plus rush-hour, festival and weather extras and capped at 30 rupees, a handling fee under 18 rupees set by the most delicate item, free delivery from a basket value of 99 rupees (the pilot sample; a zone setting, ADR 0022), COD cap for new customers, per-item substitution choice, estimated weight bill with a stated tolerance.
@@ -176,7 +177,7 @@ Build in this order: customer web app, then the admin panel (which includes the 
 | Order board | Live columns by state, late-risk highlights, call buttons, manual assign |
 | Assisted order | A form for phone and WhatsApp orders so you can run the concierge version from day one |
 | Stores | Onboarding checklist, document check, commission, hours, quality score |
-| Catalogue | Master catalogue with Hindi and Marathi aliases, bulk import, image review |
+| Catalogue | Master catalogue grouped by brand and product type, with brand names in Hindi and Marathi and aliases, bulk import, image review, and a brand list per town (which brands are trusted there, and in what order) |
 | Zones | Draw delivery polygons, set fee bands and extras, slots |
 | Customers and support | Lookup, order history, refunds, COD risk flags, blocklist |
 | Riders | Onboarding, documents, working-day count for gig-worker registration (section 11) |
@@ -195,7 +196,7 @@ Every screen below is designed and built on mock data first, then wired to the l
 
 | Surface and phases | Screens, in build order | Every screen must also have |
 | --- | --- | --- |
-| Customer app, phases 1 and 2 | 1 language and phone OTP; 2 home with Your shops, categories and reorder strip; 3 shop page; 4 search results; 5 item sheet (pack size, loose weight, substitution choice); 6 cart; 7 address and map pin; 8 checkout (slot, COD or UPI); 9 order tracking; 10 order history and reorder; 11 help; 12 profile and saved addresses | Loading, empty, error and offline states; Hindi and Marathi text, which often runs longer than English; 200% text size; the main action within thumb reach; every screen shown in both fulfilment modes |
+| Customer app, phases 1 and 2 | 1 language and phone OTP; 2 home with categories, Shop by brand and reorder strip (the shops are in the header); 3 shop page and brand page; 4 search results (with brand filter); 5 item sheet (pack size, loose weight, substitution choice); 6 cart; 7 address and map pin; 8 checkout (slot, COD or UPI); 9 order tracking; 10 order history and reorder; 11 help; 12 profile and saved addresses | Loading, empty, error and offline states; Hindi and Marathi text, which often runs longer than English; 200% text size; the main action within thumb reach; every screen shown in both fulfilment modes |
 | Admin panel and store portal, phases 3 and 4 | Admin: login; order board; order detail; Assisted order form; stores list and onboarding; catalogue editor; zone editor; customers and support; finance (payouts, cash close); content; staff and roles. Store portal: new-order alert; pack screen; availability and prices; today and payouts; shop profile. Dark-store console (enabled per town): goods receipt, stock list and counts, expiry and wastage, pick list, pack and handover, reorder list | The same four states; keyboard use; search and filters on every list; an audit trail on every change |
 | Driver app, phases 5 and 6 | 1 login and duty switch; 2 offer card; 3 pickup with code; 4 navigation hand-off; 5 drop with photo and COD amount; 6 UPI QR; 7 cash ledger and deposit; 8 earnings; 9 support and SOS | Large buttons usable on a bike stand; works on poor signal; no timers or penalties |
 
@@ -210,7 +211,7 @@ The three dashed exits are the cases ops handles by phone in the MVP; the app on
 | Area | Pilot rule | Why |
 | --- | --- | --- |
 | Shop onboarding | Visit each shop in person, verify the FSSAI number, take photos, set up a UPI payout and train the owner in 15 minutes; start with 8 to 10 strong shops (a dairy, two large kiranas, a vegetable seller, a bakery, a general store) | Trust is local, and the person who visits is the product |
-| Catalogue | One master catalogue of about 800 to 1,500 fast-moving items with local names; shops opt in per item and set a price at or below MRP; loose items sold per kg or per piece | Stops every shop typing its own catalogue and keeps search clean |
+| Catalogue | One master catalogue of about 800 to 1,500 fast-moving items with local names, grouped by brand and product type (Amul and Gokul for milk, Dairy Milk and KitKat for chocolate; the pilot starts with the 10 to 15 brands that sell in town); shops opt in per item, or per brand, and set a price at or below MRP; loose items are unbranded and sold per kg or per piece | Stops every shop typing its own catalogue, keeps search clean and lets shoppers buy by the brand they trust (ADR 0036) |
 | Stock | No stock counts; shops toggle available or unavailable, and an item auto-pauses after two cancellations | Real stock sync is unsolved at kirana level; availability is the workable version |
 | Pricing | Weekly check against three nearby shops; flag any shop more than 5% above market | Protects the "fair price" promise |
 | Delivery | 5 to 10 riders paid per delivery; shop helpers deliver within 1 km for a lower fee; zones by ward; peak windows 7 to 10 am and 5 to 9 pm | Matches low density and avoids paying idle time |
@@ -338,7 +339,9 @@ The model is about 23 tables, five of them used only in dark-store mode; the har
 | `user` | phone (unique), name, role, language | One table for customers, store owners, riders and staff |
 | `address` | user\_id, zone\_id, lat, lng, landmark, ward, alt\_phone | Zone is computed when saved |
 | `store` | type (partner or dark), stock\_mode (toggle or counted), owner, name, FSSAI number, GST number, location, hours, status, commission, auto\_accept, self\_delivery | Status: onboarding, active, paused |
-| `master_item` | names in en, hi, mr; brand; unit type; pack size; MRP; category | The shared catalogue |
+| `brand` | names in en, hi, mr; mark (wordmark or logo); categories; town order (trusted first) | A browse dimension, not just a label (ADR 0036). Loose produce has none |
+| `product_type` | names in en, hi, mr; category | The plain thing ("Toned milk"); items of one type under different brands are each other's "other brands" and substitutes |
+| `master_item` | names in en, hi, mr; brand\_id (nullable); product\_type\_id; variant name; unit type; pack size; MRP; category | The shared catalogue: brand + type + variant + pack |
 | `item_alias` | item\_id, alias, language | Powers "dudh" finding milk |
 | `store_item` | store\_id, master\_item\_id, price, available, max\_qty, sold\_by\_weight, tolerance | Availability toggle in partner mode; in dark-store mode the count is derived from stock movements |
 | `order` | customer, address snapshot, status, payment method and status, totals, promised\_by | One order, one delivery, however many shops it has |
@@ -556,6 +559,7 @@ The biggest risk is not technical: it is that unit economics, shop adoption or a
 - [ ] Revenue model: commission on shops, a price markup, or fees only
 - [ ] Rider model: shop helpers, your own riders, or a mix per zone
 - [ ] Launch categories, and whether to join ONDC later
+- [ ] Brands: which 10 to 15 brands the pilot town starts with, whether brand logos may be shown (trademarks), and which shop is shown as "Sold by" when several have the same brand item (ADR 0036)
 - [ ] How many hours a week this gets in the first six weeks, given everything else on your plate
 
 * [ ] Confirm the store portal lives inside the admin app (the default in this plan) or becomes its own app

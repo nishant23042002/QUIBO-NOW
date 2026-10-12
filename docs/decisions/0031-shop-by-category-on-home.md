@@ -20,3 +20,6 @@
 
 - The tile grid, its loading shape and the "See all" button are one piece each, so Home and the Categories tab cannot drift apart.
 - The sample tiles stay app-local data (`HOME_CATEGORY_TILES`) until the API supplies them in Phase 2.
+- **Amended 2026-10-12 ([ADR 0038](0038-shop-by-brand-on-home-and-the-shops-strip-goes.md)):** "Shop by brand" is the row under these
+  tiles, and a category's own tab carries a brand filter above its grid ([ADR 0036](0036-products-carry-a-brand-and-brands-are-browsable.md)).
+  Points 1 to 4 stand.

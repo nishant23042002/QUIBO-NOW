@@ -1,5 +1,11 @@
 # Phase 1: product page (PDP) review
 
+> **Update, 2026-10-12:** the product page was redesigned in sub-phase 1j (see `PHASE-1-pdp-redesign.md` and its report). The
+> review below describes the page as it was at `59649e2`. What became of its lists: "Could be better" (the order of the cards, the
+> trust tiles, the sticky bar's content, the title card, splitting `ProductView`) is largely done by the redesign; "Missing"
+> (brand line, delivery information for every item, packing labels in one place) is done; loose items by weight, "tell me when it
+> is back", the picture viewer, "bought before" and ask-the-shop are still open and unchanged.
+
 Walkthrough of the product page as built at commit `59649e2` plus the ADD button added to the title card. Checked in
 the web preview in English light, Hindi dark and Marathi dark, at a 360 dp width. Nothing here is built yet: this is
 the list to choose from. Items are marked **P0** (fix soon, it is wrong today), **P1** (the page feels incomplete

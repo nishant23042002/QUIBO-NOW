@@ -13,10 +13,15 @@
    (in the chosen language: English, Hindi, Marathi) set large and ghosted, a short pistachio bar, and the journey the line names drawn
    as the dotted route the app already uses: a shop, the scooter on its way, a home. Under it one quiet sentence, "Packed by shops in
    Roha. Delivered to your door."
-3. **It is only where it is wanted.** Pages that are used (cart, checkout, orders, an order's page, the item and shop pages) do not
+3. **It is only where it is wanted.** Pages that are used (cart, checkout, orders, an order's page and the shop page) do not
    carry it: a closing line belongs at the end of a page that is browsed, not one that is acted on.
+   _(Amended 2026-10-12, ADR 0037: the item page now carries it too. After the redesign the item page ends in rows of other items and
+   brands that are browsed, and the owner asked for the same closing line there. The ADD bar and the cart bar still sit above it.)_
 4. **It is not a copy.** It uses Quibo's own words, the app's own route and scooter, and no heart or logo wordmark; the colour is the
    ghosted ink with one spot of pistachio.
+
+> **Amended 2026-10-12 (ADR 0038):** point 1 no longer holds. The "Shops in your town" row was removed from Home because it repeated
+> the shops panel in the header; "Shop by brand" took its place. Points 2 to 4 stand.
 
 ## Consequences
 
