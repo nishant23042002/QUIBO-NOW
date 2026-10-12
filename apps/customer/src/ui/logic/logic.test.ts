@@ -112,13 +112,18 @@ describe('gridCardWidth', () => {
   const two = { columns: 2, gutter: 16, gap: 12 };
 
   it('shares the room between the columns, less the gutters and the gap', () => {
-    expect(gridCardWidth(360, two)).toBe(158);
+    expect(gridCardWidth(360, two)).toBe(157);
   });
 
   it('rounds down, so two cards and the gap never overflow the row', () => {
     const width = gridCardWidth(361, two);
     expect(width).toBe(158);
     expect(width * 2 + two.gap + two.gutter * 2).toBeLessThanOrEqual(361);
+  });
+
+  it('keeps a dp spare, so a row filled to the pixel cannot wrap', () => {
+    const width = gridCardWidth(360, two);
+    expect(width * 2 + two.gap + two.gutter * 2).toBeLessThan(360);
   });
 });
 
