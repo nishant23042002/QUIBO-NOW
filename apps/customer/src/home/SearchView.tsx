@@ -307,7 +307,14 @@ export function SearchView({
       <ScreenStatusBar style="light" />
       <View style={[styles.header, { paddingTop: insets.top + space[2], paddingBottom: space[2] }]}>
         <View style={{ marginLeft: space[2] - insets.left }}>
-          <IconButton icon="back" label={t('common.back')} onPress={router.back} />
+          <IconButton
+            icon="back"
+            label={t('common.back')}
+            onPress={() => {
+              if (router.canGoBack()) router.back();
+              else router.replace('/');
+            }}
+          />
         </View>
         <View style={{ flex: 1, paddingRight: space[4] + insets.right }}>
           <SearchField

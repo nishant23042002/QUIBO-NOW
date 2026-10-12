@@ -27,7 +27,14 @@ export default function ShopScreen() {
   const shop = useShop(id);
 
   const header = (title: string) => (
-    <AppHeader title={title} backLabel={t('common.back')} onBack={router.back} />
+    <AppHeader
+      title={title}
+      backLabel={t('common.back')}
+      onBack={() => {
+        if (router.canGoBack()) router.back();
+        else router.replace('/');
+      }}
+    />
   );
 
   if (shop === undefined) {
