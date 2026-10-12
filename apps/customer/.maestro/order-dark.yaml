@@ -21,7 +21,7 @@ appId: host.exp.exponent
 - tapOn: 'One dark store'
 - tapOn: 'Back'
 
-- tapOn: 'Add Toned milk'
+- tapOn: 'Add Amul Toned milk'
 - tapOn: 'Cart, .*'
 - tapOn: 'Continue'
 - assertVisible: 'Quibo Store'

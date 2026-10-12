@@ -1,0 +1,60 @@
+# The product page flow: open an item from Home, read what it is, choose a size, add it, open the details sheet, look at the brand
+# and the other brands, and reach the closing line.
+#
+# Run it against the app open in Expo Go, on a fresh install so the cart starts empty and the language is English:
+#   maestro test apps/customer/.maestro/product.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (product page redesign, 1j). It has not been run yet: the Maestro tool is not installed on the machine this was
+# written on. Names are the ones a screen reader says, so the flow also checks that they exist.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+# A fresh install starts with the first-run steps: a development build lets a tester pass them.
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Delivering in.*|Arriving.*'
+
+# Open the milk from its card on Home.
+- tapOn: 'Amul Toned milk\. 500 ml.*'
+- assertVisible: 'Select Unit'
+- assertVisible: 'Packed today'
+- assertVisible: 'Fat Profile.*'
+
+# Choose the other size: its price is the one the page asks for.
+- tapOn: '1 L.*'
+- tapOn: 'Add Amul Toned milk'
+- assertVisible: 'Remove one Amul Toned milk'
+- assertVisible: 'Cart, 1 items'
+
+# The details sheet: highlights first, then the sections.
+- tapOn: 'View details'
+- assertVisible: 'Highlights'
+- assertVisible: 'Key Information'
+- tapOn: 'Nutritional Information'
+- assertVisible: 'Serving Size.*'
+- tapOn: 'Info'
+- assertVisible: 'Packed On.*'
+- tapOn: 'Close details'
+- assertNotVisible: 'Key Information'
+
+# Who sells it, the brand, and the other brands.
+- scrollUntilVisible:
+    element: 'Amul\. Explore all products'
+- assertVisible: 'Sold by Sharma Dairy.*'
+- scrollUntilVisible:
+    element: 'Other brands of toned milk'
+- assertVisible: 'Gokul Toned milk.*'
+
+# The brand opens the brand's own page.
+- scrollUntilVisible:
+    element: 'Amul\. Explore all products'
+    direction: UP
+- tapOn: 'Amul\. Explore all products'
+- assertVisible: '3 products'
+- assertVisible: 'Amul Paneer.*'
+- back
+
+# The page ends with the closing line.
+- scrollUntilVisible:
+    element: 'Dukaan se ghar tak.*'

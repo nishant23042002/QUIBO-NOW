@@ -14,7 +14,7 @@ appId: host.exp.exponent
 - tapOn: 'Skip sign-in (testing)'
 - assertVisible: 'Delivering in.*|Arriving.*'
 
-- tapOn: 'Add Toned milk'
+- tapOn: 'Add Amul Toned milk'
 - tapOn: 'Cart, .*'
 - tapOn: 'Continue'
 

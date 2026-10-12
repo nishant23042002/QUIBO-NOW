@@ -15,7 +15,7 @@ appId: host.exp.exponent
 - assertVisible: 'Delivering in.*|Arriving.*'
 
 # An order to ask about: one thing, cash on delivery.
-- tapOn: 'Add Toned milk'
+- tapOn: 'Add Amul Toned milk'
 - tapOn: 'Cart, .*'
 - tapOn: 'Continue'
 - tapOn: 'Place order'
@@ -47,7 +47,7 @@ appId: host.exp.exponent
 - assertVisible: 'Which order?'
 - assertVisible: 'An item was missing'
 - assertVisible: 'Which items?'
-- tapOn: 'Toned milk'
+- tapOn: 'Amul Toned milk'
 - tapOn: 'Send report'
 - extendedWaitUntil:
     visible: 'We have it'

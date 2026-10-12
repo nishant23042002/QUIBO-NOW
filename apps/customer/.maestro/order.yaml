@@ -17,7 +17,7 @@ appId: host.exp.exponent
 - assertVisible: 'Delivering in.*|Arriving.*'
 
 # Two things from two shops, then the cart and the way forward.
-- tapOn: 'Add Toned milk'
+- tapOn: 'Add Amul Toned milk'
 - tapOn: 'Add Potato'
 - tapOn: 'Cart, .*'
 - assertVisible: 'Bill summary'

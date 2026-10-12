@@ -15,29 +15,29 @@ appId: host.exp.exponent
 - assertVisible: 'Delivering in.*|Arriving.*'
 
 # Add two things from Home. The first card is the milk.
-- tapOn: 'Add Toned milk'
-- assertVisible: 'Remove one Toned milk'
-- tapOn: 'Add one Toned milk'
+- tapOn: 'Add Amul Toned milk'
+- assertVisible: 'Remove one Amul Toned milk'
+- tapOn: 'Add one Amul Toned milk'
 - assertVisible: 'Cart, 2 items'
 
 # Open the cart from its tab.
 - tapOn: 'Cart, 2 items'
 - assertVisible: 'Your cart'
-- assertVisible: 'Toned milk'
+- assertVisible: 'Amul Toned milk'
 - assertVisible: 'Bill summary'
 - assertVisible: 'Continue'
 
 # Change a quantity: down to one.
-- tapOn: 'Remove one Toned milk'
+- tapOn: 'Remove one Amul Toned milk'
 - assertVisible: 'Cart, 1 items'
 
 # Take the last one out: the cart says so and offers to undo it.
-- tapOn: 'Remove one Toned milk'
+- tapOn: 'Remove one Amul Toned milk'
 - assertVisible: 'Your cart is empty'
 - assertVisible: 'Undo'
 - tapOn: 'Undo'
 - assertNotVisible: 'Your cart is empty'
-- assertVisible: 'Toned milk'
+- assertVisible: 'Amul Toned milk'
 
 # The way forward is there.
 - assertVisible: 'Continue'

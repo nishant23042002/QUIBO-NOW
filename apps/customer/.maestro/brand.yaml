@@ -1,0 +1,50 @@
+# Browsing by brand: Shop by brand on Home, a brand's page and its kind chips, a brand found by search, and the brand filter
+# on search results.
+#
+# Run it against the app open in Expo Go, on a fresh install so the cart starts empty and the language is English:
+#   maestro test apps/customer/.maestro/brand.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (brands and polish, 1k). It has not been run yet: the Maestro tool is not installed on the machine this was
+# written on. Names are the ones a screen reader says, so the flow also checks that they exist.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+# A fresh install starts with the first-run steps: a development build lets a tester pass them.
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Delivering in.*|Arriving.*'
+
+# Shop by brand on Home opens the brand's own page.
+- scrollUntilVisible:
+    element: 'Shop by brand'
+- tapOn: 'Amul\. Explore all products'
+- assertVisible: '3 products'
+- assertVisible: 'Sold by 3 shops in Roha'
+- assertVisible: 'Amul Toned milk.*'
+
+# The kind chips narrow the page to one kind of what the brand makes.
+- tapOn: 'Paneer'
+- assertVisible: 'Amul Paneer.*'
+- assertNotVisible: 'Amul Toned milk.*'
+- back
+
+# A brand's name in search puts the brand first, above its items.
+- tapOn: 'Search for items and shops'
+- inputText: 'amu'
+- assertVisible: 'Brands'
+- assertVisible: 'Amul\. Explore all products'
+- assertVisible: 'Amul Toned milk.*'
+- tapOn: 'Amul\. Explore all products'
+- assertVisible: '3 products'
+- back
+
+# A word that is not a brand's name finds no brand tile, and the brand filter narrows the items.
+- tapOn: 'Search for items and shops'
+- inputText: 'milk'
+- assertNotVisible: 'Brands'
+- tapOn: 'Gokul'
+- assertVisible: 'Gokul Toned milk.*'
+- assertNotVisible: 'Amul Toned milk.*'
+- tapOn: 'All'
+- assertVisible: 'Amul Toned milk.*'
