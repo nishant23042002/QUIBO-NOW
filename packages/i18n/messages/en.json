@@ -152,8 +152,11 @@
       "kg": "{amount}/kg",
       "pc": "{amount}/pc"
     },
-    "shopByCategory": {
-      "title": "Shop by category"
+    "shopByDepartment": {
+      "title": "Shop by department"
+    },
+    "shopForNeed": {
+      "title": "Shop for your need"
     },
     "shopByBrand": {
       "title": "Shop by brand"
@@ -1188,6 +1191,73 @@
       "fat": "Fat Profile",
       "source": "Source",
       "processing": "Processing Type"
+    }
+  },
+  "departments": {
+    "railLabel": "Departments",
+    "rail": {
+      "vegFruit": "Fresh",
+      "dairyEggs": "Dairy",
+      "attaRice": "Staples",
+      "oilMasala": "Oil & Masala",
+      "chips": "Chips",
+      "biscuits": "Biscuits",
+      "sweets": "Sweets"
+    },
+    "more": "More",
+    "groups": {
+      "care": "Beauty & Care",
+      "tech": "Tech & Play",
+      "style": "Home & Style"
+    },
+    "soon": {
+      "beauty": "Beauty",
+      "babyCare": "Baby Care",
+      "gym": "Gym & Fitness",
+      "electronics": "Electronics",
+      "kids": "Kids & Toys",
+      "gaming": "Gaming",
+      "jewellery": "Jewellery",
+      "decor": "Home Decor",
+      "automotive": "Automotive"
+    },
+    "needs": {
+      "breakfast": "Breakfast",
+      "teaTime": "Tea Time",
+      "partySnacks": "Party Snacks",
+      "cookingBasics": "Cooking Basics"
+    },
+    "tags": {
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "soon": "Soon"
+    },
+    "all": "All departments",
+    "find": "Find a department",
+    "comingTitle": "Coming to Roha",
+    "comingBody": "{name} is not in Roha yet. We are working with local shops to bring it here.",
+    "seeToday": "Shop what is here today",
+    "empty": {
+      "title": "Nothing to show yet",
+      "body": "The shops have not listed their departments yet. Please check back soon."
+    },
+    "noMatch": {
+      "title": "No department like that",
+      "body": "Try another word, or clear the search."
+    },
+    "notFound": {
+      "title": "We could not find that department",
+      "body": "It may have moved. Pick one from All departments."
+    },
+    "needBand": "Picked from shops in Roha",
+    "needRail": "Kinds in this list",
+    "needEmpty": {
+      "title": "Nothing for this right now",
+      "body": "The shops are out of these today. Please check back soon."
+    },
+    "needNotFound": {
+      "title": "We could not find that list",
+      "body": "It may have moved. Pick one from Home."
     }
   }
 }
