@@ -145,7 +145,7 @@ export function HomeSkeleton({
                   key={entry.id}
                   width={NEED_CARD_WIDTH}
                   height={NEED_CARD_HEIGHT}
-                  rounded={radius.lg}
+                  rounded={radius.xl}
                 />
               ))}
             </StaticRow>

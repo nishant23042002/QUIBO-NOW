@@ -34,6 +34,7 @@ export function IntentChips({
         <Chip
           key={intent.key}
           label={intent.label}
+          tone="solid"
           selected={selected === intent.key}
           onPress={() => {
             onSelect(intent.key);

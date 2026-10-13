@@ -11,6 +11,11 @@ export interface ChipProps {
   /** Without a handler the chip is a plain label. */
   onPress?: () => void;
   icon?: IconName;
+  /**
+   * `outline` (the usual): the chosen chip is lilac with a dark outline. `solid`: the chosen chip is filled with the action colour,
+   * and the others sit on the surface with a hairline; used for the quick filters under Home's banner.
+   */
+  tone?: 'outline' | 'solid';
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -27,12 +32,21 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },
+    solid: { borderWidth: 1, borderColor: c.line },
+    solidSelected: { borderColor: c.action, backgroundColor: c.action },
     disabled: { opacity: 0.5 },
     pressed: { opacity: 0.8 },
   });
 
 /** A small pill for filters and tabs. It is 36 dp tall and has a 48 dp touch area. */
-export function Chip({ label, selected = false, disabled = false, onPress, icon }: ChipProps) {
+export function Chip({
+  label,
+  selected = false,
+  disabled = false,
+  onPress,
+  icon,
+  tone = 'outline',
+}: ChipProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
 
@@ -46,13 +60,22 @@ export function Chip({ label, selected = false, disabled = false, onPress, icon 
       hitSlop={6}
       style={({ pressed }) => [
         styles.chip,
-        selected && styles.selected,
+        tone === 'solid' && styles.solid,
+        selected && (tone === 'solid' ? styles.solidSelected : styles.selected),
         disabled && styles.disabled,
         pressed && styles.pressed,
       ]}
     >
-      {icon !== undefined ? <Icon name={icon} color={colors.ink} size={14} /> : null}
-      <Text variant="strong">{label}</Text>
+      {icon !== undefined ? (
+        <Icon
+          name={icon}
+          color={tone === 'solid' && selected ? colors.onAction : colors.ink}
+          size={14}
+        />
+      ) : null}
+      <Text variant="strong" color={tone === 'solid' && selected ? 'onAction' : 'ink'}>
+        {label}
+      </Text>
     </Pressable>
   );
 }
