@@ -71,9 +71,9 @@ export default function HomeScreen() {
         selectedCategory={selected}
         categoriesLabel={t('departments.railLabel')}
         onCategoryChange={(key) => {
-          // More opens All departments; the tab chosen stays as it was.
+          // More opens the Categories tab; the rail tab chosen stays as it was.
           if (key === RAIL_MORE) {
-            router.push('/departments');
+            router.navigate('/categories');
             return;
           }
           // Another department is shown from its start, whichever chip was chosen on the last one.

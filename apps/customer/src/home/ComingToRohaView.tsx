@@ -51,7 +51,7 @@ export function ComingToRohaView({ department }: { department: Category }) {
         backLabel={t('common.back')}
         onBack={() => {
           if (router.canGoBack()) router.back();
-          else router.replace('/departments');
+          else router.replace('/categories');
         }}
       />
       <View style={styles.body}>

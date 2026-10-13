@@ -35,13 +35,16 @@ appId: host.exp.exponent
 - tapOn: 'Back'
 - assertVisible: 'Shop by department'
 
-# All departments: every department in its group, and one that is not stocked opens its "Coming to Roha" page.
+# All departments is the Categories tab (ADR 0046): the stocked categories in their groups, then "Coming to Roha", and a category that
+# is not stocked opens its "Coming to Roha" page.
 - tapOn: 'All departments.*'
+- assertVisible: 'Grocery & Kitchen'
 - assertVisible: 'Coming to Roha'
 - tapOn: 'Beauty, Soon'
 - assertVisible: 'Beauty is not in Roha yet.*'
 - tapOn: 'Back'
-- tapOn: 'Back'
+- assertVisible: 'Coming to Roha'
+- tapOn: 'Home'
 - assertVisible: 'Shop by department'
 
 # The Categories tab: two sections, and a category opens its own screen.

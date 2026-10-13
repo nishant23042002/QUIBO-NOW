@@ -75,6 +75,13 @@ oil, sugar, tomato, potato). "Gym Freak" and "Baby care" from the mock stay on t
 
 ## Progress
 
+- **One list, 2026-10-13 (steps 1 and 2 of the integration plan).** The Categories tab shows the live categories in their groups,
+  then "Coming to Roha"; the All departments screen is gone. `/departments` redirects to the tab, and Home's "All departments"
+  button, the rail's More and the back fallbacks go there. A field to find a category by name appears once the list passes
+  `FIND_FROM` (24) tiles; at 16 it would only repeat the pinned search. `DepartmentsView.tsx` and `useCategoryTiles.ts` are deleted.
+  Still to come: each category's kinds as tiles under its title row (layout A, a 64 dp picture), one word in all three languages,
+  ADR 0046, then the gate.
+
 - **Departments and categories merged in the data, 2026-10-13 (stage 2 of the integration plan, owner approved).** A department
   was a second list over the same seven categories, so `Department` is gone: a `Category` in `home/catalogueTree.ts` carries its
   group, tag, rail name, emoji, tint and kinds, and a Soon category is the same shape with no kinds. `departments.ts` is split into

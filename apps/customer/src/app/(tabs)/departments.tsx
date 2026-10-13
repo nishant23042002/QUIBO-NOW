@@ -1,6 +1,9 @@
-import { DepartmentsView } from '@/home/DepartmentsView';
+import { Redirect } from 'expo-router';
 
-/** All departments, opened from Home's "All departments" button and the rail's More. It lives in the tab group so the bottom bar stays. */
+/**
+ * The old All departments address. Departments and categories are one list now (ADR 0046), and it lives on the Categories tab, so
+ * an old link or a stale back stack lands there.
+ */
 export default function DepartmentsScreen() {
-  return <DepartmentsView />;
+  return <Redirect href="/categories" />;
 }

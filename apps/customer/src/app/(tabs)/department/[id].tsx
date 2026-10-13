@@ -43,7 +43,7 @@ export default function DepartmentScreen() {
         backLabel={t('common.back')}
         onBack={() => {
           if (router.canGoBack()) router.back();
-          else router.replace('/departments');
+          else router.replace('/categories');
         }}
       />
       <View style={styles.missing}>
@@ -57,7 +57,7 @@ export default function DepartmentScreen() {
         <Button
           label={t('departments.all')}
           onPress={() => {
-            router.replace('/departments');
+            router.replace('/categories');
           }}
         />
       </View>

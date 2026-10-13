@@ -37,7 +37,7 @@ export function ShopByDepartment() {
         label={t('departments.all')}
         title={title}
         onPress={() => {
-          router.push('/departments');
+          router.navigate('/categories');
         }}
       />
     </View>
