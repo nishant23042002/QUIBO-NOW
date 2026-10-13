@@ -130,17 +130,28 @@ export const MAIN_CATEGORIES: readonly MainCategory[] = [
   live('attaRice', 'grocery', '\u{1F33E}', 'staples', [
     { id: 'atta', label: 'catalogue.subs.atta', emoji: '\u{1F33E}', types: ['atta'] },
     { id: 'rice', label: 'catalogue.subs.rice', emoji: '\u{1F35A}', types: ['rice'] },
-    { id: 'sugar', label: 'catalogue.subs.sugar', emoji: '\u{1F36C}', types: ['sugar'] },
+    { id: 'dal', label: 'catalogue.subs.dal', emoji: '\u{1F372}', types: ['dal'] },
+    {
+      id: 'sugar',
+      label: 'catalogue.subs.sugar',
+      emoji: '\u{1F36C}',
+      types: ['sugar', 'salt'],
+    },
   ]),
   live('oilMasala', 'grocery', '\u{1F33B}', 'staples', [
     { id: 'oil', label: 'catalogue.subs.oil', emoji: '\u{1F33B}', types: ['oil'] },
+    { id: 'ghee', label: 'catalogue.subs.ghee', emoji: '\u{1F36F}', types: ['ghee'] },
+    { id: 'masala', label: 'catalogue.subs.masala', emoji: '\u{1F336}', types: ['masala'] },
   ]),
   live('chips', 'snacks', '\u{1F35F}', 'snacks', [
     { id: 'chips', label: 'catalogue.subs.chips', emoji: '\u{1F35F}', types: ['chips'] },
+    { id: 'namkeen', label: 'catalogue.subs.namkeen', emoji: '\u{1F968}', types: ['namkeen'] },
     { id: 'popcorn', label: 'catalogue.subs.popcorn', emoji: '\u{1F37F}', types: ['popcorn'] },
   ]),
   live('biscuits', 'snacks', '\u{1F36A}', 'snacks', [
     { id: 'biscuits', label: 'catalogue.subs.biscuits', emoji: '\u{1F36A}', types: ['biscuits'] },
+    { id: 'bread', label: 'catalogue.subs.bread', emoji: '\u{1F35E}', types: ['bread', 'pav'] },
+    { id: 'rusk', label: 'catalogue.subs.rusk', emoji: '\u{1F370}', types: ['rusk', 'cake'] },
   ]),
   live('sweets', 'snacks', '\u{1F36B}', 'snacks', [
     {
@@ -148,6 +159,12 @@ export const MAIN_CATEGORIES: readonly MainCategory[] = [
       label: 'catalogue.subs.chocolates',
       emoji: '\u{1F36B}',
       types: ['chocolate'],
+    },
+    {
+      id: 'indianSweets',
+      label: 'catalogue.subs.indianSweets',
+      emoji: '\u{1F361}',
+      types: ['mithai'],
     },
   ]),
 ];

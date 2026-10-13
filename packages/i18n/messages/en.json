@@ -1145,7 +1145,14 @@
       "chips": "Chips",
       "popcorn": "Popcorn",
       "biscuits": "Biscuits",
-      "chocolates": "Chocolates"
+      "chocolates": "Chocolates",
+      "dal": "Dal & Pulses",
+      "ghee": "Ghee",
+      "masala": "Masala & Spices",
+      "bread": "Bread & Pav",
+      "rusk": "Rusk & Cakes",
+      "indianSweets": "Indian Sweets",
+      "namkeen": "Namkeen"
     },
     "all": "All",
     "rail": "Kinds in this category",

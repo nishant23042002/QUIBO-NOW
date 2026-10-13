@@ -81,7 +81,9 @@ oil, sugar, tomato, potato). "Gym Freak" and "Baby care" from the mock stay on t
   `FIND_FROM` (24) tiles; at 16 it would only repeat the pinned search. `DepartmentsView.tsx` and `useCategoryTiles.ts` are deleted.
   Each stocked category on the tab is now a title row (a 64 dp picture, its name and "See all") with its kinds that have stock as
   tiles four across under it (`CategoryBlock`, `useCategoryBrowse`); a kind opens the category's screen on that kind. The find
-  field also matches a kind's name. Still to come: one word in all three languages, ADR 0046, then the gate.
+  field also matches a kind's name. The tree also lists the kinds the pictures promise but the mocks do not stock yet (Dal & Pulses,
+  Ghee, Masala & Spices, Bread & Pav, Rusk & Cakes, Indian Sweets, Namkeen, and salt with sugar); a kind shows only once an item
+  of its type exists, so nothing is empty on screen. Still to come: one word in all three languages, ADR 0046, then the gate.
 
 - **Departments and categories merged in the data, 2026-10-13 (stage 2 of the integration plan, owner approved).** A department
   was a second list over the same seven categories, so `Department` is gone: a `Category` in `home/catalogueTree.ts` carries its

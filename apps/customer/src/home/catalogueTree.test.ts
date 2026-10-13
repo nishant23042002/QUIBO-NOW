@@ -37,7 +37,12 @@ describe('the catalogue tree', () => {
   });
 
   it('looks a category up by id', () => {
-    expect(mainCategory('attaRice')?.subs.map((sub) => sub.id)).toEqual(['atta', 'rice', 'sugar']);
+    expect(mainCategory('attaRice')?.subs.map((sub) => sub.id)).toEqual([
+      'atta',
+      'rice',
+      'dal',
+      'sugar',
+    ]);
     expect(mainCategory('beauty')).toBeUndefined();
     expect(mainCategory('nope')).toBeUndefined();
     expect(mainCategory(undefined)).toBeUndefined();
@@ -76,5 +81,31 @@ describe('items in a category', () => {
   it('offers only the sub-categories that have items', () => {
     if (dairy === undefined) throw new Error('missing');
     expect(subsWithItems(items, dairy).map((sub) => sub.id)).toEqual(['milk', 'eggs']);
+  });
+});
+
+describe('kinds that are listed before they are stocked', () => {
+  const oil = mainCategory('oilMasala');
+  const atta = mainCategory('attaRice');
+
+  it('are in the tree, but offered only once an item of their type exists', () => {
+    if (oil === undefined) throw new Error('missing');
+    expect(oil.subs.map((sub) => sub.id)).toEqual(['oil', 'ghee', 'masala']);
+    expect(subsWithItems([{ id: 'o', type: 'oil' }], oil).map((sub) => sub.id)).toEqual(['oil']);
+    const stocked = [
+      { id: 'o', type: 'oil' },
+      { id: 'g', type: 'ghee' },
+      { id: 'm', type: 'masala' },
+    ];
+    expect(subsWithItems(stocked, oil).map((sub) => sub.id)).toEqual(['oil', 'ghee', 'masala']);
+  });
+
+  it('keep salt with sugar, and dal with its own kind', () => {
+    if (atta === undefined) throw new Error('missing');
+    const items = [
+      { id: 's', type: 'salt' },
+      { id: 'd', type: 'dal' },
+    ];
+    expect(subsWithItems(items, atta).map((sub) => sub.id)).toEqual(['dal', 'sugar']);
   });
 });
