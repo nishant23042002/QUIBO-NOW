@@ -4,7 +4,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { RowTitle, Text, radius, space } from '@/ui';
 import { tintColor } from './categoryGroups';
-import { liveNeeds, needBlurb, type Need } from './departments';
+import { liveNeeds, needBlurb, type Need } from './needs';
 import { useHomeItems } from './items';
 
 /** A card's width, and the height the loading skeleton gives it (the card itself grows if a longer name needs the room). */

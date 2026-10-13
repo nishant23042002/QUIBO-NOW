@@ -75,6 +75,11 @@ oil, sugar, tomato, potato). "Gym Freak" and "Baby care" from the mock stay on t
 
 ## Progress
 
+- **Departments and categories merged in the data, 2026-10-13 (stage 2 of the integration plan, owner approved).** A department
+  was a second list over the same seven categories, so `Department` is gone: a `Category` in `home/catalogueTree.ts` carries its
+  group, tag, rail name, emoji, tint and kinds, and a Soon category is the same shape with no kinds. `departments.ts` is split into
+  `home/categoryLists.ts` (rail, grid, index, route and name matching) and `home/needs.ts`. No screen changed. Next: one screen for
+  the Categories tab and All departments, then kinds shown under each category, then one word in all three languages.
 - **Department pictures begun, 2026-10-13.** Real artwork replaces the emoji one department at a time, each approved by the owner
   before the next. Done: Vegetables & Fruits (a mixed natural pile of every kind the catalogue stocks, plus coriander), Dairy &
   Eggs (Amul and Gokul pouches, Amul paneer tray, Gokul Dahi, white eggs, copied from the owner's pack screenshots) and Atta, Rice &

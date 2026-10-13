@@ -17,7 +17,7 @@ import {
 } from '@/ui';
 import { FEATURED_CARD_WIDTH, useFeaturedCardHeight } from './Featured';
 import { FEATURED } from './featuredPicks';
-import { liveNeeds } from './departments';
+import { liveNeeds } from './needs';
 import { HOME_RAIL_ORDER, anyCardNote, useHomeItems, useHomeListing } from './items';
 import { NEED_CARD_HEIGHT, NEED_CARD_WIDTH } from './ShopForNeed';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';

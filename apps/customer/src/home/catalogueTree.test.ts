@@ -1,10 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  CATEGORIES,
+  CATEGORY_GROUPS,
   MAIN_CATEGORIES,
-  SECTIONS,
   itemsInCategory,
   mainCategory,
-  mainsOfSection,
+  mainsOfGroup,
   subCategory,
   subsWithItems,
 } from './catalogueTree';
@@ -12,7 +13,7 @@ import {
 describe('the catalogue tree', () => {
   it('holds every kind of product in exactly one place', () => {
     const seen = new Map<string, string>();
-    for (const main of MAIN_CATEGORIES) {
+    for (const main of CATEGORIES) {
       for (const sub of main.subs) {
         for (const type of sub.types) {
           expect(seen.has(type), `${type} is in ${seen.get(type) ?? ''} and ${main.id}`).toBe(
@@ -25,19 +26,19 @@ describe('the catalogue tree', () => {
     expect(seen.size).toBeGreaterThan(10);
   });
 
-  it('has unique ids and a section for every main category', () => {
-    expect(new Set(MAIN_CATEGORIES.map((main) => main.id)).size).toBe(MAIN_CATEGORIES.length);
-    for (const main of MAIN_CATEGORIES) {
-      expect(SECTIONS.some((section) => section.id === main.section)).toBe(true);
-      expect(main.subs.length).toBeGreaterThan(0);
+  it('has unique ids and a group for every category', () => {
+    expect(new Set(CATEGORIES.map((entry) => entry.id)).size).toBe(CATEGORIES.length);
+    for (const entry of CATEGORIES) {
+      expect(CATEGORY_GROUPS.some((group) => group.id === entry.group)).toBe(true);
     }
-    expect(mainsOfSection('grocery').length + mainsOfSection('snacks').length).toBe(
-      MAIN_CATEGORIES.length,
-    );
+    for (const main of MAIN_CATEGORIES) expect(main.subs.length).toBeGreaterThan(0);
+    const inGroups = CATEGORY_GROUPS.reduce((sum, group) => sum + mainsOfGroup(group.id).length, 0);
+    expect(inGroups).toBe(MAIN_CATEGORIES.length);
   });
 
   it('looks a category up by id', () => {
     expect(mainCategory('attaRice')?.subs.map((sub) => sub.id)).toEqual(['atta', 'rice', 'sugar']);
+    expect(mainCategory('beauty')).toBeUndefined();
     expect(mainCategory('nope')).toBeUndefined();
     expect(mainCategory(undefined)).toBeUndefined();
     const dairy = mainCategory('dairyEggs');

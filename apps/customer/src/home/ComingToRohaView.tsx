@@ -4,7 +4,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { BOTTOM_BAR_HEIGHT, Button, CategoryHeader, Text, radius, space } from '@/ui';
 import { tintColor } from './categoryGroups';
-import type { Department } from './departments';
+import type { Category } from './catalogueTree';
 
 const PICTURE = 112;
 
@@ -37,7 +37,7 @@ const makeStyles = (c: ThemeColors) =>
  * what is here today. It makes no promise of a day (ADR 0012's rule for time, kept for dates) and takes no sign-up: telling a shopper
  * when it arrives needs a notification service (Phase 2).
  */
-export function ComingToRohaView({ department }: { department: Department }) {
+export function ComingToRohaView({ department }: { department: Category }) {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const router = useRouter();

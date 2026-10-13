@@ -1,6 +1,6 @@
 import { messages } from '@quibo/i18n';
 import { describe, expect, it } from 'vitest';
-import { MAIN_CATEGORIES, SECTIONS, seeAllTarget } from './catalogueTree';
+import { CATEGORIES, CATEGORY_GROUPS, MAIN_CATEGORIES, seeAllTarget } from './catalogueTree';
 import { tileRoute } from './categoryGroups';
 
 const LANGUAGES = ['en', 'hi', 'mr'] as const;
@@ -19,10 +19,14 @@ function lookup(tree: unknown, key: string): unknown {
 }
 
 describe('the words of the catalogue tree', () => {
-  it('has every section, main category and kind worded in English, Hindi and Marathi', () => {
+  it('has every group, category, rail name and kind worded in English, Hindi and Marathi', () => {
     const keys = [
-      ...SECTIONS.map((section) => section.label),
-      ...MAIN_CATEGORIES.flatMap((main) => [main.label, ...main.subs.map((sub) => sub.label)]),
+      ...CATEGORY_GROUPS.map((group) => group.label),
+      ...CATEGORIES.flatMap((entry) => [
+        entry.label,
+        entry.rail,
+        ...entry.subs.map((sub) => sub.label),
+      ]),
     ];
     for (const language of LANGUAGES) {
       for (const key of keys) {

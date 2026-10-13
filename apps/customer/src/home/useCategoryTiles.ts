@@ -1,7 +1,7 @@
 import type { ImageSourcePropType } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { SECTIONS, mainsOfSection } from './catalogueTree';
+import { CATEGORY_GROUPS, mainsOfGroup } from './catalogueTree';
 import { tintColor, type TileTarget } from './categoryGroups';
 import { departmentPicture } from './departmentPictures';
 
@@ -27,9 +27,9 @@ export interface CategoryGroup {
 export function useCategoryGroups(): readonly CategoryGroup[] {
   const { t } = useLanguage();
   const { colors } = useTheme();
-  return SECTIONS.map((section) => ({
-    title: t(section.label),
-    tiles: mainsOfSection(section.id).map((main) => {
+  return CATEGORY_GROUPS.map((group) => ({
+    title: t(group.label),
+    tiles: mainsOfGroup(group.id).map((main) => {
       const picture = departmentPicture(main.id);
       return {
         label: t(main.label),

@@ -26,7 +26,7 @@ import {
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
 import { tintColor } from './categoryGroups';
-import { needSections, type Need } from './departments';
+import { needSections, type Need } from './needs';
 import { useDeliveryWhen } from './deliveryInfo';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { anyCardNote, useHomeItems } from './items';

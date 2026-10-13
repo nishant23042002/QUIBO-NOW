@@ -26,7 +26,7 @@ import {
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
-import { departmentRoute } from './departments';
+import { categoryRoute } from './categoryLists';
 import { CATEGORIES_LOAD_MS, CATEGORIES_POLICY } from './loading';
 import { useDepartmentIndex } from './useDepartmentTiles';
 
@@ -148,7 +148,7 @@ function DepartmentsPage() {
                   tiles={section.tiles}
                   onPress={(index) => {
                     const tile = section.tiles[index];
-                    if (tile !== undefined) router.push(departmentRoute(tile.department));
+                    if (tile !== undefined) router.push(categoryRoute(tile.category));
                   }}
                 />
               </View>

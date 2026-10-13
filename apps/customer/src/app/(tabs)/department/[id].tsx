@@ -1,7 +1,7 @@
 import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { ComingToRohaView } from '@/home/ComingToRohaView';
-import { departmentRoute, isLive, resolveDepartments } from '@/home/departments';
+import { categoryRoute, isLive, resolveCategories } from '@/home/categoryLists';
 import { useHomeItems } from '@/home/items';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
@@ -29,10 +29,10 @@ export default function DepartmentScreen() {
   const { colors } = useTheme();
   const router = useRouter();
   // As the shopper sees it: a live department with nothing in stock reads as coming, so it is never sent to an empty shelf.
-  const found = resolveDepartments(useHomeItems()).find((entry) => entry.id === id);
+  const found = resolveCategories(useHomeItems()).find((entry) => entry.id === id);
 
   if (found !== undefined && isLive(found)) {
-    return <Redirect href={departmentRoute(found)} />;
+    return <Redirect href={categoryRoute(found)} />;
   }
   if (found !== undefined) return <ComingToRohaView department={found} />;
 

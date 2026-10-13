@@ -1,51 +1,51 @@
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme, type ThemeColors } from '@/theme';
 import type { CategoryGridTile } from '@/ui';
+import type { Category } from './catalogueTree';
 import {
   GRID_SIZE,
-  departmentIndex,
-  departmentsMatching,
-  gridDepartments,
+  categoriesMatching,
+  categoryIndex,
+  gridCategories,
   isLive,
-  resolveDepartments,
-  type Department,
-} from './departments';
+  resolveCategories,
+} from './categoryLists';
 import { tintColor } from './categoryGroups';
 import { departmentPicture } from './departmentPictures';
 import { useHomeItems } from './items';
 
-/** One tile of "Shop by department": the grid's tile, and the department it stands for. */
+/** One tile of "Shop by department": the grid's tile, and the category it stands for. */
 export interface DepartmentTile extends CategoryGridTile {
-  department: Department;
+  category: Category;
 }
 
 type Translate = ReturnType<typeof useLanguage>['t'];
 
 /**
- * A department as a tile: worded in the chosen language and coloured for the current theme. One that is coming is softened and says
+ * A category as a tile: worded in the chosen language and coloured for the current theme. One that is coming is softened and says
  * so; one that arrives tomorrow says that. Today is the usual and is not repeated on every tile.
  */
-function tileOf(department: Department, t: Translate, colors: ThemeColors): DepartmentTile {
-  const picture = departmentPicture(department.id);
+function tileOf(entry: Category, t: Translate, colors: ThemeColors): DepartmentTile {
+  const picture = departmentPicture(entry.id);
   return {
-    department,
-    label: t(department.label),
-    emoji: department.emoji,
-    tint: tintColor(colors, department.tint),
+    category: entry,
+    label: t(entry.label),
+    emoji: entry.emoji,
+    tint: tintColor(colors, entry.tint),
     ...(picture !== undefined ? { picture } : {}),
-    ...(department.tag === 'today' ? {} : { tag: t(`departments.tags.${department.tag}`) }),
-    ...(isLive(department) ? {} : { soon: true }),
+    ...(entry.tag === 'today' ? {} : { tag: t(`departments.tags.${entry.tag}`) }),
+    ...(isLive(entry) ? {} : { soon: true }),
   };
 }
 
-/** The tiles of Home's "Shop by department": the live departments first, then the ones that are coming, up to eight. */
+/** The tiles of Home's "Shop by department": the live categories first, then the ones that are coming, up to eight. */
 export function useDepartmentTiles(): readonly DepartmentTile[] {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const items = useHomeItems();
 
-  return gridDepartments(resolveDepartments(items), GRID_SIZE).map((department) =>
-    tileOf(department, t, colors),
+  return gridCategories(resolveCategories(items), GRID_SIZE).map((entry) =>
+    tileOf(entry, t, colors),
   );
 }
 
@@ -58,9 +58,9 @@ export interface DepartmentSection {
 }
 
 /**
- * The All departments screen: the live departments in their groups, then those coming to Roha, each section a title and its tiles.
- * `query` narrows them by name (a section with none left is dropped). `total` is how many departments the town lists, before the
- * query, so the screen can tell "no departments" from "none match".
+ * The full list: the live categories in their groups, then those coming to Roha, each section a title and its tiles. `query`
+ * narrows them by name (a section with none left is dropped). `total` is how many categories the town lists, before the query, so
+ * the screen can tell "no categories" from "none match".
  */
 export function useDepartmentIndex(query = ''): {
   sections: readonly DepartmentSection[];
@@ -69,22 +69,22 @@ export function useDepartmentIndex(query = ''): {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const items = useHomeItems();
-  const { groups, coming } = departmentIndex(resolveDepartments(items));
-  const nameOf = (entry: Department) => t(entry.label);
-  const narrow = (departments: readonly Department[]) =>
-    departmentsMatching(departments, query, nameOf).map((entry) => tileOf(entry, t, colors));
+  const { groups, coming } = categoryIndex(resolveCategories(items));
+  const nameOf = (entry: Category) => t(entry.label);
+  const narrow = (categories: readonly Category[]) =>
+    categoriesMatching(categories, query, nameOf).map((entry) => tileOf(entry, t, colors));
 
   const sections: DepartmentSection[] = [
     ...groups.map((entry) => ({
       id: entry.group.id,
       title: t(entry.group.label),
-      tiles: narrow(entry.departments),
+      tiles: narrow(entry.categories),
     })),
     { id: 'coming', title: t('departments.comingTitle'), tiles: narrow(coming) },
   ].filter((section) => section.tiles.length > 0);
 
   return {
     sections,
-    total: groups.reduce((sum, entry) => sum + entry.departments.length, coming.length),
+    total: groups.reduce((sum, entry) => sum + entry.categories.length, coming.length),
   };
 }

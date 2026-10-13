@@ -6,7 +6,8 @@ import { useCartCount } from '@/home/CartProvider';
 import { useDeliveryAddress, useDeliveryWhen } from '@/home/deliveryInfo';
 import { RAIL_MORE, useHomeRail } from '@/home/useHomeRail';
 import { seeAllTarget } from '@/home/catalogueTree';
-import { department as departmentById, type Department } from '@/home/departments';
+import { category as categoryById } from '@/home/categoryLists';
+import type { Category } from '@/home/catalogueTree';
 import { HomeFeed } from '@/home/HomeFeed';
 import type { IntentId } from '@/home/homeIntents';
 import type { ItemCategory } from '@/home/items';
@@ -35,7 +36,7 @@ export default function HomeScreen() {
   const [picked, setPicked] = useState('all');
   const [intent, setIntent] = useState<IntentId>('all');
   const selected = rail.some((tab) => tab.key === picked) ? picked : 'all';
-  const department = selected === 'all' ? undefined : departmentById(selected);
+  const department = selected === 'all' ? undefined : categoryById(selected);
   const cartCount = useCartCount();
   const reportScroll = useChromeReport();
   const when = useDeliveryWhen();
@@ -50,10 +51,9 @@ export default function HomeScreen() {
       params: { id: target.id, ...(target.sub !== undefined ? { sub: target.sub } : {}) },
     });
   };
-  // A department's "See all" opens the screen of the first main category it holds.
-  const openDepartment = (target: Department) => {
-    const main = target.mains[0];
-    if (main !== undefined) router.push({ pathname: '/category/[id]', params: { id: main } });
+  // A category's "See all" opens its own screen.
+  const openDepartment = (target: Category) => {
+    router.push({ pathname: '/category/[id]', params: { id: target.id } });
   };
 
   return (

@@ -1,7 +1,7 @@
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
 import type { CategoryTab } from '@/ui';
-import { railDepartments, resolveDepartments } from './departments';
+import { railCategories, resolveCategories } from './categoryLists';
 import { useHomeItems } from './items';
 
 /** The rail's first tab: the usual page. */
@@ -23,7 +23,7 @@ export function useHomeRail(): readonly HomeRailTab[] {
   const { colors } = useTheme();
   const items = useHomeItems();
   const tint = colors.headerBg;
-  const { shown, more } = railDepartments(resolveDepartments(items));
+  const { shown, more } = railCategories(resolveCategories(items));
 
   return [
     { key: RAIL_ALL, label: t('home.categories.all'), emoji: '\u{1F6D2}', tint },

@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
-import { need as needById } from '@/home/departments';
+import { need as needById } from '@/home/needs';
 import { NeedView } from '@/home/NeedView';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';

@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { DEPARTMENTS } from './departments';
+import { CATEGORIES } from './catalogueTree';
 import { DEPARTMENT_PICTURES, departmentPicture } from './departmentPictures';
 
 describe('the department pictures', () => {
   it('belong only to departments that exist', () => {
-    const known = new Set<string>(DEPARTMENTS.map((entry) => entry.id));
+    const known = new Set<string>(CATEGORIES.map((entry) => entry.id));
     for (const id of Object.keys(DEPARTMENT_PICTURES)) {
       expect(known.has(id)).toBe(true);
     }

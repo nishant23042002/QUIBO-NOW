@@ -3,7 +3,7 @@ import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
 import { BrandFooter, Icon, ProductRail, RowTitle, SeeAllButton, Text, space } from '@/ui';
-import { itemsInDepartment, type Department } from './departments';
+import { itemsInCategory, type Category } from './catalogueTree';
 import { matchesIntent, type IntentId } from './homeIntents';
 import { IntentChips } from './IntentChips';
 import { oneOfEachKind } from './product';
@@ -48,10 +48,10 @@ interface HomeFeedProps {
   intent: IntentId;
   onIntentChange: (intent: IntentId) => void;
   /** The department chosen in the header rail, or undefined for "All". */
-  department: Department | undefined;
+  department: Category | undefined;
   onSeeAll: (category: ItemCategory) => void;
   /** The "See all" button under a department's page: the department's own screen. */
-  onSeeDepartment: (department: Department) => void;
+  onSeeDepartment: (department: Category) => void;
 }
 
 /**
@@ -101,7 +101,7 @@ export const HomeFeed = memo(function HomeFeed({
   const grid = department !== undefined || intent !== 'all';
   // The items that suit the chip, one of each kind: the first listed of a kind that suits it, so an offer shows the brand that has it.
   // A department narrows the pool to its own shelves first.
-  const pool = department === undefined ? items : itemsInDepartment(items, department);
+  const pool = department === undefined ? items : itemsInCategory(items, department);
   const matching = grid ? oneOfEachKind(pool.filter((item) => matchesIntent(item, intent))) : [];
   const title = department === undefined ? undefined : t(department.label);
 

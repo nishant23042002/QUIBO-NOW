@@ -2,7 +2,7 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { CategoryTileGrid, RowTitle, SeeAllButton, space } from '@/ui';
-import { departmentRoute } from './departments';
+import { categoryRoute } from './categoryLists';
 import { useDepartmentTiles } from './useDepartmentTiles';
 
 const styles = StyleSheet.create({
@@ -30,7 +30,7 @@ export function ShopByDepartment() {
         tiles={tiles}
         onPress={(index) => {
           const tile = tiles[index];
-          if (tile !== undefined) router.push(departmentRoute(tile.department));
+          if (tile !== undefined) router.push(categoryRoute(tile.category));
         }}
       />
       <SeeAllButton
