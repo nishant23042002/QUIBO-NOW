@@ -72,7 +72,7 @@ function NeedCard({ need, onPress }: { need: Need; onPress: () => void }) {
 
 /**
  * "Shop for your need" on Home (ADR 0044): a swipeable row of tinted cards, one per need that has something in stock, under the same
- * dotted-line title the other rows have. A need cuts across departments ("Tea time" is milk, sugar, biscuits and chips): each card
+ * dotted-line title the other rows have. A need cuts across categories ("Tea time" is milk, sugar, biscuits and chips): each card
  * opens its own page. With no need in stock the section is not shown.
  */
 export function ShopForNeed() {

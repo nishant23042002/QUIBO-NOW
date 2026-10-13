@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
 
 /**
  * The row of chips under Home's banner (All, Quick, Offers, Under ₹50, Veg). They narrow the page that is showing: the usual page on
- * "All", or a department's page. Choosing one shows what suits it, from the chosen department or from every shelf.
+ * "All", or a category's page. Choosing one shows what suits it, from the chosen category or from every shelf.
  */
 export function IntentChips({
   selected,

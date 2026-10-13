@@ -11,7 +11,7 @@ import { HomeSkeleton } from './HomeSkeleton';
 import { Featured } from './Featured';
 import { QuieterNote } from './QuieterNote';
 import { ShopByBrand } from './ShopByBrand';
-import { ShopByDepartment } from './ShopByDepartment';
+import { ShopByCategory } from './ShopByCategory';
 import { ShopForNeed } from './ShopForNeed';
 import { SmallPrices } from './SmallPrices';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
@@ -24,7 +24,7 @@ import {
   type ItemCategory,
 } from './items';
 
-/** How long the loading skeleton shows after a chip or a department is chosen. */
+/** How long the loading skeleton shows after a chip or a category is chosen. */
 const LOAD_MS = 200;
 
 const styles = StyleSheet.create({
@@ -47,11 +47,11 @@ interface HomeFeedProps {
   /** The chosen chip. "all" is the page as it is; any other narrows it to the items that suit it, in a grid. */
   intent: IntentId;
   onIntentChange: (intent: IntentId) => void;
-  /** The department chosen in the header rail, or undefined for "All". */
-  department: Category | undefined;
+  /** The category chosen in the header rail, or undefined for "All". */
+  category: Category | undefined;
   onSeeAll: (category: ItemCategory) => void;
-  /** The "See all" button under a department's page: the department's own screen. */
-  onSeeDepartment: (department: Category) => void;
+  /** The "See all" button under a category's page: the category's own screen. */
+  onSeeCategory: (category: Category) => void;
 }
 
 /**
@@ -59,25 +59,25 @@ interface HomeFeedProps {
  *
  * - "All" in the rail with the chip All: the usual page, a swipeable row for each category with a "See all" button.
  * - "All" in the rail with another chip: the items that suit it, from every shelf, one of each kind, in a two-column grid.
- * - A department chosen in the rail: its items, one of each kind, in the same grid, narrowed by the chip when one is chosen, with a
- *   "See all" button to the department's own screen (every brand, filters and sort).
+ * - A category chosen in the rail: its items, one of each kind, in the same grid, narrowed by the chip when one is chosen, with a
+ *   "See all" button to the category's own screen (every brand, filters and sort).
  *
  * ADD turns into a stepper in place. The quantities live in the cart, which the floating cart bar reads.
  */
 export const HomeFeed = memo(function HomeFeed({
   intent,
   onIntentChange,
-  department,
+  category,
   onSeeAll,
-  onSeeDepartment,
+  onSeeCategory,
 }: HomeFeedProps) {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const { width: screen } = useWindowDimensions();
   const items = useHomeItems();
   const listing = useHomeListing();
-  // Choosing another chip or department shows the loading skeleton for a moment first, as real data would arrive.
-  const view = `${department?.id ?? 'all'}:${intent}`;
+  // Choosing another chip or category shows the loading skeleton for a moment first, as real data would arrive.
+  const view = `${category?.id ?? 'all'}:${intent}`;
   const [shown, setShown] = useState(view);
   useEffect(() => {
     if (shown === view) return undefined;
@@ -98,12 +98,12 @@ export const HomeFeed = memo(function HomeFeed({
       {...(reserveNote !== undefined ? { reserveNote } : {})}
     />
   );
-  const grid = department !== undefined || intent !== 'all';
+  const grid = category !== undefined || intent !== 'all';
   // The items that suit the chip, one of each kind: the first listed of a kind that suits it, so an offer shows the brand that has it.
-  // A department narrows the pool to its own shelves first.
-  const pool = department === undefined ? items : itemsInCategory(items, department);
+  // A category narrows the pool to its own shelves first.
+  const pool = category === undefined ? items : itemsInCategory(items, category);
   const matching = grid ? oneOfEachKind(pool.filter((item) => matchesIntent(item, intent))) : [];
-  const title = department === undefined ? undefined : t(department.label);
+  const title = category === undefined ? undefined : t(category.label);
 
   const chips = (
     <View style={styles.chips}>
@@ -118,8 +118,8 @@ export const HomeFeed = memo(function HomeFeed({
         <HomeSkeleton
           label={t('common.loading')}
           grid={grid}
-          titled={department !== undefined}
-          seeAll={department !== undefined}
+          titled={category !== undefined}
+          seeAll={category !== undefined}
           cards={matching.length}
         />
       </View>
@@ -154,12 +154,12 @@ export const HomeFeed = memo(function HomeFeed({
             </View>
           ) : null}
           <View style={styles.grid}>{matching.map((item) => tile(item, gridWidth))}</View>
-          {department !== undefined && title !== undefined ? (
+          {category !== undefined && title !== undefined ? (
             <SeeAllButton
               label={t('home.rails.seeAll')}
               title={title}
               onPress={() => {
-                onSeeDepartment(department);
+                onSeeCategory(category);
               }}
             />
           ) : null}
@@ -173,7 +173,7 @@ export const HomeFeed = memo(function HomeFeed({
       {chips}
       <View style={styles.rails}>
         <ShopForNeed />
-        <ShopByDepartment />
+        <ShopByCategory />
         <ShopByBrand />
         <SmallPrices />
         <Featured onCategory={onSeeAll} />

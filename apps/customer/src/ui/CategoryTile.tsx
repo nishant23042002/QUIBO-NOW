@@ -19,7 +19,7 @@ export interface CategoryTileProps {
   tint: string;
   /** The artwork: a square that fills the tile. Without one the emoji is drawn on the colour. */
   picture?: ImageSourcePropType;
-  /** Without a handler the tile is a label only (a department that is not here yet). */
+  /** Without a handler the tile is a label only (a category that is not here yet). */
   onPress?: () => void;
   /** A small word on the picture's lower edge, for example "Soon" or "Tomorrow". Already translated. */
   tag?: string;
@@ -47,7 +47,7 @@ const makeStyles = (c: ThemeColors) =>
     },
     // Sized outright: left to `absoluteFill` alone, the web build keeps the picture at its own pixel size and the tile clips it.
     artwork: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' },
-    // A tile with artwork is the picture on its neutral plate, without the department's tint. It keeps the hairline: the plate is
+    // A tile with artwork is the picture on its neutral plate, without the category's tint. It keeps the hairline: the plate is
     // almost the page's own colour, so without it the tile has no edge and sits oddly beside the tinted ones.
     plate: { backgroundColor: c.artworkPlate },
     dimmed: { opacity: 0.55 },
@@ -73,7 +73,7 @@ const makeStyles = (c: ThemeColors) =>
 
 /**
  * One way into a kind of thing: a picture on its colour, and its name under it in at most two lines. The name is the smallest
- * text size the app uses, so a longer Hindi or Marathi name still fits two lines in a four-across grid. A department that is not
+ * text size the app uses, so a longer Hindi or Marathi name still fits two lines in a four-across grid. A category that is not
  * here yet is softened and carries a tag instead of opening.
  */
 export function CategoryTile({

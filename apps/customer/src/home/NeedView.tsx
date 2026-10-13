@@ -124,7 +124,7 @@ function NeedPage({ need }: { need: Need }) {
         <Text variant="title" color="onHeader" role="heading">
           {t(need.label)}
         </Text>
-        <Text color="onHeaderMuted">{t('departments.needBand')}</Text>
+        <Text color="onHeaderMuted">{t('needs.band')}</Text>
       </View>
       <View style={[styles.content, { paddingTop: space[4] }]}>
         {online ? null : (
@@ -134,11 +134,7 @@ function NeedPage({ need }: { need: Need }) {
         )}
         {sections.length === 0 ? (
           <View style={styles.empty}>
-            <StatePanel
-              icon="search"
-              title={t('departments.needEmpty.title')}
-              body={t('departments.needEmpty.body')}
-            />
+            <StatePanel icon="search" title={t('needs.empty.title')} body={t('needs.empty.body')} />
           </View>
         ) : (
           <>
@@ -147,7 +143,7 @@ function NeedPage({ need }: { need: Need }) {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.chips}
-                aria-label={t('departments.needRail')}
+                aria-label={t('needs.rail')}
               >
                 <Chip
                   label={t('catalogue.all')}

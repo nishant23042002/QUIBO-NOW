@@ -169,7 +169,7 @@ describe('where a category opens', () => {
       params: { id: 'dairyEggs' },
     });
     expect(beauty && categoryRoute(beauty)).toEqual({
-      pathname: '/department/[id]',
+      pathname: '/coming/[id]',
       params: { id: 'beauty' },
     });
   });
@@ -177,7 +177,7 @@ describe('where a category opens', () => {
   it('sends a live category that has gone out of stock to its own page, not an empty shelf', () => {
     const resolved = resolveCategories([]);
     const dairy = resolved.find((entry) => entry.id === 'dairyEggs');
-    expect(dairy && categoryRoute(dairy).pathname).toBe('/department/[id]');
+    expect(dairy && categoryRoute(dairy).pathname).toBe('/coming/[id]');
   });
 });
 

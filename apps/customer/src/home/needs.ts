@@ -23,28 +23,28 @@ export interface Need {
 export const NEEDS: readonly Need[] = [
   {
     id: 'breakfast',
-    label: 'departments.needs.breakfast',
+    label: 'needs.names.breakfast',
     emoji: '\u{1F373}',
     tint: 'dairy',
     kinds: ['milk', 'eggs', 'atta', 'sugar', 'oil'],
   },
   {
     id: 'teaTime',
-    label: 'departments.needs.teaTime',
+    label: 'needs.names.teaTime',
     emoji: '\u{2615}',
     tint: 'snacks',
     kinds: ['milk', 'sugar', 'biscuits', 'chips'],
   },
   {
     id: 'partySnacks',
-    label: 'departments.needs.partySnacks',
+    label: 'needs.names.partySnacks',
     emoji: '\u{1F389}',
     tint: 'snacks',
     kinds: ['chips', 'popcorn', 'chocolate', 'biscuits'],
   },
   {
     id: 'cookingBasics',
-    label: 'departments.needs.cookingBasics',
+    label: 'needs.names.cookingBasics',
     emoji: '\u{1F958}',
     tint: 'staples',
     kinds: ['atta', 'rice', 'oil', 'sugar', 'tomato', 'potato'],

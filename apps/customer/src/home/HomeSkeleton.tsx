@@ -24,7 +24,7 @@ import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder } from './priceTiers';
 import { QUIETER_NOTE_HEIGHT } from './QuieterNote';
 import type { HomeItem } from './items';
-import { useDepartmentTiles } from './useDepartmentTiles';
+import { useCategoryTiles } from './useCategoryTiles';
 
 /** How many cards of a rail show before the edge of the screen, and how many a grid shows when it is not known. */
 const RAIL_CARDS = 3;
@@ -60,7 +60,7 @@ function StaticRow({ children }: { children: ReactNode }) {
 }
 
 /**
- * What Home shows while items load. With "All" chosen it is the page's own sections in order (Shop by department with its named
+ * What Home shows while items load. With "All" chosen it is the page's own sections in order (Shop by category with its named
  * tiles, the shops strip, Small prices with its three tabs, Featured, a row under each category's title, the quieter-times note),
  * each with its real title's length and the same gaps and heights. With one category chosen (or on a shop page, with `titled`) it
  * is the two-column grid, as many cards as the category has (up to eight). The cards are `ProductCardSkeleton`, drawn from the
@@ -76,16 +76,16 @@ export function HomeSkeleton({
   label: string;
   /** The two-column grid instead of the sections. */
   grid?: boolean;
-  /** With the grid: a section title above it, as a shop page or a department's page has. */
+  /** With the grid: a section title above it, as a shop page or a category's page has. */
   titled?: boolean;
-  /** With the grid: the "See all" button under it, as a department's page has. */
+  /** With the grid: the "See all" button under it, as a category's page has. */
   seeAll?: boolean;
   /** With the grid: how many cards the page will have, when that is known. */
   cards?: number;
 }) {
   const { t, locale } = useLanguage();
   const { width: screen } = useWindowDimensions();
-  const tiles = useDepartmentTiles();
+  const tiles = useCategoryTiles();
   const needs = liveNeeds(useHomeItems());
   const items = useHomeListing();
   const featuredHeight = useFeaturedCardHeight();
@@ -154,7 +154,7 @@ export function HomeSkeleton({
 
         <View style={styles.section}>
           <View style={styles.pad}>
-            <RowTitleSkeleton title={t('home.shopByDepartment.title')} />
+            <RowTitleSkeleton title={t('home.shopByCategory.title')} />
           </View>
           <CategoryTileGridSkeleton count={tiles.length} names={tiles.map((tile) => tile.label)} />
           <SeeAllButtonSkeleton />

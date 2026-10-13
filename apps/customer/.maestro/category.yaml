@@ -1,4 +1,4 @@
-# The category flow: use a chip under Home's banner and a department in its header rail, open a category from the Categories tab, move between its kinds, sort it and filter it.
+# The category flow: use a chip under Home's banner and a category in its header rail, open a category from the Categories tab, move between its kinds, sort it and filter it.
 #
 # Run it against the app open in Expo Go, on a fresh install so the language is English:
 #   maestro test apps/customer/.maestro/category.yaml -e APP_URL=exp://<your computer's address>:8081
@@ -18,14 +18,14 @@ appId: host.exp.exponent
 - tapOn: 'Offers'
 - assertVisible: 'Amul Toned milk.*'
 - tapOn: 'All'
-- assertVisible: 'Shop by department'
+- assertVisible: 'Shop by category'
 
-# A department in the header rail shows its own page, and "All" in the rail brings the usual page back.
+# A category in the header rail shows its own page, and "All" in the rail brings the usual page back.
 - tapOn: 'Dairy'
 - assertVisible: 'Amul Toned milk.*'
-- assertNotVisible: 'Shop by department'
+- assertNotVisible: 'Shop by category'
 - tapOn: 'All'
-- assertVisible: 'Shop by department'
+- assertVisible: 'Shop by category'
 
 # Shop for your need: a card opens its own page with a shelf for each thing it gathers.
 - assertVisible: 'Shop for your need'
@@ -33,11 +33,11 @@ appId: host.exp.exponent
 - assertVisible: 'Picked from shops in Roha'
 - assertVisible: 'Amul Toned milk.*'
 - tapOn: 'Back'
-- assertVisible: 'Shop by department'
+- assertVisible: 'Shop by category'
 
-# All departments is the Categories tab (ADR 0046): the stocked categories in their groups, then "Coming to Roha", and a category that
+# All categories is the Categories tab (ADR 0046): the stocked categories in their groups, then "Coming to Roha", and a category that
 # is not stocked opens its "Coming to Roha" page.
-- tapOn: 'All departments.*'
+- tapOn: 'All categories.*'
 - assertVisible: 'Grocery & Kitchen'
 - assertVisible: 'Coming to Roha'
 - tapOn: 'Beauty, Soon'
@@ -45,12 +45,13 @@ appId: host.exp.exponent
 - tapOn: 'Back'
 - assertVisible: 'Coming to Roha'
 - tapOn: 'Home'
-- assertVisible: 'Shop by department'
+- assertVisible: 'Shop by category'
 
-# The Categories tab: two sections, and a category opens its own screen.
+# The Categories tab: each category is a row of tiles (its own, then its kinds), and its own tile opens its screen.
 - tapOn: 'Categories'
 - assertVisible: 'Grocery & Kitchen'
 - assertVisible: 'Snacks & Drinks'
+- assertVisible: 'Curd & Yogurt'
 - tapOn: 'Dairy & Eggs'
 - assertVisible: 'Curd & Yogurt'
 - assertVisible: 'Filters'

@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   cellSkeleton: { width: '25%', paddingHorizontal: GAP / 2, gap: space[2] },
 });
 
-/** The tiles of a group or of Home's "Shop by department", four across. */
+/** The tiles of a group or of Home's "Shop by category", four across. */
 export function CategoryTileGrid({ tiles, onPress }: CategoryTileGridProps) {
   return (
     <View style={styles.grid}>

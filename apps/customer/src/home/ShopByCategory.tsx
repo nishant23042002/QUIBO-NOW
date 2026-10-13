@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { CategoryTileGrid, RowTitle, SeeAllButton, space } from '@/ui';
 import { categoryRoute } from './categoryLists';
-import { useDepartmentTiles } from './useDepartmentTiles';
+import { useCategoryTiles } from './useCategoryTiles';
 
 const styles = StyleSheet.create({
   section: { gap: space[3] },
@@ -11,15 +11,15 @@ const styles = StyleSheet.create({
 });
 
 /**
- * "Shop by department" at the top of Home's rows (ADR 0044): up to eight tiles in rows of four, under the same dotted-line title the
- * rows have, and an "All departments" button under them. A live department opens the screen of the main category it holds; one that
- * is coming is softened, carries its tag and opens its "Coming to Roha" page.
+ * "Shop by category" at the top of Home's rows (ADR 0044, ADR 0046): up to eight tiles in rows of four, under the same dotted-line
+ * title the rows have, and an "All categories" button under them that opens the Categories tab. A live category opens its own
+ * screen; one that is coming is softened, carries its tag and opens its "Coming to Roha" page.
  */
-export function ShopByDepartment() {
+export function ShopByCategory() {
   const { t } = useLanguage();
   const router = useRouter();
-  const tiles = useDepartmentTiles();
-  const title = t('home.shopByDepartment.title');
+  const tiles = useCategoryTiles();
+  const title = t('home.shopByCategory.title');
 
   return (
     <View style={styles.section}>
@@ -34,7 +34,7 @@ export function ShopByDepartment() {
         }}
       />
       <SeeAllButton
-        label={t('departments.all')}
+        label={t('categoriesTab.all')}
         title={title}
         onPress={() => {
           router.navigate('/categories');

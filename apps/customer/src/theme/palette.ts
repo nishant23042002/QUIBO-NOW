@@ -65,7 +65,7 @@ export interface ThemeColors {
   /** The plate a brand's logo sits on: white in both themes, because logos are made for white. Not used for text. */
   logoPlate: string;
   /**
-   * The plate a department's picture sits on: the neutral light grey every picture's own backdrop is flattened to, the same in both
+   * The plate a category's picture sits on: the neutral light grey every picture's own backdrop is flattened to, the same in both
    * themes because the pictures are made on it. Not used for text.
    */
   artworkPlate: string;

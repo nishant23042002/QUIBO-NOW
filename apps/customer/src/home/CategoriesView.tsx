@@ -23,7 +23,6 @@ import {
 } from '@/ui';
 import { CART_ROOM } from './CartLayer';
 import { useCart } from './CartProvider';
-import { CategoryBlock, CategoryBlockSkeleton } from './CategoryBlock';
 import { tileRoute } from './categoryGroups';
 import { categoryRoute } from './categoryLists';
 import { CATEGORIES_LOAD_MS, CATEGORIES_POLICY } from './loading';
@@ -44,8 +43,8 @@ const makeStyles = (c: ThemeColors) =>
     page: { flex: 1, backgroundColor: c.bg },
     content: { gap: space[6], paddingTop: space[4] },
     pad: { paddingHorizontal: space[4] },
-    // The categories of a group sit a little closer to each other than the groups do.
-    categories: { gap: space[5] },
+    // The rows of a group's categories sit a little closer to each other than the groups do.
+    categories: { gap: space[4] },
     // The field sits on the page's colour with a hairline, so it reads as a field and not as a hole.
     field: { flexDirection: 'row', borderRadius: radius.full, borderWidth: 1, borderColor: c.line },
     group: { gap: space[3] },
@@ -79,7 +78,11 @@ function CategoriesSkeleton() {
             </View>
             <View style={styles.categories}>
               {group.categories.map((category) => (
-                <CategoryBlockSkeleton key={category.id} category={category} />
+                <CategoryTileGridSkeleton
+                  key={category.id}
+                  count={category.tiles.length}
+                  names={category.tiles.map((tile) => tile.label)}
+                />
               ))}
             </View>
           </View>
@@ -129,7 +132,7 @@ function CategorySections() {
               value={query}
               onChangeText={setQuery}
               onSubmit={() => undefined}
-              placeholder={t('departments.find')}
+              placeholder={t('categoriesTab.find')}
               clearLabel={t('search.clearField')}
             />
           </View>
@@ -139,8 +142,8 @@ function CategorySections() {
         <View style={styles.empty}>
           <StatePanel
             icon="search"
-            title={t('departments.noMatch.title')}
-            body={t('departments.noMatch.body')}
+            title={t('categoriesTab.noMatch.title')}
+            body={t('categoriesTab.noMatch.body')}
             actionLabel={t('search.clearField')}
             onAction={() => {
               setQuery('');
@@ -156,14 +159,18 @@ function CategorySections() {
               </View>
               <View style={styles.categories}>
                 {group.categories.map((category) => (
-                  <CategoryBlock
+                  <CategoryTileGrid
                     key={category.id}
-                    category={category}
-                    onOpen={() => {
-                      router.push(tileRoute({ kind: 'main', id: category.id }, ''));
-                    }}
-                    onOpenKind={(subId) => {
-                      router.push(tileRoute({ kind: 'main', id: category.id, sub: subId }, ''));
+                    tiles={category.tiles}
+                    onPress={(index) => {
+                      const tile = category.tiles[index];
+                      if (tile === undefined) return;
+                      // The category's own tile opens all of it; a kind opens it on that kind.
+                      const target =
+                        tile.subId === undefined
+                          ? { kind: 'main' as const, id: category.id }
+                          : { kind: 'main' as const, id: category.id, sub: tile.subId };
+                      router.push(tileRoute(target, ''));
                     }}
                   />
                 ))}
@@ -196,9 +203,9 @@ function CategorySections() {
 const alwaysQuiet = (): boolean => true;
 
 /**
- * The Categories tab (ADR 0046): every category the town lists. Each stocked one is a title row (its picture, its name and "See
- * all") with its kinds as tiles four across under it, in its group; then "Coming to Roha" as tiles. A title row opens the category's
- * own screen, a kind opens it on that kind, and a category that is coming opens its "Coming to Roha" page. It sits under the same
+ * The Categories tab (ADR 0046): every category the town lists. Each stocked one is a row of tiles four across in its group: its
+ * own tile first, with its picture, then its kinds; then "Coming to Roha" as tiles. The category's own tile opens its screen, a kind
+ * opens it on that kind, and a category that is coming opens its "Coming to Roha" page. It sits under the same
  * header Home wears (delivery promise, address, profile, and the search that stays pinned as the page scrolls). Once the list passes
  * `FIND_FROM` categories a field to find one by its name or a kind's appears. It has its loading, offline and failed states like
  * every other page, and the header stays put through them.

@@ -162,9 +162,8 @@ export default function TabsLayout() {
       <Tabs.Screen name="brand/[id]" options={{ href: null }} />
       {/* A main category's screen (a rail of its kinds, filters and a grid), reached from the Categories tab and Home, with the bar kept. */}
       <Tabs.Screen name="category/[id]" options={{ href: null }} />
-      {/* All departments and a department's own page ("Coming to Roha"), reached from Home, with the bar kept (ADR 0044). */}
-      <Tabs.Screen name="departments" options={{ href: null }} />
-      <Tabs.Screen name="department/[id]" options={{ href: null }} />
+      {/* The "Coming to Roha" page of a category that is not stocked yet, with the bar kept (ADR 0046). */}
+      <Tabs.Screen name="coming/[id]" options={{ href: null }} />
       {/* A need's page ("Tea time"), reached from Home's "Shop for your need", with the bar kept. */}
       <Tabs.Screen name="need/[id]" options={{ href: null }} />
       {/* An item's page, the same: reached from a card, with the bottom bar kept. */}

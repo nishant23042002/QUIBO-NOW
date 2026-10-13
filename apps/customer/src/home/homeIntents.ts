@@ -2,7 +2,7 @@ import { PRICE_TIERS } from './priceTiers';
 
 /**
  * What the chips under Home's banner stand for. They are not categories (the header rail and the category screens are for that):
- * each is a way a shopper is in a hurry or in a mood, and shows the items that suit it, from every shelf or from the department
+ * each is a way a shopper is in a hurry or in a mood, and shows the items that suit it, from every shelf or from the category
  * chosen in the rail. "All" is the page as it is.
  */
 export type IntentId = 'all' | 'quick' | 'offers' | 'under' | 'veg';

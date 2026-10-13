@@ -41,10 +41,10 @@ export default function NeedScreen() {
       <View style={styles.missing}>
         <Icon name="grid" color={colors.inkMuted} size={40} />
         <Text variant="heading" align="center">
-          {t('departments.needNotFound.title')}
+          {t('needs.notFound.title')}
         </Text>
         <Text color="inkMuted" align="center">
-          {t('departments.needNotFound.body')}
+          {t('needs.notFound.body')}
         </Text>
         <Button
           label={t('shop.notFound.back')}

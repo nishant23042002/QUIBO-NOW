@@ -11,7 +11,7 @@ export interface HomeIntent {
 
 /**
  * The chips under Home's banner, in order: All, Quick, Offers, Under ₹50 and Veg. They are ways to look at what is on sale, not
- * departments (the header rail is for those): they narrow the page that is showing.
+ * categories (the header rail is for those): they narrow the page that is showing.
  */
 export function useHomeIntents(): readonly HomeIntent[] {
   const { t } = useLanguage();

@@ -221,16 +221,25 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 ## Categories tab
 
-| Key                        | English                                                                 | Hindi (draft)                                                        | Marathi (draft)                                                          | OK or change to |
-| -------------------------- | ----------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------ | --------------- |
-| `categoriesTab.emptyTitle` | Nothing to show yet                                                     | अभी दिखाने के लिए कुछ नहीं है                                        | अजून दाखवण्यासाठी काही नाही                                              |                 |
-| `categoriesTab.emptyBody`  | The shops have not listed their categories yet. Please check back soon. | दुकानों ने अभी अपनी श्रेणियाँ नहीं जोड़ी हैं। कृपया जल्दी फिर देखें। | दुकानांनी अजून त्यांच्या श्रेणी जोडलेल्या नाहीत. कृपया लवकरच पुन्हा पहा. |                 |
+| Key                           | English                                                                      | Hindi (draft)                                                                                  | Marathi (draft)                                                                               | OK or change to |
+| ----------------------------- | ---------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------- |
+| `categoriesTab.emptyTitle`    | Nothing to show yet                                                          | अभी दिखाने के लिए कुछ नहीं है                                                                  | अजून दाखवण्यासाठी काही नाही                                                                   |                 |
+| `categoriesTab.emptyBody`     | The shops have not listed their categories yet. Please check back soon.      | दुकानों ने अभी अपनी श्रेणियाँ नहीं जोड़ी हैं। कृपया जल्दी फिर देखें।                           | दुकानांनी अजून त्यांच्या श्रेणी जोडलेल्या नाहीत. कृपया लवकरच पुन्हा पहा.                      |                 |
+| `categoriesTab.all`           | All categories                                                               | सभी श्रेणियाँ                                                                                  | सर्व श्रेणी                                                                                   |                 |
+| `categoriesTab.find`          | Find a category                                                              | श्रेणी खोजें                                                                                   | श्रेणी शोधा                                                                                   |                 |
+| `categoriesTab.more`          | More                                                                         | और देखें                                                                                       | आणखी                                                                                          |                 |
+| `categoriesTab.railLabel`     | Categories                                                                   | श्रेणियाँ                                                                                      | श्रेणी                                                                                        |                 |
+| `categoriesTab.comingTitle`   | Coming to Roha                                                               | रोहा में जल्द आ रहा है                                                                         | रोह्यात लवकरच येत आहे                                                                         |                 |
+| `categoriesTab.comingBody`    | {name} is not in Roha yet. We are working with local shops to bring it here. | {name} अभी रोहा में उपलब्ध नहीं है। हम स्थानीय दुकानों के साथ इसे यहाँ लाने पर काम कर रहे हैं। | {name} अजून रोह्यात उपलब्ध नाही. स्थानिक दुकानदारांसोबत ते इथे आणण्यासाठी आम्ही काम करत आहोत. |                 |
+| `categoriesTab.seeToday`      | Shop what is here today                                                      | आज जो उपलब्ध है उसे देखें                                                                      | आज जे उपलब्ध आहे ते पाहा                                                                      |                 |
+| `categoriesTab.noMatch.title` | No category like that                                                        | ऐसी कोई श्रेणी नहीं मिली                                                                       | अशी कोणतीही श्रेणी सापडली नाही                                                                |                 |
+| `categoriesTab.noMatch.body`  | Try another word, or clear the search.                                       | कोई दूसरा शब्द आज़माएँ, या खोज साफ़ करें।                                                      | दुसरा शब्द वापरून पाहा, किंवा शोध पुसून टाका.                                                 |                 |
 
 ## Shop by category, on Home
 
-| Key                         | English          | Hindi (draft)             | Marathi (draft)   | OK or change to |
-| --------------------------- | ---------------- | ------------------------- | ----------------- | --------------- |
-| `home.shopByCategory.title` | Shop by category | श्रेणी के हिसाब से खरीदें | श्रेणीनुसार खरेदी |                 |
+| Key                         | English          | Hindi (draft)           | Marathi (draft)       | OK or change to |
+| --------------------------- | ---------------- | ----------------------- | --------------------- | --------------- |
+| `home.shopByCategory.title` | Shop by category | श्रेणी के अनुसार खरीदें | श्रेणीनुसार खरेदी करा |                 |
 
 ## Shop by brand, on Home
 
@@ -344,8 +353,11 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 | Key                               | English                                              | Hindi (draft)                          | Marathi (draft)                      | OK or change to |
 | --------------------------------- | ---------------------------------------------------- | -------------------------------------- | ------------------------------------ | --------------- |
-| `catalogue.sections.grocery`      | Grocery & Kitchen                                    | किराना और रसोई                         | किराणा आणि स्वयंपाकघर                |                 |
-| `catalogue.sections.snacks`       | Snacks & Drinks                                      | स्नैक्स और पेय                         | स्नॅक्स आणि पेये                     |                 |
+| `catalogue.groups.grocery`        | Grocery & Kitchen                                    | किराना और रसोई                         | किराणा आणि स्वयंपाकघर                |                 |
+| `catalogue.groups.snacks`         | Snacks & Drinks                                      | स्नैक्स और पेय                         | स्नॅक्स आणि पेये                     |                 |
+| `catalogue.groups.care`           | Beauty & Care                                        | सौंदर्य और देखभाल                      | सौंदर्य आणि निगा                     |                 |
+| `catalogue.groups.tech`           | Tech & Play                                          | टेक और खेल                             | टेक आणि खेळ                          |                 |
+| `catalogue.groups.style`          | Home & Style                                         | घर और स्टाइल                           | घर आणि स्टाइल                        |                 |
 | `catalogue.mains.vegFruit`        | Vegetables & Fruits                                  | सब्ज़ियाँ और फल                        | भाज्या आणि फळे                       |                 |
 | `catalogue.mains.dairyEggs`       | Dairy & Eggs                                         | डेयरी और अंडे                          | दुग्धजन्य आणि अंडी                   |                 |
 | `catalogue.mains.attaRice`        | Atta, Rice & Dal                                     | आटा, चावल और दाल                       | आटा, तांदूळ आणि डाळ                  |                 |
@@ -367,6 +379,13 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `catalogue.subs.popcorn`          | Popcorn                                              | पॉपकॉर्न                               | पॉपकॉर्न                             |                 |
 | `catalogue.subs.biscuits`         | Biscuits                                             | बिस्किट                                | बिस्किटे                             |                 |
 | `catalogue.subs.chocolates`       | Chocolates                                           | चॉकलेट                                 | चॉकलेट                               |                 |
+| `catalogue.subs.dal`              | Dal & Pulses                                         | दाल और दलहन                            | डाळी आणि कडधान्ये                    |                 |
+| `catalogue.subs.ghee`             | Ghee                                                 | घी                                     | तूप                                  |                 |
+| `catalogue.subs.masala`           | Masala & Spices                                      | मसाले                                  | मसाले                                |                 |
+| `catalogue.subs.bread`            | Bread & Pav                                          | ब्रेड और पाव                           | ब्रेड आणि पाव                        |                 |
+| `catalogue.subs.rusk`             | Rusk & Cakes                                         | रस्क और केक                            | रस्क आणि केक                         |                 |
+| `catalogue.subs.indianSweets`     | Indian Sweets                                        | मिठाई                                  | मिठाई                                |                 |
+| `catalogue.subs.namkeen`          | Namkeen                                              | नमकीन                                  | नमकीन                                |                 |
 | `catalogue.all`                   | All                                                  | सभी                                    | सर्व                                 |                 |
 | `catalogue.rail`                  | Kinds in this category                               | इस श्रेणी के प्रकार                    | या श्रेणीतील प्रकार                  |                 |
 | `catalogue.searchLabel`           | Search                                               | खोजें                                  | शोधा                                 |                 |
@@ -402,6 +421,25 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `catalogue.filters.fat`           | Fat Profile                                          | वसा प्रोफ़ाइल                          | फॅट प्रोफाइल                         |                 |
 | `catalogue.filters.source`        | Source                                               | स्रोत                                  | स्रोत                                |                 |
 | `catalogue.filters.processing`    | Processing Type                                      | प्रोसेसिंग का प्रकार                   | प्रक्रिया प्रकार                     |                 |
+| `catalogue.railNames.vegFruit`    | Fresh                                                | ताज़ा                                  | ताजे                                 |                 |
+| `catalogue.railNames.dairyEggs`   | Dairy                                                | डेयरी                                  | डेअरी                                |                 |
+| `catalogue.railNames.attaRice`    | Staples                                              | किराना                                 | किराणा                               |                 |
+| `catalogue.railNames.oilMasala`   | Oil & Masala                                         | तेल-मसाले                              | तेल-मसाले                            |                 |
+| `catalogue.railNames.chips`       | Chips                                                | चिप्स                                  | चिप्स                                |                 |
+| `catalogue.railNames.biscuits`    | Biscuits                                             | बिस्किट                                | बिस्किट                              |                 |
+| `catalogue.railNames.sweets`      | Sweets                                               | मिठाई                                  | मिठाई                                |                 |
+| `catalogue.soon.beauty`           | Beauty                                               | ब्यूटी                                 | ब्युटी                               |                 |
+| `catalogue.soon.babyCare`         | Baby Care                                            | बेबी केयर                              | बेबी केअर                            |                 |
+| `catalogue.soon.gym`              | Gym & Fitness                                        | जिम और फिटनेस                          | जिम आणि फिटनेस                       |                 |
+| `catalogue.soon.electronics`      | Electronics                                          | इलेक्ट्रॉनिक्स                         | इलेक्ट्रॉनिक्स                       |                 |
+| `catalogue.soon.kids`             | Kids & Toys                                          | बच्चे और खिलौने                        | मुले आणि खेळणी                       |                 |
+| `catalogue.soon.gaming`           | Gaming                                               | गेमिंग                                 | गेमिंग                               |                 |
+| `catalogue.soon.jewellery`        | Jewellery                                            | ज्वेलरी                                | ज्वेलरी                              |                 |
+| `catalogue.soon.decor`            | Home Decor                                           | होम डेकोर                              | होम डेकोर                            |                 |
+| `catalogue.soon.automotive`       | Automotive                                           | ऑटोमोटिव                               | ऑटोमोटिव्ह                           |                 |
+| `catalogue.tags.today`            | Today                                                | आज                                     | आज                                   |                 |
+| `catalogue.tags.tomorrow`         | Tomorrow                                             | कल                                     | उद्या                                |                 |
+| `catalogue.tags.soon`             | Soon                                                 | जल्द                                   | लवकरच                                |                 |
 
 ## The chips on Home's header
 
@@ -414,4 +452,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.intents.empty.title` | Nothing like this right now     | अभी ऐसी कोई चीज़ नहीं है            | सध्या असे काही नाही                   |                 |
 | `home.intents.empty.body`  | Check back soon, or choose All. | थोड़ी देर बाद देखें या "सभी" चुनें। | थोड्या वेळाने पहा किंवा "सर्व" निवडा. |                 |
 
-301 lines in all.
+339 lines in all.

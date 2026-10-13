@@ -152,8 +152,8 @@
       "kg": "{amount}/kg",
       "pc": "{amount}/pc"
     },
-    "shopByDepartment": {
-      "title": "Shop by department"
+    "shopByCategory": {
+      "title": "Shop by category"
     },
     "shopForNeed": {
       "title": "Shop for your need"
@@ -1112,15 +1112,29 @@
   },
   "categoriesTab": {
     "emptyTitle": "Nothing to show yet",
-    "emptyBody": "The shops have not listed their categories yet. Please check back soon."
+    "emptyBody": "The shops have not listed their categories yet. Please check back soon.",
+    "all": "All categories",
+    "find": "Find a category",
+    "more": "More",
+    "railLabel": "Categories",
+    "comingTitle": "Coming to Roha",
+    "comingBody": "{name} is not in Roha yet. We are working with local shops to bring it here.",
+    "seeToday": "Shop what is here today",
+    "noMatch": {
+      "title": "No category like that",
+      "body": "Try another word, or clear the search."
+    }
   },
   "footer": {
     "line": "Packed by shops in Roha. Delivered to your door."
   },
   "catalogue": {
-    "sections": {
+    "groups": {
       "grocery": "Grocery & Kitchen",
-      "snacks": "Snacks & Drinks"
+      "snacks": "Snacks & Drinks",
+      "care": "Beauty & Care",
+      "tech": "Tech & Play",
+      "style": "Home & Style"
     },
     "mains": {
       "vegFruit": "Vegetables & Fruits",
@@ -1198,11 +1212,8 @@
       "fat": "Fat Profile",
       "source": "Source",
       "processing": "Processing Type"
-    }
-  },
-  "departments": {
-    "railLabel": "Departments",
-    "rail": {
+    },
+    "railNames": {
       "vegFruit": "Fresh",
       "dairyEggs": "Dairy",
       "attaRice": "Staples",
@@ -1210,12 +1221,6 @@
       "chips": "Chips",
       "biscuits": "Biscuits",
       "sweets": "Sweets"
-    },
-    "more": "More",
-    "groups": {
-      "care": "Beauty & Care",
-      "tech": "Tech & Play",
-      "style": "Home & Style"
     },
     "soon": {
       "beauty": "Beauty",
@@ -1228,41 +1233,26 @@
       "decor": "Home Decor",
       "automotive": "Automotive"
     },
-    "needs": {
+    "tags": {
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "soon": "Soon"
+    }
+  },
+  "needs": {
+    "names": {
       "breakfast": "Breakfast",
       "teaTime": "Tea Time",
       "partySnacks": "Party Snacks",
       "cookingBasics": "Cooking Basics"
     },
-    "tags": {
-      "today": "Today",
-      "tomorrow": "Tomorrow",
-      "soon": "Soon"
-    },
-    "all": "All departments",
-    "find": "Find a department",
-    "comingTitle": "Coming to Roha",
-    "comingBody": "{name} is not in Roha yet. We are working with local shops to bring it here.",
-    "seeToday": "Shop what is here today",
+    "band": "Picked from shops in Roha",
+    "rail": "Kinds in this list",
     "empty": {
-      "title": "Nothing to show yet",
-      "body": "The shops have not listed their departments yet. Please check back soon."
-    },
-    "noMatch": {
-      "title": "No department like that",
-      "body": "Try another word, or clear the search."
-    },
-    "notFound": {
-      "title": "We could not find that department",
-      "body": "It may have moved. Pick one from All departments."
-    },
-    "needBand": "Picked from shops in Roha",
-    "needRail": "Kinds in this list",
-    "needEmpty": {
       "title": "Nothing for this right now",
       "body": "The shops are out of these today. Please check back soon."
     },
-    "needNotFound": {
+    "notFound": {
       "title": "We could not find that list",
       "body": "It may have moved. Pick one from Home."
     }

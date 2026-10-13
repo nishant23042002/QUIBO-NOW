@@ -70,11 +70,11 @@ export interface CategoryGroup {
 }
 
 export const CATEGORY_GROUPS: readonly CategoryGroup[] = [
-  { id: 'grocery', label: 'catalogue.sections.grocery' },
-  { id: 'snacks', label: 'catalogue.sections.snacks' },
-  { id: 'care', label: 'departments.groups.care' },
-  { id: 'tech', label: 'departments.groups.tech' },
-  { id: 'style', label: 'departments.groups.style' },
+  { id: 'grocery', label: 'catalogue.groups.grocery' },
+  { id: 'snacks', label: 'catalogue.groups.snacks' },
+  { id: 'care', label: 'catalogue.groups.care' },
+  { id: 'tech', label: 'catalogue.groups.tech' },
+  { id: 'style', label: 'catalogue.groups.style' },
 ];
 
 const live = (
@@ -88,7 +88,7 @@ const live = (
   group,
   tag: 'today',
   label: `catalogue.mains.${id}`,
-  rail: `departments.rail.${id}`,
+  rail: `catalogue.railNames.${id}`,
   emoji,
   tint,
   subs,
@@ -98,8 +98,8 @@ const soon = (id: SoonCategoryId, group: CategoryGroupId, emoji: string): Catego
   id,
   group,
   tag: 'soon',
-  label: `departments.soon.${id}`,
-  rail: `departments.soon.${id}`,
+  label: `catalogue.soon.${id}`,
+  rail: `catalogue.soon.${id}`,
   emoji,
   tint: 'neutral',
   subs: [],

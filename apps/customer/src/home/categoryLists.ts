@@ -79,12 +79,12 @@ export function categoryIndex(categories: readonly Category[]): {
 /** Where a category's tile goes: a live one opens its own screen, one that is coming opens its "Coming to Roha" page. */
 export type CategoryRoute =
   | { pathname: '/category/[id]'; params: { id: string } }
-  | { pathname: '/department/[id]'; params: { id: string } };
+  | { pathname: '/coming/[id]'; params: { id: string } };
 
 export function categoryRoute(target: Category): CategoryRoute {
   return isLive(target) && target.subs.length > 0
     ? { pathname: '/category/[id]', params: { id: target.id } }
-    : { pathname: '/department/[id]', params: { id: target.id } };
+    : { pathname: '/coming/[id]', params: { id: target.id } };
 }
 
 /**

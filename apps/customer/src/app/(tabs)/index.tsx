@@ -6,8 +6,8 @@ import { useCartCount } from '@/home/CartProvider';
 import { useDeliveryAddress, useDeliveryWhen } from '@/home/deliveryInfo';
 import { RAIL_MORE, useHomeRail } from '@/home/useHomeRail';
 import { seeAllTarget } from '@/home/catalogueTree';
-import { category as categoryById } from '@/home/categoryLists';
 import type { Category } from '@/home/catalogueTree';
+import { category as categoryById } from '@/home/categoryLists';
 import { HomeFeed } from '@/home/HomeFeed';
 import type { IntentId } from '@/home/homeIntents';
 import type { ItemCategory } from '@/home/items';
@@ -22,7 +22,7 @@ import { BOTTOM_BAR_HEIGHT, HomeHeader, useChromeReport } from '@/ui';
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
 
-// Home: the header (with the shops row it opens and the departments rail), the search bar, the sliding offers, the chips under the
+// Home: the header (with the shops row it opens and the categories rail), the search bar, the sliding offers, the chips under the
 // banner, and the item rows.
 export default function HomeScreen() {
   const { t } = useLanguage();
@@ -32,11 +32,11 @@ export default function HomeScreen() {
   const rail = useHomeRail();
   const offers = useHomeOffers();
   const searchHint = useSearchHint();
-  // The rail's tab chosen ("all" or a department's id) and the chip under the banner.
+  // The rail's tab chosen ("all" or a category's id) and the chip under the banner.
   const [picked, setPicked] = useState('all');
   const [intent, setIntent] = useState<IntentId>('all');
   const selected = rail.some((tab) => tab.key === picked) ? picked : 'all';
-  const department = selected === 'all' ? undefined : categoryById(selected);
+  const category = selected === 'all' ? undefined : categoryById(selected);
   const cartCount = useCartCount();
   const reportScroll = useChromeReport();
   const when = useDeliveryWhen();
@@ -52,7 +52,7 @@ export default function HomeScreen() {
     });
   };
   // A category's "See all" opens its own screen.
-  const openDepartment = (target: Category) => {
+  const openMainCategory = (target: Category) => {
     router.push({ pathname: '/category/[id]', params: { id: target.id } });
   };
 
@@ -69,14 +69,14 @@ export default function HomeScreen() {
         searchHint={searchHint}
         categories={rail}
         selectedCategory={selected}
-        categoriesLabel={t('departments.railLabel')}
+        categoriesLabel={t('categoriesTab.railLabel')}
         onCategoryChange={(key) => {
           // More opens the Categories tab; the rail tab chosen stays as it was.
           if (key === RAIL_MORE) {
             router.navigate('/categories');
             return;
           }
-          // Another department is shown from its start, whichever chip was chosen on the last one.
+          // Another category is shown from its start, whichever chip was chosen on the last one.
           setPicked(key);
           setIntent('all');
         }}
@@ -104,9 +104,9 @@ export default function HomeScreen() {
         <HomeFeed
           intent={intent}
           onIntentChange={setIntent}
-          department={department}
+          category={category}
           onSeeAll={openCategory}
-          onSeeDepartment={openDepartment}
+          onSeeCategory={openMainCategory}
         />
       </HomeHeader>
       <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />

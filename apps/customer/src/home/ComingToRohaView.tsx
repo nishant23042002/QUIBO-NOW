@@ -33,16 +33,16 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /**
- * What a department that is not stocked yet opens: its name and picture, one line saying it is on its way to Roha, and a way back to
+ * What a category that is not stocked yet opens: its name and picture, one line saying it is on its way to Roha, and a way back to
  * what is here today. It makes no promise of a day (ADR 0012's rule for time, kept for dates) and takes no sign-up: telling a shopper
  * when it arrives needs a notification service (Phase 2).
  */
-export function ComingToRohaView({ department }: { department: Category }) {
+export function ComingToRohaView({ category }: { category: Category }) {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const router = useRouter();
   const styles = useStyles(makeStyles);
-  const name = t(department.label);
+  const name = t(category.label);
 
   return (
     <View style={styles.page}>
@@ -55,20 +55,20 @@ export function ComingToRohaView({ department }: { department: Category }) {
         }}
       />
       <View style={styles.body}>
-        <View style={[styles.picture, { backgroundColor: tintColor(colors, department.tint) }]}>
+        <View style={[styles.picture, { backgroundColor: tintColor(colors, category.tint) }]}>
           <NativeText allowFontScaling={false} style={{ fontSize: 48, lineHeight: 58 }}>
-            {department.emoji}
+            {category.emoji}
           </NativeText>
         </View>
         <Text variant="heading" align="center" role="heading">
-          {t('departments.comingTitle')}
+          {t('categoriesTab.comingTitle')}
         </Text>
         <Text color="inkMuted" align="center">
-          {t('departments.comingBody', { name })}
+          {t('categoriesTab.comingBody', { name })}
         </Text>
         <View style={styles.actions}>
           <Button
-            label={t('departments.seeToday')}
+            label={t('categoriesTab.seeToday')}
             onPress={() => {
               router.navigate('/');
             }}
