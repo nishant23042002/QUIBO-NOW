@@ -77,6 +77,12 @@ oil, sugar, tomato, potato). "Gym Freak" and "Baby care" from the mock stay on t
 
 > Steps 1 to 5 below are the build log as it was written; the files and words they name have since been renamed (ADR 0046).
 
+- **Need cards and Small prices redesigned, 2026-10-13 (ADR 0047).** The owner chose variant A of the need cards and variant B of
+  Small prices from a Canva board. Need cards are larger soft cards with three pictures filling them, the words over them on a
+  plate and a round arrow; the quick filters are taller chips with an icon and a hard edge, a sliders badge leading the row and the
+  chosen one filled (`Chip` `tone="solid"`, that row only). Small prices is a segmented control over `PriceTile` (the price
+  large beside a pistachio ADD); `ItemTile` and `ProductCard` are unchanged. Both skeletons follow the new sizes.
+
 - **One word, Layout B and a clean-up, 2026-10-13.** A department is a category everywhere: the words (`departments.*` is gone;
   `catalogue.groups`, `railNames`, `soon`, `tags`, `categoriesTab` and `needs` hold them), the files (`categoryPictures.ts`,
   `useCategoryTiles.ts`, `ShopByCategory.tsx`, `assets/categories/`), and the routes (`/coming/[id]`; `/departments` is removed). The
