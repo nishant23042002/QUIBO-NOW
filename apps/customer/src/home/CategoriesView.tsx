@@ -19,10 +19,10 @@ import {
 } from '@/ui';
 import { CART_ROOM } from './CartLayer';
 import { useCart } from './CartProvider';
-import { tileRoute } from './categoryGroups';
+import { categoryRoute } from './categoryLists';
 import { CATEGORIES_LOAD_MS, CATEGORIES_POLICY } from './loading';
 import { useTabHeaderProps } from './useTabHeader';
-import { useCategoryGroups, type CategoryTile as TileData } from './useCategoryTiles';
+import { useDepartmentIndex } from './useDepartmentTiles';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -34,13 +34,6 @@ const makeStyles = (c: ThemeColors) =>
     empty: { minHeight: 360 },
   });
 
-/** Opens what a tile points at: Home on a category, or search for a word. */
-function openTile(router: ReturnType<typeof useRouter>, tile: TileData): void {
-  const route = tileRoute(tile.target, String(Date.now()));
-  if (route.pathname === '/') router.navigate(route);
-  else router.push(route);
-}
-
 /**
  * Grey blocks in the shape of the page: each group's title as long as the real one with its dotted line, then its tiles four across
  * with the lines of name each real name will take, in the same groups, order and spacing as the real tiles. The header is real and
@@ -49,19 +42,19 @@ function openTile(router: ReturnType<typeof useRouter>, tile: TileData): void {
 function CategoriesSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
-  const groups = useCategoryGroups();
+  const { sections } = useDepartmentIndex();
 
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
       <View style={styles.content}>
-        {groups.map((group) => (
-          <View key={group.title} style={styles.group}>
+        {sections.map((section) => (
+          <View key={section.id} style={styles.group}>
             <View style={styles.pad}>
-              <RowTitleSkeleton title={group.title} />
+              <RowTitleSkeleton title={section.title} />
             </View>
             <CategoryTileGridSkeleton
-              count={group.tiles.length}
-              names={group.tiles.map((tile) => tile.label)}
+              count={section.tiles.length}
+              names={section.tiles.map((tile) => tile.label)}
             />
           </View>
         ))}
@@ -70,13 +63,13 @@ function CategoriesSkeleton() {
   );
 }
 
-function CategoryGroups() {
+function CategorySections() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
   const router = useRouter();
-  const groups = useCategoryGroups();
+  const { sections, total } = useDepartmentIndex();
 
-  if (groups.length === 0) {
+  if (total === 0) {
     return (
       <View style={styles.empty}>
         <StatePanel
@@ -90,16 +83,17 @@ function CategoryGroups() {
 
   return (
     <View style={styles.content}>
-      {groups.map((group) => (
-        <View key={group.title} style={styles.group}>
+      {sections.map((section) => (
+        <View key={section.id} style={styles.group}>
           <View style={styles.pad}>
-            <RowTitle title={group.title} />
+            <RowTitle title={section.title} />
           </View>
           <CategoryTileGrid
-            tiles={group.tiles}
+            tiles={section.tiles}
             onPress={(index) => {
-              const tile = group.tiles[index];
-              if (tile !== undefined) openTile(router, tile);
+              const tile = section.tiles[index];
+              // A live category opens its own screen; one that is coming opens its "Coming to Roha" page.
+              if (tile !== undefined) router.push(categoryRoute(tile.category));
             }}
           />
         </View>
@@ -113,10 +107,10 @@ function CategoryGroups() {
 const alwaysQuiet = (): boolean => true;
 
 /**
- * The Categories tab: the kinds of things the shops sell, in a few groups of tiles four across, under the same header Home wears
- * (delivery promise, address, profile, and the search that stays pinned as the page scrolls). Choosing a main category opens Home
- * on it; a finer tile opens search for its word. It has its loading, offline and failed states like every other page, and the
- * header stays put through them.
+ * The Categories tab: every category the town lists, in groups of tiles four across (what is stocked in its groups, then "Coming to
+ * Roha"), under the same header Home wears (delivery promise, address, profile, and the search that stays pinned as the page
+ * scrolls). A live category opens its own screen; one that is coming opens its "Coming to Roha" page. It has its loading, offline and
+ * failed states like every other page, and the header stays put through them.
  */
 export function CategoriesView() {
   const header = useTabHeaderProps();
@@ -138,7 +132,7 @@ export function CategoriesView() {
       bottomSpace={BOTTOM_BAR_HEIGHT + (cart.count > 0 ? CART_ROOM : 0)}
     >
       <LoadGate inFlow load={load} skeleton={<CategoriesSkeleton />}>
-        <CategoryGroups />
+        <CategorySections />
       </LoadGate>
     </TabHeader>
   );
