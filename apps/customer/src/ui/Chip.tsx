@@ -32,8 +32,20 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },
-    solid: { borderWidth: 1, borderColor: c.line },
-    solidSelected: { borderColor: c.action, backgroundColor: c.action },
+    // The solid tone is a button you can see: a little taller, with a hard edge under it (the same stamped look as the price badge)
+    // that pistachio-lines the chosen one.
+    solid: {
+      minHeight: 40,
+      borderWidth: 1,
+      borderBottomWidth: 3,
+      borderColor: c.line,
+      borderBottomColor: c.ctl,
+    },
+    solidSelected: {
+      borderColor: c.action,
+      borderBottomColor: c.accent,
+      backgroundColor: c.action,
+    },
     disabled: { opacity: 0.5 },
     pressed: { opacity: 0.8 },
   });
@@ -70,7 +82,7 @@ export function Chip({
         <Icon
           name={icon}
           color={tone === 'solid' && selected ? colors.onAction : colors.ink}
-          size={14}
+          size={tone === 'solid' ? 16 : 14}
         />
       ) : null}
       <Text variant="strong" color={tone === 'solid' && selected ? 'onAction' : 'ink'}>

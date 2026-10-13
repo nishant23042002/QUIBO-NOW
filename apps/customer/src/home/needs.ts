@@ -13,7 +13,9 @@ export type NeedId = 'breakfast' | 'teaTime' | 'partySnacks' | 'cookingBasics';
 export interface Need {
   id: NeedId;
   label: MessageKey;
+  /** The main picture of its card, and two smaller ones beside it, until each need has a picture of its own. */
   emoji: string;
+  extras: readonly [string, string];
   tint: TileTint;
   /** The product kinds (an item's `type`) it gathers, in the order its page lists them. */
   kinds: readonly string[];
@@ -25,6 +27,7 @@ export const NEEDS: readonly Need[] = [
     id: 'breakfast',
     label: 'needs.names.breakfast',
     emoji: '\u{1F373}',
+    extras: ['\u{1F95B}', '\u{1F35E}'],
     tint: 'dairy',
     kinds: ['milk', 'eggs', 'atta', 'sugar', 'oil'],
   },
@@ -32,6 +35,7 @@ export const NEEDS: readonly Need[] = [
     id: 'teaTime',
     label: 'needs.names.teaTime',
     emoji: '\u{2615}',
+    extras: ['\u{1F36A}', '\u{1F95B}'],
     tint: 'snacks',
     kinds: ['milk', 'sugar', 'biscuits', 'chips'],
   },
@@ -39,6 +43,7 @@ export const NEEDS: readonly Need[] = [
     id: 'partySnacks',
     label: 'needs.names.partySnacks',
     emoji: '\u{1F389}',
+    extras: ['\u{1F35F}', '\u{1F36B}'],
     tint: 'snacks',
     kinds: ['chips', 'popcorn', 'chocolate', 'biscuits'],
   },
@@ -46,6 +51,7 @@ export const NEEDS: readonly Need[] = [
     id: 'cookingBasics',
     label: 'needs.names.cookingBasics',
     emoji: '\u{1F958}',
+    extras: ['\u{1F33E}', '\u{1F345}'],
     tint: 'staples',
     kinds: ['atta', 'rice', 'oil', 'sugar', 'tomato', 'potato'],
   },
