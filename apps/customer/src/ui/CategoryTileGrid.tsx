@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, type ImageSourcePropType } from 'react-native';
 import { CategoryTile } from './CategoryTile';
 import { Skeleton, SkeletonLine } from './Skeleton';
 import { tileNameLines } from './logic/tileNames';
@@ -9,6 +9,12 @@ export interface CategoryGridTile {
   label: string;
   emoji: string;
   tint: string;
+  /** The picture, when there is one; the emoji stands in until then. */
+  picture?: ImageSourcePropType;
+  /** A small word on the picture ("Soon", "Tomorrow"), already translated. */
+  tag?: string;
+  /** A tile for something that is not here yet: softened. It can still be pressed, to say when it is coming. */
+  soon?: boolean;
 }
 
 export interface CategoryTileGridProps {
@@ -33,7 +39,7 @@ const styles = StyleSheet.create({
   cellSkeleton: { width: '25%', paddingHorizontal: GAP / 2, gap: space[2] },
 });
 
-/** The tiles of a group or of Home's "Shop by category", four across. */
+/** The tiles of a group or of Home's "Shop by department", four across. */
 export function CategoryTileGrid({ tiles, onPress }: CategoryTileGridProps) {
   return (
     <View style={styles.grid}>
@@ -43,6 +49,9 @@ export function CategoryTileGrid({ tiles, onPress }: CategoryTileGridProps) {
             label={tile.label}
             emoji={tile.emoji}
             tint={tile.tint}
+            {...(tile.picture !== undefined ? { picture: tile.picture } : {})}
+            {...(tile.tag !== undefined ? { tag: tile.tag } : {})}
+            dimmed={tile.soon === true}
             onPress={() => {
               onPress(index);
             }}

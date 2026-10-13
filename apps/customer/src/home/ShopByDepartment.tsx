@@ -2,8 +2,8 @@ import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { CategoryTileGrid, RowTitle, SeeAllButton, space } from '@/ui';
-import { tileRoute } from './categoryGroups';
-import { useHomeCategoryTiles } from './useCategoryTiles';
+import { departmentRoute } from './departments';
+import { useDepartmentTiles } from './useDepartmentTiles';
 
 const styles = StyleSheet.create({
   section: { gap: space[3] },
@@ -11,15 +11,15 @@ const styles = StyleSheet.create({
 });
 
 /**
- * "Shop by category" at the top of Home's rows: eight tiles in two rows of four, under the same dotted-line title the rows have, and a
- * "See all" button under them that opens the Categories tab. A main category switches Home to its tab in place (no new screen); a finer
- * tile opens search for its word.
+ * "Shop by department" at the top of Home's rows (ADR 0044): up to eight tiles in rows of four, under the same dotted-line title the
+ * rows have, and an "All departments" button under them. A live department opens the screen of the main category it holds; one that
+ * is coming is softened, carries its tag and opens its "Coming to Roha" page.
  */
-export function ShopByCategory() {
+export function ShopByDepartment() {
   const { t } = useLanguage();
   const router = useRouter();
-  const tiles = useHomeCategoryTiles();
-  const title = t('home.shopByCategory.title');
+  const tiles = useDepartmentTiles();
+  const title = t('home.shopByDepartment.title');
 
   return (
     <View style={styles.section}>
@@ -30,15 +30,14 @@ export function ShopByCategory() {
         tiles={tiles}
         onPress={(index) => {
           const tile = tiles[index];
-          if (tile === undefined) return;
-          router.push(tileRoute(tile.target, String(Date.now())));
+          if (tile !== undefined) router.push(departmentRoute(tile.department));
         }}
       />
       <SeeAllButton
-        label={t('home.rails.seeAll')}
+        label={t('departments.all')}
         title={title}
         onPress={() => {
-          router.navigate('/categories');
+          router.push('/departments');
         }}
       />
     </View>

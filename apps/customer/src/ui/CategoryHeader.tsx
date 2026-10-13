@@ -12,8 +12,9 @@ export interface CategoryHeaderProps {
   subtitle?: string;
   backLabel: string;
   onBack: () => void;
-  searchLabel: string;
-  onSearch: () => void;
+  /** Give both to show the search button at the end. A page that has nothing to search leaves them out. */
+  searchLabel?: string;
+  onSearch?: () => void;
 }
 
 /** An icon button's circle is 38 dp inside a 48 dp touch area, so the circle sits this far in from the area's edge. */
@@ -72,9 +73,11 @@ export function CategoryHeader({
             </Text>
           ) : null}
         </View>
-        <View style={styles.end}>
-          <IconButton icon="search" label={searchLabel} onPress={onSearch} ground="header" />
-        </View>
+        {searchLabel !== undefined && onSearch !== undefined ? (
+          <View style={styles.end}>
+            <IconButton icon="search" label={searchLabel} onPress={onSearch} ground="header" />
+          </View>
+        ) : null}
       </View>
     </View>
   );

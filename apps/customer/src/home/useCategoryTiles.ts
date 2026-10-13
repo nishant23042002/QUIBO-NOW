@@ -1,13 +1,17 @@
+import type { ImageSourcePropType } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { MAIN_CATEGORIES, SECTIONS, mainsOfSection } from './catalogueTree';
+import { SECTIONS, mainsOfSection } from './catalogueTree';
 import { tintColor, type TileTarget } from './categoryGroups';
+import { departmentPicture } from './departmentPictures';
 
 export interface CategoryTile {
   label: string;
   emoji: string;
   /** The colour behind the picture. */
   tint: string;
+  /** The artwork, when the category has any yet. */
+  picture?: ImageSourcePropType;
   target: TileTarget;
 }
 
@@ -25,23 +29,15 @@ export function useCategoryGroups(): readonly CategoryGroup[] {
   const { colors } = useTheme();
   return SECTIONS.map((section) => ({
     title: t(section.label),
-    tiles: mainsOfSection(section.id).map((main) => ({
-      label: t(main.label),
-      emoji: main.emoji,
-      tint: tintColor(colors, main.tint),
-      target: { kind: 'main' as const, id: main.id },
-    })),
-  }));
-}
-
-/** Home's "Shop by category" tiles: every main category, the same tiles as the Categories tab. */
-export function useHomeCategoryTiles(): readonly CategoryTile[] {
-  const { t } = useLanguage();
-  const { colors } = useTheme();
-  return MAIN_CATEGORIES.map((main) => ({
-    label: t(main.label),
-    emoji: main.emoji,
-    tint: tintColor(colors, main.tint),
-    target: { kind: 'main' as const, id: main.id },
+    tiles: mainsOfSection(section.id).map((main) => {
+      const picture = departmentPicture(main.id);
+      return {
+        label: t(main.label),
+        emoji: main.emoji,
+        tint: tintColor(colors, main.tint),
+        ...(picture !== undefined ? { picture } : {}),
+        target: { kind: 'main' as const, id: main.id },
+      };
+    }),
   }));
 }

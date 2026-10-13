@@ -64,6 +64,11 @@ export interface ThemeColors {
   lilac: string;
   /** The plate a brand's logo sits on: white in both themes, because logos are made for white. Not used for text. */
   logoPlate: string;
+  /**
+   * The plate a department's picture sits on: the neutral light grey every picture's own backdrop is flattened to, the same in both
+   * themes because the pictures are made on it. Not used for text.
+   */
+  artworkPlate: string;
 
   /** The deeper olive of the price badge's edge and the divider's mark: a decorative shape, not text. */
   accentEdge: string;
@@ -124,6 +129,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     accentInk: '#4C7A12',
     lilac: '#EFE4F5',
     logoPlate: '#FFFFFF',
+    artworkPlate: '#F7F7F7',
     accentEdge: '#5E8F17',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',
@@ -170,6 +176,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     accentInk: '#B8E86B',
     lilac: '#2A1836',
     logoPlate: '#FFFFFF',
+    artworkPlate: '#F7F7F7',
     accentEdge: '#7BA531',
     tagBg: '#FFD27A',
     tagFg: '#2A1033',
