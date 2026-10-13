@@ -21,6 +21,7 @@ import { liveNeeds } from './needs';
 import { HOME_RAIL_ORDER, anyCardNote, useHomeItems, useHomeListing } from './items';
 import { NEED_CARD_HEIGHT, NEED_CARD_WIDTH } from './ShopForNeed';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
+import { PriceTileSkeleton } from './PriceTile';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder } from './priceTiers';
 import { QUIETER_NOTE_HEIGHT } from './QuieterNote';
 import type { HomeItem } from './items';
@@ -32,9 +33,8 @@ const GRID_CARDS = 4;
 const GRID_CARDS_MAX = 8;
 /** How many brand tiles show before the edge of the screen. */
 const BRAND_TILES = 4;
-/** The chip of the price tabs: as tall as the real one, about as wide as "Under ₹30". */
-const CHIP_WIDTH = 96;
-const CHIP_HEIGHT = 36;
+/** The segmented control of the price tabs: as tall as the real one (a 40 dp option in a track with 4 of padding all round). */
+const TABS_HEIGHT = 48;
 
 // These mirror `HomeFeed`, `ProductRail` and the sections Home keeps above the rows: the same gaps, gutters and heights, so nothing
 // jumps when the real sections replace the grey ones.
@@ -44,7 +44,6 @@ const styles = StyleSheet.create({
   section: { gap: space[3] },
   pad: { paddingHorizontal: space[4] },
   row: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
-  tabs: { flexDirection: 'row', gap: space[2], paddingHorizontal: space[4] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
   sectionTitle: { justifyContent: 'center', paddingHorizontal: space[4] },
   note: { marginHorizontal: space[4] },
@@ -180,12 +179,14 @@ export function HomeSkeleton({
           <View style={styles.pad}>
             <RowTitleSkeleton title={t('home.smallPrices.title')} />
           </View>
-          <View style={styles.tabs}>
-            {PRICE_TIERS.map((tier) => (
-              <Skeleton key={tier} width={CHIP_WIDTH} height={CHIP_HEIGHT} rounded={radius.full} />
-            ))}
+          <View style={styles.pad}>
+            <Skeleton height={TABS_HEIGHT} rounded={radius.full} />
           </View>
-          {railCards(cheap)}
+          <StaticRow>
+            {Array.from({ length: Math.min(RAIL_CARDS, cheap.length) }, (_, card) => (
+              <PriceTileSkeleton key={card} reserveNote={anyCardNote(cheap)} />
+            ))}
+          </StaticRow>
         </View>
 
         <View style={styles.section}>

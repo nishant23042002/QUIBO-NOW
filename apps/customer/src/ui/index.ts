@@ -136,6 +136,7 @@ export {
   type SlotPickerProps,
 } from './SlotPicker';
 export { ShopCard, type ShopCardProps } from './ShopCard';
+export { SegmentedTabs, type SegmentedTabsOption, type SegmentedTabsProps } from './SegmentedTabs';
 export { Stepper, type StepperProps } from './Stepper';
 export { Text, type TextColor, type TextProps, type TextVariant } from './Text';
 export {

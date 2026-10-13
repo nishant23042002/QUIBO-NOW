@@ -22,12 +22,15 @@ export const RAIL_CARD_WIDTH = 128;
  * The ADD button and stepper of one item. It reads this item's count from the cart's store and nothing else, so adding or changing
  * the quantity redraws only this control, in the same frame as the press.
  */
-const ItemControl = memo(function ItemControl({
+export const ItemControl = memo(function ItemControl({
   item,
   compact,
+  accent = false,
 }: {
   item: HomeItem;
   compact: boolean;
+  /** ADD is filled with the accent colour, for the one row where price leads (`PriceTile`). */
+  accent?: boolean;
 }) {
   const { t } = useLanguage();
   const { setQuantity } = useCartActions();
@@ -40,6 +43,7 @@ const ItemControl = memo(function ItemControl({
         setQuantity(item.defaultPackId, next);
       }}
       compact={compact}
+      accent={accent}
       addLabel={t('home.rails.add')}
       addAriaLabel={t('home.rails.addNamed', { name: item.fullName })}
       decreaseLabel={t('home.rails.removeOneOf', { name: item.fullName })}

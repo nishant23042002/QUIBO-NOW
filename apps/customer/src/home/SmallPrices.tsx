@@ -2,22 +2,21 @@ import { formatRupees, money } from '@quibo/contracts';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { Chip, RowTitle, Text, space } from '@/ui';
-import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
+import { RowTitle, SegmentedTabs, Text, space } from '@/ui';
 import { anyCardNote, useHomeListing } from './items';
+import { PRICE_TILE_WIDTH, PriceTile } from './PriceTile';
 import { PRICE_TIERS, pickUnder } from './priceTiers';
 
 const styles = StyleSheet.create({
   section: { gap: space[3] },
   pad: { paddingHorizontal: space[4] },
-  tabs: { flexDirection: 'row', gap: space[2], paddingHorizontal: space[4] },
   row: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
 });
 
 /**
- * "Small prices": three tabs (under ₹30, ₹50, ₹100) over one swipeable row of the same compact cards as every other row, cheapest
- * first. The tabs are the same chips used elsewhere (the chosen one in lilac), the title is the same dotted-line title, and nothing in
- * it loads or moves: choosing a tab only swaps the row.
+ * "Small prices" (ADR 0047): three tiers (under ₹30, ₹50, ₹100) as one segmented control over one swipeable row of price-first cards,
+ * cheapest first. The title is the same dotted-line title the other rows have, and nothing in it loads or moves: choosing a tier only
+ * swaps the row.
  */
 export function SmallPrices() {
   const { t } = useLanguage();
@@ -33,17 +32,23 @@ export function SmallPrices() {
       <View style={styles.pad}>
         <RowTitle title={t('home.smallPrices.title')} />
       </View>
-      <View style={styles.tabs} role="radiogroup" aria-label={t('home.smallPrices.title')}>
-        {PRICE_TIERS.map((tier, index) => (
-          <Chip
-            key={tier}
-            label={t('home.smallPrices.under', { amount: amount(tier) })}
-            selected={index === chosen}
-            onPress={() => {
-              setChosen(index);
-            }}
-          />
-        ))}
+      <View style={styles.pad}>
+        <SegmentedTabs
+          label={t('home.smallPrices.title')}
+          options={PRICE_TIERS.map((tier) => ({
+            key: String(tier),
+            label: t('home.smallPrices.under', { amount: amount(tier) }),
+          }))}
+          selected={String(limit)}
+          onSelect={(key) => {
+            setChosen(
+              Math.max(
+                0,
+                PRICE_TIERS.findIndex((tier) => String(tier) === key),
+              ),
+            );
+          }}
+        />
       </View>
       {picked.length === 0 ? (
         <View style={styles.pad}>
@@ -55,7 +60,7 @@ export function SmallPrices() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.row}>
             {picked.map((item) => (
-              <ItemTile key={item.id} item={item} width={RAIL_CARD_WIDTH} reserveNote={note} />
+              <PriceTile key={item.id} item={item} width={PRICE_TILE_WIDTH} reserveNote={note} />
             ))}
           </View>
         </ScrollView>
