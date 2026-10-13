@@ -4,6 +4,7 @@ import {
   itemsInCategory,
   type Category,
   type CategoryGroup,
+  type SubCategory,
 } from './catalogueTree';
 
 /**
@@ -88,14 +89,21 @@ export function categoryRoute(target: Category): CategoryRoute {
 
 /**
  * The categories whose name contains what was typed (ignoring case and the space round it), in their order. Nothing typed keeps them
- * all. `nameOf` gives a category's name in the chosen language.
+ * all. `nameOf` gives a category's name in the chosen language. With `subNameOf`, a category also matches when one of its kinds does
+ * ("paneer" finds Dairy & Eggs).
  */
 export function categoriesMatching(
   categories: readonly Category[],
   query: string,
   nameOf: (entry: Category) => string,
+  subNameOf?: (sub: SubCategory) => string,
 ): Category[] {
   const wanted = query.trim().toLowerCase();
   if (wanted === '') return [...categories];
-  return categories.filter((entry) => nameOf(entry).toLowerCase().includes(wanted));
+  const has = (name: string) => name.toLowerCase().includes(wanted);
+  return categories.filter(
+    (entry) =>
+      has(nameOf(entry)) ||
+      (subNameOf !== undefined && entry.subs.some((sub) => has(subNameOf(sub)))),
+  );
 }

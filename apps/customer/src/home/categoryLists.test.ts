@@ -198,4 +198,15 @@ describe('finding a category by name', () => {
     ]);
     expect(categoriesMatching(CATEGORIES, 'zzz', nameOf)).toEqual([]);
   });
+
+  it('also finds a category by the name of one of its kinds, when asked to', () => {
+    const subNameOf = (sub: { id: string }) => sub.id;
+    expect(categoriesMatching(CATEGORIES, 'paneer', nameOf).length).toBe(0);
+    expect(
+      categoriesMatching(CATEGORIES, 'paneer', nameOf, subNameOf).map((entry) => entry.id),
+    ).toEqual(['dairyEggs']);
+    expect(
+      categoriesMatching(CATEGORIES, 'fruits', nameOf, subNameOf).map((entry) => entry.id),
+    ).toEqual(['vegFruit']);
+  });
 });

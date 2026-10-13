@@ -23,10 +23,12 @@ import {
 } from '@/ui';
 import { CART_ROOM } from './CartLayer';
 import { useCart } from './CartProvider';
+import { CategoryBlock, CategoryBlockSkeleton } from './CategoryBlock';
+import { tileRoute } from './categoryGroups';
 import { categoryRoute } from './categoryLists';
 import { CATEGORIES_LOAD_MS, CATEGORIES_POLICY } from './loading';
+import { useCategoryBrowse } from './useCategoryBrowse';
 import { useTabHeaderProps } from './useTabHeader';
-import { useDepartmentIndex } from './useDepartmentTiles';
 
 /**
  * The field to find a category by name appears only once the list is long enough to need one. The header's search is pinned and
@@ -42,6 +44,8 @@ const makeStyles = (c: ThemeColors) =>
     page: { flex: 1, backgroundColor: c.bg },
     content: { gap: space[6], paddingTop: space[4] },
     pad: { paddingHorizontal: space[4] },
+    // The categories of a group sit a little closer to each other than the groups do.
+    categories: { gap: space[5] },
     // The field sits on the page's colour with a hairline, so it reads as a field and not as a hole.
     field: { flexDirection: 'row', borderRadius: radius.full, borderWidth: 1, borderColor: c.line },
     group: { gap: space[3] },
@@ -51,13 +55,14 @@ const makeStyles = (c: ThemeColors) =>
 
 /**
  * Grey blocks in the shape of the page: the field when there is one, then each group's title as long as the real one with its dotted
- * line, then its tiles four across with the lines of name each real name will take, in the same groups, order and spacing as the
- * real tiles. The header is real and stays put, so the skeleton is only the page under it and nothing moves when the tiles arrive.
+ * line, each category's picture and name, and its kinds' tiles four across with the lines of name each real name will take, in the
+ * same groups, order and spacing as the real page. The header is real and stays put, so the skeleton is only the page under it and
+ * nothing moves when the tiles arrive.
  */
 function CategoriesSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
-  const { sections, total } = useDepartmentIndex();
+  const { groups, coming, total } = useCategoryBrowse();
 
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
@@ -67,17 +72,29 @@ function CategoriesSkeleton() {
             <Skeleton height={FIELD_HEIGHT} rounded={radius.full} />
           </View>
         ) : null}
-        {sections.map((section) => (
-          <View key={section.id} style={styles.group}>
+        {groups.map((group) => (
+          <View key={group.id} style={styles.group}>
             <View style={styles.pad}>
-              <RowTitleSkeleton title={section.title} />
+              <RowTitleSkeleton title={group.title} />
             </View>
-            <CategoryTileGridSkeleton
-              count={section.tiles.length}
-              names={section.tiles.map((tile) => tile.label)}
-            />
+            <View style={styles.categories}>
+              {group.categories.map((category) => (
+                <CategoryBlockSkeleton key={category.id} category={category} />
+              ))}
+            </View>
           </View>
         ))}
+        {coming !== undefined ? (
+          <View style={styles.group}>
+            <View style={styles.pad}>
+              <RowTitleSkeleton title={coming.title} />
+            </View>
+            <CategoryTileGridSkeleton
+              count={coming.tiles.length}
+              names={coming.tiles.map((tile) => tile.label)}
+            />
+          </View>
+        ) : null}
       </View>
     </SkeletonScope>
   );
@@ -88,7 +105,7 @@ function CategorySections() {
   const styles = useStyles(makeStyles);
   const router = useRouter();
   const [query, setQuery] = useState('');
-  const { sections, total } = useDepartmentIndex(query);
+  const { groups, coming, total } = useCategoryBrowse(query);
   const showField = total > FIND_FROM;
 
   if (total === 0) {
@@ -118,7 +135,7 @@ function CategorySections() {
           </View>
         </View>
       ) : null}
-      {sections.length === 0 ? (
+      {groups.length === 0 && coming === undefined ? (
         <View style={styles.empty}>
           <StatePanel
             icon="search"
@@ -131,21 +148,44 @@ function CategorySections() {
           />
         </View>
       ) : (
-        sections.map((section) => (
-          <View key={section.id} style={styles.group}>
-            <View style={styles.pad}>
-              <RowTitle title={section.title} />
+        <>
+          {groups.map((group) => (
+            <View key={group.id} style={styles.group}>
+              <View style={styles.pad}>
+                <RowTitle title={group.title} />
+              </View>
+              <View style={styles.categories}>
+                {group.categories.map((category) => (
+                  <CategoryBlock
+                    key={category.id}
+                    category={category}
+                    onOpen={() => {
+                      router.push(tileRoute({ kind: 'main', id: category.id }, ''));
+                    }}
+                    onOpenKind={(subId) => {
+                      router.push(tileRoute({ kind: 'main', id: category.id, sub: subId }, ''));
+                    }}
+                  />
+                ))}
+              </View>
             </View>
-            <CategoryTileGrid
-              tiles={section.tiles}
-              onPress={(index) => {
-                const tile = section.tiles[index];
-                // A live category opens its own screen; one that is coming opens its "Coming to Roha" page.
-                if (tile !== undefined) router.push(categoryRoute(tile.category));
-              }}
-            />
-          </View>
-        ))
+          ))}
+          {coming !== undefined ? (
+            <View style={styles.group}>
+              <View style={styles.pad}>
+                <RowTitle title={coming.title} />
+              </View>
+              <CategoryTileGrid
+                tiles={coming.tiles}
+                onPress={(index) => {
+                  const tile = coming.tiles[index];
+                  // One that is coming opens its "Coming to Roha" page, never an empty shelf.
+                  if (tile !== undefined) router.push(categoryRoute(tile.category));
+                }}
+              />
+            </View>
+          ) : null}
+        </>
       )}
       <BrandFooter />
     </View>
@@ -156,11 +196,12 @@ function CategorySections() {
 const alwaysQuiet = (): boolean => true;
 
 /**
- * The Categories tab: every category the town lists, in groups of tiles four across (what is stocked in its groups, then "Coming to
- * Roha"), under the same header Home wears (delivery promise, address, profile, and the search that stays pinned as the page
- * scrolls). A live category opens its own screen; one that is coming opens its "Coming to Roha" page. Once the list passes
- * `FIND_FROM` tiles a field to find one by name appears. It has its loading, offline and failed states like every other page, and
- * the header stays put through them.
+ * The Categories tab (ADR 0046): every category the town lists. Each stocked one is a title row (its picture, its name and "See
+ * all") with its kinds as tiles four across under it, in its group; then "Coming to Roha" as tiles. A title row opens the category's
+ * own screen, a kind opens it on that kind, and a category that is coming opens its "Coming to Roha" page. It sits under the same
+ * header Home wears (delivery promise, address, profile, and the search that stays pinned as the page scrolls). Once the list passes
+ * `FIND_FROM` categories a field to find one by its name or a kind's appears. It has its loading, offline and failed states like
+ * every other page, and the header stays put through them.
  */
 export function CategoriesView() {
   const header = useTabHeaderProps();
