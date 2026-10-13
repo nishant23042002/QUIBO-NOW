@@ -75,6 +75,14 @@ oil, sugar, tomato, potato). "Gym Freak" and "Baby care" from the mock stay on t
 
 ## Progress
 
+> Steps 1 to 5 below are the build log as it was written; the files and words they name have since been renamed (ADR 0046).
+
+- **One word, Layout B and a clean-up, 2026-10-13.** A department is a category everywhere: the words (`departments.*` is gone;
+  `catalogue.groups`, `railNames`, `soon`, `tags`, `categoriesTab` and `needs` hold them), the files (`categoryPictures.ts`,
+  `useCategoryTiles.ts`, `ShopByCategory.tsx`, `assets/categories/`), and the routes (`/coming/[id]`; `/departments` is removed). The
+  Categories tab is now Layout B: each stocked category is a row of tiles four across, its own picture tile first and then its
+  kinds, so `CategoryBlock.tsx` and its title row are deleted. The Coming page sends an unknown id to the category screen's own
+  not-found page, so its copy is deleted. The unused `empty` and `notFound` words are removed. ADR 0046 records it.
 - **One list, 2026-10-13 (steps 1 and 2 of the integration plan).** The Categories tab shows the live categories in their groups,
   then "Coming to Roha"; the All departments screen is gone. `/departments` redirects to the tab, and Home's "All departments"
   button, the rail's More and the back fallbacks go there. A field to find a category by name appears once the list passes
@@ -104,7 +112,7 @@ oil, sugar, tomato, potato). "Gym Freak" and "Baby care" from the mock stay on t
   departments have a picture. From here on a picture shows what the department will sell, not only what the mocks stock, and Atta, Rice & Dal and Oil, Ghee & Masala have been redone to
   match. Pictures are
   made in Gemini, then flattened to the `artworkPlate` colour (`#F7F7F7`), centred at 84% of the width and exported as 512 px WebP
-  into `assets/departments/<id>.webp`; `home/departmentPictures.ts` lists them and a department without one keeps its emoji.
+  into `assets/categories/<id>.webp`; `home/categoryPictures.ts` lists them and a category without one keeps its emoji.
   `CategoryTile` draws a picture on the plate (kept hairline, no department tint). Pictures are baked on the plate, so the dark
   theme shows a light square; a cut-out (transparent) version is parked for later if that is not wanted.
 - **Step 5 built (Shop for your need), 2026-10-13.** `ShopForNeed` (a swipeable row of tinted cards, above "Shop by department"; a card

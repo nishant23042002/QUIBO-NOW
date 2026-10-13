@@ -1,6 +1,7 @@
 # 0041. Categories have their own screen, and the catalogue is a two-section tree
 
-- **Status:** Accepted (Phase 1)
+- **Status:** Accepted (Phase 1). The Categories tab's layout (point 3) is amended by
+  [ADR 0046](0046-one-list-of-categories.md): each category is a row of tiles, its own first, then its kinds.
 - **Date:** 2026-10-13
 - **Source:** the owner, comparing the Categories tab and a category page with Blinkit's
 

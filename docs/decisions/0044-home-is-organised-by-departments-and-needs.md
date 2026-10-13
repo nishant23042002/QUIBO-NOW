@@ -1,6 +1,8 @@
 # 0044. Home is organised by departments and needs, and both are data
 
 - **Status:** Proposed (Phase 1, sub-phase 1l). Supersedes ADR 0043 for where the intents sit; the intents themselves stay.
+  Amended by [ADR 0046](0046-one-list-of-categories.md): a department is a category, and the All departments screen is the
+  Categories tab. Decisions 1 and 2 below read with that.
 - **Date:** 2026-10-13
 - **Source:** the owner, after the departments mock; see `docs/phases/PHASE-1-departments.md`
 
@@ -15,7 +17,7 @@ list that never stops, and a shopper thinks "I am hosting tonight", not "which d
    your need" shows cards for needs that cut across departments. "Shop by department" is a grid of eight, then All departments. The
    All departments screen indexes every department in groups.
 2. **A department and a need are data.** A department holds catalogue main categories; a need holds product kinds. Both are listed
-   per town (`home/departments.ts` today, a record with `town_id` once the API exists), so adding Gaming is a data change and not an
+   per town (`home/catalogueTree.ts` and `home/needs.ts` today, a record with `town_id` once the API exists), so adding Gaming is a data change and not an
    app release.
 3. **A department that is not stocked is "Soon".** It is listed with a Soon tag and opens a "Coming to Roha" page, never an empty
    shelf. A live department with nothing in stock reads Soon too.

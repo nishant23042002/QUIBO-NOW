@@ -1,8 +1,9 @@
 # 0031. "Shop by category" opens Home's rows
 
 - **Status:** Accepted (Phase 1). The tiles now open a category's own screen ([0041](./0041-categories-have-their-own-screen-and-a-two-section-tree.md)).
-  The section itself is replaced by "Shop by department" ([0044](./0044-home-is-organised-by-departments-and-needs.md)): the same four-across
-  tiles, now from the departments data, with the ones that are coming softened and tagged.
+  The section was rebuilt from the department list in [0044](./0044-home-is-organised-by-departments-and-needs.md), and
+  [0046](./0046-one-list-of-categories.md) gave it its word back: "Shop by category", the same four-across tiles with the ones that are
+  coming softened and tagged.
 - **Date:** 2026-10-12
 - **Source:** the owner's Home redesign, inspired by the quick-commerce apps and drawn in Quibo's own style
 
