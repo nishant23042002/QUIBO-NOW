@@ -129,5 +129,15 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - **Bug fixed: a second order could not be placed without reloading.** Checkout stays mounted in the tab group, so after an
     order its "placed" step and its order key carried over: "Place order" did nothing and a second order would have been taken for
     the first. The page now resets the flow, the payment choice and the key once it is left after an order. A test covers the flow.
+- **Step 3, Fresh today and Bestsellers: built, waiting for the owner's phone check.**
+  - Fresh today: a lettered title ("Fresh" with a "today" sticker that has the price badge's stamped edge), a soft pistachio wash,
+    round tabs (Under ₹30 as a stamped price, Veggies, Fruits, Dairy, New in) and the usual item cards of the chosen tab. Out of
+    stock items are left out and the Under tab is cheapest first. See all opens that tab's category, or the Categories tab for
+    Under and New in. "New in" uses a sample list of types until the API says what is new.
+  - Bestsellers: the town's live categories as three-across collage tiles (four pictures, "+N more", the name under). With no sales
+    data in Phase 1 the order is the town's own order; the API supplies real ranking later. A tile opens the category screen.
+  - New parts: `LetteredTitle`, `IconTabs` and `AccentWash` in `ui`; `fresh.ts` and `bestsellerTiles.ts` hold the rules, with tests.
+  - Test orders placed in the web preview while checking steps 1 and 2 were removed from its storage.
+  - Not done yet: the loading skeleton does not draw these two sections (that is the close-out step).
   - Checks: lint, typecheck, test (670 customer tests) and build pass. Looked at on the web preview in light: the strip, and the
     live card after placing a real mock order. The closed banner depends on the clock and has not been seen on screen.

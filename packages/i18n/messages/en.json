@@ -250,6 +250,22 @@
       "body": "Your order is set for {when}. You can change it any time.",
       "bodyNone": "Pick a window and we will bring it then.",
       "action": "Pick a window"
+    },
+    "fresh": {
+      "word": "Fresh",
+      "sticker": "today",
+      "sub": "Handpicked daily essentials from your kirana",
+      "label": "Fresh today",
+      "under": "Under {amount}",
+      "veg": "Veggies",
+      "fruit": "Fruits",
+      "dairy": "Dairy",
+      "new": "New in",
+      "empty": "Nothing in this one right now."
+    },
+    "bestsellers": {
+      "title": "Bestsellers",
+      "more": "+{count} more"
     }
   },
   "brands": {

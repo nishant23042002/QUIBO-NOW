@@ -5,7 +5,9 @@ import { useTheme } from '@/theme';
 import { BrandFooter, Icon, ProductRail, RowTitle, SeeAllButton, Text, space } from '@/ui';
 import { itemsInCategory, type Category } from './catalogueTree';
 import { matchesIntent, type IntentId } from './homeIntents';
+import { Bestsellers } from './Bestsellers';
 import { DailyEssentials } from './DailyEssentials';
+import { FreshToday } from './FreshToday';
 import { IntentChips } from './IntentChips';
 import { PaymentStrip } from './PaymentStrip';
 import { oneOfEachKind } from './product';
@@ -187,6 +189,8 @@ export const HomeFeed = memo(function HomeFeed({
       {strip}
       {chips}
       <View style={styles.rails}>
+        <FreshToday onSeeAll={onSeeAll} />
+        <Bestsellers onCategory={onSeeCategory} />
         <ShopByCategory />
         <DailyEssentials />
         {showSection('need') ? <ShopForNeed /> : null}
