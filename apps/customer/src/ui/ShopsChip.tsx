@@ -35,7 +35,7 @@ const makeStyles = (c: ThemeColors) =>
       paddingVertical: 3,
       paddingLeft: 3,
       paddingRight: space[2] + 2,
-      borderRadius: radius.full,
+      borderRadius: radius.md,
       backgroundColor: c.headerControl,
     },
     avatars: { flexDirection: 'row', alignItems: 'center' },

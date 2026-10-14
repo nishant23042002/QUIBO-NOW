@@ -27,7 +27,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       gap: space[2],
       paddingLeft: space[3],
-      borderRadius: radius.full,
+      borderRadius: radius.md,
       backgroundColor: c.surface,
     },
     input: {

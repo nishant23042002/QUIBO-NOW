@@ -81,7 +81,7 @@ const makeStyles = (c: ThemeColors) =>
       top: -10,
       left: space[3],
       paddingHorizontal: space[2],
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
       backgroundColor: c.accent,
     },
     pressed: { opacity: 0.8 },
@@ -100,7 +100,7 @@ const makeStyles = (c: ThemeColors) =>
       minWidth: 30,
       justifyContent: 'center',
       paddingHorizontal: space[1] + 2,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
       backgroundColor: c.action,
     },
   });

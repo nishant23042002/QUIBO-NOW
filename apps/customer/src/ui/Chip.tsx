@@ -13,7 +13,7 @@ export interface ChipProps {
   icon?: IconName;
   /**
    * `outline` (the usual): the chosen chip is lilac with a dark outline. `solid`: the chosen chip is filled with the action colour,
-   * and the others sit on the surface with a hairline; used for the quick filters under Home's banner.
+   * and the others sit on the surface with a hairline, with squarer corners; used for the quick filters under Home's banner.
    */
   tone?: 'outline' | 'solid';
 }
@@ -27,7 +27,7 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       gap: space[1],
       borderWidth: 1.5,
-      borderRadius: radius.full,
+      borderRadius: radius.md,
       borderColor: c.ctl,
       backgroundColor: c.surface,
     },
@@ -50,7 +50,7 @@ const makeStyles = (c: ThemeColors) =>
     pressed: { opacity: 0.8 },
   });
 
-/** A small pill for filters and tabs. It is 36 dp tall and has a 48 dp touch area. */
+/** A small, square-cornered button for filters and tabs. It is 36 dp tall and has a 48 dp touch area. */
 export function Chip({
   label,
   selected = false,

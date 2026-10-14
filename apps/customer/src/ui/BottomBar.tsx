@@ -101,7 +101,7 @@ const makeStyles = (c: ThemeColors) =>
     pill: {
       width: PILL_WIDTH,
       height: PILL_HEIGHT,
-      borderRadius: radius.full,
+      borderRadius: radius.md,
       alignItems: 'center',
       justifyContent: 'center',
     },

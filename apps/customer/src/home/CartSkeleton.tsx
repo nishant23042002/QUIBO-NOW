@@ -249,7 +249,7 @@ export function CartSkeleton({ shape, bottom }: { shape: CartShape; bottom: numb
           </View>
         </View>
         <View style={[styles.card, styles.tip]}>
-          <Skeleton height={48} rounded={radius.full} />
+          <Skeleton height={48} rounded={radius.md} />
           <View style={styles.intro}>
             <View style={styles.introText}>
               <SkeletonLine size="base" width="40%" />
@@ -261,7 +261,7 @@ export function CartSkeleton({ shape, bottom }: { shape: CartShape; bottom: numb
           </View>
           <View style={styles.chips}>
             {[64, 64, 64, 80].map((width, index) => (
-              <Skeleton key={index} width={width} height={36} rounded={radius.full} />
+              <Skeleton key={index} width={width} height={36} rounded={radius.md} />
             ))}
           </View>
         </View>

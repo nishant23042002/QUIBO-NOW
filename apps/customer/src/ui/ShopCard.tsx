@@ -33,7 +33,7 @@ const makeStyles = (c: ThemeColors) =>
       gap: space[1],
       paddingHorizontal: space[2],
       paddingVertical: 2,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
     },
     openPill: { backgroundColor: c.successBg },
     closedPill: { backgroundColor: c.muted },

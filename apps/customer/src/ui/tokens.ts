@@ -29,7 +29,7 @@ export const HEADER_HEIGHT = 56;
  */
 export const BOTTOM_BAR_HEIGHT = 64;
 
-export const radius = { sm: 6, md: 12, lg: 16, xl: 24, full: 9999 } as const;
+export const radius = { sm: 6, md: 8, lg: 12, xl: 16, full: 9999 } as const;
 
 /**
  * Font sizes in dp. They grow with the phone's text-size setting, and nothing is below 14:

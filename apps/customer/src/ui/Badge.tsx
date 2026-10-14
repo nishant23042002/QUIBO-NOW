@@ -36,7 +36,7 @@ const makeStyles = (c: ThemeColors) =>
       alignSelf: 'flex-start',
       paddingHorizontal: space[3],
       paddingVertical: 2,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
     },
     placeholder: { width: 56, height: 20, borderRadius: radius.full, backgroundColor: c.line },
   });

@@ -33,7 +33,7 @@ const makeStyles = (c: ThemeColors) =>
       left: CORNER,
       paddingHorizontal: space[2],
       paddingVertical: 1,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
     },
     openTag: { backgroundColor: c.accent },
     closedTag: {

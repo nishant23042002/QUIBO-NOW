@@ -23,7 +23,7 @@ const makeStyles = (c: ThemeColors) =>
     track: {
       flexDirection: 'row',
       padding: PAD,
-      borderRadius: radius.full,
+      borderRadius: radius.md,
       backgroundColor: c.muted,
     },
     // The white pill under the chosen option, which slides to the other when the choice changes.
@@ -32,7 +32,7 @@ const makeStyles = (c: ThemeColors) =>
       top: PAD,
       bottom: PAD,
       left: PAD,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
       backgroundColor: c.surface,
       borderWidth: 1,
       borderColor: c.line,

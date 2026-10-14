@@ -28,7 +28,7 @@ const makeStyles = (c: ThemeColors) =>
       flexDirection: 'row',
       gap: space[1] / 2,
       padding: PAD,
-      borderRadius: radius.full,
+      borderRadius: radius.md,
       backgroundColor: c.lilac,
     },
     option: {
@@ -38,7 +38,7 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[2],
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
       borderWidth: 1,
       borderColor: 'transparent',
     },
@@ -48,7 +48,7 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /**
- * A few options in one rounded track, like a segmented control: the chosen one a white pill with a hairline, the others bare on the
+ * A few options in one square-cornered track, like a segmented control: the chosen one raised with a hairline, the others bare on the
  * lilac. For choices that swap one row of content in place (the price tiers of "Small prices"), where a row of separate chips would
  * read as filters. Every option is 40 dp tall inside a 48 dp track.
  */

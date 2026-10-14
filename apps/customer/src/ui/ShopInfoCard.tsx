@@ -56,7 +56,7 @@ const makeStyles = (c: ThemeColors) =>
       maxWidth: SHOP_INFO_CARD_WIDTH - SHOP_INFO_CARD_INSET * 2 - CORNER * 2,
       paddingHorizontal: space[2],
       paddingVertical: 1,
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
     },
     openTag: { backgroundColor: c.accent },
     closedTag: {

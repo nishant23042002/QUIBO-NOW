@@ -71,7 +71,7 @@ function NeedSkeleton({ need }: { need: Need }) {
       <View style={styles.content}>
         <View style={styles.chips}>
           {Array.from({ length: Math.max(2, sections.length + 1) }, (_, index) => (
-            <Skeleton key={index} width={CHIP_WIDTH} height={CHIP_HEIGHT} rounded={radius.full} />
+            <Skeleton key={index} width={CHIP_WIDTH} height={CHIP_HEIGHT} rounded={radius.md} />
           ))}
         </View>
         <View style={styles.shelves}>

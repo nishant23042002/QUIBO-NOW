@@ -46,7 +46,7 @@ const makeStyles = (c: ThemeColors) =>
     // The rows of a group's categories sit a little closer to each other than the groups do.
     categories: { gap: space[4] },
     // The field sits on the page's colour with a hairline, so it reads as a field and not as a hole.
-    field: { flexDirection: 'row', borderRadius: radius.full, borderWidth: 1, borderColor: c.line },
+    field: { flexDirection: 'row', borderRadius: radius.md, borderWidth: 1, borderColor: c.line },
     group: { gap: space[3] },
     skeleton: { flex: 1, overflow: 'hidden' },
     empty: { minHeight: 360 },
@@ -68,7 +68,7 @@ function CategoriesSkeleton() {
       <View style={styles.content}>
         {total > FIND_FROM ? (
           <View style={styles.pad}>
-            <Skeleton height={FIELD_HEIGHT} rounded={radius.full} />
+            <Skeleton height={FIELD_HEIGHT} rounded={radius.md} />
           </View>
         ) : null}
         {groups.map((group) => (

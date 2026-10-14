@@ -126,7 +126,7 @@ const makeStyles = (c: ThemeColors) =>
     actionBox: { alignItems: 'center', justifyContent: 'center' },
     halo: {
       ...FILL,
-      borderRadius: radius.full,
+      borderRadius: radius.md,
       borderWidth: 2,
       borderColor: c.accent,
     },
@@ -134,7 +134,7 @@ const makeStyles = (c: ThemeColors) =>
       minHeight: space[10],
       justifyContent: 'center',
       paddingHorizontal: space[4],
-      borderRadius: radius.full,
+      borderRadius: radius.md,
       overflow: 'hidden',
       // A little deeper than the bag's pistachio, so the white band of light stands out against it.
       backgroundColor: c.accentPressed,

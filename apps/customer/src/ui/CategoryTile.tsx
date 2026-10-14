@@ -62,7 +62,7 @@ const makeStyles = (c: ThemeColors) =>
     tagPill: {
       maxWidth: '100%',
       paddingHorizontal: space[2],
-      borderRadius: radius.full,
+      borderRadius: radius.sm,
       borderWidth: 1,
       borderColor: c.line,
       backgroundColor: c.surface,

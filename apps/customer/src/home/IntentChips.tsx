@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import { Chip, Icon, space } from '@/ui';
+import { Chip, Icon, radius, space } from '@/ui';
 import type { IntentId } from './homeIntents';
 import { useHomeIntents } from './useHomeIntents';
 
@@ -9,13 +9,13 @@ const BADGE = 40;
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     row: { flexDirection: 'row', alignItems: 'center', gap: space[2], paddingHorizontal: space[4] },
-    // A small sliders badge at the start of the row: the chips after it are filters, not places to go.
+    // A small, squared sliders badge at the start of the row: the chips after it are filters, not places to go.
     badge: {
       width: BADGE,
       height: BADGE,
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: BADGE / 2,
+      borderRadius: radius.md,
       backgroundColor: c.lilac,
     },
   });
