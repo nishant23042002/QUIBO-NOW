@@ -15,6 +15,7 @@ import {
   radius,
   space,
 } from '@/ui';
+import { DailyEssentialsSkeleton } from './DailyEssentials';
 import { FEATURED_CARD_WIDTH, useFeaturedCardHeight } from './Featured';
 import { FEATURED } from './featuredPicks';
 import { liveNeeds } from './needs';
@@ -133,6 +134,16 @@ export function HomeSkeleton({
   return (
     <SkeletonScope label={label}>
       <View style={styles.rails}>
+        <View style={styles.section}>
+          <View style={styles.pad}>
+            <RowTitleSkeleton title={t('home.shopByCategory.title')} />
+          </View>
+          <CategoryTileGridSkeleton count={tiles.length} names={tiles.map((tile) => tile.label)} />
+          <SeeAllButtonSkeleton />
+        </View>
+
+        <DailyEssentialsSkeleton />
+
         {needs.length > 0 ? (
           <View style={styles.section}>
             <View style={styles.pad}>
@@ -153,34 +164,10 @@ export function HomeSkeleton({
 
         <View style={styles.section}>
           <View style={styles.pad}>
-            <RowTitleSkeleton title={t('home.shopByCategory.title')} />
-          </View>
-          <CategoryTileGridSkeleton count={tiles.length} names={tiles.map((tile) => tile.label)} />
-          <SeeAllButtonSkeleton />
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.pad}>
-            <RowTitleSkeleton title={t('home.shopByBrand.title')} />
-          </View>
-          <StaticRow>
-            {Array.from({ length: BRAND_TILES }, (_, tile) => (
-              <Skeleton
-                key={tile}
-                width={BRAND_TILE_WIDTH}
-                height={BRAND_TILE_HEIGHT + space[2] + brandNameLine}
-                rounded={radius.md}
-              />
-            ))}
-          </StaticRow>
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.pad}>
             <RowTitleSkeleton title={t('home.smallPrices.title')} />
           </View>
           <View style={styles.pad}>
-            <Skeleton height={TABS_HEIGHT} rounded={radius.full} />
+            <Skeleton height={TABS_HEIGHT} rounded={radius.md} />
           </View>
           <StaticRow>
             {Array.from({ length: Math.min(RAIL_CARDS, cheap.length) }, (_, card) => (
@@ -199,6 +186,22 @@ export function HomeSkeleton({
                 key={pick.title}
                 width={FEATURED_CARD_WIDTH}
                 height={featuredHeight}
+                rounded={radius.md}
+              />
+            ))}
+          </StaticRow>
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.pad}>
+            <RowTitleSkeleton title={t('home.shopByBrand.title')} />
+          </View>
+          <StaticRow>
+            {Array.from({ length: BRAND_TILES }, (_, tile) => (
+              <Skeleton
+                key={tile}
+                width={BRAND_TILE_WIDTH}
+                height={BRAND_TILE_HEIGHT + space[2] + brandNameLine}
                 rounded={radius.md}
               />
             ))}

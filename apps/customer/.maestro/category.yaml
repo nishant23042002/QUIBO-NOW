@@ -27,8 +27,16 @@ appId: host.exp.exponent
 - tapOn: 'All'
 - assertVisible: 'Shop by category'
 
-# Shop for your need: a card opens its own page with a shelf for each thing it gathers.
-- assertVisible: 'Shop for your need'
+# Daily essentials (ADR 0048): a tab swaps the grid, and ADD in a tile turns into a stepper in place.
+- assertVisible: 'Daily essentials'
+- tapOn: 'Cooking'
+- assertVisible: 'Add Potato'
+- tapOn: 'Evening'
+- assertVisible: 'Add Lay.s Potato chips'
+
+# Shop for your need: a card opens its own page with a shelf for each thing it gathers. It is below the first screen now.
+- scrollUntilVisible:
+    element: 'Shop for your need'
 - tapOn: 'Tea Time.*'
 - assertVisible: 'Picked from shops in Roha'
 - assertVisible: 'Amul Toned milk.*'

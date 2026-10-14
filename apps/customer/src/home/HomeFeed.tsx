@@ -5,6 +5,7 @@ import { useTheme } from '@/theme';
 import { BrandFooter, Icon, ProductRail, RowTitle, SeeAllButton, Text, space } from '@/ui';
 import { itemsInCategory, type Category } from './catalogueTree';
 import { matchesIntent, type IntentId } from './homeIntents';
+import { DailyEssentials } from './DailyEssentials';
 import { IntentChips } from './IntentChips';
 import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
@@ -172,11 +173,12 @@ export const HomeFeed = memo(function HomeFeed({
     <View>
       {chips}
       <View style={styles.rails}>
-        <ShopForNeed />
         <ShopByCategory />
-        <ShopByBrand />
+        <DailyEssentials />
+        <ShopForNeed />
         <SmallPrices />
         <Featured onCategory={onSeeAll} />
+        <ShopByBrand />
         {HOME_RAIL_ORDER.map((key) => {
           const row = listing.filter((item) => item.category === key);
           // Cards in a row stay one height: room for the low-stock line only when one of them has it.
