@@ -70,6 +70,7 @@ import {
 } from './product';
 import { useProductDetails } from './productDetails';
 import { useShop } from './sampleShops';
+import { noteViewed } from './useViewed';
 
 /** How long the loading skeleton shows when the page opens, as real data would take to arrive. */
 const LOAD_MS = 150;
@@ -264,6 +265,10 @@ export function ProductView({
   const scrollRef = useRef<ScrollView>(null);
   const othersAt = useRef(0);
   const shop = useShop(item.shop);
+  // Opening a product is what "Continue browsing" on Home remembers (only its id).
+  useEffect(() => {
+    noteViewed(item.id);
+  }, [item.id]);
   const details = useProductDetails(item, {
     id: item.shop,
     name: item.shopName,

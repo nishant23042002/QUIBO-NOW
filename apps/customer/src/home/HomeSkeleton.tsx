@@ -23,6 +23,7 @@ import { HOME_RAIL_ORDER, anyCardNote, useHomeItems, useHomeListing } from './it
 import { NEED_CARD_HEIGHT } from './ShopForNeed';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { PriceTileSkeleton } from './PriceTile';
+import { TRENDING_MOST } from './trendingRules';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
 import { QUIETER_NOTE_HEIGHT } from './QuieterNote';
 import type { HomeItem } from './items';
@@ -37,6 +38,9 @@ const GRID_CARDS_MAX = 8;
 const BRAND_TILES = 4;
 /** A price store's button: the amount over "and under", in a box with its border. */
 const STORE_HEIGHT = 68;
+/** The row of text tabs of Trending in Roha, and the chosen brand's store (its head, a row of cards and its button). */
+const TAB_ROW_HEIGHT = 48;
+const BRAND_STORE_HEIGHT = 380;
 
 // These mirror `HomeFeed`, `ProductRail` and the sections Home keeps above the rows: the same gaps, gutters and heights, so nothing
 // jumps when the real sections replace the grey ones.
@@ -220,6 +224,21 @@ export function HomeSkeleton({
 
         <View style={styles.section}>
           <View style={styles.pad}>
+            <RowTitleSkeleton title={t('home.trending.title')} />
+          </View>
+          <View style={styles.pad}>
+            <Skeleton height={TAB_ROW_HEIGHT} rounded={radius.md} />
+          </View>
+          <View style={styles.grid}>
+            {Array.from({ length: Math.min(4, TRENDING_MOST) }, (_, card) => (
+              <ProductCardSkeleton key={card} width={gridCardWidth(screen)} />
+            ))}
+          </View>
+          <SeeAllButtonSkeleton />
+        </View>
+
+        <View style={styles.section}>
+          <View style={styles.pad}>
             <RowTitleSkeleton title={t('home.featured.title')} />
           </View>
           <StaticRow>
@@ -248,6 +267,10 @@ export function HomeSkeleton({
               />
             ))}
           </StaticRow>
+          {/* The chosen brand's store under the row. */}
+          <View style={styles.pad}>
+            <Skeleton height={BRAND_STORE_HEIGHT} rounded={radius.xl} />
+          </View>
         </View>
 
         {HOME_RAIL_ORDER.map((key) => (

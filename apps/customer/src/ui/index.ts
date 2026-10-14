@@ -21,6 +21,7 @@ export { HomeHeader, type HeroControls, type HomeHeaderProps } from './HomeHeade
 export { AccentWash } from './AccentWash';
 export { GlassPanel, type GlassPanelProps } from './GlassPanel';
 export { PlumCard } from './PlumCard';
+export { UnderlineTabs, type UnderlineTab } from './UnderlineTabs';
 export { IconTabs, type IconTab, type IconTabsProps } from './IconTabs';
 export { LetteredTitle, type LetteredTitleProps } from './LetteredTitle';
 export { LanguageChip, type LanguageChipProps } from './LanguageChip';

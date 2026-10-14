@@ -15,6 +15,9 @@ import {
 } from '@/ui';
 import { itemsInCategory, type Category } from './catalogueTree';
 import { Bestsellers } from './Bestsellers';
+import { BrandStores } from './BrandStores';
+import { BuyAgain } from './BuyAgain';
+import { ContinueBrowsing } from './ContinueBrowsing';
 import { DailyEssentials } from './DailyEssentials';
 import { FreshToday } from './FreshToday';
 import { HomeCategories } from './HomeCategories';
@@ -28,7 +31,7 @@ import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
 import { Featured } from './Featured';
 import { QuieterNote } from './QuieterNote';
-import { ShopByBrand } from './ShopByBrand';
+import { Trending } from './Trending';
 import { ShopForNeed } from './ShopForNeed';
 import { SmallPrices } from './SmallPrices';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
@@ -201,6 +204,7 @@ export const HomeFeed = memo(function HomeFeed({
         // keeps a wash of its own under it.
         <>
           <KnowYourShop lead={strip('night')} />
+          <BuyAgain />
           <View style={[styles.freshBlock, styles.rounded]}>
             <AccentWash />
             <FreshToday onSeeAll={onSeeAll} />
@@ -215,12 +219,14 @@ export const HomeFeed = memo(function HomeFeed({
       )}
       <View style={[styles.rails, styles.after]}>
         <Bestsellers onCategory={onSeeCategory} />
+        <ContinueBrowsing />
         <HomeCategories />
         <DailyEssentials />
         <ShopForNeed />
         <SmallPrices />
+        <Trending />
         <Featured onCategory={onSeeAll} />
-        <ShopByBrand />
+        <BrandStores />
         {HOME_RAIL_ORDER.map((key) => {
           const row = listing.filter((item) => item.category === key);
           // Cards in a row stay one height: room for the low-stock line only when one of them has it.

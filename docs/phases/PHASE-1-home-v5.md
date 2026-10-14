@@ -209,3 +209,21 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - Checks: lint, typecheck, test (701 customer tests) and build pass. Looked at on the web preview at 375 px: the tile grid (tick,
     add, an in-cart tile with its stepper), the stores and chips (the Dairy filter), and the routine cards. Not seen on a real phone,
     at 200% text, or in Hindi and Marathi. The loading skeleton mirrors the three sections.
+- **Step 7, buy again and more: built, waiting for the owner's phone check.**
+  - Buy again: a lettered title on the pistachio wash, above Fresh today, only for a customer who has orders on the phone. Two
+    views, "Last order" and "Most ordered" (a pack counts once per order; cancelled, rejected and undelivered orders do not count).
+    The cards are today's items at today's prices; an item that is out of stock is named under the row, and "Add 3 items · ₹192"
+    puts one of each thing that can be bought into the cart (half a kilogram for loose items), skipping what is in it already.
+  - Continue browsing: the products the shopper opened last (the product page notes only the product's id, kept on the phone as
+    `quibo.viewed`, newest 8), after Bestsellers, with a Clear button. Out-of-stock and gone items are left out. Nothing shows until
+    something has been opened.
+  - Trending in Roha: a two-column grid with its own tabs (All items, Offers, Under ₹50, Veg) on a new `UnderlineTabs`, one of each
+    kind, up to eight cards, then See all (the Categories tab). The tabs are views of the same items, not categories.
+  - Brand stores: Shop by brand keeps its row of brand tiles; a tile now opens that brand's store under the row (its name, how many
+    items, up to eight cards) and the store's button opens the brand's own page.
+  - Logic with tests: `againRules.ts`, `viewed.ts`, `trendingRules.ts`. New: `BuyAgain`, `ContinueBrowsing`, `Trending`,
+    `BrandStores`, `useViewed`, `UnderlineTabs`. `ShopByBrand` was replaced by `BrandStores`.
+  - Checks: lint, typecheck, test and build pass. Looked at on the web preview at 375 px with a saved order injected into the
+    preview's storage (Buy again at today's prices), a product opened (Continue browsing), Trending and the brand store. The
+    test data was removed. Not seen on a real phone, at 200% text, or in Hindi and Marathi. The loading skeleton draws Trending and
+    the brand store; Buy again and Continue browsing are not drawn in it (the close-out step).

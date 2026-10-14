@@ -254,9 +254,13 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 ## Shop by brand, on Home
 
-| Key                      | English       | Hindi (draft)           | Marathi (draft)      | OK or change to |
-| ------------------------ | ------------- | ----------------------- | -------------------- | --------------- |
-| `home.shopByBrand.title` | Shop by brand | ब्रांड के अनुसार खरीदें | ब्रँडनुसार खरेदी करा |                 |
+| Key                        | English                  | Hindi (draft)              | Marathi (draft)      | OK or change to |
+| -------------------------- | ------------------------ | -------------------------- | -------------------- | --------------- |
+| `home.shopByBrand.title`   | Shop by brand            | ब्रांड के अनुसार खरीदें    | ब्रँडनुसार खरेदी करा |                 |
+| `home.shopByBrand.sub`     | Open a brand store       | किसी ब्रांड का स्टोर खोलें | ब्रँडचे स्टोअर उघडा  |                 |
+| `home.shopByBrand.count`   | {count} items            | {count} चीज़ें             | {count} वस्तू        |                 |
+| `home.shopByBrand.explore` | Explore the {name} store | {name} स्टोर देखें         | {name} स्टोअर पहा    |                 |
+| `home.shopByBrand.open`    | Open its store           | इसका स्टोर खोलें           | त्याचे स्टोअर उघडा   |                 |
 
 ## Small prices, on Home
 
@@ -481,4 +485,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.categoryEmpty.title` | Nothing here right now          | अभी यहाँ कुछ नहीं है                | सध्या इथे काही नाही                   |                 |
 | `home.categoryEmpty.body`  | Check back soon, or choose All. | थोड़ी देर बाद देखें या "सभी" चुनें। | थोड्या वेळाने पहा किंवा "सर्व" निवडा. |                 |
 
-363 lines in all.
+367 lines in all.

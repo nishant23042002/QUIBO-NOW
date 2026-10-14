@@ -14,28 +14,39 @@ export interface BrandTileProps {
   /** What a screen reader says, for example "Amul. Explore all products". */
   label: string;
   onPress: () => void;
+  /** The brand whose store is open below the row: its tile gets a dark edge. */
+  selected?: boolean;
 }
 
 /** How wide a brand tile is, so a row of them keeps its rhythm and the loading skeleton can draw the same. */
 export const BRAND_TILE_WIDTH = 88;
 export const BRAND_TILE_HEIGHT = 72;
 
-const makeStyles = (_colors: ThemeColors) =>
+const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     tile: { width: BRAND_TILE_WIDTH, alignItems: 'center', gap: space[2] },
     pressed: { opacity: 0.8 },
+    selected: { borderBottomWidth: 3, borderBottomColor: c.action, paddingBottom: space[1] },
   });
 
 /** A brand as a tile with its logo (or letter) on a white plate and its name under it: one of a row of brands. */
-export function BrandTile({ brandId, mark, name, label, onPress }: BrandTileProps) {
+export function BrandTile({
+  brandId,
+  mark,
+  name,
+  label,
+  onPress,
+  selected = false,
+}: BrandTileProps) {
   const styles = useStyles(makeStyles);
 
   return (
     <Pressable
       role="button"
       aria-label={label}
+      aria-pressed={selected}
       onPress={onPress}
-      style={({ pressed }) => [styles.tile, pressed && styles.pressed]}
+      style={({ pressed }) => [styles.tile, selected && styles.selected, pressed && styles.pressed]}
     >
       <BrandMark
         brandId={brandId}

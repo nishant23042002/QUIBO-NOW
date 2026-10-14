@@ -15,10 +15,11 @@ appId: host.exp.exponent
 - tapOn: 'Skip sign-in (testing)'
 - assertVisible: 'Estimated delivery|Scheduled delivery'
 
-# Shop by brand on Home opens the brand's own page.
+# Shop by brand on Home: a brand's tile opens its store under the row, and the store's button opens the brand's own page.
 - scrollUntilVisible:
     element: 'Shop by brand'
-- tapOn: 'Amul\. Explore all products'
+- tapOn: 'Amul\. Open its store'
+- tapOn: 'Explore the Amul store'
 - assertVisible: '3 products'
 - assertVisible: 'Sold by 3 shops in Roha'
 - assertVisible: 'Amul Toned milk.*'

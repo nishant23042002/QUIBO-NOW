@@ -180,7 +180,11 @@
       "sub": "Ready-made baskets for the moments in your day"
     },
     "shopByBrand": {
-      "title": "Shop by brand"
+      "title": "Shop by brand",
+      "sub": "Open a brand store",
+      "count": "{count} items",
+      "explore": "Explore the {name} store",
+      "open": "Open its store"
     },
     "smallPrices": {
       "title": "Small prices",
@@ -342,6 +346,27 @@
     "comingSoon": {
       "title": "Coming soon to Roha",
       "sub": "Tap Notify me and we will tell you when a category arrives"
+    },
+    "again": {
+      "title": "Buy again",
+      "word": "Buy",
+      "sticker": "again",
+      "sub": "From your last orders, ready to add in one tap",
+      "last": "Last order",
+      "most": "Most ordered",
+      "outOfStock": "Out of stock today: {names}"
+    },
+    "continue": {
+      "title": "Continue browsing",
+      "clear": "Clear"
+    },
+    "trending": {
+      "title": "Trending in Roha",
+      "all": "All items",
+      "offers": "Offers",
+      "under": "Under {amount}",
+      "veg": "Veg",
+      "empty": "Nothing like this right now. Try another tab."
     }
   },
   "brands": {
