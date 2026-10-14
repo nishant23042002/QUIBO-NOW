@@ -27,12 +27,14 @@ appId: host.exp.exponent
 - tapOn: 'All'
 - assertVisible: 'Shop by category'
 
-# Daily essentials (ADR 0048): a tab swaps the grid, and ADD in a tile turns into a stepper in place.
+# Daily essentials (ADR 0048): a tab swaps the list, a row ticks, and the bar adds what is ticked.
 - assertVisible: 'Daily essentials'
 - tapOn: 'Cooking'
-- assertVisible: 'Add Potato'
+- assertVisible: 'Potato\. .*'
 - tapOn: 'Evening'
-- assertVisible: 'Add Lay.s Potato chips'
+- assertVisible: 'Lay.s Potato chips\. .*'
+- tapOn: 'Lay.s Potato chips\. .*'
+- assertVisible: 'Add 1 item.*'
 
 # Shop for your need: a card opens its own page with a shelf for each thing it gathers. It is below the first screen now.
 - scrollUntilVisible:

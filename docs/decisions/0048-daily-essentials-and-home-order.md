@@ -14,11 +14,19 @@ order the everyday things quickly, without searching or scrolling to a product.
 
 ## Decision
 
-1. **A new section, "Daily essentials".** Under the category tiles: one segmented control (Morning, Cooking, Evening) over a
-   two-column grid of up to six tiles. Each tile has a small picture, the name and pack, the price, and its own ADD that turns into the
-   stepper in place. The tab that suits the time of day opens (morning before 11, cooking until 5 in the evening, then evening). The
-   picture and words open the product page; the control writes to the cart through the same `ItemControl` every card uses, so the count
-   shows everywhere the item shows.
+1. **A new section, "Daily essentials".** Under the category tiles: one segmented control (Morning, Cooking, Evening) over one card of
+   up to six tickable rows, and under it a bar with "Select all" and "Add 3 items · ₹112". A shopper ticks the usual and adds the
+   basket once (variant D of `docs/design/essentials-variants.html`). A row is a box, a 44 dp picture, the name on one line (cut
+   with an ellipsis when long) over the pack and, when stock is short, "· 3 left", and at the end the price over its struck MRP.
+   Every row is the same height. A tap anywhere on the row ticks it (the whole row is the target); a press and hold opens the
+   product. "Add" puts one piece of each ticked item in the cart (half a kilogram for a loose item) through the same cart action
+   every card uses, then clears the ticks. An item that is already in the cart is not tickable: its row gets a soft green wash, a
+   tick and the usual stepper, so it can be changed or taken out right there (minus at 1 takes it out and the row is tickable again);
+   a tap on its words opens the product. "Select all" and the bar count only what is not in the cart, and the bar is hidden when
+   everything is. Changing tab clears the ticks. It
+   opens on the tab that suits the time of day (morning before 11, cooking until 5 in the evening, then evening). Nothing else is
+   added to a row: not a "Save" label (the struck MRP says it), not the price per unit (it is on the product page), not the delivery
+   time (the same for every row), not "2 sizes".
 2. **The list is data, not code.** `ESSENTIAL_TABS` lists item ids per tab until the mock API supplies it; in live phases it is a
    town-level table with `town_id`, so each town sets its own. An id that is not stocked or is out of stock is left out, a tab with
    nothing is left out, and with no tab left the section is not shown.

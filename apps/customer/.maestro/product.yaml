@@ -16,8 +16,9 @@ appId: host.exp.exponent
 - assertVisible: 'Delivering in.*|Arriving.*'
 
 # Home lists one of each kind: toned milk once, as Amul's. The other brands are on the product page.
-- assertVisible: 'Add Amul Toned milk'
-- assertNotVisible: 'Add Gokul Toned milk'
+- tapOn: 'Morning'
+- assertVisible: 'Amul Toned milk\. 500 ml.*'
+- assertNotVisible: 'Gokul Toned milk.*'
 
 # Open the milk from its card on Home.
 - tapOn: 'Amul Toned milk\. 500 ml.*'

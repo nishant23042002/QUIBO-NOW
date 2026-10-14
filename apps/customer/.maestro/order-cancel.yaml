@@ -14,7 +14,10 @@ appId: host.exp.exponent
 - tapOn: 'Skip sign-in (testing)'
 - assertVisible: 'Delivering in.*|Arriving.*'
 
-- tapOn: 'Add Amul Toned milk'
+# Daily essentials (ADR 0048): tick the milk, then add the ticked items from the bar under the list.
+- tapOn: 'Morning'
+- tapOn: 'Amul Toned milk\. 500 ml.*'
+- tapOn: 'Add 1 item.*'
 - tapOn: 'Cart, .*'
 - tapOn: 'Continue'
 

@@ -14,8 +14,10 @@ appId: host.exp.exponent
 - tapOn: 'Skip sign-in (testing)'
 - assertVisible: 'Delivering in.*|Arriving.*'
 
-# Add two things from Home. The first card is the milk.
-- tapOn: 'Add Amul Toned milk'
+# Add the milk from Daily essentials: tick it and add it. The row then has its stepper, so one more is a tap on plus.
+- tapOn: 'Morning'
+- tapOn: 'Amul Toned milk\. 500 ml.*'
+- tapOn: 'Add 1 item.*'
 - assertVisible: 'Remove one Amul Toned milk'
 - tapOn: 'Add one Amul Toned milk'
 - assertVisible: 'Cart, 2 items'

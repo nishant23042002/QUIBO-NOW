@@ -30,6 +30,7 @@ export {
   WEIGHT_RULE,
   countRule,
   formatQuantity,
+  stepQuantity,
   type QuantityRule,
 } from './logic/quantity';
 export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';

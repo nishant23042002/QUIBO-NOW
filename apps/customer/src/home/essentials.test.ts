@@ -4,6 +4,8 @@ import {
   ESSENTIALS_PER_TAB,
   ESSENTIAL_TABS,
   defaultEssentialTab,
+  essentialBasket,
+  essentialLeft,
   liveEssentialTabs,
   openingTab,
 } from './essentials';
@@ -90,5 +92,31 @@ describe('openingTab', () => {
     const onlyCooking = liveEssentialTabs([item('tomato')]);
     expect(openingTab(onlyCooking, 8)?.tab.id).toBe('cooking');
     expect(openingTab([], 8)).toBeUndefined();
+  });
+});
+
+describe('essentialLeft', () => {
+  it('is the count only when stock is short', () => {
+    expect(essentialLeft({ stock: { kind: 'low', label: 'Only 3 left' }, maxQuantity: 3 })).toBe(3);
+    expect(essentialLeft({ maxQuantity: 40 })).toBeUndefined();
+    expect(essentialLeft({})).toBeUndefined();
+  });
+});
+
+describe('essentialBasket', () => {
+  const milk = { id: 'milk', price: 2900 } as never;
+  const tomato = { id: 'tomato', price: 4200, loose: true } as never;
+  const curd = { id: 'curd', price: 3500 } as never;
+
+  it('counts the ticked items and one step of each, half a kilogram for a loose one', () => {
+    expect(essentialBasket([milk, tomato, curd], new Set(['milk', 'tomato']))).toEqual({
+      count: 2,
+      paise: 2900 + 2100,
+    });
+  });
+
+  it('is nothing when nothing is ticked, and ignores ticks that are not in the list', () => {
+    expect(essentialBasket([milk, curd], new Set())).toEqual({ count: 0, paise: 0 });
+    expect(essentialBasket([milk], new Set(['gone']))).toEqual({ count: 0, paise: 0 });
   });
 });

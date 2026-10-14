@@ -1,0 +1,1132 @@
+<title>Daily Essentials Variants</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  /* Layout concept: five phone-width frames of the same section, side by side, each with what it shows, its height and its trade-off. */
+  :root {
+    --bg: #f6f1f7;
+    --surface: #ffffff;
+    --ink: #2a1033;
+    --muted: #675671;
+    --line: #e1d6e7;
+    --soft: #efe4f5;
+    --action: #3a1646;
+    --on-action: #ffffff;
+    --pop: #b8e86b;
+    --on-pop: #2a1033;
+    --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Figtree', 'Segoe UI', system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --bg: #150a1a;
+      --surface: #20102a;
+      --ink: #f4ecf7;
+      --muted: #b9a7c2;
+      --line: #3b2748;
+      --soft: #2d1b38;
+      --action: #b8e86b;
+      --on-action: #2a1033;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme='dark'] {
+    --bg: #150a1a;
+    --surface: #20102a;
+    --ink: #f4ecf7;
+    --muted: #b9a7c2;
+    --line: #3b2748;
+    --soft: #2d1b38;
+    --action: #b8e86b;
+    --on-action: #2a1033;
+    color-scheme: dark;
+  }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    padding-inline: 16px;
+  }
+  .page {
+    max-width: 1280px;
+    margin-inline: auto;
+    padding-block: 28px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h1 {
+    font-size: clamp(26px, 4vw, 38px);
+    letter-spacing: -0.01em;
+  }
+  h2 {
+    font-size: 20px;
+  }
+  h3 {
+    font-size: 17px;
+  }
+  p {
+    margin: 0;
+  }
+  .lede {
+    color: var(--muted);
+    max-width: 66ch;
+    margin-top: 8px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  .small {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 3px solid var(--action);
+    outline-offset: 2px;
+  }
+
+  .variants {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+    gap: 28px 24px;
+    align-items: start;
+  }
+  .variant {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+  }
+  .vhead {
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
+  .tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--soft);
+  }
+  .tag.pick {
+    background: var(--pop);
+    color: var(--on-pop);
+  }
+  .shows {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .shows li {
+    font-size: 12.5px;
+    padding: 2px 8px;
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    background: var(--surface);
+  }
+  .shows li.no {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+  .trade {
+    font-size: 13.5px;
+    color: var(--muted);
+  }
+  .trade b {
+    color: var(--ink);
+  }
+
+  /* ---------- a phone-width frame of the app's light theme ---------- */
+  .frame {
+    --p-bg: #f8f4f7;
+    --p-ink: #2a1033;
+    --p-muted: #6f5f76;
+    --p-line: #e6dcea;
+    --p-chrome: #3a1646;
+    --p-on: #ffffff;
+    --p-lilac: #efe4f5;
+    --p-pop: #b8e86b;
+    --p-edge: #5e8f17;
+    --p-warn: #7a4b00;
+    --p-warnbg: #fff1d0;
+    --p-surface: #ffffff;
+    --t-dairy: #e4eef9;
+    --t-veg: #dfedd2;
+    --t-fruit: #f9e3dc;
+    --t-staples: #f6ebc9;
+    --t-bakery: #f0e3d3;
+    background: var(--p-bg);
+    color: var(--p-ink);
+    border-radius: 12px;
+    padding: 16px;
+    width: 100%;
+    max-width: 392px;
+    font-family: Roboto, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.3;
+    box-shadow: 0 0 0 1px var(--line);
+  }
+  .frame button {
+    font: inherit;
+  }
+  .f-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .f-title b {
+    font-size: 18px;
+    font-weight: 700;
+    flex: none;
+  }
+  .f-title i {
+    flex: 1;
+    border-top: 2px dotted var(--p-line);
+  }
+  .f-tabs {
+    display: flex;
+    background: var(--p-lilac);
+    border-radius: 8px;
+    padding: 4px;
+    margin-bottom: 12px;
+  }
+  .f-tabs span {
+    flex: 1;
+    text-align: center;
+    padding: 9px 0;
+    border-radius: 6px;
+    font-weight: 600;
+    color: var(--p-muted);
+  }
+  .f-tabs .on {
+    background: var(--p-surface);
+    color: var(--p-ink);
+    box-shadow: 0 0 0 1px var(--p-line);
+  }
+
+  /* shared bits */
+  .pic {
+    position: relative;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    flex: none;
+  }
+  .veg {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    width: 12px;
+    height: 12px;
+    border: 1.5px solid #176534;
+    border-radius: 2px;
+    background: var(--p-surface);
+    display: grid;
+    place-items: center;
+  }
+  .veg::after {
+    content: '';
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #176534;
+  }
+  .veg.non {
+    border-color: #b3261e;
+  }
+  .veg.non::after {
+    background: #b3261e;
+    border-radius: 0;
+    clip-path: polygon(50% 0, 100% 100%, 0 100%);
+  }
+  .left {
+    position: absolute;
+    left: 3px;
+    right: 3px;
+    bottom: 3px;
+    text-align: center;
+    background: var(--p-warnbg);
+    color: var(--p-warn);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 1px 0;
+    border-radius: 6px;
+  }
+  .badge {
+    display: inline-block;
+    background: var(--p-pop);
+    color: var(--p-ink);
+    font-weight: 700;
+    font-size: 15px;
+    padding: 1px 8px;
+    border-radius: 8px;
+    box-shadow: 2px 2px 0 var(--p-edge);
+  }
+  .mrp {
+    color: var(--p-muted);
+    text-decoration: line-through;
+    font-size: 13px;
+  }
+  .muted {
+    color: var(--p-muted);
+    font-size: 13px;
+  }
+  .nm {
+    font-weight: 600;
+    font-size: 15px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+  .add {
+    border: 1.5px solid var(--p-chrome);
+    background: var(--p-surface);
+    color: var(--p-chrome);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    min-height: 30px;
+    padding: 0 14px;
+  }
+  .step {
+    display: inline-flex;
+    align-items: center;
+    background: var(--p-chrome);
+    color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    min-height: 30px;
+  }
+  .step button {
+    border: 0;
+    background: transparent;
+    color: #fff;
+    width: 28px;
+    height: 30px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .step b {
+    min-width: 16px;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  /* A: buy column */
+  .a-card {
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .a-row {
+    display: grid;
+    grid-template-columns: 56px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 12px;
+    height: 72px;
+  }
+  .a-row + .a-row {
+    border-top: 1px solid var(--p-line);
+  }
+  .a-words {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+  .a-buy {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    min-width: 76px;
+  }
+  .a-price {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .a-price.shift {
+    min-height: 20px;
+  }
+
+  /* B: card grid */
+  .b-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .b-card {
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+  .b-pic {
+    height: 84px;
+    font-size: 42px;
+  }
+  .b-add {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+  }
+  .b-line {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    min-height: 24px;
+  }
+
+  /* C: quick list */
+  .c-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .c-chip {
+    display: grid;
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    gap: 8px;
+    align-items: center;
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    border-radius: 8px;
+    padding: 6px 8px;
+    height: 54px;
+  }
+  .c-chip .pic {
+    width: 36px;
+    height: 36px;
+    font-size: 22px;
+  }
+  .c-plus {
+    width: 30px;
+    height: 30px;
+    border: 1.5px solid var(--p-chrome);
+    background: var(--p-surface);
+    color: var(--p-chrome);
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0;
+  }
+  .c-plus.on {
+    background: var(--p-chrome);
+    color: #fff;
+  }
+  .c-sub {
+    font-size: 13px;
+    color: var(--p-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .c-sub b {
+    color: var(--p-ink);
+  }
+  .c-sub .w {
+    color: var(--p-warn);
+    font-weight: 700;
+  }
+
+  /* D: tick and add together */
+  .d-card {
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .d-row {
+    display: grid;
+    grid-template-columns: 24px 44px minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+    padding: 8px 12px;
+    height: 64px;
+    width: 100%;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    color: inherit;
+  }
+  .d-row + .d-row {
+    border-top: 1px solid var(--p-line);
+  }
+  .d-row.on {
+    background: var(--p-lilac);
+  }
+  .d-box {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--p-chrome);
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    color: transparent;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .d-row.on .d-box {
+    background: var(--p-chrome);
+    color: #fff;
+  }
+  .d-price {
+    text-align: right;
+    font-weight: 700;
+    font-size: 15px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+  }
+  .d-foot {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .d-cta {
+    flex: 1;
+    min-height: 46px;
+    border: 0;
+    border-radius: 8px;
+    background: var(--p-chrome);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+  }
+  .d-cta[disabled] {
+    background: var(--p-lilac);
+    color: var(--p-muted);
+  }
+  .d-all {
+    min-height: 46px;
+    padding: 0 14px;
+    border: 1.5px solid var(--p-chrome);
+    background: var(--p-surface);
+    color: var(--p-chrome);
+    border-radius: 8px;
+    font-weight: 700;
+  }
+
+  /* E: lightest two-line row */
+  .e-row {
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) auto;
+    gap: 12px;
+    align-items: center;
+    padding: 6px 12px;
+    height: 62px;
+  }
+  .e-row + .e-row {
+    border-top: 1px solid var(--p-line);
+  }
+  .e-line {
+    display: flex;
+    gap: 6px;
+    align-items: baseline;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .e-line b {
+    font-size: 15px;
+  }
+  .e-line .w {
+    color: var(--p-warn);
+    font-weight: 700;
+    font-size: 13px;
+  }
+
+  /* comparison table */
+  .tablewrap {
+    overflow-x: auto;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 640px;
+    font-size: 13.5px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
+    vertical-align: top;
+  }
+  th {
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  tr:last-child td {
+    border-bottom: 0;
+  }
+  .rec {
+    background: var(--soft);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+</style>
+
+<main class="page">
+  <header>
+    <div class="eyebrow">Home · Daily essentials</div>
+    <h1>Five ways to draw the strip</h1>
+    <p class="lede">
+      Same six items in every frame (a long name, a three-digit price, an item with no saving and
+      two with short stock), so each design is judged on the same data. ADD and the ticks work, and
+      the count is shared, so add something in one and see it in the others.
+    </p>
+  </header>
+
+  <section class="variants" id="variants" aria-label="Design variants"></section>
+
+  <section>
+    <h2>Side by side</h2>
+    <div class="tablewrap" style="margin-top: 12px">
+      <table>
+        <thead>
+          <tr>
+            <th>Variant</th>
+            <th>Height for 6 items</th>
+            <th>Lines of text per item</th>
+            <th>Taps to order 3 items</th>
+            <th>Changes the interaction?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>A. Buy column</b></td>
+            <td>about 440 dp</td>
+            <td>2 on the left, price and ADD stacked on the right</td>
+            <td>3</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td><b>B. Card grid</b></td>
+            <td>about 530 dp</td>
+            <td>3 under a larger picture</td>
+            <td>3</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td><b>C. Quick list</b></td>
+            <td>about 190 dp</td>
+            <td>2, very short</td>
+            <td>3</td>
+            <td>No</td>
+          </tr>
+          <tr>
+            <td><b>D. Tick and add</b></td>
+            <td>about 440 dp with its bar</td>
+            <td>2 plus price at the right</td>
+            <td>4 (3 ticks and one Add)</td>
+            <td>Yes: select first, then add together</td>
+          </tr>
+          <tr>
+            <td><b>E. Lightest row</b></td>
+            <td>about 380 dp</td>
+            <td>2</td>
+            <td>3</td>
+            <td>No</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="rec">
+    <h2>My pick: A, with E as the fallback</h2>
+    <p style="margin-top: 8px">
+      <b>A</b> keeps what you asked for (a one-line name, the green price, the MRP struck beside or
+      under it, one ADD) but moves the price next to ADD, so the eye reads the row left to right:
+      what it is, then what it costs and how to add it. The words on the left are only two lines, so
+      it does not feel stacked. <b>E</b> is the quietest if A still feels busy. <b>D</b> is the most
+      different: worth it only if you want a "build the basket, add once" habit. <b>C</b> is for a
+      very short strip. <b>B</b> repeats the other rails, so it adds the least.
+    </p>
+  </section>
+</main>
+
+<script>
+  (function () {
+    var ITEMS = [
+      {
+        id: 'milk',
+        e: '\u{1F95B}',
+        t: 'dairy',
+        n: 'Amul Toned milk',
+        p: '500 ml',
+        price: 29,
+        mrp: 30,
+        left: 0,
+        veg: true,
+      },
+      {
+        id: 'curd',
+        e: '\u{1F963}',
+        t: 'dairy',
+        n: 'Gokul Fresh curd',
+        p: '400 g',
+        price: 35,
+        mrp: 0,
+        left: 0,
+        veg: true,
+      },
+      {
+        id: 'eggs',
+        e: '\u{1F95A}',
+        t: 'dairy',
+        n: 'Farm eggs',
+        p: '6 pcs',
+        price: 48,
+        mrp: 54,
+        left: 3,
+        veg: false,
+      },
+      {
+        id: 'banana',
+        e: '\u{1F34C}',
+        t: 'fruit',
+        n: 'Banana',
+        p: '1 dozen',
+        price: 60,
+        mrp: 0,
+        left: 0,
+        veg: true,
+      },
+      {
+        id: 'atta',
+        e: '\u{1F33E}',
+        t: 'staples',
+        n: 'Aashirvaad Wheat atta',
+        p: '1 kg',
+        price: 52,
+        mrp: 56,
+        left: 0,
+        veg: true,
+      },
+      {
+        id: 'apple',
+        e: '\u{1F34E}',
+        t: 'fruit',
+        n: 'Apple',
+        p: '4 pcs',
+        price: 120,
+        mrp: 140,
+        left: 2,
+        veg: true,
+      },
+    ];
+    var state = { qty: {}, ticked: { milk: true, curd: true, eggs: true } };
+
+    function vegMark(i) {
+      return '<span class="veg' + (i.veg ? '' : ' non') + '"></span>';
+    }
+    function control(i) {
+      var q = state.qty[i.id] || 0;
+      return q > 0
+        ? '<span class="step"><button type="button" data-dec="' +
+            i.id +
+            '" aria-label="Remove one ' +
+            i.n +
+            '">−</button><b>' +
+            q +
+            '</b><button type="button" data-inc="' +
+            i.id +
+            '" aria-label="Add one ' +
+            i.n +
+            '">+</button></span>'
+        : '<button type="button" class="add" data-inc="' +
+            i.id +
+            '" aria-label="Add ' +
+            i.n +
+            '">ADD</button>';
+    }
+    function head() {
+      return '<div class="f-title"><b>Daily essentials</b><i></i></div><div class="f-tabs"><span class="on">Morning</span><span>Cooking</span><span>Evening</span></div>';
+    }
+
+    function A() {
+      return (
+        head() +
+        '<div class="a-card">' +
+        ITEMS.map(function (i) {
+          return (
+            '<div class="a-row"><div class="pic" style="width:56px;height:56px;font-size:30px;background:var(--t-' +
+            i.t +
+            ')">' +
+            i.e +
+            vegMark(i) +
+            (i.left ? '<span class="left">' + i.left + ' left</span>' : '') +
+            '</div>' +
+            '<div class="a-words"><span class="nm">' +
+            i.n +
+            '</span><span class="muted">' +
+            i.p +
+            '</span></div>' +
+            '<div class="a-buy"><div class="a-price shift"><span>₹' +
+            i.price +
+            '</span>' +
+            (i.mrp ? '<span class="mrp">₹' + i.mrp + '</span>' : '') +
+            '</div>' +
+            control(i) +
+            '</div></div>'
+          );
+        }).join('') +
+        '</div>'
+      );
+    }
+
+    function B() {
+      return (
+        head() +
+        '<div class="b-grid">' +
+        ITEMS.map(function (i) {
+          return (
+            '<div class="b-card"><div class="pic b-pic" style="background:var(--t-' +
+            i.t +
+            ')">' +
+            i.e +
+            vegMark(i) +
+            (i.left
+              ? '<span class="left" style="left:6px;right:auto;bottom:auto;top:6px;padding:1px 6px">' +
+                i.left +
+                ' left</span>'
+              : '') +
+            '<span class="b-add">' +
+            control(i) +
+            '</span></div>' +
+            '<span class="nm">' +
+            i.n +
+            '</span><span class="muted">' +
+            i.p +
+            '</span>' +
+            '<div class="b-line"><span class="badge">₹' +
+            i.price +
+            '</span>' +
+            (i.mrp ? '<span class="mrp">₹' + i.mrp + '</span>' : '') +
+            '</div></div>'
+          );
+        }).join('') +
+        '</div>'
+      );
+    }
+
+    function C() {
+      return (
+        head() +
+        '<div class="c-grid">' +
+        ITEMS.map(function (i) {
+          var q = state.qty[i.id] || 0;
+          return (
+            '<div class="c-chip"><div class="pic" style="background:var(--t-' +
+            i.t +
+            ')">' +
+            i.e +
+            '</div>' +
+            '<div style="min-width:0"><div class="nm" style="font-size:14px">' +
+            i.n +
+            '</div><div class="c-sub"><b>₹' +
+            i.price +
+            '</b> · ' +
+            (i.left ? '<span class="w">' + i.left + ' left</span>' : i.p) +
+            '</div></div>' +
+            '<button type="button" class="c-plus' +
+            (q ? ' on' : '') +
+            '" data-inc="' +
+            i.id +
+            '" aria-label="Add ' +
+            i.n +
+            '">' +
+            (q ? q : '+') +
+            '</button></div>'
+          );
+        }).join('') +
+        '</div>'
+      );
+    }
+
+    function D() {
+      var n = 0,
+        total = 0;
+      ITEMS.forEach(function (i) {
+        if (state.ticked[i.id]) {
+          n += 1;
+          total += i.price;
+        }
+      });
+      return (
+        head() +
+        '<div class="d-card">' +
+        ITEMS.map(function (i) {
+          var on = !!state.ticked[i.id];
+          return (
+            '<button type="button" class="d-row' +
+            (on ? ' on' : '') +
+            '" data-tick="' +
+            i.id +
+            '" aria-pressed="' +
+            on +
+            '"><span class="d-box">✓</span>' +
+            '<span class="pic" style="width:44px;height:44px;font-size:26px;background:var(--t-' +
+            i.t +
+            ')">' +
+            i.e +
+            vegMark(i) +
+            '</span>' +
+            '<span class="a-words"><span class="nm">' +
+            i.n +
+            '</span><span class="muted">' +
+            i.p +
+            (i.left ? ' · <b style="color:var(--p-warn)">' + i.left + ' left</b>' : '') +
+            '</span></span>' +
+            '<span class="d-price"><span>₹' +
+            i.price +
+            '</span>' +
+            (i.mrp ? '<span class="mrp">₹' + i.mrp + '</span>' : '') +
+            '</span></button>'
+          );
+        }).join('') +
+        '</div>' +
+        '<div class="d-foot"><button type="button" class="d-all" data-all="1">' +
+        (n === ITEMS.length ? 'Clear' : 'Select all') +
+        '</button><button type="button" class="d-cta" data-addall="1"' +
+        (n ? '' : ' disabled') +
+        '>' +
+        (n ? 'Add ' + n + ' item' + (n > 1 ? 's' : '') + ' · ₹' + total : 'Tick what you need') +
+        '</button></div>'
+      );
+    }
+
+    function E() {
+      return (
+        head() +
+        '<div class="a-card">' +
+        ITEMS.map(function (i) {
+          return (
+            '<div class="e-row"><div class="pic" style="width:48px;height:48px;font-size:26px;background:var(--t-' +
+            i.t +
+            ')">' +
+            i.e +
+            vegMark(i) +
+            '</div>' +
+            '<div class="a-words"><span class="nm">' +
+            i.n +
+            '</span><div class="e-line"><b>₹' +
+            i.price +
+            '</b>' +
+            (i.mrp ? '<span class="mrp">₹' + i.mrp + '</span>' : '') +
+            '<span class="muted">· ' +
+            i.p +
+            '</span>' +
+            (i.left ? '<span class="w">· ' + i.left + ' left</span>' : '') +
+            '</div></div>' +
+            control(i) +
+            '</div>'
+          );
+        }).join('') +
+        '</div>'
+      );
+    }
+
+    var V = [
+      {
+        key: 'A',
+        name: 'Buy column',
+        tag: 'Recommended',
+        pick: true,
+        fn: A,
+        shows: [
+          ['Picture', 1],
+          ['Name', 1],
+          ['Pack', 1],
+          ['Price', 1],
+          ['MRP', 1],
+          ['Short stock', 1],
+          ['Veg mark', 1],
+        ],
+        trade:
+          '<b>Reads left to right:</b> what it is, then what it costs and how to add it. The price sits right above ADD. <b>Cost:</b> price and MRP share a short line, so the MRP is beside the price, not below.',
+      },
+      {
+        key: 'B',
+        name: 'Card grid',
+        tag: 'Familiar',
+        fn: B,
+        shows: [
+          ['Picture', 1],
+          ['Name', 1],
+          ['Pack', 1],
+          ['Price', 1],
+          ['MRP', 1],
+          ['Short stock', 1],
+          ['Veg mark', 1],
+        ],
+        trade:
+          '<b>Largest picture</b> and the same shape as the other rails. <b>Cost:</b> the tallest, and it repeats what the page already has.',
+      },
+      {
+        key: 'C',
+        name: 'Quick list',
+        tag: 'Smallest',
+        fn: C,
+        shows: [
+          ['Picture', 1],
+          ['Name', 1],
+          ['Pack', 1],
+          ['Price', 1],
+          ['MRP', 0],
+          ['Short stock', 1],
+          ['Veg mark', 0],
+        ],
+        trade:
+          '<b>About a third of the height:</b> six items in three short lines. One tap on + adds. <b>Cost:</b> no MRP and no veg mark, which a food list needs, so it suits a very short strip only.',
+      },
+      {
+        key: 'D',
+        name: 'Tick and add',
+        tag: 'New habit',
+        fn: D,
+        shows: [
+          ['Picture', 1],
+          ['Name', 1],
+          ['Pack', 1],
+          ['Price', 1],
+          ['MRP', 1],
+          ['Short stock', 1],
+          ['Veg mark', 1],
+        ],
+        trade:
+          '<b>Build the usual basket</b> and add it once with the total shown. Fewest controls on screen. <b>Cost:</b> a different interaction from every other row in the app, and one more tap to order.',
+      },
+      {
+        key: 'E',
+        name: 'Lightest row',
+        tag: 'Quietest',
+        fn: E,
+        shows: [
+          ['Picture', 1],
+          ['Name', 1],
+          ['Pack', 1],
+          ['Price', 1],
+          ['MRP', 1],
+          ['Short stock', 1],
+          ['Veg mark', 1],
+        ],
+        trade:
+          '<b>Two lines</b>, the price and its struck MRP and the pack on one line under the name. <b>Cost:</b> the price is not the loudest thing in the row, and a long pack and "3 left" can crowd that line.',
+      },
+    ];
+
+    var host = document.getElementById('variants');
+
+    function render() {
+      host.innerHTML = V.map(function (v) {
+        return (
+          '<article class="variant"><div class="vhead"><h3>' +
+          v.key +
+          '. ' +
+          v.name +
+          '</h3><span class="tag' +
+          (v.pick ? ' pick' : '') +
+          '">' +
+          v.tag +
+          '</span></div>' +
+          '<div class="frame">' +
+          v.fn() +
+          '</div>' +
+          '<ul class="shows" aria-label="What it shows">' +
+          v.shows
+            .map(function (s) {
+              return '<li class="' + (s[1] ? '' : 'no') + '">' + s[0] + '</li>';
+            })
+            .join('') +
+          '</ul>' +
+          '<p class="trade">' +
+          v.trade +
+          '</p></article>'
+        );
+      }).join('');
+    }
+
+    host.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-inc],[data-dec],[data-tick],[data-all],[data-addall]');
+      if (!t) return;
+      if (t.hasAttribute('data-inc')) {
+        var a = t.getAttribute('data-inc');
+        state.qty[a] = (state.qty[a] || 0) + 1;
+      } else if (t.hasAttribute('data-dec')) {
+        var d = t.getAttribute('data-dec');
+        state.qty[d] = Math.max(0, (state.qty[d] || 0) - 1);
+      } else if (t.hasAttribute('data-tick')) {
+        var k = t.getAttribute('data-tick');
+        state.ticked[k] = !state.ticked[k];
+      } else if (t.hasAttribute('data-all')) {
+        var every = ITEMS.every(function (i) {
+          return state.ticked[i.id];
+        });
+        ITEMS.forEach(function (i) {
+          state.ticked[i.id] = !every;
+        });
+      } else if (t.hasAttribute('data-addall')) {
+        ITEMS.forEach(function (i) {
+          if (state.ticked[i.id]) state.qty[i.id] = (state.qty[i.id] || 0) + 1;
+        });
+        state.ticked = {};
+      }
+      render();
+    });
+
+    render();
+  })();
+</script>

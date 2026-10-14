@@ -157,6 +157,13 @@
     },
     "essentials": {
       "title": "रोजच्या गरजा",
+      "addOne": "1 आयटम जोडा · {amount}",
+      "addMany": "{count} आयटम जोडा · {amount}",
+      "tick": "हवे ते निवडा",
+      "selectAll": "सर्व निवडा",
+      "clearAll": "निवड काढा",
+      "inCart": "कार्टमध्ये {count}",
+      "left": "{count} उरले",
       "tabs": {
         "morning": "सकाळ",
         "cooking": "स्वयंपाक",

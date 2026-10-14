@@ -157,6 +157,13 @@
     },
     "essentials": {
       "title": "Daily essentials",
+      "addOne": "Add 1 item · {amount}",
+      "addMany": "Add {count} items · {amount}",
+      "tick": "Tick what you need",
+      "selectAll": "Select all",
+      "clearAll": "Clear",
+      "inCart": "{count} in cart",
+      "left": "{count} left",
       "tabs": {
         "morning": "Morning",
         "cooking": "Cooking",

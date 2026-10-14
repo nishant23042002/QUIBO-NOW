@@ -157,6 +157,13 @@
     },
     "essentials": {
       "title": "रोज़ की ज़रूरतें",
+      "addOne": "1 आइटम जोड़ें · {amount}",
+      "addMany": "{count} आइटम जोड़ें · {amount}",
+      "tick": "जो चाहिए, उसे चुनें",
+      "selectAll": "सभी चुनें",
+      "clearAll": "चयन हटाएँ",
+      "inCart": "कार्ट में {count}",
+      "left": "{count} बचे",
       "tabs": {
         "morning": "सुबह",
         "cooking": "रसोई",

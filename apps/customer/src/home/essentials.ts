@@ -77,3 +77,35 @@ export function openingTab(
   const wanted = defaultEssentialTab(hour);
   return live.find((entry) => entry.tab.id === wanted) ?? live[0];
 }
+
+/**
+ * How many are left, for the small "3 left" in a row's words: only when stock is short (the one fact that changes a decision),
+ * otherwise undefined. The count is the default pack's stock limit.
+ */
+export function essentialLeft(item: Pick<HomeItem, 'stock' | 'maxQuantity'>): number | undefined {
+  return item.stock?.kind === 'low' ? item.maxQuantity : undefined;
+}
+
+/**
+ * What "Add" puts in the cart for each ticked item: one piece, or half a kilogram for a loose item (the smallest step the cart
+ * takes). The price is per kilogram for a loose item, so its share is half.
+ */
+export function essentialStepCost(item: Pick<HomeItem, 'loose' | 'price'>): number {
+  const paise = Number(item.price);
+  return item.loose === true ? Math.round(paise / 2) : paise;
+}
+
+/** How many items are ticked, and what one step of each comes to, in paise: for the bar's "Add 3 items · ₹112". */
+export function essentialBasket(
+  items: readonly Pick<HomeItem, 'id' | 'loose' | 'price'>[],
+  ticked: ReadonlySet<string>,
+): { count: number; paise: number } {
+  let count = 0;
+  let paise = 0;
+  for (const item of items) {
+    if (!ticked.has(item.id)) continue;
+    count += 1;
+    paise += essentialStepCost(item);
+  }
+  return { count, paise };
+}
