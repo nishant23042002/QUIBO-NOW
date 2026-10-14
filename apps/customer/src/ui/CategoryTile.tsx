@@ -30,7 +30,7 @@ export interface CategoryTileProps {
 /** The picture is a square the width of the tile. */
 const EMOJI_SIZE = 30;
 /** The band of the category's colour round a picture's plate, like the mat round a framed photograph. */
-const FRAME = 5;
+const FRAME = 3;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({

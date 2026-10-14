@@ -13,7 +13,7 @@ hairline was the only thing holding it up, and it sat oddly beside the tinted em
 
 ## Decision
 
-1. **The plate is set in a band of the category's own colour**, 5 dp wide, like the mat round a framed photograph. The plate keeps the
+1. **The plate is set in a band of the category's own colour**, 3 dp wide, like the mat round a framed photograph. The plate keeps the
    neutral grey, so the pictures stay consistent, and the band gives the tile a clear edge and ties it to the category's colour (green
    for fruit and vegetables, blue for dairy, and so on).
 2. **The hairline is dropped** for pictured tiles: the band is the edge.
@@ -22,6 +22,6 @@ hairline was the only thing holding it up, and it sat oddly beside the tinted em
 
 ## Consequences
 
-- Nothing moves: the tile is the same size and the picture is a little smaller inside it (10 dp less across).
+- Nothing moves: the tile is the same size and the picture is a little smaller inside it (6 dp less across).
 - In the dark theme the band is the deep tint and the plate stays light, which reads as the same framed picture.
 - One component changed (`CategoryTile`); the Home grid, the Categories tab and All categories all use it.
