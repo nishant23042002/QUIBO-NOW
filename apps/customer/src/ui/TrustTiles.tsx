@@ -41,7 +41,7 @@ const makeStyles = (c: ThemeColors) =>
       borderRadius: radius.lg,
     },
     soft: { backgroundColor: c.lilac, borderWidth: 1, borderColor: c.line },
-    brand: { backgroundColor: c.headerBg },
+    brand: { backgroundColor: c.plum },
     icon: {
       width: 40,
       height: 40,
@@ -84,13 +84,13 @@ export function TrustTiles({ tiles, tone = 'soft', scroll = false, bleed = 0 }: 
             aria-label={`${tile.title}. ${tile.body}`}
           >
             <View style={styles.icon}>
-              <Icon name={tile.icon} color={brand ? colors.onHeader : colors.action} size={20} />
+              <Icon name={tile.icon} color={brand ? colors.onPlum : colors.action} size={20} />
             </View>
             <View style={styles.words}>
-              <Text variant="strong" color={brand ? 'onHeader' : 'ink'}>
+              <Text variant="strong" color={brand ? 'onPlum' : 'ink'}>
                 {tile.title}
               </Text>
-              <Text variant="small" color={brand ? 'onHeaderMuted' : 'inkMuted'}>
+              <Text variant="small" color={brand ? 'onPlumMuted' : 'inkMuted'}>
                 {tile.body}
               </Text>
             </View>
@@ -110,13 +110,13 @@ export function TrustTiles({ tiles, tone = 'soft', scroll = false, bleed = 0 }: 
           aria-label={`${tile.title}. ${tile.body}`}
         >
           <View style={styles.icon}>
-            <Icon name={tile.icon} color={brand ? colors.onHeader : colors.action} size={20} />
+            <Icon name={tile.icon} color={brand ? colors.onPlum : colors.action} size={20} />
           </View>
           <View style={styles.words}>
-            <Text variant="strong" color={brand ? 'onHeader' : 'ink'}>
+            <Text variant="strong" color={brand ? 'onPlum' : 'ink'}>
               {tile.title}
             </Text>
-            <Text variant="small" color={brand ? 'onHeaderMuted' : 'inkMuted'}>
+            <Text variant="small" color={brand ? 'onPlumMuted' : 'inkMuted'}>
               {tile.body}
             </Text>
           </View>

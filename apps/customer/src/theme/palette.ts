@@ -30,9 +30,10 @@ export interface ThemeColors {
   onChromeMuted: string;
 
   /**
-   * The block at the top of Home and the tabs: address, profile and search. It paints behind the status bar too.
-   * Deep aubergine in the light theme (the colour of the cart bar) and deep plum in the dark one; text on it uses `onHeader`,
-   * which is white in both. `onHeader` is for text on the header and not on the pale `tint*` blocks: use `ink` there.
+   * The block at the top of every screen: address, profile and search on Home, the title on the others. It paints behind the status
+   * bar too. A soft lilac with dark text in the light theme (ADR 0057) and deep plum with white text in the dark one. `onHeader` is
+   * for text on the header and not on the pale `tint*` blocks: use `ink` there. A dark card that is not a header (the closing card,
+   * the promise) uses `plum`, not this.
    */
   headerBg: string;
   /** The far (right-hand) end of the header's very light sheen; `headerBg` is the left end. Text on it uses `onHeader` too. */
@@ -51,6 +52,23 @@ export interface ThemeColors {
   /** The round buttons on the header (profile, theme), and the icon on them. */
   headerControl: string;
   onHeaderControl: string;
+
+  /**
+   * A deep aubergine card on the page: the closing card of "Know your shop" and the promise. The same deep colour in both themes
+   * (it is what the aubergine is left for once the header is lilac), with a very light sheen from `plum` to `plumEnd`. Text on it
+   * uses `onPlum` and `onPlumMuted`.
+   */
+  plum: string;
+  plumEnd: string;
+  onPlum: string;
+  onPlumMuted: string;
+  /**
+   * The near-black the "Know your shop" stage starts from, fading in one straight line into the page colour. Text on it uses
+   * `onNight` and `onNightMuted`.
+   */
+  night: string;
+  onNight: string;
+  onNightMuted: string;
 
   /** The main action. Only ever a fill with `onAccent` on it, or text in `accentInk`. */
   accent: string;
@@ -115,10 +133,10 @@ export const palettes: Record<Scheme, ThemeColors> = {
     chrome: '#3A1646',
     onChrome: '#FFFFFF',
     onChromeMuted: '#D2BDDB',
-    headerBg: '#3A1646',
-    headerBgEnd: '#4A2160',
-    onHeader: '#FFFFFF',
-    onHeaderMuted: '#D2BDDB',
+    headerBg: '#E9D8F0',
+    headerBgEnd: '#F1E6F7',
+    onHeader: '#2A1033',
+    onHeaderMuted: '#563E60',
     headerControl: '#FFFFFF',
     onHeaderControl: '#2A1033',
     tintDairy: '#DCE8F5',
@@ -126,6 +144,13 @@ export const palettes: Record<Scheme, ThemeColors> = {
     tintFruits: '#F6DDD5',
     tintStaples: '#F3E6C4',
     tintSnacks: '#F2D9E6',
+    plum: '#3A1646',
+    plumEnd: '#4A2160',
+    onPlum: '#FFFFFF',
+    onPlumMuted: '#D2BDDB',
+    night: '#1B1620',
+    onNight: '#FFFFFF',
+    onNightMuted: '#D9CCE0',
     accent: '#B8E86B',
     onAccent: '#2A1033',
     accentPressed: '#9FD24E',
@@ -174,6 +199,13 @@ export const palettes: Record<Scheme, ThemeColors> = {
     tintFruits: '#4D2A24',
     tintStaples: '#463A1A',
     tintSnacks: '#4A2440',
+    plum: '#3E1A4C',
+    plumEnd: '#4E2663',
+    onPlum: '#FFFFFF',
+    onPlumMuted: '#DCCBE4',
+    night: '#1B1620',
+    onNight: '#FFFFFF',
+    onNightMuted: '#D9CCE0',
     accent: '#B8E86B',
     onAccent: '#2A1033',
     accentPressed: '#9FD24E',

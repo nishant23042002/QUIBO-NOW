@@ -21,7 +21,8 @@ app, in small amounts, without being slowed down.
 2. **Where the signals sit on Home** (a new customer meets them earlier than a returning one):
    - a "Visited shops only" pill in the payment strip under the hero, which opens "How we check a shop";
    - "Know your shop", straight under the payment strip for a new customer and after Bestsellers for a returning one. Its
-     parts are a draggable scene, five swipeable questions, the score, and a close that points to the shops;
+     parts are a draggable scene, five swipeable questions and the score (a closing card that pointed to the shops was
+     removed by the owner on 2026-10-14, ADR 0057);
    - "The Quibo promise" near the bottom with the "How we check a shop" sheet;
    - the shop's name on the live order card, and "Your money stays in Roha" in the footer.
 3. **Moment screens.** A full-screen card with one trust fact, a thin progress line and "tap to skip":

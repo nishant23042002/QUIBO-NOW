@@ -51,7 +51,7 @@ const makeStyles = (c: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[1],
-      backgroundColor: c.chrome,
+      backgroundColor: c.headerBg,
     },
     body: { gap: space[5], paddingTop: space[4] },
     gutter: { paddingHorizontal: space[4] },
@@ -304,7 +304,7 @@ export function SearchView({
 
   return (
     <View style={styles.page}>
-      <ScreenStatusBar style="light" />
+      <ScreenStatusBar style="header" />
       <View style={[styles.header, { paddingTop: insets.top + space[2], paddingBottom: space[2] }]}>
         <View style={{ marginLeft: space[2] - insets.left }}>
           <IconButton
@@ -314,6 +314,7 @@ export function SearchView({
               if (router.canGoBack()) router.back();
               else router.replace('/');
             }}
+            ground="header"
           />
         </View>
         <View style={{ flex: 1, paddingRight: space[4] + insets.right }}>

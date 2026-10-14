@@ -1,7 +1,9 @@
 # 0050. The header is deep aubergine in the light theme
 
-- **Status:** Proposed (Phase 1, sub-phase 1l). Amends [ADR 0043](0043-home-header-chips-are-intents.md) (the header keeps one colour
-  whichever tab is chosen: it still does, the colour changes) and the header description in the palette file.
+- **Status:** Superseded for the light theme by [ADR 0057](0057-header-returns-to-lilac.md) (2026-10-14: the header is lilac
+  again). Its dark-theme plum stands. Was: Proposed (Phase 1, sub-phase 1l). Amends
+  [ADR 0043](0043-home-header-chips-are-intents.md) (the header keeps one colour whichever tab is chosen: it still does, the
+  colour changes) and the header description in the palette file.
 - **Date:** 2026-10-14
 - **Source:** the owner, who asked for a dark header from the theme palette and a page that suits it; option A of three drawn in
   `docs/design/home-layout-preview.html`

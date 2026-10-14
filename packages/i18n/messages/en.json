@@ -218,6 +218,7 @@
       "codSub": "Cash or UPI at the door",
       "visited": "Visited shops only",
       "visitedSub": "Checked in person",
+      "visitedHint": "Opens how we check a shop",
       "free": "Free delivery",
       "freeSub": "Over {amount}",
       "upi": "Pay by UPI",
@@ -260,6 +261,75 @@
     "bestsellers": {
       "title": "Bestsellers",
       "more": "+{count} more"
+    },
+    "know": {
+      "kicker": "Know your shop",
+      "titleStart": "Would you trust what you ",
+      "titleEm": "can’t see",
+      "titleEnd": "?",
+      "intro": "A dark store asks you to take its word. Your shop lets you see for yourself.",
+      "scene": {
+        "label": "Drag to compare a dark store with your shop",
+        "hint": "Drag to compare",
+        "darkName": "A dark store",
+        "darkSub": "Sealed. Staff only.",
+        "tape": "STAFF ONLY",
+        "shopName": "Your Roha shop",
+        "shopSub": "Open. Walk in.",
+        "open": "OPEN"
+      },
+      "fiveTitle": "Five things you can check",
+      "count": "{n} of {total}",
+      "darkLabel": "A dark store",
+      "shopLabel": "Your Roha shop",
+      "q": {
+        "where": {
+          "title": "Where was it packed?",
+          "dark": "Inside a warehouse you cannot enter. You take it on faith.",
+          "shop": "In a shop you have walked into, a few streets from you."
+        },
+        "who": {
+          "title": "Who packed it?",
+          "dark": "Someone you will never meet.",
+          "shop": "{shop}, by name. In Roha since {year}."
+        },
+        "kept": {
+          "title": "How is it kept?",
+          "dark": "You see a photo of the product, never the shelf.",
+          "shop": "Go and look at the shelf yourself, any day."
+        },
+        "wrong": {
+          "title": "If something is wrong",
+          "dark": "Raise a ticket and wait for a reply.",
+          "shop": "Walk in and tell the person who packed it."
+        },
+        "name": {
+          "title": "Whose name is on the bag?",
+          "dark": "A company’s.",
+          "shop": "{shop}’s. And they know yours."
+        }
+      },
+      "scoreCaption": "Things you can check for yourself"
+    },
+    "promise": {
+      "title": "The Quibo promise",
+      "visited": "Every shop is visited in person before it is listed",
+      "name": "Your bag carries the shop’s name",
+      "price": "Prices at or below MRP, checked every week",
+      "paused": "A shop that slips is paused, not hidden",
+      "how": "How we check a shop"
+    },
+    "how": {
+      "title": "How we check a shop",
+      "oneTitle": "We visit in person",
+      "oneBody": "Someone from Quibo walks into the shop before it is listed. No shop is added from a phone call.",
+      "twoTitle": "We look at how it is kept",
+      "twoBody": "Storage, scales and the FSSAI number are checked and photographed.",
+      "threeTitle": "You can see it too",
+      "threeBody": "The photos go on the shop’s page, and the shop is open to visitors.",
+      "fourTitle": "We keep checking",
+      "fourBody": "A weekly score covers cleanliness, price and speed. A shop that slips is paused until it is fixed.",
+      "note": "This wording is a draft until the first shops are visited."
     }
   },
   "brands": {

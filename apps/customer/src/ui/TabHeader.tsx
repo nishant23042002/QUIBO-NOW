@@ -131,7 +131,7 @@ export function TabHeader({
 
   return (
     <View style={styles.frame}>
-      <ScreenStatusBar style="light" />
+      <ScreenStatusBar style="header" />
       <Animated.ScrollView
         // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit at
         // the top and then drop; held back, it appears where it belongs.

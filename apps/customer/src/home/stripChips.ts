@@ -3,9 +3,18 @@ export type StripChipId = 'cod' | 'visited' | 'free' | 'upi';
 
 /**
  * Which chips show. "Pay on delivery" only shows where cash on delivery is allowed (the town's rule, ADR 0019): a promise on the
- * first screen must be one checkout keeps. The others are always true of the app: shops are visited before they are listed
- * (ADR 0054), delivery is free from the town's line, and UPI is a payment choice.
+ * first screen must be one checkout keeps. "Visited shops only" only shows where the town is served by partner shops: a company
+ * dark store is not a shop that was visited and listed (ADR 0054). The others are always true of the app: delivery is free from
+ * the town's line, and UPI is a payment choice.
  */
-export function stripChips(rules: { codMax: number }): readonly StripChipId[] {
-  return [...(rules.codMax > 0 ? (['cod'] as const) : []), 'visited', 'free', 'upi'];
+export function stripChips(rules: {
+  codMax: number;
+  store: 'partner' | 'dark';
+}): readonly StripChipId[] {
+  return [
+    ...(rules.codMax > 0 ? (['cod'] as const) : []),
+    ...(rules.store === 'partner' ? (['visited'] as const) : []),
+    'free',
+    'upi',
+  ];
 }

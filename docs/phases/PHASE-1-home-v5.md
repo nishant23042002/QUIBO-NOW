@@ -142,3 +142,34 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - Not done yet: the loading skeleton does not draw these two sections (that is the close-out step).
   - Checks: lint, typecheck, test (670 customer tests) and build pass. Looked at on the web preview in light: the strip, and the
     live card after placing a real mock order. The closed banner depends on the clock and has not been seen on screen.
+  - **Follow-up, 2026-10-14 (owner's phone check).** The quick-filter row was removed (ADR 0056), the payment strip and Fresh
+    today share one pistachio wash, and the page sheet now clips to its rounded top corners.
+- **Step 4, Know your shop: built, waiting for the owner's phone check.**
+  - Know your shop: a lilac stage (the soft aubergine tint the header wore before it went deep) that fades in one straight line
+    into the page colour, holding the heading ("Would you trust what you can't see?") and a scene to drag (a sealed dark store
+    against an open shop; the divider stays between 10% and 90%, and for a screen reader it is a slider with increase and
+    decrease). Under it, five swipeable question cards (each answered for a dark store and for a shop, with a count that follows
+    the swipe and dots), the 0 of 5 against 5 of 5 score. (A closing card with a Meet your shops button was built and then removed at the owner's request,
+    2026-10-14, ADR 0057; the mosaic's strip already opens the shops row.)
+  - The shop named in the answers is a real one from the shop data (its name and the year it joined Roha). The owner's name and
+    quotes from the mock are not in the data and are dropped (decision 5 above).
+  - The Quibo promise (four lines and a "How we check a shop" button) sits near the bottom, before the footer. "How we check a
+    shop" is a sheet with four steps; it opens from that button and from the "Visited shops only" chip, which is now a button.
+  - Placement: right under the header for every customer, with the payment strip at the top of its lilac-to-page stage so strip,
+    heading and scene are one fade, and Fresh today under it on a wash of its own. (It first moved after Bestsellers for someone
+    who had ordered; the owner saw the phone, which had orders, and the web, which had none, show different pages, so it is the same
+    everywhere, 2026-10-14.)
+  - The payment strip scrolls on its own: each chip snaps to the page's left margin, the last one ends with the same margin, and
+    a fade on the stage's colour shows on whichever side has more chips, so a chip never looks cut by the screen edge.
+  - Dark-store towns: the argument is not true of what the customer buys there, so Know your shop and the promise are not shown,
+    and the "Visited shops only" chip leaves the strip (`stripChips` now reads the store kind; a test covers it).
+  - New parts: `PlumCard` in `ui`; `CompareScene`, `KnowYourShop`, `QuiboPromise`, `HowWeCheckSheet` and the rules in
+    `knowRules.ts` (with tests) in `home`. `HomeHeader` accepts a function as its children so a section far down can open the
+    shops row. No new palette tokens: the dark store is the header's colour under the overlay glass.
+  - Copy to review: the whole module argues against dark stores. It names no company and carries a line saying it compares only
+    what a customer can check; it still needs a legal read before launch (ADR 0054). The four promise lines and the four steps are
+    drafts until the first shops are visited; the sheet says so.
+  - Not done yet: the loading skeleton does not draw the module (close-out step); Hindi and Marathi are drafts.
+  - Checks: lint, typecheck, test (681 customer tests) and build pass. Looked at on the web preview at 375 px: the scene and its
+    drag, the cards, the score and the sheet. The returning-customer place and the dark-store case are covered
+    by the placement test and have not been seen on screen.

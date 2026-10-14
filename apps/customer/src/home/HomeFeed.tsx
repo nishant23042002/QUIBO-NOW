@@ -10,13 +10,19 @@ import {
   RowTitle,
   SeeAllButton,
   Text,
+  radius,
   space,
 } from '@/ui';
 import { itemsInCategory, type Category } from './catalogueTree';
 import { Bestsellers } from './Bestsellers';
 import { DailyEssentials } from './DailyEssentials';
 import { FreshToday } from './FreshToday';
+import { HowWeCheckSheet } from './HowWeCheckSheet';
+import { KnowYourShop } from './KnowYourShop';
 import { PaymentStrip } from './PaymentStrip';
+import { QuiboPromise } from './QuiboPromise';
+import { useConditions } from './conditions';
+import { knowShown } from './knowRules';
 import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
 import { useHomeSectionShown } from './homeSections';
@@ -47,6 +53,11 @@ const styles = StyleSheet.create({
   // The opening of the page: the payment strip and Fresh today on one pistachio wash, strongest under the mosaic and gone by the end
   // of the module, so the two read as one section.
   opening: { paddingTop: space[3], paddingBottom: space[6] },
+  // With "Know your shop" above it, Fresh today keeps a wash of its own.
+  stripBlock: { paddingTop: space[3], paddingBottom: space[5] },
+  freshBlock: { paddingBottom: space[6] },
+  // Where a block's colour meets the page's, its top edge is curved (and the wash draws a fine edge along the curve).
+  rounded: { borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, overflow: 'hidden' },
   // Room between the opening and the rows after it, as the rows have between each other.
   after: { paddingTop: space[2] },
   head: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space[4] },
@@ -83,6 +94,16 @@ export const HomeFeed = memo(function HomeFeed({
   const { t } = useLanguage();
   const { colors } = useTheme();
   const showSection = useHomeSectionShown();
+  const { store } = useConditions();
+  const showKnow = knowShown(store);
+  // "How we check a shop" opens from the strip's chip and from the promise.
+  const [howOpen, setHowOpen] = useState(false);
+  const openHow = () => {
+    setHowOpen(true);
+  };
+  const closeHow = () => {
+    setHowOpen(false);
+  };
   const { width: screen } = useWindowDimensions();
   const items = useHomeItems();
   const listing = useHomeListing();
@@ -117,9 +138,9 @@ export const HomeFeed = memo(function HomeFeed({
     return (
       <View>
         {grid ? null : (
-          <View style={styles.opening}>
+          <View style={[styles.stripBlock, styles.rounded]}>
             <AccentWash />
-            <PaymentStrip />
+            <PaymentStrip onVisitedPress={openHow} ground="wash" />
           </View>
         )}
         <HomeSkeleton
@@ -171,13 +192,29 @@ export const HomeFeed = memo(function HomeFeed({
     );
   }
 
+  const strip = (ground: 'night' | 'wash') => (
+    <PaymentStrip onVisitedPress={openHow} ground={ground} />
+  );
+
   return (
     <View>
-      <View style={styles.opening}>
-        <AccentWash />
-        <PaymentStrip />
-        <FreshToday onSeeAll={onSeeAll} />
-      </View>
+      {showKnow ? (
+        // "Know your shop" is the first thing under the header for everyone: the strip sits at the top of its stage, and Fresh today
+        // keeps a wash of its own under it.
+        <>
+          <KnowYourShop lead={strip('night')} />
+          <View style={[styles.freshBlock, styles.rounded]}>
+            <AccentWash />
+            <FreshToday onSeeAll={onSeeAll} />
+          </View>
+        </>
+      ) : (
+        <View style={[styles.opening, styles.rounded]}>
+          <AccentWash />
+          {strip('wash')}
+          <FreshToday onSeeAll={onSeeAll} />
+        </View>
+      )}
       <View style={[styles.rails, styles.after]}>
         <Bestsellers onCategory={onSeeCategory} />
         <ShopByCategory />
@@ -204,8 +241,10 @@ export const HomeFeed = memo(function HomeFeed({
           );
         })}
         <QuieterNote />
+        {showKnow ? <QuiboPromise onHow={openHow} /> : null}
         <BrandFooter />
       </View>
+      <HowWeCheckSheet open={howOpen} onClose={closeHow} />
     </View>
   );
 });

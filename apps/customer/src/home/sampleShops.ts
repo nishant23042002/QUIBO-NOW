@@ -14,6 +14,8 @@ const SAMPLES = [
 
 export interface SampleShop extends ShopInfoCardProps {
   id: string;
+  /** The year the shop started in Roha. */
+  since: number;
 }
 
 export function useSampleShops(): readonly SampleShop[] {
@@ -21,6 +23,7 @@ export function useSampleShops(): readonly SampleShop[] {
 
   return SAMPLES.map(({ key, since, open }) => ({
     id: key,
+    since,
     name: t(`home.shopsSheet.sample.${key}Name`),
     type: t(`home.shopsSheet.sample.${key}Type`),
     statusLabel: open ? t('home.shopsSheet.open') : t('home.shopsSheet.closed'),

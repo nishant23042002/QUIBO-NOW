@@ -13,6 +13,7 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
 import { HeaderGradient } from './HeaderGradient';
 import { HeaderIdentity } from './HeaderIdentity';
+import { PageFade } from './PageFade';
 import { SearchBar, type SearchHint } from './SearchBar';
 import type { ShopInfoCardProps } from './ShopInfoCard';
 import { ShopsChip } from './ShopsChip';
@@ -96,9 +97,9 @@ const makeStyles = (c: ThemeColors) =>
     // One dp more than it looks, because the lower part overlaps the upper by 1 dp (see SEAM).
     search: { paddingTop: space[2] + SEAM },
     tabs: { marginTop: space[2] },
-    // The hero is the header's own colour carried down under the tabs, so the header and the first block are one surface. It
-    // scrolls away with the page.
-    hero: { backgroundColor: c.headerBg, paddingTop: space[3], paddingBottom: space[8] },
+    // The hero is on the page's own colour: the header's lilac has faded into it by the bottom of the tabs, so the header and the
+    // first block are one surface with no edge. It scrolls away with the page.
+    hero: { backgroundColor: c.bg, paddingTop: space[3], paddingBottom: space[8] },
     // The page slides up over the hero's lower edge with rounded top corners. It clips what is inside, so a wash that starts at the
     // top follows the curve instead of showing square corners over the hero.
     sheet: {
@@ -116,8 +117,9 @@ const makeStyles = (c: ThemeColors) =>
  * button and shops chip) slides up, one for one with the finger, all the way out through the top of the screen,
  * fading as it goes. The search bar and the category tabs rise with it and stop under the status bar, square
  * at the bottom, with the tabs' fine line as their lower edge.
- * The hero (Home's mosaic) is the header's own colour carried down under the tabs, so the two are one surface, and it scrolls
- * away with the page; the page then slides up over its lower edge with rounded top corners. Nothing here resizes while scrolling or while the shops row opens: the header only moves, on the phone's own animation
+ * The header's colour fades in one straight line from the search bar into the page's own colour, which it has become by the bottom
+ * of the tabs. The hero (Home's mosaic) sits on the page's colour under it, so the two are one surface, and it scrolls away with
+ * the page; the page then slides up over its lower edge with rounded top corners. Nothing here resizes while scrolling or while the shops row opens: the header only moves, on the phone's own animation
  * thread, so the movement stays smooth however busy the rest of the app is.
  *
  * Everything, including the status bar area, is the header's deep colour (aubergine in the light theme, plum in the dark one), so
@@ -277,7 +279,7 @@ export function HomeHeader({
 
   return (
     <View style={styles.frame}>
-      <ScreenStatusBar style="light" />
+      <ScreenStatusBar style="header" />
       <Animated.ScrollView
         ref={scrollRef}
         // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit
@@ -300,10 +302,7 @@ export function HomeHeader({
         }}
       >
         <Animated.View style={{ transform: [{ translateY: push }] }}>
-          <View style={styles.hero}>
-            <HeaderGradient />
-            {hero({ openShops })}
-          </View>
+          <View style={styles.hero}>{hero({ openShops })}</View>
           <View style={styles.sheet}>{children}</View>
         </Animated.View>
       </Animated.ScrollView>
@@ -404,6 +403,8 @@ export function HomeHeader({
           }}
         >
           <HeaderGradient />
+          {/* The header's colour starts to fade at the search bar and is the page's own colour by the bottom of the tabs. */}
+          <PageFade />
           <View style={[styles.search, gutter]}>
             <SearchBar
               placeholder={searchLabel}

@@ -59,7 +59,7 @@ export function CategoryHeader({
       ]}
     >
       <HeaderGradient />
-      <ScreenStatusBar style="light" />
+      <ScreenStatusBar style="header" />
       <View style={styles.row}>
         <View style={styles.back}>
           <IconButton icon="back" label={backLabel} onPress={onBack} ground="header" />

@@ -47,8 +47,8 @@ export function GlassPanel({ children, style }: GlassPanelProps) {
           <Svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
             <Defs>
               <LinearGradient id={sheen} x1="0" y1="0" x2="1" y2="1">
-                <Stop offset="0" stopColor={colors.onHeader} stopOpacity={0.2} />
-                <Stop offset="1" stopColor={colors.onHeader} stopOpacity={0.05} />
+                <Stop offset="0" stopColor={colors.onChrome} stopOpacity={0.2} />
+                <Stop offset="1" stopColor={colors.onChrome} stopOpacity={0.05} />
               </LinearGradient>
               <RadialGradient id={glow} cx="1" cy="0" r="0.85">
                 <Stop offset="0" stopColor={colors.accent} stopOpacity={0.32} />
@@ -65,7 +65,7 @@ export function GlassPanel({ children, style }: GlassPanelProps) {
               rx={r - 1}
               ry={r - 1}
               fill="none"
-              stroke={colors.onHeader}
+              stroke={colors.onChrome}
               strokeOpacity={0.34}
               strokeWidth={2}
             />
@@ -74,7 +74,7 @@ export function GlassPanel({ children, style }: GlassPanelProps) {
               y={0}
               width={Math.max(width - r * 2, 0)}
               height={1}
-              fill={colors.onHeader}
+              fill={colors.onChrome}
               fillOpacity={0.5}
             />
           </Svg>
