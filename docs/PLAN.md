@@ -4,6 +4,8 @@ Oct 8, 2026 · @workspace.nishant
 
 > **Update, 2026-10-08 (Phase 0b):** the customer app is now an Expo (React Native) app, like the driver app, not a Next.js PWA, and `apps/customer-web` is now `apps/customer`. Wherever this plan says PWA, customer web app, service worker or Lighthouse for the customer app, read it as the React Native app. What the PWA choice was protecting (no install, WhatsApp link previews, iPhone coverage) and what it costs now are in [ADR 0007](decisions/0007-customer-and-driver-are-expo-apps.md). The admin panel and store portal stay Next.js web. Nothing else in this plan changed.
 
+> **Update, 2026-10-14 (ADR 0053):** the lead reason to choose the product is now trust (a shop you already know packs your order, and there is no hidden warehouse for everyday items). Shops pay a **flat plan (monthly, quarterly or yearly) and no commission**; customers still pay delivery and handling fees. Standing orders (daily, chosen days, alternate days) move to the front of V2. Pharmacy and exclusive items are **placeholders ("Coming soon") at launch** and are decided in a later phase. Dark-store mode is unchanged and stays a secondary, switchable mode. Wherever this plan below says commission, read it as the flat shop plan; sections 5, 6, 7, 10, 14 and 15 were updated and the dark-store sections were not touched.
+
 ## 1. Read this first
 
 Build one delivery product that runs in two switchable modes per town: partner stores first, and a single small dark store of your own when the numbers justify it; either way it is not a smaller copy of Blinkit. Writing the app is only part of the job; winning shops, riders and trust in one town is the rest.
@@ -16,6 +18,8 @@ Build one delivery product that runs in two switchable modes per town: partner s
 | Build everything, then launch | Run a manual WhatsApp version in one town while you build | Two to three weeks of manual orders show what to build and what to skip |
 
 **Two modes, one product.** Fulfilment mode (partner stores, one dark store, or both) is a per-town setting, so you can start in either mode and switch at any point in the build. The customer app, order flow, payments, riders and ledger are identical in both modes; only the supply side differs (stock counts, receiving and picking instead of shop toggles). Section 7 gives the switch triggers and procedure, and section 14 shows what a dark store costs. Also decide the starting mode per town.
+
+**Trust first, and a flat plan for shops (ADR 0053).** Customers worry about what they cannot see: where an order is packed, how the goods are kept and whether the place is clean. Quibo connects the shops they already walk into, so the shop's own cleanliness and the customer's own visit are the guarantee. Shops pay a flat plan to be on the app, monthly, quarterly or yearly, and no commission is taken on a sale (the way a ride app charges its drivers a plan instead of a cut). Customers keep paying a delivery fee. Dark-store mode remains a secondary mode that can be switched on, ignored or removed.
 
 PWA = progressive web app: a website that installs like an app, works on weak networks and needs no Play Store approval.
 
@@ -52,6 +56,7 @@ What this means for the plan:
 - **The window is real and closing.** Flipkart is already opening in district towns such as Darbhanga, Purnia, Jorhat and Tenali. Treat 12 to 24 months of head start as a working guess, shorter in bigger towns.
 - **Your real competitor is the kirana's own phone and WhatsApp delivery.** Kiko Live, a kirana software firm, claimed in March 2024 that call and WhatsApp home delivery is already over 10% of kirana business, an $80 billion plus market by its estimate ([Retail4Growth](https://retail4growth.com/news/will-ondc-and-its-enablers-drive-growth-of-kirana-e-commerce-6676)). It is a company claim, so treat it as indicative.
 - **Win where a dark store loses.** Wide catchments, small baskets, credit, trust, local language and cash payment are cheap for a partner-store model and expensive for a dark-store model; section 4 turns each into a feature. A single small dark store stays available as a switchable fallback (section 7).
+- **Lead with trust, not only cost.** The giants' dark stores are a fast way to deliver; what a customer cannot do is walk into one. A shop in the customer's own market can be visited, and its name is on the bag. Say that plainly in the app (ADR 0054) and never accuse a competitor of anything; state the difference the customer can check.
 - **Do not promise a fixed 10 minutes.** The giants dropped the claim under regulatory pressure. Quick delivery shows an estimated range that follows the trip and is never a guarantee, and the customer can schedule a one-hour window instead (ADR 0012).
 
 ## 3. Target towns, users and personas
@@ -77,7 +82,7 @@ Pick one town of roughly 30,000 to 1,50,000 people that no giant serves yet, win
 | Household buyer (homemaker, 28 to 50) | Calls or WhatsApps the kirana; walks to the market for vegetables | Fair price, freshness, trust, the usual shop's items | Shop-first browsing ("your shops"), reorder in one tap, local-language item names |
 | Student, PG or young worker | Buys snacks and essentials on impulse, pays by UPI | Speed, late hours, small baskets | Scheduled and instant slots, UPI intent checkout, low delivery fee on small orders |
 | Elder or low-tech user | Phones the shop; relatives order for them | A human voice, no typing | Call-to-order, voice and photo list orders, family ordering on a parent's behalf (a hypothesis to test) |
-| Store partner (kirana, dairy, produce seller) | Takes orders on calls and WhatsApp, delivers with a helper, gives credit | More orders without losing control, quick payouts | Simple app that opens by voice or photo, daily payouts, no forced price changes |
+| Store partner (kirana, dairy, produce seller) | Takes orders on calls and WhatsApp, delivers with a helper, gives credit | More orders without losing control, quick payouts, and no cut taken from each sale | Simple app that opens by voice or photo, daily payouts, no forced price changes, a visible flat plan with a trial month |
 | Rider (local youth, often part-time) | Informal delivery for shops, cash daily | Predictable pay, no delivery deadlines, same-day payout | Zone-based batching, no late penalties, daily payout, cash-in-hand handling |
 
 **Who is already in this white space**
@@ -93,7 +98,7 @@ The lesson from this table: the idea is not unique, so the moat is being first, 
 
 ## 4. Town reality to product decisions
 
-Every feature in this plan traces back to one of these ten patterns of small-town buying; if a feature cannot be traced to a row, it waits. The left column is a working assumption, so each row is tested in the manual pilot (section 12) before it is built.
+Every feature in this plan traces back to one of these twelve patterns of small-town buying; if a feature cannot be traced to a row, it waits. The left column is a working assumption, so each row is tested in the manual pilot (section 12) before it is built.
 
 | # | Town reality (assumption to validate) | Product decision | Where it shows up |
 | --- | --- | --- | --- |
@@ -103,10 +108,12 @@ Every feature in this plan traces back to one of these ten patterns of small-tow
 | 4 | Hindi, Marathi and other local languages; names like "atta", "dudh", "jeera" | Vernacular-first UI with typed-in-English-letters search ("dudh" finds milk) and voice search | Item alias table; language switch on first screen |
 | 5 | Addresses are landmarks and mohallas, not street numbers; big catchments (Bain puts small-town catchments at 6 to 8 km, [Outlook Business](https://www.outlookbusiness.com/interviews/can-quick-commerce-scale-beyond-metros-flipkart-bain-execs-decode)) | Pin drop plus landmark text plus ward, always a call-the-customer button | Structured area field; driver app has one-tap call and WhatsApp location |
 | 6 | Cash on delivery and UPI side by side; informal credit (udhaar) is normal | COD and UPI both first class; doorstep UPI QR; store credit only later and capped | Rider cash ledger; COD limits per new customer |
-| 7 | Baskets are staples, milk and vegetables, bought often and in monthly lists | Monthly list and repeat orders; fixed morning and evening slots | Reorder, saved lists, subscriptions in V2 |
+| 7 | Baskets are staples, milk and vegetables, bought often and in monthly lists | Monthly list and repeat orders; fixed morning and evening slots | Reorder, saved lists, standing orders (daily, chosen days, alternate days, monthly list; ADR 0053) |
 | 8 | Low order density means few orders per street per hour | Zone-based batching and delivery windows rather than one rider per order | Batch by ward; fee bands by distance; free delivery above a basket threshold |
 | 9 | Certainty beats speed; PwC India says shoppers barely notice delivery faster than 30 minutes ([Business Standard](https://www.business-standard.com/industry/news/blinkit-zomato-tailor-quick-commerce-for-india-s-tier-2-tier-3-cities-125123000066_1.html)) | Promise a window ("by 7:30 pm") and keep it; no hard rider deadlines | Live status over WhatsApp; late-risk alerts to ops, not penalties to riders |
 | 10 | Loose items sold by weight, with prices that move daily (vegetables) | Variable-weight items with a tolerance band and a final bill from the shop | Unit conversions, price override per shop, partial-fill and substitution flow |
+| 11 | Customers cannot see where an app order is packed or how the goods are kept, and they already trust the shops they walk into (assumption to validate) | Make the shop visible: its name on every order and bag, a visited-and-verified mark, a hygiene check at onboarding, and plain comparison of a dark store with a connected shop (ADR 0054) | Shop page trust block, Home trust modules, short moment screens between navigations |
+| 12 | Milk, bread and the monthly ration repeat on a pattern, and people would rather not reorder them | Standing orders: daily, chosen days, alternate days or a monthly list, created as ordinary orders | Orders tab, Daily essentials, product page |
 
 Two more patterns shape operations rather than screens. Festivals, wedding season and weekly market days spike demand for specific items, so the admin panel needs seasonal collections. Shops lose power and signal, so the store portal needs a loud new-order alert, a retry queue and a phone-call fallback.
 
@@ -120,13 +127,13 @@ The MVP is one town, three apps (customer, admin with a store portal, driver) on
 
 | Area | MVP (phases 1 to 4) | V2 (phases 5 to 7) | V3 (after pilot data) |
 | --- | --- | --- | --- |
-| Customer | PWA: phone OTP login, shop list, search in Hindi or English letters, cart, pin and landmark address, COD and UPI, order tracking, reorder | WhatsApp order bot, saved monthly lists, scheduled slots, milk and vegetable subscriptions, ratings | Android app on Play Store, voice ordering in local language, ONDC visibility |
-| Store partner | Store portal inside the admin app: accept or reject, mark ready, stock and price toggles, loud new-order alert, daily summary | Catalogue upload by photo or Excel, weight adjustment, payout statement, store-delivered orders | Store credit (khata) with limits, B2B restocking, store analytics |
+| Customer | PWA: phone OTP login, shop list, search in Hindi or English letters, cart, pin and landmark address, COD and UPI, order tracking, reorder | WhatsApp order bot, standing orders first (daily, chosen days, alternate days, monthly list), saved monthly lists, scheduled slots, ratings | Android app on Play Store, voice ordering in local language, ONDC visibility |
+| Store partner | Store portal inside the admin app: accept or reject, mark ready, stock and price toggles, loud new-order alert, daily summary, plan and billing, offers and new-item marks | Catalogue upload by photo or Excel, weight adjustment, payout statement, store-delivered orders | Store credit (khata) with limits, B2B restocking, store analytics |
 | Rider | Ops assigns by phone and WhatsApp and marks Picked up and Delivered in admin on the rider's behalf | React Native app: auto-assign, batching, navigation hand-off, cash ledger, earnings screen | Incentives, shift planning, automated KYC |
-| Admin and ops | Order board, store onboarding, catalogue editor, zones, manual assign, refunds, basic reports | Settlement and payout runs, cash reconciliation, festival collections, support inbox | Multi-town tenancy, demand forecast, fraud rules, AI ops assistant |
-| Payments | COD, UPI through a gateway, refunds | Prepaid offer, doorstep UPI QR, reconciliation | Wallet or credits, ONDC settlement |
+| Admin and ops | Order board, store onboarding with hygiene visit, catalogue editor, zones, manual assign, refunds, basic reports, shop plans and billing, offer moderation | Settlement and payout runs, cash reconciliation, festival collections, support inbox | Multi-town tenancy, demand forecast, fraud rules, AI ops assistant |
+| Payments | COD, UPI through a gateway, refunds, shop plan fees by UPI | Prepaid offer, doorstep UPI QR, reconciliation | Wallet or credits, ONDC settlement |
 | Messaging | WhatsApp utility templates, SMS or WhatsApp OTP, web push | Rider and store push, ops alerts to a WhatsApp group | Smart nudges, reorder reminders |
-| Trust | FSSAI number shown per shop, photo proof at delivery (no customer code, ADR 0013), bill photo | Ratings, complaint tracking, store quality score | Verified-shop badges |
+| Trust | FSSAI number shown per shop, hygiene visit and a visited-and-verified mark, the shop's name on the bag, photo proof at delivery (no customer code, ADR 0013), bill photo | Ratings, complaint tracking, store quality score | Verified-shop badges |
 | Fulfilment modes | Partner mode live in the pilot town; dark-store mode designed in contracts, data model and admin screens and switched off by a per-town setting | Dark-store mode live in the pilot town if the switch triggers in section 7 are met; goods receipt, stock counts and pick lists in daily use | Hybrid towns, expiry and wastage analytics, reorder suggestions, supplier price tracking |
 
 **Deliberately not built yet**
@@ -135,7 +142,8 @@ The MVP is one town, three apps (customer, admin with a store portal, driver) on
 - **Native iOS app.** Android dominates in these towns by assumption; the PWA covers iPhones.
 - **Wallet, coins, referral engine.** Discount machinery hides whether the product itself works; run one simple first-order offer.
 - **Live ML delivery estimates.** Use fixed windows per zone until you have data.
-- **Pharmacy, alcohol, electronics.** Each adds licenses and returns handling that a solo team cannot absorb.
+- **Pharmacy and exclusive items.** Shown as "Coming soon" placeholders at launch with a notify-me tap; the sourcing, licensing and legal questions are decided in a later phase (ADR 0053).
+- **Alcohol, electronics.** Each adds licenses and returns handling that a solo team cannot absorb.
 - **AI support chat.** Human replies on WhatsApp teach you what customers actually ask.
 
 ## 6. The apps: customer, store, rider, admin
@@ -146,7 +154,7 @@ Build in this order: customer web app, then the admin panel (which includes the 
 
 ### Customer web app (Next.js PWA)
 
-- **Screens:** language and phone OTP; home with "Shop by category", "Shop by brand" and a reorder strip (the shops are in the header); shop page with in-shop search; brand page; global search (brands are results and filters); cart; address; checkout; order tracking; past orders; help.
+- **Screens:** language and phone OTP; home with "Shop by category", "Shop by brand" and a reorder strip (the shops are in the header); shop page with in-shop search; brand page; global search (brands are results and filters); cart; address; checkout; order tracking; past orders; standing orders under Orders; help. Short moment screens (a launch screen and brief transitions) carry one trust fact each and never block the customer (ADR 0054).
 - **Brands:** every branded item shows its brand above its name; the brand opens a brand page; a category, a search and a shop page can be filtered by brand; the item page offers "Other brands of this" and "More from this brand" (ADR 0036).
 - **Search:** typed-in-English-letters Hindi and Marathi ("dudh", "aata"), spelling tolerance, voice search in V2.
 - **Address:** map pin, landmark text, ward or mohalla, alternate phone number; serviceability checked against zone polygons.
@@ -160,6 +168,7 @@ Build in this order: customer web app, then the admin panel (which includes the 
 - **Fulfilment:** mark an item unavailable (starts substitution or partial fill), adjust loose-item weight, mark ready, hand over with a rider code.
 - **Shop control:** open or close, stock toggle, price edit inside an allowed band, holiday hours.
 - **Money:** today's orders, payable amount, payout history.
+- **Plan and offers:** the shop's plan (monthly, quarterly or yearly), renewal date and invoices; create offers and mark items as new (ADR 0053).
 - **Onboarding:** shop photos, FSSAI number, GST if applicable, bank or UPI account, hours, delivery radius.
 - **Failure handling:** an order unaccepted for 90 seconds triggers an ops call; a shop that keeps missing orders is auto-paused.
 
@@ -176,7 +185,8 @@ Build in this order: customer web app, then the admin panel (which includes the 
 | --- | --- |
 | Order board | Live columns by state, late-risk highlights, call buttons, manual assign |
 | Assisted order | A form for phone and WhatsApp orders so you can run the concierge version from day one |
-| Stores | Onboarding checklist, document check, commission, hours, quality score |
+| Stores | Onboarding checklist, document check, hygiene visit, plan, hours, quality score |
+| Plans and billing | Plan prices and periods, trial month, renewals and reminders, plan invoices, a grace period before a shop is paused |
 | Catalogue | Master catalogue grouped by brand and product type, with brand names in Hindi and Marathi and aliases, bulk import, image review, and a brand list per town (which brands are trusted there, and in what order) |
 | Zones | Draw delivery polygons, set fee bands and extras, slots |
 | Customers and support | Lookup, order history, refunds, COD risk flags, blocklist |
@@ -210,7 +220,7 @@ The three dashed exits are the cases ops handles by phone in the MVP; the app on
 
 | Area | Pilot rule | Why |
 | --- | --- | --- |
-| Shop onboarding | Visit each shop in person, verify the FSSAI number, take photos, set up a UPI payout and train the owner in 15 minutes; start with 8 to 10 strong shops (a dairy, two large kiranas, a vegetable seller, a bakery, a general store) | Trust is local, and the person who visits is the product |
+| Shop onboarding | Visit each shop in person, verify the FSSAI number, take photos, set up a UPI payout and train the owner in 15 minutes; take photos of the shelves and storage and tick the hygiene checklist; start the flat plan with a free trial month; start with 8 to 10 strong shops (a dairy, two large kiranas, a vegetable seller, a bakery, a general store) | Trust is local, and the person who visits is the product |
 | Catalogue | One master catalogue of about 800 to 1,500 fast-moving items with local names, grouped by brand and product type (Amul and Gokul for milk, Dairy Milk and KitKat for chocolate; the pilot starts with the 10 to 15 brands that sell in town); shops opt in per item, or per brand, and set a price at or below MRP; loose items are unbranded and sold per kg or per piece | Stops every shop typing its own catalogue, keeps search clean and lets shoppers buy by the brand they trust (ADR 0036) |
 | Stock | No stock counts; shops toggle available or unavailable, and an item auto-pauses after two cancellations | Real stock sync is unsolved at kirana level; availability is the workable version |
 | Pricing | Weekly check against three nearby shops; flag any shop more than 5% above market | Protects the "fair price" promise |
@@ -219,7 +229,7 @@ The three dashed exits are the cases ops handles by phone in the MVP; the app on
 | Substitution | Customer picks per item: substitute, remove, or call me; a price rise above 10% needs consent | Prevents disputes at the door |
 | Refunds | Damaged or wrong items refunded to source within 24 hours; perishables need a photo; cost follows fault (shop, rider or platform) | Keeps disputes cheap and traceable |
 | Support | One WhatsApp number and phone line, 8 am to 10 pm; every ticket linked to an order | Human replies teach you what to build next |
-| Shop quality | Weekly score on acceptance, fill rate, cancellations, complaints and price; coach or pause the bottom 10% | Supply quality is the product |
+| Shop quality | Weekly score on acceptance, fill rate, cancellations, complaints, price and a hygiene check (a spot visit or customer photo flag); coach or pause the bottom 10% | Supply quality is the product, and cleanliness is the promise |
 
 Every number in this table is a working default to tune with pilot data.
 
@@ -330,7 +340,7 @@ Use TypeScript end to end on a PostgreSQL-backed modular monolith, with web apps
 
 ## 10. Core data model
 
-The model is about 23 tables, five of them used only in dark-store mode; the hard parts are the order snapshot, weighed items, the zone check and the ledger, not the table count. Every business table carries `town_id`, and all money is stored as integer paise.
+The model is about 28 tables, five of them used only in dark-store mode; the hard parts are the order snapshot, weighed items, the zone check and the ledger, not the table count. Every business table carries `town_id`, and all money is stored as integer paise.
 
 | Entity | Key fields | Notes |
 | --- | --- | --- |
@@ -338,12 +348,17 @@ The model is about 23 tables, five of them used only in dark-store mode; the har
 | `zone` | town\_id, polygon, fee bands and extras, fee cap, handling fees, slots | PostGIS polygon; drives serviceability and fees |
 | `user` | phone (unique), name, role, language | One table for customers, store owners, riders and staff |
 | `address` | user\_id, zone\_id, lat, lng, landmark, ward, alt\_phone | Zone is computed when saved |
-| `store` | type (partner or dark), stock\_mode (toggle or counted), owner, name, FSSAI number, GST number, location, hours, status, commission, auto\_accept, self\_delivery | Status: onboarding, active, paused |
+| `store` | type (partner or dark), stock\_mode (toggle or counted), owner, name, FSSAI number, GST number, location, hours, status, auto\_accept, self\_delivery, hygiene\_checked\_at | Status: onboarding, active, paused. No commission field (ADR 0053) |
 | `brand` | names in en, hi, mr; mark (wordmark or logo); categories; town order (trusted first) | A browse dimension, not just a label (ADR 0036). Loose produce has none |
 | `product_type` | names in en, hi, mr; category | The plain thing ("Toned milk"); items of one type under different brands are each other's "other brands" and substitutes |
 | `master_item` | names in en, hi, mr; brand\_id (nullable); product\_type\_id; variant name; unit type; pack size; MRP; category | The shared catalogue: brand + type + variant + pack |
 | `item_alias` | item\_id, alias, language | Powers "dudh" finding milk |
 | `store_item` | store\_id, master\_item\_id, price, available, max\_qty, sold\_by\_weight, tolerance | Availability toggle in partner mode; in dark-store mode the count is derived from stock movements |
+| `store_plan` | town\_id, name, period (month, quarter, year), price, trial days, status | The flat plan a shop buys; prices and periods are data |
+| `store_subscription` | store\_id, plan\_id, starts, renews, status (trial, active, grace, paused), invoice refs | One current row per shop; a lapse pauses new orders after a grace period |
+| `offer` | store\_id, title, rule, valid from and to, status (draft, live, rejected), moderated\_by | Shop-made offers; price at or below MRP |
+| `standing_order` | customer, store or shops, items, pattern (daily, weekdays, alternate days, monthly date), window, start, end, paused\_until | A template; creates ordinary orders |
+| `standing_order_run` | standing\_order\_id, run date, order\_id, outcome (created, skipped, failed), reason | Idempotency key is the standing order and the date |
 | `order` | customer, address snapshot, status, payment method and status, totals, promised\_by | One order, one delivery, however many shops it has |
 | `order_shop` | order\_id, store\_id, status (placed, accepted, packed, picked up, rejected), subtotal, packed\_at, picked\_at | The part of the order one shop packs; the store portal and pick tasks work on this row |
 | `order_item` | order\_shop\_id, name and price snapshot, ordered qty, final qty, final price, substitute\_of | Final values come from weighing and packing |
@@ -385,7 +400,7 @@ Three rules change the build: a food-ordering platform needs its own FSSAI licen
 | 10-minute promise | The labour ministry persuaded platforms to drop 10-minute branding in January 2026 ([Storyboard18](https://www.storyboard18.com/amp/how-it-works/govt-pulls-brakes-on-10-minute-delivery-forces-quick-commerce-rethink-87542.htm)) | Show minutes only as an estimated range, never as a guarantee or a fixed "10-minute" claim; offer scheduled windows; never penalise riders for lateness (ADR 0012) |
 | Data protection (DPDP) | The DPDP Rules were notified in November 2025; consent-manager rules start about a year later and the main duties (notice, consent, breach reporting within 72 hours, children's data) apply from about 13 May 2027 ([Hogan Lovells](https://www.hoganlovells.com/en/publications/indias-digital-personal-data-protection-act-2023-brought-into-force-)) | Plain-language privacy notice, consent log, data deletion on request, retention schedule, minimal data from day one |
 | Payments and aggregation | From 15 October 2026 UPI payments above Rs 2,000 attract 0.4% MDR; payments up to Rs 2,000 and small P2PM merchants stay at zero ([Inc42](https://inc42.com/?p=572596)). Gateways still charge their own fee; Razorpay's blog states a standard platform fee of 2% plus 18% GST ([Razorpay](https://razorpay.com/blog/upi-charges-explained-mdr-vs-platform-fees/)) | Use the gateway's split-settlement product so shop money settles without passing through your account (from general knowledge: holding customers' funds to pay shops later can need RBI payment-aggregator authorisation); keep COD and doorstep UPI QR first class to control fees |
-| Tax at source | From general knowledge: e-commerce operators have GST TCS and income-tax TDS duties on sales they facilitate, plus GST on commission and delivery fees | Record every order with GSTIN, HSN and tax split; ask a CA for rates and filing dates |
+| Tax at source | From general knowledge: e-commerce operators have GST TCS and income-tax TDS duties on sales they facilitate, plus GST on shop plan fees and delivery fees | Record every order with GSTIN, HSN and tax split; ask a CA for rates and filing dates |
 | Consumer rules | From general knowledge: the Consumer Protection (E-Commerce) Rules, 2020 require a grievance officer, seller and price disclosure and a stated refund policy; Legal Metrology rules govern MRP and weighing scales | Footer with grievance contact, refund policy page, MRP and net quantity on listings, shops use verified scales |
 | Messaging | SMS needs DLT registration of sender and templates (from general knowledge); WhatsApp needs a verified business and approved templates; Meta's October 2026 reports put utility messages near Rs 0.115 and marketing near Rs 0.86 each before GST ([TelecomTalk](https://telecomtalk.info/whatsappbusiness-price-reveal-telegram-arattai-may-benefit/1012403/)) | Send order updates as utility templates, keep promotions opt-in and rare |
 | Dark-store mode | From general knowledge and FSSAI direction excerpts: an inventory-based e-commerce operator owns the stock it sells, unlike a marketplace; the premises need their own licence or registration and cold-chain hygiene; you become the seller, so you issue GST invoices and claim input credit on purchases, and the marketplace payment-aggregator and TDS questions mostly fall away for your own sales; shop-and-establishment registration, fire safety and labour rules apply to the unit | Number invoices per order, keep batch, expiry and supplier records, feed goods receipts to GST input claims, and add a licence-expiry reminder per store in admin; confirm every point with a CA before switching |
@@ -410,7 +425,7 @@ Build UI first, one surface at a time: customer app, then admin panel with the s
 | 1. Customer UI on mock data (3 to 5) | Every customer screen and state from section 6, Hindi and Marathi, both fulfilment modes, PWA shell, mock API, Playwright flows | Show the clickable build to 5 households and 3 shop owners | 5 of 5 testers place a mock order unaided in both fulfilment modes; axe shows no serious issues; Lighthouse mobile 90+ on key screens; usable on a 2 GB Android phone with throttled network; zero open blocker or major defects |
 | 2. Customer live (6 to 8) | NestJS API, PostgreSQL schema (including the stock tables), OTP auth, catalogue, cart, order state machine, COD and UPI in test mode, ops inbox and WhatsApp alerts; mocks swapped for the API | Pilot-town customers start ordering in the app; ops handles each order from the ops inbox | Contract tests pass; real orders complete end to end; payment and refund reconcile to zero; no double charge on retry |
 | 3. Admin UI on mock data (9 to 10) | Every admin, store-portal and dark-store-console screen and state, role-based layout, mock data | One operator and 3 shop owners try the screens | Operator and shop owners finish their tasks unaided; same accessibility and performance bars; zero open blocker or major defects |
-| 4. Admin live (11 to 13) | Assisted order, order board, store onboarding, catalogue, zones, finance basics, store alerts with the 90-second timeout; dark-store console (receiving, stock counts, pick lists) behind a per-town switch | Move every pilot order and shop onto admin and retire the sheet | All pilot orders run in admin; 80%+ accepted inside 90 seconds; every admin change appears in the audit log; a test town switches from partner to dark-store mode and back with no code change |
+| 4. Admin live (11 to 13) | Assisted order, order board, store onboarding with hygiene visit, catalogue, zones, shop plans and billing, finance basics, store alerts with the 90-second timeout; dark-store console (receiving, stock counts, pick lists) behind a per-town switch | Move every pilot order and shop onto admin and retire the sheet | All pilot orders run in admin; 80%+ accepted inside 90 seconds; every admin change appears in the audit log; a test town switches from partner to dark-store mode and back with no code change |
 | 5. Driver UI on mock data (14 to 15) | Every driver screen and state in Expo on mock data | 3 riders walk through a mock delivery | 3 of 3 riders complete a mock delivery unaided; usable one-handed on a bike stand; zero open blocker or major defects |
 | 6. Driver live (16 to 18) | Offers, batching, location, drop photo, UPI QR, cash ledger, earnings | Move riders onto the app; nightly cash close | Cash reconciles to zero daily for a week; 90%+ delivered inside the window |
 | 7. Harden and replicate (19 to 21) | Monitoring, backups, load test, runbooks, town setup by configuration | Pick town two using the section 3 filters | Backup restore tested; load test passes; town two launches with under a week of engineering |
@@ -450,29 +465,48 @@ Each phase ends with a gate review on its last day: run the checklist, fix every
 
 ## 14. Metrics and unit economics
 
-At base assumptions one order earns about Rs 2 and a town needs roughly 870 orders a day to break even, which no small town delivers; with realistic levers it needs about 71, so the pilot's job is to prove the levers, not to add features. Every number here is an illustrative assumption to replace with pilot data.
+Without commission an order does not pay for itself, so the shops' plan fees carry the fixed cost: on the assumptions below a town needs roughly 155 paying shops at 100 orders a day, and the number to watch is paying shops, not orders. Every number here is an illustrative assumption to replace with pilot data (ADR 0053).
 
-**One order, worked example**
+**One order, worked example (partner mode, flat-fee model)**
 
 | Line | Base (Rs per order) | With levers (Rs per order) | Assumption |
 | --- | --- | --- | --- |
 | Basket value | 350 | 450 | Bain expects lower spend per order in small towns ([Outlook Business](https://www.outlookbusiness.com/interviews/can-quick-commerce-scale-beyond-metros-flipkart-bain-execs-decode)), so 450 is a stretch to test |
-| Commission from shops | 24.5 | 40.5 | 7% against 9%; the most contested number, so test 5, 7 and 9% with shops |
-| Delivery and small-basket fees | 20.0 | 25.0 | A free-delivery threshold keeps the average below the headline fee |
-| **Revenue** | **44.5** | **65.5** | Sum of the three lines above |
+| Commission from shops | 0 | 0 | None. Shops pay a plan instead (table below) |
+| Delivery, handling and small-basket fees | 22.0 | 34.0 | Delivery fee capped at 30 and handling under 18 (ADR 0011); the free-delivery line (ADR 0022) keeps the average under the cap, so set it with the plan price |
+| **Revenue** | **22.0** | **34.0** | Sum of the lines above |
 | Rider cost after batching | 27.7 | 20.0 | Rs 36 per trip divided by 1.3 or 1.8 orders per trip |
 | Payment gateway | 5.2 | 6.7 | 60% prepaid at 2% plus 18% GST on basket and fee |
 | Messaging and OTP | 1.0 | 1.0 | About four utility messages plus occasional SMS |
 | Refunds and shrink | 5.3 | 6.8 | 1.5% of basket value |
 | Support | 3.0 | 3.0 | One part-time agent spread across volume |
-| **Contribution per order** | **2.3** | **28.0** | Revenue minus the five costs above |
-| **Break-even orders per day** | **about 870** | **about 71** | Rs 60,000 fixed cost a month (town manager 25,000, support 15,000, tools 8,000, local marketing 12,000) divided by contribution times 30 days |
+| **Contribution per order** | **-20.2** | **-3.5** | Revenue minus the five costs above |
 
-&#91;embedded content: illustrative assumptions typed in chat · two scenarios, 25 to 150 orders a day\]
+Each order still loses a little, which is expected: the plan fees, not the order, pay for the business.
 
-Commission, batching and basket size move the result most; test them in that order.
+**Shop plans (working defaults, to test with shops)**
 
-Note (ADR 0022): the free-delivery line is 99 rupees, and both baskets above (350 and 450) are well over it, so nearly every order ships free. Read the "Delivery and small-basket fees" row as small-basket and handling fees only until a real fee mix is measured; the table has not been re-run for this and its contribution figures are therefore optimistic.
+| Plan | Price | Per month | Note |
+| --- | --- | --- | --- |
+| Monthly | Rs 499 | Rs 499 | Full price, easiest to say yes to |
+| Quarterly | Rs 1,299 | Rs 433 | About 13% off |
+| Yearly | Rs 4,499 | Rs 375 | About 25% off; best for the shop and for cash flow |
+
+A blend of 50% monthly, 30% quarterly and 20% yearly gives about Rs 454 a shop a month. Every plan starts with a free trial month.
+
+| Line | With levers | Base |
+| --- | --- | --- |
+| Fixed cost a month (town manager 25,000, support 15,000, tools 8,000, local marketing 12,000) | Rs 60,000 | Rs 60,000 |
+| Loss on orders at 100 a day (3,000 a month) | Rs 10,500 | Rs 60,600 |
+| **Paying shops needed to break even** | **about 155** | **about 266** |
+
+**What the shop gets for the plan.** At a gross margin of 10 to 15% on a Rs 450 basket (an assumption) a shop earns Rs 45 to 68 an order, so 7 to 10 extra orders a month pay for a Rs 454 plan. That sentence is the sales pitch to a shopkeeper, and the pilot should test it.
+
+**Levers, in order.** Plan price and mix first (doubling the plan prices roughly halves the shops needed), then the number of shops a city can hold, then the delivery fee and free-delivery line, then rider batching. Shops that deliver nearby orders themselves (`self_delivery`) take the rider cost off the platform.
+
+Dark-store mode is unchanged and keeps its own sketch below: it earns a retail margin on stock it buys and has no shop plans.
+
+**Earlier commission sketch, kept for the dark-store column.** The partner column below uses a commission and is superseded by the flat-fee model above; the dark-store column still stands.
 
 **Same basket, dark-store mode (illustrative)**
 
@@ -537,10 +571,13 @@ The biggest risk is not technical: it is that unit economics, shop adoption or a
 | Switching to a dark store before volume, burning cash on rent, staff and stock | Switch only on the section 7 triggers; cap stock at about 7 days; start with 300 items; run both modes for two weeks; keep the reverse path rehearsed | Wastage above 3% of sales or stock-outs on top items |
 | Mode-specific logic leaks into shared code | A FulfilmentStrategy boundary per module; CI runs the whole order flow in both modes | A branch on fulfilment mode appears in order, payment, dispatch or ledger code |
 | Dark-store stock counts drift from reality | Daily counts of fast items, a weekly full count, every adjustment logged with a reason | Variance above 2% on a weekly count |
+| Shops do not renew the flat plan, or too few join to cover fixed cost | Free trial month, a visible "extra orders" figure in the store portal, yearly discount, a grace period before pausing, a plan price test with the first 10 shops | Fewer than 6 of 10 trial shops convert to a paid plan |
+| Without commission every order loses money | Set the delivery fee and free-delivery line with the plan price; let nearby shops deliver themselves; keep batching | Contribution per order below minus Rs 10 after 8 weeks |
+| The trust comparison reads as an attack on competitors | State only what a customer can check, never name or accuse a company, keep legal review before launch | Any complaint or takedown notice |
 
 **Things the brief did not mention but the build needs**
 
-- **Shop agreement:** commission, payout day, price rules and a penalty-free exit.
+- **Shop agreement:** plan price and period, trial month, payout day, price rules and a penalty-free exit.
 - **Fraud and abuse controls:** COD no-shows, fake pins, repeated refunds, rider and shop collusion, a blocklist.
 - **Acquisition plan:** shop-door QR posters, neighbourhood WhatsApp groups, PG and hostel tie-ups, local ambassadors, and Meta click-to-WhatsApp ads as the natural paid channel.
 - **Analytics from day one:** an event plan covering visit, add to cart, checkout, paid, delivered and reorder, so every funnel drop is visible.
@@ -556,7 +593,7 @@ The biggest risk is not technical: it is that unit economics, shop adoption or a
 - [ ] Which town is first, and who is your person on the ground there?
 - [ ] Brand name and launch languages (Hindi, Marathi or another)
 - [ ] Bootstrap the pilot or raise money (BazaarNow raised Rs 72 crore for a similar thesis, so a solo pilot competes on cost, not capital)
-- [ ] Revenue model: commission on shops, a price markup, or fees only
+- [x] Revenue model: decided, a flat shop plan (monthly, quarterly, yearly) and no commission; delivery fees stay (ADR 0053)
 - [ ] Rider model: shop helpers, your own riders, or a mix per zone
 - [ ] Launch categories, and whether to join ONDC later
 - [ ] Brands: which 10 to 15 brands the pilot town starts with, whether brand logos may be shown (trademarks), and which shop is shown as "Sold by" when several have the same brand item (ADR 0036)
@@ -576,7 +613,7 @@ Export this doc to Markdown as `docs/PLAN.md` in a new empty repository, add the
 # Project: hyperlocal grocery delivery for tier 3 and 4 Indian towns
 
 ## What we are building
-A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. Partner stores by default; a single company dark store per town is an allowed alternative. Delivery is quick by default: the app shows an estimated time in minutes as a range, never a guarantee (ADR 0012), and the customer can instead schedule a one-hour window today or tomorrow. One pilot town first; multi-town ready through town_id. Each town runs in a fulfilment mode (partner, dark or hybrid) that can be switched by configuration at any time.
+A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. Partner stores by default; a single company dark store per town is an allowed alternative. Delivery is quick by default: the app shows an estimated time in minutes as a range, never a guarantee (ADR 0012), and the customer can instead schedule a one-hour window today or tomorrow. One pilot town first; multi-town ready through town_id. Each town runs in a fulfilment mode (partner, dark or hybrid) that can be switched by configuration at any time. Shops pay a flat plan (monthly, quarterly or yearly) and no commission is taken on a sale; customers pay delivery and handling fees (ADR 0053).
 Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 
 ## How we work: UI first, phase-gated

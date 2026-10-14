@@ -1,7 +1,7 @@
 # Project: hyperlocal grocery delivery for tier 3 and 4 Indian towns
 
 ## What we are building
-A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. Partner stores by default; a single company dark store per town is an allowed alternative. Delivery is quick by default: the app shows an estimated time in minutes as a range, never a guarantee (ADR 0012), and the customer can instead schedule a one-hour window today or tomorrow. One pilot town first; multi-town ready through town_id. Each town runs in a fulfilment mode (partner, dark or hybrid) that can be switched by configuration at any time.
+A partner-store marketplace. Customers order from local kirana, dairy and vegetable shops in their own town. Shops accept and pack. Paid riders deliver. Partner stores by default; a single company dark store per town is an allowed alternative. Delivery is quick by default: the app shows an estimated time in minutes as a range, never a guarantee (ADR 0012), and the customer can instead schedule a one-hour window today or tomorrow. One pilot town first; multi-town ready through town_id. Each town runs in a fulfilment mode (partner, dark or hybrid) that can be switched by configuration at any time. Shops pay a flat plan (monthly, quarterly or yearly) and no commission is taken on a sale; customers pay delivery and handling fees (ADR 0053).
 Plan: docs/PLAN.md (read sections 4, 6, 7, 10 and 12 before coding).
 
 ## How we work: UI first, phase-gated
