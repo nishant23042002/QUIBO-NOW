@@ -444,6 +444,25 @@
     "hi": "हिन्दी",
     "mr": "मराठी"
   },
+  "outOfArea": {
+    "headerLabel": "Delivery",
+    "headerValue": "Not here yet",
+    "title": "We do not deliver to this address yet",
+    "body": "Quibo works with the local shops of a town, and opens a town once those shops are on board.",
+    "tellTitle": "Tell me when Quibo arrives",
+    "tellBody": "Add your pincode and we will let you know the moment Quibo reaches it.",
+    "pincodeLabel": "Pincode",
+    "pincodeBad": "A pincode has six digits",
+    "noted": "Noted",
+    "notedLine": "Noted. We will tell you when Quibo reaches {pincode}.",
+    "townsTitle": "Where we deliver today",
+    "town": { "roha": "Roha", "mhasla": "Mhasla", "tala": "Tala" },
+    "townLive": "Open now · {count} shops",
+    "townSoon": "Shops are signing up",
+    "pillLive": "Shop in Roha",
+    "browse": "Look around Roha anyway",
+    "browsing": "You are looking around Roha. We do not deliver to your address yet, so ordering is paused."
+  },
   "languageSheet": {
     "title": "Choose your language",
     "note": "You can change this any time, here or in Profile."
@@ -500,6 +519,9 @@
     "appearance": "Appearance",
     "dev": {
       "network": "Network (testing)",
+      "area": "Delivery area (testing)",
+      "areaIn": "Inside the area",
+      "areaOut": "Outside the area",
       "online": "Online",
       "offline": "Pretend offline",
       "fail": "Make the next page load fail",

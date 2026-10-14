@@ -1,6 +1,7 @@
 import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 import { setConditions, useConditions } from '@/home/conditions';
+import { setForceOutside, useForceOutside } from '@/home/useAreaStatus';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { armFailNext, setSimulatedOffline, useFailNextArmed, useSimulatedOffline } from '@/network';
 import { Button, OptionGroup, space } from '@/ui';
@@ -16,6 +17,7 @@ export default function TestingTools() {
   const offline = useSimulatedOffline();
   const failArmed = useFailNextArmed();
   const conditions = useConditions();
+  const forceOutside = useForceOutside();
 
   return (
     <View style={{ gap: space[6] }}>
@@ -28,6 +30,17 @@ export default function TestingTools() {
         value={offline ? 'offline' : 'online'}
         onChange={(value) => {
           setSimulatedOffline(value === 'offline');
+        }}
+      />
+      <OptionGroup
+        title={t('profile.dev.area')}
+        options={[
+          { value: 'in', label: t('profile.dev.areaIn') },
+          { value: 'out', label: t('profile.dev.areaOut') },
+        ]}
+        value={forceOutside ? 'out' : 'in'}
+        onChange={(value) => {
+          setForceOutside(value === 'out');
         }}
       />
       <OptionGroup

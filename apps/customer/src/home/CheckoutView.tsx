@@ -38,6 +38,7 @@ import {
   useScreenLoad,
 } from '@/ui';
 import { useAddresses } from './AddressProvider';
+import { useAreaStatus } from './useAreaStatus';
 import { useConditions } from './conditions';
 import { useBillRows } from './billRows';
 import { useCart } from './CartProvider';
@@ -164,6 +165,7 @@ function CheckoutPage() {
   const router = useRouter();
   const cart = useCart();
   const addresses = useAddresses();
+  const area = useAreaStatus();
   const online = useOnline();
   const when = useDeliveryWhen();
   const address = useDeliveryAddress();
@@ -221,6 +223,8 @@ function CheckoutPage() {
   const options = paymentOptions(bill.toPay);
   const shops = shopLines(cart.items, t('cart.darkStore'));
   const hasAddress = addresses.selected !== undefined;
+  // An address outside the delivery area can be looked around from, but nothing can be ordered to it (ADR 0055, step 10).
+  const outsideArea = area.outside;
   const quick = when.quick;
   const methodTitle = method === 'cod' ? t('checkout.codTitle') : t('checkout.upiTitle');
   const busy = isBusy(flow);
@@ -481,9 +485,17 @@ function CheckoutPage() {
         </View>
         <View style={styles.dockButton}>
           <Button
-            label={flow.step === 'placing' ? t('checkout.placing') : t('checkout.place')}
+            label={
+              outsideArea
+                ? t('address.notServed')
+                : flow.step === 'placing'
+                  ? t('checkout.placing')
+                  : t('checkout.place')
+            }
             loading={flow.step === 'placing'}
-            disabled={!online || !hasAddress || cart.delivery.current === undefined || busy}
+            disabled={
+              !online || !hasAddress || outsideArea || cart.delivery.current === undefined || busy
+            }
             shine
             onPress={place}
           />

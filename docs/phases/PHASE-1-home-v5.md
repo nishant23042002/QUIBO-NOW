@@ -265,3 +265,20 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
     the language sheet, Dark Store vs Connected Store and the Quibo promise. New Maestro flow `language.yaml`.
   - Checks: lint, typecheck, test (741 customer tests) pass. Looked at on the web preview at 375 px: the sheet in English, then
     Home in Hindi. Not seen on a real phone, at 200% text, or in Marathi.
+- **Step 10, out of the area: built, waiting for the owner's phone check.**
+  - When the chosen address is outside every delivery zone, Home is `OutOfArea` (under the header the other tabs wear, its
+    estimate replaced by "Not here yet", so no minutes are promised): a plum card that says so, a pincode field (starts from a
+    pincode found in the address text) with Notify me, "Where we deliver today" (Roha with its open shops; Mhasla and Tala with
+    Notify me), and "Look around Roha anyway". Notify me is kept with the same consent log as the categories' (`pin:<code>` and
+    `town:<id>` beside the category ids in `quibo.notify`).
+  - Looking around shows Home's shops with a banner ("ordering is paused" and a way back), and checkout's button reads "We do
+    not deliver here yet" and is off. The choice lasts until the app closes, or until another address is chosen.
+  - Logic with tests in `areaRules.ts` (pincode, zone check, towns); state in `useAreaStatus.ts`; the towns are stand-ins for
+    town data in Phase 2, as the zone shapes are (ADR 0016).
+  - **Reaching it:** an address outside the area cannot be saved or chosen (ADR 0016), so today the screen appears only when the
+    zones change under a saved address. A switch in Settings, in the testing tools ("Delivery area"), shows it in development
+    builds. Maestro flow `area.yaml` uses it.
+  - **Not built:** the mock's "Suggest a shop" card, which is not in this plan row. Parked for the owner to decide.
+  - Checks: lint, typecheck, test (750 customer tests) and build pass. Looked at on the web preview at 375 px: the screen, the
+    pincode and a town saved to Notify me (the test entries were removed), looking around, and checkout's off button.
+    Not seen on a real phone, at 200% text, or in Hindi and Marathi.

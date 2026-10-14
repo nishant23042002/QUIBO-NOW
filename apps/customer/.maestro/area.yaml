@@ -1,0 +1,45 @@
+# Out of the area: an address outside the delivery area gets the "we do not deliver here yet" screen, a pincode to be told about,
+# the towns served, and a way to look around anyway.
+#
+# Run it against the app open in Expo Go, on a fresh install:
+#   maestro test apps/customer/.maestro/area.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (Home v5, step 10). It has not been run yet: the Maestro tool is not installed on the machine this was written on.
+# The address list cannot hold an address outside the area, so the testing switch in Settings stands in for one.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Estimated delivery|Scheduled delivery'
+
+# The testing switch: pretend the chosen address is outside the area.
+- tapOn: 'Profile'
+- tapOn: 'Testing tools'
+- scrollUntilVisible:
+    element: 'Outside the area'
+- tapOn: 'Outside the area'
+- tapOn: 'Back'
+
+# The screen says so, and promises no minutes.
+- assertVisible: 'We do not deliver to this address yet'
+- assertVisible: 'Not here yet'
+- assertNotVisible: 'Estimated delivery'
+
+# Leave a pincode, and ask to hear about a town.
+- tapOn: 'Pincode'
+- inputText: '410203'
+- tapOn: 'Notify me'
+- assertVisible: 'Noted'
+- scrollUntilVisible:
+    element: 'Where we deliver today'
+- assertVisible: 'Roha'
+- assertVisible: 'Mhasla'
+- assertVisible: 'Tala'
+
+# Look around: the shops show, with ordering paused and a way back.
+- tapOn: 'Look around Roha anyway'
+- assertVisible: 'ordering is paused'
+- tapOn: 'Tell me when Quibo arrives'
+- assertVisible: 'We do not deliver to this address yet'

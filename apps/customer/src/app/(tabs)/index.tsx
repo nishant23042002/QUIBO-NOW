@@ -13,7 +13,10 @@ import { LiveOrderCard } from '@/home/LiveOrderCard';
 import { HomeFeed } from '@/home/HomeFeed';
 import type { ItemCategory } from '@/home/items';
 import type { NeedId } from '@/home/needs';
+import { OutOfArea } from '@/home/OutOfArea';
+import { OutsideBanner } from '@/home/OutsideBanner';
 import { useSampleShops } from '@/home/sampleShops';
+import { useAreaStatus } from '@/home/useAreaStatus';
 import { useTabHeaderProps } from '@/home/useTabHeader';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
@@ -23,9 +26,16 @@ import { BOTTOM_BAR_HEIGHT, HomeHeader, useChromeReport } from '@/ui';
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
 
-// Home: the header (the delivery estimate, the shops row it opens, the search bar with its Schedule slot and the categories rail),
-// the "Right now in Roha" mosaic on the same surface, and the item rows under it (ADR 0055).
+// Home is the shops, or, for an address outside the delivery area (until the shopper chooses to look around anyway), the screen that
+// says so and takes a pincode (ADR 0055, step 10).
 export default function HomeScreen() {
+  const area = useAreaStatus();
+  return area.outside && !area.browsing ? <OutOfArea /> : <ShopsHome />;
+}
+
+// The shops: the header (the delivery estimate, the shops row it opens, the search bar with its Schedule slot and the categories rail),
+// the "Right now in Roha" mosaic on the same surface, and the item rows under it (ADR 0055).
+function ShopsHome() {
   const { t } = useLanguage();
   const router = useRouter();
   const styles = useStyles(makeStyles);
@@ -83,6 +93,7 @@ export default function HomeScreen() {
         hero={({ openShops }) => (
           <>
             <LiveOrderCard />
+            <OutsideBanner />
             <ClosedBanner />
             <HeroMosaic
               shopNames={shopNames}
