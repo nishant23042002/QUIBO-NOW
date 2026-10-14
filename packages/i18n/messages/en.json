@@ -157,9 +157,6 @@
       "kg": "{amount}/kg",
       "pc": "{amount}/pc"
     },
-    "shopByCategory": {
-      "title": "Shop by category"
-    },
     "essentials": {
       "title": "Daily essentials",
       "addOne": "Add 1 item · {amount}",
@@ -330,6 +327,10 @@
       "fourTitle": "We keep checking",
       "fourBody": "A weekly score covers cleanliness, price and speed. A shop that slips is paused until it is fixed.",
       "note": "This wording is a draft until the first shops are visited."
+    },
+    "comingSoon": {
+      "title": "Coming soon to Roha",
+      "sub": "Tap Notify me and we will tell you when a category arrives"
     }
   },
   "brands": {
@@ -1279,7 +1280,9 @@
       "snacks": "Snacks & Drinks",
       "care": "Beauty & Care",
       "tech": "Tech & Play",
-      "style": "Home & Style"
+      "style": "Home & Style",
+      "pharmacy": "Pharmacy",
+      "exclusive": "Only on Quibo"
     },
     "mains": {
       "vegFruit": "Vegetables & Fruits",
@@ -1376,12 +1379,27 @@
       "gaming": "Gaming",
       "jewellery": "Jewellery",
       "decor": "Home Decor",
-      "automotive": "Automotive"
+      "automotive": "Automotive",
+      "breakfast": "Breakfast & Sauces",
+      "meatFish": "Meat & Fish",
+      "drinks": "Cold Drinks & Juices",
+      "iceCream": "Ice Creams",
+      "medicines": "Medicines",
+      "wellness": "Health & Wellness",
+      "quiboPicks": "Quibo Picks",
+      "giftBoxes": "Gift Boxes"
     },
     "tags": {
       "today": "Today",
       "tomorrow": "Tomorrow",
       "soon": "Soon"
+    },
+    "notify": {
+      "me": "Notify me",
+      "on": "We’ll tell you",
+      "tag": "Notify",
+      "hint": "Coming soon. Tap to be told when it arrives",
+      "hintOn": "You will be told. Tap to undo"
     }
   },
   "needs": {

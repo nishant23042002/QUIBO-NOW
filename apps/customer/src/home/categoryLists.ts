@@ -15,8 +15,6 @@ import {
 
 /** The most categories the header rail shows before "More". */
 export const RAIL_LIMIT = 6;
-/** The tiles of "Shop by category" before "All categories". */
-export const GRID_SIZE = 8;
 
 export function category(id: string | undefined): Category | undefined {
   return CATEGORIES.find((candidate) => candidate.id === id);
@@ -50,30 +48,24 @@ export function railCategories(
   return { shown: liveOnes.slice(0, limit), more: liveOnes.length > limit };
 }
 
-/**
- * The tiles of "Shop by category": live ones first, then the ones that are coming to fill the grid, up to `size`. The last tile of a
- * grid that does not show everything is "All categories", which the screen adds.
- */
-export function gridCategories(
-  categories: readonly Category[],
-  size: number = GRID_SIZE,
-): Category[] {
-  return [...categories.filter(isLive), ...categories.filter((entry) => !isLive(entry))].slice(
-    0,
-    size,
-  );
+/** One group with what it holds: the categories the town stocks, and the ones that are coming. */
+export interface GroupedCategories {
+  group: CategoryGroup;
+  live: Category[];
+  soon: Category[];
 }
 
-/** The full list: the live categories in their groups (a group with none is left out), then those coming. */
-export function categoryIndex(categories: readonly Category[]): {
-  groups: { group: CategoryGroup; categories: Category[] }[];
-  coming: Category[];
-} {
-  const groups = CATEGORY_GROUPS.map((group) => ({
+/**
+ * Every group that holds anything, in the order the groups are listed, each with its live categories and its coming ones in their
+ * own order. A group with no live category is one that is only coming (Pharmacy, Only on Quibo): Home shows it as a card on "Coming
+ * soon to Roha" and the Categories tab as a group of tiles with Notify me.
+ */
+export function groupedCategories(categories: readonly Category[]): GroupedCategories[] {
+  return CATEGORY_GROUPS.map((group) => ({
     group,
-    categories: categories.filter((entry) => entry.group === group.id && isLive(entry)),
-  })).filter((entry) => entry.categories.length > 0);
-  return { groups, coming: categories.filter((entry) => !isLive(entry)) };
+    live: categories.filter((entry) => entry.group === group.id && isLive(entry)),
+    soon: categories.filter((entry) => entry.group === group.id && !isLive(entry)),
+  })).filter((entry) => entry.live.length + entry.soon.length > 0);
 }
 
 /** Where a category's tile goes: a live one opens its own screen, one that is coming opens its "Coming to Roha" page. */

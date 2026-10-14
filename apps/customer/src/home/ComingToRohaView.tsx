@@ -3,6 +3,7 @@ import { Text as NativeText, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { BOTTOM_BAR_HEIGHT, Button, CategoryHeader, Text, radius, space } from '@/ui';
+import { useNotify } from './useNotify';
 import { tintColor } from './categoryGroups';
 import type { Category } from './catalogueTree';
 
@@ -29,20 +30,22 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.line,
       opacity: 0.7,
     },
-    actions: { alignSelf: 'stretch', marginTop: space[2] },
+    actions: { alignSelf: 'stretch', marginTop: space[2], gap: space[3] },
   });
 
 /**
  * What a category that is not stocked yet opens: its name and picture, one line saying it is on its way to Roha, and a way back to
- * what is here today. It makes no promise of a day (ADR 0012's rule for time, kept for dates) and takes no sign-up: telling a shopper
- * when it arrives needs a notification service (Phase 2).
+ * what is here today, with the same Notify me the tiles have. It makes no promise of a day (ADR 0012's rule for time, kept for
+ * dates). Notify me is kept on the phone in Phase 1; telling a shopper when it arrives needs a notification service (Phase 2).
  */
 export function ComingToRohaView({ category }: { category: Category }) {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const router = useRouter();
   const styles = useStyles(makeStyles);
+  const notify = useNotify();
   const name = t(category.label);
+  const notified = notify.has(category.id);
 
   return (
     <View style={styles.page}>
@@ -68,7 +71,15 @@ export function ComingToRohaView({ category }: { category: Category }) {
         </Text>
         <View style={styles.actions}>
           <Button
+            label={notified ? t('catalogue.notify.on') : t('catalogue.notify.me')}
+            variant={notified ? 'secondary' : 'primary'}
+            onPress={() => {
+              notify.toggle(category.id);
+            }}
+          />
+          <Button
             label={t('categoriesTab.seeToday')}
+            variant="secondary"
             onPress={() => {
               router.navigate('/');
             }}

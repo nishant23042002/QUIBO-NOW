@@ -15,6 +15,13 @@ export interface CategoryGridTile {
   tag?: string;
   /** A tile for something that is not here yet: softened. It can still be pressed, to say when it is coming. */
   soon?: boolean;
+  /** Twice as wide, showing `emojis` side by side. Used for the first tile of a group. */
+  wide?: boolean;
+  emojis?: readonly string[];
+  /** The shopper asked to be told when this arrives: the tile turns pistachio. */
+  notified?: boolean;
+  /** What a screen reader says besides the name, for example that a tap turns Notify me on. */
+  hint?: string;
 }
 
 export interface CategoryTileGridProps {
@@ -36,21 +43,29 @@ const styles = StyleSheet.create({
     paddingHorizontal: space[4] - GAP / 2,
   },
   cell: { width: '25%', paddingHorizontal: GAP / 2 },
+  cellWide: { width: '50%', paddingHorizontal: GAP / 2 },
   cellSkeleton: { width: '25%', paddingHorizontal: GAP / 2, gap: space[2] },
 });
 
-/** The tiles of a group or of Home's "Shop by category", four across. */
+/** The tiles of a group on Home or in the Categories tab, four across (a wide tile takes two). */
 export function CategoryTileGrid({ tiles, onPress }: CategoryTileGridProps) {
   return (
     <View style={styles.grid}>
       {tiles.map((tile, index) => (
-        <View key={`${tile.label}-${index}`} style={styles.cell}>
+        <View
+          key={`${tile.label}-${index}`}
+          style={tile.wide === true ? styles.cellWide : styles.cell}
+        >
           <CategoryTile
             label={tile.label}
             emoji={tile.emoji}
             tint={tile.tint}
             {...(tile.picture !== undefined ? { picture: tile.picture } : {})}
             {...(tile.tag !== undefined ? { tag: tile.tag } : {})}
+            {...(tile.emojis !== undefined ? { emojis: tile.emojis } : {})}
+            {...(tile.hint !== undefined ? { hint: tile.hint } : {})}
+            wide={tile.wide === true}
+            notified={tile.notified === true}
             dimmed={tile.soon === true}
             onPress={() => {
               onPress(index);

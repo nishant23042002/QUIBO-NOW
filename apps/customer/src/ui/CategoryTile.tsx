@@ -25,10 +25,23 @@ export interface CategoryTileProps {
   tag?: string;
   /** Softened, for something that cannot be opened yet. */
   dimmed?: boolean;
+  /** Twice as wide as a tile, showing `emojis` side by side: the way into a group's first category. */
+  wide?: boolean;
+  /** What a wide tile shows, in order, instead of a picture. */
+  emojis?: readonly string[];
+  /** The shopper asked to be told when this arrives: the tile turns pistachio and its tag says so. */
+  notified?: boolean;
+  /** What a screen reader says after the name, for example that a tap turns Notify me on. */
+  hint?: string;
 }
 
 /** The picture is a square the width of the tile. */
 const EMOJI_SIZE = 30;
+/**
+ * A wide tile covers two cells and the gap between them, so its picture is a little over twice as wide as it is tall: the same
+ * height as the square tiles beside it.
+ */
+const WIDE_RATIO = 2.15;
 /** The band of the category's colour round a picture's plate, like the mat round a framed photograph. */
 const FRAME = 3;
 
@@ -59,7 +72,10 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.artworkPlate,
       overflow: 'hidden',
     },
+    boxWide: { aspectRatio: WIDE_RATIO, flexDirection: 'row', gap: space[2] },
     dimmed: { opacity: 0.55 },
+    // Asked to be told: the colour of what is saved or on offer, with a pistachio edge.
+    notified: { backgroundColor: c.accentSubtle, borderColor: c.accent, borderWidth: 1.5 },
     // The tag sits on the picture's lower edge, centred, and never wider than the picture.
     tag: {
       position: 'absolute',
@@ -76,6 +92,7 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.line,
       backgroundColor: c.surface,
     },
+    tagPillNotified: { borderColor: c.accentEdge, backgroundColor: c.accent },
     pressed: { opacity: 0.8 },
     label: { maxWidth: '100%' },
   });
@@ -93,13 +110,17 @@ export function CategoryTile({
   onPress,
   tag,
   dimmed = false,
+  wide = false,
+  emojis,
+  notified = false,
+  hint,
 }: CategoryTileProps) {
   const styles = useStyles(makeStyles);
 
   return (
     <Pressable
       role="button"
-      aria-label={tag === undefined ? label : `${label}, ${tag}`}
+      aria-label={[label, tag, hint].filter((part) => part !== undefined).join(', ')}
       aria-disabled={onPress === undefined}
       disabled={onPress === undefined}
       onPress={onPress}
@@ -110,11 +131,23 @@ export function CategoryTile({
           style={[
             styles.box,
             { backgroundColor: tint },
-            picture !== undefined && styles.framed,
-            dimmed && styles.dimmed,
+            wide && styles.boxWide,
+            picture !== undefined && !wide && styles.framed,
+            dimmed && !notified && styles.dimmed,
+            notified && styles.notified,
           ]}
         >
-          {picture !== undefined ? (
+          {wide ? (
+            (emojis ?? [emoji]).map((entry) => (
+              <NativeText
+                key={entry}
+                allowFontScaling={false}
+                style={{ fontSize: EMOJI_SIZE + 6, lineHeight: EMOJI_SIZE + 14 }}
+              >
+                {entry}
+              </NativeText>
+            ))
+          ) : picture !== undefined ? (
             <View style={styles.plate}>
               <Image
                 source={picture}
@@ -135,8 +168,14 @@ export function CategoryTile({
         </View>
         {tag !== undefined ? (
           <View style={styles.tag} pointerEvents="none">
-            <View style={styles.tagPill}>
-              <Text variant="caption" align="center" numberOfLines={1} maxFontSizeMultiplier={1.2}>
+            <View style={[styles.tagPill, notified && styles.tagPillNotified]}>
+              <Text
+                variant="caption"
+                color={notified ? 'onAccent' : 'ink'}
+                align="center"
+                numberOfLines={1}
+                maxFontSizeMultiplier={1.2}
+              >
                 {tag}
               </Text>
             </View>
@@ -146,7 +185,7 @@ export function CategoryTile({
       <View style={styles.label}>
         <Text
           variant="caption"
-          color={dimmed ? 'inkMuted' : 'ink'}
+          color={dimmed && !notified ? 'inkMuted' : 'ink'}
           align="center"
           numberOfLines={2}
           maxFontSizeMultiplier={1.2}

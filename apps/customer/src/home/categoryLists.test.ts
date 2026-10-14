@@ -7,13 +7,11 @@ import {
   type Category,
 } from './catalogueTree';
 import {
-  GRID_SIZE,
   RAIL_LIMIT,
   categoriesMatching,
   category,
-  categoryIndex,
   categoryRoute,
-  gridCategories,
+  groupedCategories,
   isLive,
   railCategories,
   resolveCategories,
@@ -127,36 +125,56 @@ describe('the header rail', () => {
   });
 });
 
-describe('Shop by category', () => {
-  it('puts live categories first and fills the rest of the grid with those coming', () => {
-    const tiles = gridCategories(CATEGORIES);
-    expect(tiles.length).toBe(Math.min(GRID_SIZE, CATEGORIES.length));
-    const firstSoon = tiles.findIndex((entry) => !isLive(entry));
-    expect(firstSoon).toBeGreaterThan(0);
-    expect(tiles.slice(firstSoon).every((entry) => !isLive(entry))).toBe(true);
-  });
-
-  it('shows fewer tiles when there are fewer categories', () => {
-    expect(gridCategories(CATEGORIES.slice(0, 2)).length).toBe(2);
-  });
-});
-
-describe('the index of all categories', () => {
-  it('groups the live categories and lists the rest as coming, leaving out empty groups', () => {
-    const { groups, coming } = categoryIndex(CATEGORIES);
-    expect(groups.map((entry) => entry.group.id)).toEqual(['grocery', 'snacks']);
-    expect(groups.flatMap((entry) => entry.categories).every(isLive)).toBe(true);
-    expect(coming.length).toBe(CATEGORIES.filter((entry) => !isLive(entry)).length);
+describe('the groups of categories', () => {
+  it('lists every group that holds something, with its live categories apart from those coming', () => {
+    const groups = groupedCategories(CATEGORIES);
+    expect(groups.map((entry) => entry.group.id)).toEqual([
+      'grocery',
+      'snacks',
+      'care',
+      'tech',
+      'style',
+      'pharmacy',
+      'exclusive',
+    ]);
+    expect(groups.flatMap((entry) => entry.live).every(isLive)).toBe(true);
+    expect(groups.flatMap((entry) => entry.soon).every((entry) => !isLive(entry))).toBe(true);
   });
 
   it('puts a category in its group in the order given', () => {
-    const grocery = categoryIndex(CATEGORIES).groups[0];
-    expect(grocery?.categories.map((entry) => entry.id)).toEqual([
+    const grocery = groupedCategories(CATEGORIES)[0];
+    expect(grocery?.live.map((entry) => entry.id)).toEqual([
       'vegFruit',
       'dairyEggs',
       'attaRice',
       'oilMasala',
     ]);
+  });
+
+  it('keeps the groups that are only coming apart from the stocked ones', () => {
+    const groups = groupedCategories(CATEGORIES);
+    const onlyComing = groups.filter((entry) => entry.live.length === 0);
+    expect(onlyComing.map((entry) => entry.group.id)).toEqual([
+      'care',
+      'tech',
+      'style',
+      'pharmacy',
+      'exclusive',
+    ]);
+    expect(
+      groups.filter((entry) => entry.live.length > 0).every((entry) => entry.soon.length > 0),
+    ).toBe(true);
+  });
+
+  it('counts every category exactly once', () => {
+    const groups = groupedCategories(CATEGORIES);
+    const total = groups.reduce((sum, entry) => sum + entry.live.length + entry.soon.length, 0);
+    expect(total).toBe(CATEGORIES.length);
+  });
+
+  it('turns a live group into a group that is coming when nothing in it is in stock', () => {
+    const groups = groupedCategories(resolveCategories([]));
+    expect(groups.every((entry) => entry.live.length === 0)).toBe(true);
   });
 });
 

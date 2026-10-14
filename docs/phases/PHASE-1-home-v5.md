@@ -173,3 +173,22 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - Checks: lint, typecheck, test (681 customer tests) and build pass. Looked at on the web preview at 375 px: the scene and its
     drag, the cards, the score and the sheet. The returning-customer place and the dark-store case are covered
     by the placement test and have not been seen on screen.
+- **Step 5, categories grouped: built, waiting for the owner's phone check.**
+  - Home: "Shop by category" is replaced by the groups the town stocks (Grocery & Kitchen, Snacks & Drinks), each a title and a
+    grid whose first tile is wide with the pictures of what it holds. The categories of the group that are coming sit beside the
+    live ones, softened, with a "Soon" tag. Under them, "Coming soon to Roha": a card for each group that is only coming (Beauty &
+    Care, Tech & Play, Home & Style, Pharmacy, Only on Quibo) with a Notify me button, then "All categories".
+  - Notify me: a tap on a coming tile or card turns it on and off. The tile turns pistachio and says Notify; the card says it will
+    tell the shopper. It is kept on the phone (`quibo.notify`) with when and under which wording they first agreed (the consent
+    log), and goes to the API in Phase 2. Pharmacy and Only on Quibo are placeholders, never catalogues (ADR 0053).
+  - Categories tab: a Find a category field that is always there, every group (the stocked categories as rows, then the group's
+    coming ones as tiles with Notify me, and the groups that are only coming as just those tiles). The "Coming to Roha" page keeps a
+    Notify me button for a deep link.
+  - Data: eight categories that are coming (Breakfast & Sauces, Meat & Fish, Cold Drinks & Juices, Ice Creams, Medicines, Health &
+    Wellness, Quibo Picks, Gift Boxes) and the groups Pharmacy and Only on Quibo, all sample data until the API supplies them.
+  - Removed: `ShopByCategory`, `useCategoryTiles`, the grid and index helpers of `categoryLists`, the `FIND_FROM` rule, and the
+    `home.shopByCategory` messages. New: `HomeCategories`, `ComingSoonRail`, `useCategoryGroups`, `notify.ts` and `useNotify.ts`
+    (with tests), `subsEmojis`.
+  - Checks: lint, typecheck, test (705 customer tests) and build pass. Looked at on the web preview at 375 px: the groups, a wide
+    tile, the soon tiles, the cards, Notify me on a tile and a card (kept across screens), and the Categories tab. Not seen on a
+    real phone, at 200% text, or in Hindi and Marathi. The loading skeleton mirrors the groups and the cards.

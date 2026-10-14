@@ -17,6 +17,7 @@ import { itemsInCategory, type Category } from './catalogueTree';
 import { Bestsellers } from './Bestsellers';
 import { DailyEssentials } from './DailyEssentials';
 import { FreshToday } from './FreshToday';
+import { HomeCategories } from './HomeCategories';
 import { HowWeCheckSheet } from './HowWeCheckSheet';
 import { KnowYourShop } from './KnowYourShop';
 import { PaymentStrip } from './PaymentStrip';
@@ -29,7 +30,6 @@ import { useHomeSectionShown } from './homeSections';
 import { Featured } from './Featured';
 import { QuieterNote } from './QuieterNote';
 import { ShopByBrand } from './ShopByBrand';
-import { ShopByCategory } from './ShopByCategory';
 import { ShopForNeed } from './ShopForNeed';
 import { SmallPrices } from './SmallPrices';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
@@ -217,7 +217,7 @@ export const HomeFeed = memo(function HomeFeed({
       )}
       <View style={[styles.rails, styles.after]}>
         <Bestsellers onCategory={onSeeCategory} />
-        <ShopByCategory />
+        <HomeCategories />
         <DailyEssentials />
         {showSection('need') ? <ShopForNeed /> : null}
         {showSection('small') ? <SmallPrices /> : null}

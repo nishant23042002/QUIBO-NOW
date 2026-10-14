@@ -235,11 +235,22 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `categoriesTab.noMatch.title` | No category like that                                                        | ऐसी कोई श्रेणी नहीं मिली                                                                       | अशी कोणतीही श्रेणी सापडली नाही                                                                |                 |
 | `categoriesTab.noMatch.body`  | Try another word, or clear the search.                                       | कोई दूसरा शब्द आज़माएँ, या खोज साफ़ करें।                                                      | दुसरा शब्द वापरून पाहा, किंवा शोध पुसून टाका.                                                 |                 |
 
-## Shop by category, on Home
+## Coming soon to Roha, on Home
 
-| Key                         | English          | Hindi (draft)           | Marathi (draft)       | OK or change to |
-| --------------------------- | ---------------- | ----------------------- | --------------------- | --------------- |
-| `home.shopByCategory.title` | Shop by category | श्रेणी के अनुसार खरीदें | श्रेणीनुसार खरेदी करा |                 |
+| Key                     | English                                                    | Hindi (draft)                                      | Marathi (draft)                                 | OK or change to |
+| ----------------------- | ---------------------------------------------------------- | -------------------------------------------------- | ----------------------------------------------- | --------------- |
+| `home.comingSoon.title` | Coming soon to Roha                                        | जल्द ही रोहा में                                   | लवकरच रोह्यात                                   |                 |
+| `home.comingSoon.sub`   | Tap Notify me and we will tell you when a category arrives | "मुझे बताएं" दबाएँ, कोई श्रेणी आते ही हम बता देंगे | "मला कळवा" दाबा, एखादी श्रेणी आली की आम्ही कळवू |                 |
+
+## Notify me, on a category that is coming
+
+| Key                       | English                                     | Hindi (draft)                            | Marathi (draft)                           | OK or change to |
+| ------------------------- | ------------------------------------------- | ---------------------------------------- | ----------------------------------------- | --------------- |
+| `catalogue.notify.me`     | Notify me                                   | मुझे बताएं                               | मला कळवा                                  |                 |
+| `catalogue.notify.on`     | We’ll tell you                              | हम बताएंगे                               | आम्ही कळवू                                |                 |
+| `catalogue.notify.tag`    | Notify                                      | सूचित                                    | कळवणार                                    |                 |
+| `catalogue.notify.hint`   | Coming soon. Tap to be told when it arrives | जल्द आ रहा है। आने पर बताने के लिए दबाएँ | लवकरच येत आहे. आल्यावर कळवण्यासाठी दाबा   |                 |
+| `catalogue.notify.hintOn` | You will be told. Tap to undo               | आपको बताया जाएगा। रद्द करने के लिए दबाएँ | तुम्हाला कळवले जाईल. रद्द करण्यासाठी दाबा |                 |
 
 ## Shop by brand, on Home
 
@@ -351,95 +362,110 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 ## Categories and sub-categories
 
-| Key                               | English                                              | Hindi (draft)                          | Marathi (draft)                      | OK or change to |
-| --------------------------------- | ---------------------------------------------------- | -------------------------------------- | ------------------------------------ | --------------- |
-| `catalogue.groups.grocery`        | Grocery & Kitchen                                    | किराना और रसोई                         | किराणा आणि स्वयंपाकघर                |                 |
-| `catalogue.groups.snacks`         | Snacks & Drinks                                      | स्नैक्स और पेय                         | स्नॅक्स आणि पेये                     |                 |
-| `catalogue.groups.care`           | Beauty & Care                                        | सौंदर्य और देखभाल                      | सौंदर्य आणि निगा                     |                 |
-| `catalogue.groups.tech`           | Tech & Play                                          | टेक और खेल                             | टेक आणि खेळ                          |                 |
-| `catalogue.groups.style`          | Home & Style                                         | घर और स्टाइल                           | घर आणि स्टाइल                        |                 |
-| `catalogue.mains.vegFruit`        | Vegetables & Fruits                                  | सब्ज़ियाँ और फल                        | भाज्या आणि फळे                       |                 |
-| `catalogue.mains.dairyEggs`       | Dairy & Eggs                                         | डेयरी और अंडे                          | दुग्धजन्य आणि अंडी                   |                 |
-| `catalogue.mains.attaRice`        | Atta, Rice & Dal                                     | आटा, चावल और दाल                       | आटा, तांदूळ आणि डाळ                  |                 |
-| `catalogue.mains.oilMasala`       | Oil, Ghee & Masala                                   | तेल, घी और मसाले                       | तेल, तूप आणि मसाले                   |                 |
-| `catalogue.mains.chips`           | Chips & Namkeen                                      | चिप्स और नमकीन                         | चिप्स आणि नमकीन                      |                 |
-| `catalogue.mains.biscuits`        | Biscuits & Bakery                                    | बिस्किट और बेकरी                       | बिस्किटे आणि बेकरी                   |                 |
-| `catalogue.mains.sweets`          | Sweets & Chocolates                                  | मिठाई और चॉकलेट                        | मिठाई आणि चॉकलेट                     |                 |
-| `catalogue.subs.freshVegetables`  | Fresh Vegetables                                     | ताज़ी सब्ज़ियाँ                        | ताज्या भाज्या                        |                 |
-| `catalogue.subs.freshFruits`      | Fresh Fruits                                         | ताज़े फल                               | ताजी फळे                             |                 |
-| `catalogue.subs.milk`             | Milk                                                 | दूध                                    | दूध                                  |                 |
-| `catalogue.subs.curd`             | Curd & Yogurt                                        | दही                                    | दही                                  |                 |
-| `catalogue.subs.paneer`           | Paneer & Cheese                                      | पनीर और चीज़                           | पनीर आणि चीज                         |                 |
-| `catalogue.subs.eggs`             | Eggs                                                 | अंडे                                   | अंडी                                 |                 |
-| `catalogue.subs.atta`             | Atta                                                 | आटा                                    | आटा                                  |                 |
-| `catalogue.subs.rice`             | Rice                                                 | चावल                                   | तांदूळ                               |                 |
-| `catalogue.subs.sugar`            | Sugar & Salt                                         | चीनी और नमक                            | साखर आणि मीठ                         |                 |
-| `catalogue.subs.oil`              | Cooking Oil                                          | खाना पकाने का तेल                      | स्वयंपाकाचे तेल                      |                 |
-| `catalogue.subs.chips`            | Chips                                                | चिप्स                                  | चिप्स                                |                 |
-| `catalogue.subs.popcorn`          | Popcorn                                              | पॉपकॉर्न                               | पॉपकॉर्न                             |                 |
-| `catalogue.subs.biscuits`         | Biscuits                                             | बिस्किट                                | बिस्किटे                             |                 |
-| `catalogue.subs.chocolates`       | Chocolates                                           | चॉकलेट                                 | चॉकलेट                               |                 |
-| `catalogue.subs.dal`              | Dal & Pulses                                         | दाल और दलहन                            | डाळी आणि कडधान्ये                    |                 |
-| `catalogue.subs.ghee`             | Ghee                                                 | घी                                     | तूप                                  |                 |
-| `catalogue.subs.masala`           | Masala & Spices                                      | मसाले                                  | मसाले                                |                 |
-| `catalogue.subs.bread`            | Bread & Pav                                          | ब्रेड और पाव                           | ब्रेड आणि पाव                        |                 |
-| `catalogue.subs.rusk`             | Rusk & Cakes                                         | रस्क और केक                            | रस्क आणि केक                         |                 |
-| `catalogue.subs.indianSweets`     | Indian Sweets                                        | मिठाई                                  | मिठाई                                |                 |
-| `catalogue.subs.namkeen`          | Namkeen                                              | नमकीन                                  | नमकीन                                |                 |
-| `catalogue.all`                   | All                                                  | सभी                                    | सर्व                                 |                 |
-| `catalogue.rail`                  | Kinds in this category                               | इस श्रेणी के प्रकार                    | या श्रेणीतील प्रकार                  |                 |
-| `catalogue.searchLabel`           | Search                                               | खोजें                                  | शोधा                                 |                 |
-| `catalogue.empty.title`           | Nothing here right now                               | अभी यहाँ कुछ नहीं है                   | सध्या येथे काही नाही                 |                 |
-| `catalogue.empty.body`            | Try another kind from the list.                      | सूची से कोई दूसरा प्रकार चुनें।        | यादीतून दुसरा प्रकार निवडा.          |                 |
-| `catalogue.notFound.title`        | We couldn't find that category                       | यह श्रेणी नहीं मिली                    | ही श्रेणी सापडली नाही                |                 |
-| `catalogue.notFound.body`         | It may have moved. Pick one from the Categories tab. | यह हट गई होगी। श्रेणियाँ टैब से चुनें। | ती हलवली असेल. श्रेणी टॅबमधून निवडा. |                 |
-| `catalogue.notFound.back`         | See categories                                       | श्रेणियाँ देखें                        | श्रेणी पहा                           |                 |
-| `catalogue.sort.chip`             | Sort                                                 | क्रम                                   | क्रमवारी                             |                 |
-| `catalogue.sort.title`            | Sort by                                              | इस क्रम में दिखाएँ                     | या क्रमाने दाखवा                     |                 |
-| `catalogue.sort.relevance`        | Relevance                                            | सबसे उपयुक्त                           | सर्वात योग्य                         |                 |
-| `catalogue.sort.priceLow`         | Price: low to high                                   | कीमत: कम से ज़्यादा                    | किंमत: कमी ते जास्त                  |                 |
-| `catalogue.sort.priceHigh`        | Price: high to low                                   | कीमत: ज़्यादा से कम                    | किंमत: जास्त ते कमी                  |                 |
-| `catalogue.sort.saving`           | Biggest saving                                       | सबसे ज़्यादा बचत                       | सर्वाधिक बचत                         |                 |
-| `catalogue.filters.chip`          | Filters                                              | फ़िल्टर                                | फिल्टर                               |                 |
-| `catalogue.filters.title`         | Filters                                              | फ़िल्टर                                | फिल्टर                               |                 |
-| `catalogue.filters.brand`         | Brand                                                | ब्रांड                                 | ब्रँड                                |                 |
-| `catalogue.filters.price`         | Price                                                | कीमत                                   | किंमत                                |                 |
-| `catalogue.filters.under`         | Under {amount}                                       | {amount} से कम                         | {amount} पेक्षा कमी                  |                 |
-| `catalogue.filters.veg`           | Veg                                                  | शाकाहारी                               | शाकाहारी                             |                 |
-| `catalogue.filters.nonveg`        | Non-veg                                              | मांसाहारी                              | मांसाहारी                            |                 |
-| `catalogue.filters.clearAll`      | Clear all                                            | सब हटाएँ                               | सर्व काढा                            |                 |
-| `catalogue.filters.close`         | Close                                                | बंद करें                               | बंद करा                              |                 |
-| `catalogue.filters.noMatch.title` | No items match                                       | कोई चीज़ नहीं मिली                     | एकही वस्तू जुळली नाही                |                 |
-| `catalogue.filters.noMatch.body`  | Try taking a filter off.                             | कोई फ़िल्टर हटाकर देखें।               | एखादा फिल्टर काढून पहा.              |                 |
-| `catalogue.filters.noMatch.clear` | Clear filters                                        | फ़िल्टर हटाएँ                          | फिल्टर काढा                          |                 |
-| `catalogue.filters.type`          | Type                                                 | प्रकार                                 | प्रकार                               |                 |
-| `catalogue.filters.properties`    | Properties                                           | विशेषताएँ                              | वैशिष्ट्ये                           |                 |
-| `catalogue.filters.onOffer`       | On offer                                             | ऑफ़र पर                                | ऑफरवर                                |                 |
-| `catalogue.filters.apply`         | Apply ({count})                                      | लागू करें ({count})                    | लागू करा ({count})                   |                 |
-| `catalogue.filters.quantity`      | Quantity                                             | मात्रा                                 | प्रमाण                               |                 |
-| `catalogue.filters.origin`        | Country of Origin                                    | उत्पत्ति का देश                        | उत्पत्तीचा देश                       |                 |
-| `catalogue.filters.fat`           | Fat Profile                                          | वसा प्रोफ़ाइल                          | फॅट प्रोफाइल                         |                 |
-| `catalogue.filters.source`        | Source                                               | स्रोत                                  | स्रोत                                |                 |
-| `catalogue.filters.processing`    | Processing Type                                      | प्रोसेसिंग का प्रकार                   | प्रक्रिया प्रकार                     |                 |
-| `catalogue.railNames.vegFruit`    | Fresh                                                | ताज़ा                                  | ताजे                                 |                 |
-| `catalogue.railNames.dairyEggs`   | Dairy                                                | डेयरी                                  | डेअरी                                |                 |
-| `catalogue.railNames.attaRice`    | Staples                                              | किराना                                 | किराणा                               |                 |
-| `catalogue.railNames.oilMasala`   | Oil & Masala                                         | तेल-मसाले                              | तेल-मसाले                            |                 |
-| `catalogue.railNames.chips`       | Chips                                                | चिप्स                                  | चिप्स                                |                 |
-| `catalogue.railNames.biscuits`    | Biscuits                                             | बिस्किट                                | बिस्किट                              |                 |
-| `catalogue.railNames.sweets`      | Sweets                                               | मिठाई                                  | मिठाई                                |                 |
-| `catalogue.soon.beauty`           | Beauty                                               | ब्यूटी                                 | ब्युटी                               |                 |
-| `catalogue.soon.babyCare`         | Baby Care                                            | बेबी केयर                              | बेबी केअर                            |                 |
-| `catalogue.soon.gym`              | Gym & Fitness                                        | जिम और फिटनेस                          | जिम आणि फिटनेस                       |                 |
-| `catalogue.soon.electronics`      | Electronics                                          | इलेक्ट्रॉनिक्स                         | इलेक्ट्रॉनिक्स                       |                 |
-| `catalogue.soon.kids`             | Kids & Toys                                          | बच्चे और खिलौने                        | मुले आणि खेळणी                       |                 |
-| `catalogue.soon.gaming`           | Gaming                                               | गेमिंग                                 | गेमिंग                               |                 |
-| `catalogue.soon.jewellery`        | Jewellery                                            | ज्वेलरी                                | ज्वेलरी                              |                 |
-| `catalogue.soon.decor`            | Home Decor                                           | होम डेकोर                              | होम डेकोर                            |                 |
-| `catalogue.soon.automotive`       | Automotive                                           | ऑटोमोटिव                               | ऑटोमोटिव्ह                           |                 |
-| `catalogue.tags.today`            | Today                                                | आज                                     | आज                                   |                 |
-| `catalogue.tags.tomorrow`         | Tomorrow                                             | कल                                     | उद्या                                |                 |
-| `catalogue.tags.soon`             | Soon                                                 | जल्द                                   | लवकरच                                |                 |
+| Key                               | English                                              | Hindi (draft)                            | Marathi (draft)                           | OK or change to |
+| --------------------------------- | ---------------------------------------------------- | ---------------------------------------- | ----------------------------------------- | --------------- |
+| `catalogue.groups.grocery`        | Grocery & Kitchen                                    | किराना और रसोई                           | किराणा आणि स्वयंपाकघर                     |                 |
+| `catalogue.groups.snacks`         | Snacks & Drinks                                      | स्नैक्स और पेय                           | स्नॅक्स आणि पेये                          |                 |
+| `catalogue.groups.care`           | Beauty & Care                                        | सौंदर्य और देखभाल                        | सौंदर्य आणि निगा                          |                 |
+| `catalogue.groups.tech`           | Tech & Play                                          | टेक और खेल                               | टेक आणि खेळ                               |                 |
+| `catalogue.groups.style`          | Home & Style                                         | घर और स्टाइल                             | घर आणि स्टाइल                             |                 |
+| `catalogue.groups.pharmacy`       | Pharmacy                                             | फ़ार्मेसी                                | फार्मसी                                   |                 |
+| `catalogue.groups.exclusive`      | Only on Quibo                                        | सिर्फ़ Quibo पर                          | फक्त Quibo वर                             |                 |
+| `catalogue.mains.vegFruit`        | Vegetables & Fruits                                  | सब्ज़ियाँ और फल                          | भाज्या आणि फळे                            |                 |
+| `catalogue.mains.dairyEggs`       | Dairy & Eggs                                         | डेयरी और अंडे                            | दुग्धजन्य आणि अंडी                        |                 |
+| `catalogue.mains.attaRice`        | Atta, Rice & Dal                                     | आटा, चावल और दाल                         | आटा, तांदूळ आणि डाळ                       |                 |
+| `catalogue.mains.oilMasala`       | Oil, Ghee & Masala                                   | तेल, घी और मसाले                         | तेल, तूप आणि मसाले                        |                 |
+| `catalogue.mains.chips`           | Chips & Namkeen                                      | चिप्स और नमकीन                           | चिप्स आणि नमकीन                           |                 |
+| `catalogue.mains.biscuits`        | Biscuits & Bakery                                    | बिस्किट और बेकरी                         | बिस्किटे आणि बेकरी                        |                 |
+| `catalogue.mains.sweets`          | Sweets & Chocolates                                  | मिठाई और चॉकलेट                          | मिठाई आणि चॉकलेट                          |                 |
+| `catalogue.subs.freshVegetables`  | Fresh Vegetables                                     | ताज़ी सब्ज़ियाँ                          | ताज्या भाज्या                             |                 |
+| `catalogue.subs.freshFruits`      | Fresh Fruits                                         | ताज़े फल                                 | ताजी फळे                                  |                 |
+| `catalogue.subs.milk`             | Milk                                                 | दूध                                      | दूध                                       |                 |
+| `catalogue.subs.curd`             | Curd & Yogurt                                        | दही                                      | दही                                       |                 |
+| `catalogue.subs.paneer`           | Paneer & Cheese                                      | पनीर और चीज़                             | पनीर आणि चीज                              |                 |
+| `catalogue.subs.eggs`             | Eggs                                                 | अंडे                                     | अंडी                                      |                 |
+| `catalogue.subs.atta`             | Atta                                                 | आटा                                      | आटा                                       |                 |
+| `catalogue.subs.rice`             | Rice                                                 | चावल                                     | तांदूळ                                    |                 |
+| `catalogue.subs.sugar`            | Sugar & Salt                                         | चीनी और नमक                              | साखर आणि मीठ                              |                 |
+| `catalogue.subs.oil`              | Cooking Oil                                          | खाना पकाने का तेल                        | स्वयंपाकाचे तेल                           |                 |
+| `catalogue.subs.chips`            | Chips                                                | चिप्स                                    | चिप्स                                     |                 |
+| `catalogue.subs.popcorn`          | Popcorn                                              | पॉपकॉर्न                                 | पॉपकॉर्न                                  |                 |
+| `catalogue.subs.biscuits`         | Biscuits                                             | बिस्किट                                  | बिस्किटे                                  |                 |
+| `catalogue.subs.chocolates`       | Chocolates                                           | चॉकलेट                                   | चॉकलेट                                    |                 |
+| `catalogue.subs.dal`              | Dal & Pulses                                         | दाल और दलहन                              | डाळी आणि कडधान्ये                         |                 |
+| `catalogue.subs.ghee`             | Ghee                                                 | घी                                       | तूप                                       |                 |
+| `catalogue.subs.masala`           | Masala & Spices                                      | मसाले                                    | मसाले                                     |                 |
+| `catalogue.subs.bread`            | Bread & Pav                                          | ब्रेड और पाव                             | ब्रेड आणि पाव                             |                 |
+| `catalogue.subs.rusk`             | Rusk & Cakes                                         | रस्क और केक                              | रस्क आणि केक                              |                 |
+| `catalogue.subs.indianSweets`     | Indian Sweets                                        | मिठाई                                    | मिठाई                                     |                 |
+| `catalogue.subs.namkeen`          | Namkeen                                              | नमकीन                                    | नमकीन                                     |                 |
+| `catalogue.all`                   | All                                                  | सभी                                      | सर्व                                      |                 |
+| `catalogue.rail`                  | Kinds in this category                               | इस श्रेणी के प्रकार                      | या श्रेणीतील प्रकार                       |                 |
+| `catalogue.searchLabel`           | Search                                               | खोजें                                    | शोधा                                      |                 |
+| `catalogue.empty.title`           | Nothing here right now                               | अभी यहाँ कुछ नहीं है                     | सध्या येथे काही नाही                      |                 |
+| `catalogue.empty.body`            | Try another kind from the list.                      | सूची से कोई दूसरा प्रकार चुनें।          | यादीतून दुसरा प्रकार निवडा.               |                 |
+| `catalogue.notFound.title`        | We couldn't find that category                       | यह श्रेणी नहीं मिली                      | ही श्रेणी सापडली नाही                     |                 |
+| `catalogue.notFound.body`         | It may have moved. Pick one from the Categories tab. | यह हट गई होगी। श्रेणियाँ टैब से चुनें।   | ती हलवली असेल. श्रेणी टॅबमधून निवडा.      |                 |
+| `catalogue.notFound.back`         | See categories                                       | श्रेणियाँ देखें                          | श्रेणी पहा                                |                 |
+| `catalogue.sort.chip`             | Sort                                                 | क्रम                                     | क्रमवारी                                  |                 |
+| `catalogue.sort.title`            | Sort by                                              | इस क्रम में दिखाएँ                       | या क्रमाने दाखवा                          |                 |
+| `catalogue.sort.relevance`        | Relevance                                            | सबसे उपयुक्त                             | सर्वात योग्य                              |                 |
+| `catalogue.sort.priceLow`         | Price: low to high                                   | कीमत: कम से ज़्यादा                      | किंमत: कमी ते जास्त                       |                 |
+| `catalogue.sort.priceHigh`        | Price: high to low                                   | कीमत: ज़्यादा से कम                      | किंमत: जास्त ते कमी                       |                 |
+| `catalogue.sort.saving`           | Biggest saving                                       | सबसे ज़्यादा बचत                         | सर्वाधिक बचत                              |                 |
+| `catalogue.filters.chip`          | Filters                                              | फ़िल्टर                                  | फिल्टर                                    |                 |
+| `catalogue.filters.title`         | Filters                                              | फ़िल्टर                                  | फिल्टर                                    |                 |
+| `catalogue.filters.brand`         | Brand                                                | ब्रांड                                   | ब्रँड                                     |                 |
+| `catalogue.filters.price`         | Price                                                | कीमत                                     | किंमत                                     |                 |
+| `catalogue.filters.under`         | Under {amount}                                       | {amount} से कम                           | {amount} पेक्षा कमी                       |                 |
+| `catalogue.filters.veg`           | Veg                                                  | शाकाहारी                                 | शाकाहारी                                  |                 |
+| `catalogue.filters.nonveg`        | Non-veg                                              | मांसाहारी                                | मांसाहारी                                 |                 |
+| `catalogue.filters.clearAll`      | Clear all                                            | सब हटाएँ                                 | सर्व काढा                                 |                 |
+| `catalogue.filters.close`         | Close                                                | बंद करें                                 | बंद करा                                   |                 |
+| `catalogue.filters.noMatch.title` | No items match                                       | कोई चीज़ नहीं मिली                       | एकही वस्तू जुळली नाही                     |                 |
+| `catalogue.filters.noMatch.body`  | Try taking a filter off.                             | कोई फ़िल्टर हटाकर देखें।                 | एखादा फिल्टर काढून पहा.                   |                 |
+| `catalogue.filters.noMatch.clear` | Clear filters                                        | फ़िल्टर हटाएँ                            | फिल्टर काढा                               |                 |
+| `catalogue.filters.type`          | Type                                                 | प्रकार                                   | प्रकार                                    |                 |
+| `catalogue.filters.properties`    | Properties                                           | विशेषताएँ                                | वैशिष्ट्ये                                |                 |
+| `catalogue.filters.onOffer`       | On offer                                             | ऑफ़र पर                                  | ऑफरवर                                     |                 |
+| `catalogue.filters.apply`         | Apply ({count})                                      | लागू करें ({count})                      | लागू करा ({count})                        |                 |
+| `catalogue.filters.quantity`      | Quantity                                             | मात्रा                                   | प्रमाण                                    |                 |
+| `catalogue.filters.origin`        | Country of Origin                                    | उत्पत्ति का देश                          | उत्पत्तीचा देश                            |                 |
+| `catalogue.filters.fat`           | Fat Profile                                          | वसा प्रोफ़ाइल                            | फॅट प्रोफाइल                              |                 |
+| `catalogue.filters.source`        | Source                                               | स्रोत                                    | स्रोत                                     |                 |
+| `catalogue.filters.processing`    | Processing Type                                      | प्रोसेसिंग का प्रकार                     | प्रक्रिया प्रकार                          |                 |
+| `catalogue.railNames.vegFruit`    | Fresh                                                | ताज़ा                                    | ताजे                                      |                 |
+| `catalogue.railNames.dairyEggs`   | Dairy                                                | डेयरी                                    | डेअरी                                     |                 |
+| `catalogue.railNames.attaRice`    | Staples                                              | किराना                                   | किराणा                                    |                 |
+| `catalogue.railNames.oilMasala`   | Oil & Masala                                         | तेल-मसाले                                | तेल-मसाले                                 |                 |
+| `catalogue.railNames.chips`       | Chips                                                | चिप्स                                    | चिप्स                                     |                 |
+| `catalogue.railNames.biscuits`    | Biscuits                                             | बिस्किट                                  | बिस्किट                                   |                 |
+| `catalogue.railNames.sweets`      | Sweets                                               | मिठाई                                    | मिठाई                                     |                 |
+| `catalogue.soon.beauty`           | Beauty                                               | ब्यूटी                                   | ब्युटी                                    |                 |
+| `catalogue.soon.babyCare`         | Baby Care                                            | बेबी केयर                                | बेबी केअर                                 |                 |
+| `catalogue.soon.gym`              | Gym & Fitness                                        | जिम और फिटनेस                            | जिम आणि फिटनेस                            |                 |
+| `catalogue.soon.electronics`      | Electronics                                          | इलेक्ट्रॉनिक्स                           | इलेक्ट्रॉनिक्स                            |                 |
+| `catalogue.soon.kids`             | Kids & Toys                                          | बच्चे और खिलौने                          | मुले आणि खेळणी                            |                 |
+| `catalogue.soon.gaming`           | Gaming                                               | गेमिंग                                   | गेमिंग                                    |                 |
+| `catalogue.soon.jewellery`        | Jewellery                                            | ज्वेलरी                                  | ज्वेलरी                                   |                 |
+| `catalogue.soon.decor`            | Home Decor                                           | होम डेकोर                                | होम डेकोर                                 |                 |
+| `catalogue.soon.automotive`       | Automotive                                           | ऑटोमोटिव                                 | ऑटोमोटिव्ह                                |                 |
+| `catalogue.soon.breakfast`        | Breakfast & Sauces                                   | नाश्ता और सॉस                            | नाश्ता आणि सॉस                            |                 |
+| `catalogue.soon.meatFish`         | Meat & Fish                                          | मांस और मछली                             | मांस आणि मासे                             |                 |
+| `catalogue.soon.drinks`           | Cold Drinks & Juices                                 | कोल्ड ड्रिंक और जूस                      | कोल्ड ड्रिंक आणि ज्यूस                    |                 |
+| `catalogue.soon.iceCream`         | Ice Creams                                           | आइसक्रीम                                 | आइस्क्रीम                                 |                 |
+| `catalogue.soon.medicines`        | Medicines                                            | दवाइयाँ                                  | औषधे                                      |                 |
+| `catalogue.soon.wellness`         | Health & Wellness                                    | सेहत और वेलनेस                           | आरोग्य आणि वेलनेस                         |                 |
+| `catalogue.soon.quiboPicks`       | Quibo Picks                                          | Quibo की पसंद                            | Quibo ची निवड                             |                 |
+| `catalogue.soon.giftBoxes`        | Gift Boxes                                           | गिफ़्ट बॉक्स                             | गिफ्ट बॉक्स                               |                 |
+| `catalogue.tags.today`            | Today                                                | आज                                       | आज                                        |                 |
+| `catalogue.tags.tomorrow`         | Tomorrow                                             | कल                                       | उद्या                                     |                 |
+| `catalogue.tags.soon`             | Soon                                                 | जल्द                                     | लवकरच                                     |                 |
+| `catalogue.notify.me`             | Notify me                                            | मुझे बताएं                               | मला कळवा                                  |                 |
+| `catalogue.notify.on`             | We’ll tell you                                       | हम बताएंगे                               | आम्ही कळवू                                |                 |
+| `catalogue.notify.tag`            | Notify                                               | सूचित                                    | कळवणार                                    |                 |
+| `catalogue.notify.hint`           | Coming soon. Tap to be told when it arrives          | जल्द आ रहा है। आने पर बताने के लिए दबाएँ | लवकरच येत आहे. आल्यावर कळवण्यासाठी दाबा   |                 |
+| `catalogue.notify.hintOn`         | You will be told. Tap to undo                        | आपको बताया जाएगा। रद्द करने के लिए दबाएँ | तुम्हाला कळवले जाईल. रद्द करण्यासाठी दाबा |                 |
 
 ## A category's page on Home, when it is empty
 
@@ -448,4 +474,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.categoryEmpty.title` | Nothing here right now          | अभी यहाँ कुछ नहीं है                | सध्या इथे काही नाही                   |                 |
 | `home.categoryEmpty.body`  | Check back soon, or choose All. | थोड़ी देर बाद देखें या "सभी" चुनें। | थोड्या वेळाने पहा किंवा "सर्व" निवडा. |                 |
 
-335 lines in all.
+356 lines in all.

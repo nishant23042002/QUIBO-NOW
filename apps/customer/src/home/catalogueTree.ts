@@ -2,7 +2,7 @@ import type { MessageKey } from '@quibo/i18n';
 import type { TileTint } from './categoryGroups';
 
 /**
- * How the shop's catalogue is organised for browsing (the Categories tab, Shop by category, the header rail and the category
+ * How the shop's catalogue is organised for browsing (the Categories tab, Home's groups, the header rail and the category
  * screen): a few categories in groups, each holding the kinds shown in the category screen's left rail. A kind is a set of product
  * types (an item's `type`: "milk", "tomato"), so a type is found in exactly one place and a new brand of a kind needs nothing here.
  *
@@ -12,13 +12,22 @@ import type { TileTint } from './categoryGroups';
  */
 
 /** The groups the Categories tab and the header rail's index sort categories into. */
-export type CategoryGroupId = 'grocery' | 'snacks' | 'care' | 'tech' | 'style';
+export type CategoryGroupId =
+  'grocery' | 'snacks' | 'care' | 'tech' | 'style' | 'pharmacy' | 'exclusive';
 
 export type MainCategoryId =
   'vegFruit' | 'dairyEggs' | 'attaRice' | 'oilMasala' | 'chips' | 'biscuits' | 'sweets';
 
 /** The categories that are listed but not stocked yet. */
 export type SoonCategoryId =
+  | 'breakfast'
+  | 'meatFish'
+  | 'drinks'
+  | 'iceCream'
+  | 'medicines'
+  | 'wellness'
+  | 'quiboPicks'
+  | 'giftBoxes'
   | 'beauty'
   | 'babyCare'
   | 'gym'
@@ -75,6 +84,8 @@ export const CATEGORY_GROUPS: readonly CategoryGroup[] = [
   { id: 'care', label: 'catalogue.groups.care' },
   { id: 'tech', label: 'catalogue.groups.tech' },
   { id: 'style', label: 'catalogue.groups.style' },
+  { id: 'pharmacy', label: 'catalogue.groups.pharmacy' },
+  { id: 'exclusive', label: 'catalogue.groups.exclusive' },
 ];
 
 const live = (
@@ -171,6 +182,11 @@ export const MAIN_CATEGORIES: readonly MainCategory[] = [
 
 /** Listed with a Soon tag and no kinds: they open a "Coming to Roha" page, never an empty shelf. */
 const SOON_CATEGORIES: readonly Category[] = [
+  // Inside the groups that are stocked: they sit beside the live categories, softened, with Notify me (ADR 0055).
+  soon('breakfast', 'grocery', '\u{1F963}'),
+  soon('meatFish', 'grocery', '\u{1F357}'),
+  soon('drinks', 'snacks', '\u{1F379}'),
+  soon('iceCream', 'snacks', '\u{1F366}'),
   soon('beauty', 'care', '\u{1F484}'),
   soon('babyCare', 'care', '\u{1F37C}'),
   soon('gym', 'care', '\u{1F4AA}'),
@@ -180,6 +196,11 @@ const SOON_CATEGORIES: readonly Category[] = [
   soon('jewellery', 'style', '\u{1F48D}'),
   soon('decor', 'style', '\u{1F3EE}'),
   soon('automotive', 'style', '\u{1F697}'),
+  // Placeholders only (ADR 0053): a pharmacy and what is only on Quibo are not catalogues yet.
+  soon('medicines', 'pharmacy', '\u{1F48A}'),
+  soon('wellness', 'pharmacy', '\u{1F33F}'),
+  soon('quiboPicks', 'exclusive', '\u{2728}'),
+  soon('giftBoxes', 'exclusive', '\u{1F381}'),
 ];
 
 /** Every category, in the order the rail, the grid and the index show them: what the town stocks first, then what is coming. */

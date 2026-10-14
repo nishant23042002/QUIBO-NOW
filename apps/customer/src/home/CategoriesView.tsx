@@ -24,16 +24,10 @@ import {
 import { CART_ROOM } from './CartLayer';
 import { useCart } from './CartProvider';
 import { tileRoute } from './categoryGroups';
-import { categoryRoute } from './categoryLists';
 import { CATEGORIES_LOAD_MS, CATEGORIES_POLICY } from './loading';
 import { useCategoryBrowse } from './useCategoryBrowse';
+import { useNotify } from './useNotify';
 import { useTabHeaderProps } from './useTabHeader';
-
-/**
- * The field to find a category by name appears only once the list is long enough to need one. The header's search is pinned and
- * finds products, so with a short list a second field would only repeat it.
- */
-export const FIND_FROM = 24;
 
 /** The field is as tall as the search field of the search screen. */
 const FIELD_HEIGHT = 44;
@@ -61,16 +55,14 @@ const makeStyles = (c: ThemeColors) =>
 function CategoriesSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
-  const { groups, coming, total } = useCategoryBrowse();
+  const { groups } = useCategoryBrowse();
 
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
       <View style={styles.content}>
-        {total > FIND_FROM ? (
-          <View style={styles.pad}>
-            <Skeleton height={FIELD_HEIGHT} rounded={radius.md} />
-          </View>
-        ) : null}
+        <View style={styles.pad}>
+          <Skeleton height={FIELD_HEIGHT} rounded={radius.md} />
+        </View>
         {groups.map((group) => (
           <View key={group.id} style={styles.group}>
             <View style={styles.pad}>
@@ -84,20 +76,15 @@ function CategoriesSkeleton() {
                   names={category.tiles.map((tile) => tile.label)}
                 />
               ))}
+              {group.soon.length > 0 ? (
+                <CategoryTileGridSkeleton
+                  count={group.soon.length}
+                  names={group.soon.map((tile) => tile.label)}
+                />
+              ) : null}
             </View>
           </View>
         ))}
-        {coming !== undefined ? (
-          <View style={styles.group}>
-            <View style={styles.pad}>
-              <RowTitleSkeleton title={coming.title} />
-            </View>
-            <CategoryTileGridSkeleton
-              count={coming.tiles.length}
-              names={coming.tiles.map((tile) => tile.label)}
-            />
-          </View>
-        ) : null}
       </View>
     </SkeletonScope>
   );
@@ -107,9 +94,9 @@ function CategorySections() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
   const router = useRouter();
+  const notify = useNotify();
   const [query, setQuery] = useState('');
-  const { groups, coming, total } = useCategoryBrowse(query);
-  const showField = total > FIND_FROM;
+  const { groups, total } = useCategoryBrowse(query);
 
   if (total === 0) {
     return (
@@ -125,20 +112,18 @@ function CategorySections() {
 
   return (
     <View style={styles.content}>
-      {showField ? (
-        <View style={styles.pad}>
-          <View style={styles.field}>
-            <SearchField
-              value={query}
-              onChangeText={setQuery}
-              onSubmit={() => undefined}
-              placeholder={t('categoriesTab.find')}
-              clearLabel={t('search.clearField')}
-            />
-          </View>
+      <View style={styles.pad}>
+        <View style={styles.field}>
+          <SearchField
+            value={query}
+            onChangeText={setQuery}
+            onSubmit={() => undefined}
+            placeholder={t('categoriesTab.find')}
+            clearLabel={t('search.clearField')}
+          />
         </View>
-      ) : null}
-      {groups.length === 0 && coming === undefined ? (
+      </View>
+      {groups.length === 0 ? (
         <View style={styles.empty}>
           <StatePanel
             icon="search"
@@ -174,24 +159,19 @@ function CategorySections() {
                     }}
                   />
                 ))}
+                {group.soon.length > 0 ? (
+                  <CategoryTileGrid
+                    tiles={group.soon}
+                    onPress={(index) => {
+                      const tile = group.soon[index];
+                      // One that is coming turns Notify me on and off; it never opens an empty shelf.
+                      if (tile !== undefined) notify.toggle(tile.category.id);
+                    }}
+                  />
+                ) : null}
               </View>
             </View>
           ))}
-          {coming !== undefined ? (
-            <View style={styles.group}>
-              <View style={styles.pad}>
-                <RowTitle title={coming.title} />
-              </View>
-              <CategoryTileGrid
-                tiles={coming.tiles}
-                onPress={(index) => {
-                  const tile = coming.tiles[index];
-                  // One that is coming opens its "Coming to Roha" page, never an empty shelf.
-                  if (tile !== undefined) router.push(categoryRoute(tile.category));
-                }}
-              />
-            </View>
-          ) : null}
         </>
       )}
       <BrandFooter />
@@ -203,12 +183,12 @@ function CategorySections() {
 const alwaysQuiet = (): boolean => true;
 
 /**
- * The Categories tab (ADR 0046): every category the town lists. Each stocked one is a row of tiles four across in its group: its
- * own tile first, with its picture, then its kinds; then "Coming to Roha" as tiles. The category's own tile opens its screen, a kind
- * opens it on that kind, and a category that is coming opens its "Coming to Roha" page. It sits under the same
- * header Home wears (delivery promise, address, profile, and the search that stays pinned as the page scrolls). Once the list passes
- * `FIND_FROM` categories a field to find one by its name or a kind's appears. It has its loading, offline and failed states like
- * every other page, and the header stays put through them.
+ * The Categories tab (ADR 0046, ADR 0055): every category the town lists, in groups. Each stocked one is a row of tiles four across:
+ * its own tile first, with its picture, then its kinds; the group's categories that are coming follow as tiles with Notify me. A
+ * group that is only coming is just those tiles. The category's own tile opens its screen, a kind opens it on that kind, and a tile
+ * that is coming turns Notify me on and off. It sits under the same header Home wears (delivery promise, address, profile, and the
+ * search that stays pinned as the page scrolls), with a field to find a category by its name or a kind's. It has its loading,
+ * offline and failed states like every other page, and the header stays put through them.
  */
 export function CategoriesView() {
   const header = useTabHeaderProps();
