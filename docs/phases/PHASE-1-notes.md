@@ -157,6 +157,16 @@ language: a TalkBack pass, the phone's largest font size, and Devanagari renderi
   exists if another id type is preferred.
 - **How NestJS consumes the source-only packages** (ADR 0004).
 - Idempotency keys for orders, payments and webhooks; contract tests in CI.
+- **Pictures for the nine coming categories and for each need.** Beauty, Baby Care, Gym & Fitness, Electronics, Kids & Toys, Gaming,
+  Jewellery, Home Decor and Automotive still show an emoji; each need card is three emoji. They are made one at a time from the
+  owner's pack photographs (see the category-pictures notes in `PHASE-1-departments.md`).
+- **Cut-out (transparent) category pictures**, so the tile's colour belongs to the app and the dark theme is not a row of light
+  squares. Needs a background-removal step per picture.
+- **"Tell me when it arrives"** on a Coming to Roha page: needs a notification service.
+- **Pinned and learned categories, "Jump back in", Flash deals** (a schedule from the API, worded "Ends tonight, 9 PM", never a
+  countdown).
+- **Sample items for the new kinds** (Dal, Ghee, Masala, Namkeen, Bread & Pav, Rusk & Cakes, Indian Sweets), and the brands the
+  pictures show that the mocks do not have.
 
 ## Tooling follow-ups
 

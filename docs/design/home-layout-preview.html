@@ -1,0 +1,1998 @@
+<title>Quibo Home Layout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Figtree:wght@400;500;600&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  /* Layout concept: a controls bar, then the phone(s) at full length beside a sticky list of what changes and where in the code. */
+  :root {
+    --bg: #f6f1f7;
+    --surface: #ffffff;
+    --ink: #2a1033;
+    --muted: #675671;
+    --line: #e1d6e7;
+    --soft: #efe4f5;
+    --action: #3a1646;
+    --on-action: #ffffff;
+    --pop: #b8e86b;
+    --on-pop: #2a1033;
+    --warn-bg: #fff4d6;
+    --warn-ink: #5c4300;
+    --font-display: 'Bricolage Grotesque', 'Segoe UI', system-ui, sans-serif;
+    --font-body: 'Figtree', 'Segoe UI', system-ui, sans-serif;
+    --font-mono: ui-monospace, 'Cascadia Mono', Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --bg: #150a1a;
+      --surface: #20102a;
+      --ink: #f4ecf7;
+      --muted: #b9a7c2;
+      --line: #3b2748;
+      --soft: #2d1b38;
+      --action: #b8e86b;
+      --on-action: #2a1033;
+      --warn-bg: #3a2f10;
+      --warn-ink: #f3dda0;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme='dark'] {
+    --bg: #150a1a;
+    --surface: #20102a;
+    --ink: #f4ecf7;
+    --muted: #b9a7c2;
+    --line: #3b2748;
+    --soft: #2d1b38;
+    --action: #b8e86b;
+    --on-action: #2a1033;
+    --warn-bg: #3a2f10;
+    --warn-ink: #f3dda0;
+    color-scheme: dark;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    padding-inline: 16px;
+  }
+  .page {
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-block: 28px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    line-height: 1.15;
+    margin: 0;
+    text-wrap: balance;
+  }
+  h1 {
+    font-size: clamp(26px, 4vw, 38px);
+    letter-spacing: -0.01em;
+  }
+  h2 {
+    font-size: 19px;
+  }
+  h3 {
+    font-size: 16px;
+  }
+  p {
+    margin: 0;
+  }
+  .lede {
+    color: var(--muted);
+    max-width: 62ch;
+    margin-top: 8px;
+  }
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 600;
+  }
+  button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 3px solid var(--action);
+    outline-offset: 2px;
+  }
+
+  /* Controls */
+  .bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 20px;
+    align-items: center;
+  }
+  .seg {
+    display: inline-flex;
+    background: var(--soft);
+    border-radius: 999px;
+    padding: 4px;
+    gap: 2px;
+  }
+  .seg button {
+    border: 0;
+    background: transparent;
+    padding: 8px 16px;
+    border-radius: 999px;
+    font-weight: 600;
+    color: var(--muted);
+    min-height: 40px;
+  }
+  .seg button[aria-pressed='true'] {
+    background: var(--action);
+    color: var(--on-action);
+  }
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    min-height: 40px;
+    cursor: pointer;
+  }
+  .toggle input {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--action);
+  }
+
+  /* Stage */
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 32px;
+    align-items: start;
+  }
+  .phones {
+    display: flex;
+    gap: 32px;
+    align-items: flex-start;
+    justify-content: center;
+    overflow-x: auto;
+    padding-block: 10px 6px;
+  }
+  .phone-col {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 0 0 auto;
+  }
+  .phone-label {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 17px;
+    display: flex;
+    gap: 10px;
+    align-items: baseline;
+  }
+  .phone-label span {
+    font-family: var(--font-body);
+    font-weight: 500;
+    font-size: 13px;
+    color: var(--muted);
+  }
+  .panel {
+    position: sticky;
+    top: calc(env(safe-area-inset-top, 0px) + 16px);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    max-height: calc(100vh - 32px);
+    overflow-y: auto;
+    padding-right: 2px;
+  }
+
+  /* Change list */
+  .changes {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .change {
+    width: 100%;
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    gap: 4px 12px;
+  }
+  .change:hover {
+    border-color: var(--action);
+  }
+  .n {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--pop);
+    color: var(--on-pop);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 14px;
+    grid-row: span 3;
+  }
+  .change strong {
+    font-size: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    align-items: center;
+  }
+  .pill {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+    background: var(--soft);
+    color: var(--ink);
+  }
+  .pill.new {
+    background: var(--pop);
+    color: var(--on-pop);
+  }
+  .change .why {
+    color: var(--muted);
+    font-size: 13.5px;
+  }
+  .change code {
+    font-family: var(--font-mono);
+    font-size: 11.5px;
+    color: var(--muted);
+    overflow-wrap: anywhere;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .order-cols {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 14px;
+  }
+  .order {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13.5px;
+  }
+  .order li {
+    display: flex;
+    gap: 8px;
+    align-items: baseline;
+    min-height: 24px;
+  }
+  .order .pos {
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+    width: 14px;
+    flex: none;
+  }
+  .order .moved {
+    font-weight: 700;
+  }
+  .order .moved::after {
+    content: '●';
+    color: var(--action);
+    font-size: 8px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .order .colhead {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 700;
+  }
+  .hdr-swatches {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .hdr-swatches button {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    padding: 0 10px 0 6px;
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    background: var(--surface);
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .hdr-swatches button[aria-pressed='true'] {
+    border-color: var(--action);
+    box-shadow: inset 0 0 0 1px var(--action);
+  }
+  .hdr-swatches i {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+  }
+  .specs {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13px;
+  }
+  .specs li {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .specs code {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .rec {
+    background: var(--soft);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 13.5px;
+  }
+  .note {
+    background: var(--warn-bg);
+    color: var(--warn-ink);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13.5px;
+  }
+  .small {
+    font-size: 13px;
+    color: var(--muted);
+  }
+  ul.plain {
+    margin: 0;
+    padding-left: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 13.5px;
+  }
+  code.inline {
+    font-family: var(--font-mono);
+    font-size: 12px;
+  }
+
+  .below {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  /* ---------- The phone (always the app's light theme) ---------- */
+  .phone-wrap {
+    width: 372px;
+  }
+  .phone {
+    --p-bg: #f8f4f7;
+    --p-ink: #2a1033;
+    --p-muted: #6f5f76;
+    --p-line: #e6dcea;
+    --p-chrome: #3a1646;
+    --p-on: #ffffff;
+    --p-on-muted: #dcc9e6;
+    --p-lilac: #efe4f5;
+    --p-pop: #b8e86b;
+    --p-surface: #ffffff;
+    --t-dairy: #e4eef9;
+    --t-veg: #e1f2d9;
+    --t-fruit: #fce6de;
+    --t-staples: #f8eccb;
+    --t-snacks: #fae3bd;
+    --t-sweets: #f5ddeb;
+    --t-bakery: #f0e3d3;
+    --t-lilac: #eadcf4;
+    position: relative;
+    width: 360px;
+    margin-inline: 6px;
+    background: var(--p-bg);
+    color: var(--p-ink);
+    border-radius: 30px;
+    overflow: hidden;
+    box-shadow:
+      0 0 0 6px #1b0f20,
+      0 14px 40px rgba(20, 5, 30, 0.25);
+    font-family: Roboto, 'Segoe UI', system-ui, sans-serif;
+    font-size: 14px;
+    line-height: 1.35;
+    --mk: #3a1646;
+  }
+  .phone button {
+    font: inherit;
+    color: inherit;
+  }
+  /* The header's colours come from --hd-* so the options can swap them. */
+  .phone {
+    --hd-bg: #e9d8f0;
+    --hd-on: #2a1033;
+    --hd-muted: #563e60;
+    --hd-chip: #ffffff;
+    --hd-ind: #2a1033;
+  }
+  .phone[data-hdr='a'],
+  .phone[data-hdr='b'],
+  .phone[data-hdr='c'] {
+    --hd-bg: #3a1646;
+    --hd-on: #ffffff;
+    --hd-muted: #d2bddb;
+    --hd-chip: rgba(255, 255, 255, 0.14);
+    --hd-ind: #b8e86b;
+  }
+  .phone[data-hdr='b'] {
+    --p-bg: #f6f0f8;
+  }
+  .phone[data-hdr='c'] {
+    --hd-bg: linear-gradient(180deg, #2a1033 0%, #3a1646 100%);
+    --p-bg: #f4f0f6;
+  }
+  .p-head {
+    background: var(--hd-bg);
+    color: var(--hd-on);
+    padding: 10px 16px 0;
+    border-radius: 0 0 12px 12px;
+  }
+  .phone[data-hdr='b'] .p-head {
+    border-radius: 0 0 16px 16px;
+    padding-bottom: 16px;
+  }
+  .p-hero {
+    padding-top: 4px;
+  }
+  .p-status {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0.9;
+    padding-bottom: 8px;
+  }
+  .p-id {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  .p-id > div:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+  .p-eta {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.25;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .p-addr {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    font-weight: 600;
+    min-height: 36px;
+    font-size: 14px;
+  }
+  .p-avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ffffff;
+    color: #2a1033;
+    display: grid;
+    place-items: center;
+    flex: none;
+    font-size: 17px;
+  }
+  .p-shops {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--hd-chip);
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-top: 2px;
+  }
+  .p-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--p-pop);
+  }
+  .p-search {
+    margin: 12px 0 8px;
+    background: var(--p-surface);
+    color: var(--p-muted);
+    border-radius: 8px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  .p-tabs {
+    display: flex;
+    gap: 6px;
+    padding: 0 0 10px;
+    overflow: hidden;
+  }
+  .p-tab {
+    flex: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--hd-muted);
+    border-bottom: 3px solid transparent;
+  }
+  .p-tab span {
+    font-size: 18px;
+  }
+  .p-tab.on {
+    color: var(--hd-on);
+    font-weight: 600;
+    border-bottom-color: var(--hd-ind);
+  }
+  .p-body {
+    padding-block: 16px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    position: relative;
+  }
+  .p-pad {
+    padding-inline: 16px;
+  }
+  .p-banner {
+    margin-inline: 16px;
+    background: var(--p-pop);
+    border-radius: 18px;
+    padding: 14px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+  }
+  .p-banner b {
+    font-size: 16px;
+    display: block;
+  }
+  .p-banner small {
+    font-size: 12.5px;
+  }
+  .p-banner .em {
+    font-size: 38px;
+  }
+  .p-chips {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    padding-inline: 16px;
+    overflow: hidden;
+  }
+  .p-badge {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--p-lilac);
+    display: grid;
+    place-items: center;
+    flex: none;
+  }
+  .p-chip {
+    flex: none;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 12px;
+    border-radius: 999px;
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    border-bottom: 3px solid #d2c3da;
+    font-weight: 500;
+    font-size: 13px;
+  }
+  .p-chip.sel {
+    background: var(--p-chrome);
+    color: var(--p-on);
+    border-color: var(--p-chrome);
+    border-bottom-color: var(--p-pop);
+  }
+  .p-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .p-title h4 {
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    flex: none;
+    font-family: inherit;
+  }
+  .p-title i {
+    flex: 1;
+    border-top: 2px dotted var(--p-line);
+  }
+  .p-title a,
+  .p-title .cnt {
+    flex: none;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--p-chrome);
+  }
+  .p-title .cnt {
+    background: var(--p-pop);
+    color: var(--p-ink);
+    padding: 2px 10px;
+    border-radius: 999px;
+  }
+  .p-scroll {
+    display: flex;
+    gap: 10px;
+    padding-inline: 16px;
+    overflow: hidden;
+  }
+  .p-add {
+    border: 1.5px solid var(--p-chrome);
+    background: transparent;
+    color: var(--p-chrome);
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 11.5px;
+    padding: 3px 10px;
+  }
+
+  .p-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 8px;
+    padding-inline: 16px;
+  }
+  .p-cat {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    text-align: center;
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1.2;
+  }
+  .p-cat .sq {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 16px;
+    display: grid;
+    place-items: center;
+    font-size: 30px;
+    border: 1px solid var(--p-line);
+  }
+
+  /* Daily essentials */
+  .p-sub {
+    margin: -4px 16px 10px;
+    font-size: 12.5px;
+    color: var(--p-muted);
+  }
+  .p-seg {
+    display: flex;
+    margin-inline: 16px;
+    background: var(--p-lilac);
+    border-radius: 12px;
+    padding: 3px;
+    margin-bottom: 10px;
+  }
+  .p-seg button {
+    flex: 1;
+    border: 0;
+    background: transparent;
+    text-align: center;
+    padding: 8px 0;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--p-muted);
+  }
+  .p-seg .on {
+    background: var(--p-chrome);
+    color: var(--p-on);
+  }
+  .p-ess-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding-inline: 16px;
+  }
+  .p-ess {
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    border-radius: 16px;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    gap: 4px 8px;
+    align-items: start;
+  }
+  .p-ess .art {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 24px;
+  }
+  .p-ess .meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .p-ess b {
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 1.2;
+  }
+  .p-ess small {
+    color: var(--p-muted);
+    font-size: 11.5px;
+  }
+  .p-ess .ctl {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 32px;
+  }
+  .p-ess .ctl .price {
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .p-step {
+    display: inline-flex;
+    align-items: center;
+    background: var(--p-chrome);
+    color: var(--p-on);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .p-step button {
+    border: 0;
+    background: transparent;
+    width: 30px;
+    height: 30px;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--p-on);
+  }
+  .p-step b {
+    min-width: 18px;
+    text-align: center;
+    font-size: 13px;
+    color: var(--p-on);
+  }
+  .p-add.big {
+    min-height: 30px;
+    padding: 3px 14px;
+  }
+  .p-more {
+    margin: 10px 16px 0;
+    display: flex;
+    justify-content: space-between;
+    font-size: 12.5px;
+    color: var(--p-muted);
+  }
+  .p-more b {
+    color: var(--p-chrome);
+  }
+
+  .p-need {
+    flex: none;
+    width: 150px;
+    height: 168px;
+    border-radius: 22px;
+    padding: 12px;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .p-need .em {
+    position: absolute;
+    top: 10px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 4px;
+    font-size: 40px;
+    line-height: 1;
+  }
+  .p-need .em span:nth-child(2) {
+    font-size: 56px;
+  }
+  .p-need .plate {
+    position: relative;
+    padding: 8px 10px 8px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.55);
+  }
+  .p-need b {
+    font-size: 14px;
+    display: block;
+  }
+  .p-need small {
+    font-size: 11.5px;
+    color: var(--p-muted);
+    display: block;
+    line-height: 1.25;
+  }
+
+  .p-seg.static span {
+    flex: 1;
+    text-align: center;
+    padding: 7px 0;
+    border-radius: 9px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--p-muted);
+  }
+  .p-seg.static .on {
+    background: var(--p-chrome);
+    color: var(--p-on);
+  }
+  .p-price {
+    flex: none;
+    width: 148px;
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    border-radius: 16px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .p-price .art {
+    height: 60px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 32px;
+    position: relative;
+  }
+  .p-price .tag {
+    position: absolute;
+    left: 6px;
+    bottom: 6px;
+    background: var(--p-pop);
+    border-bottom: 2px solid var(--p-chrome);
+    font-weight: 700;
+    font-size: 13px;
+    padding: 1px 7px;
+    border-radius: 6px;
+  }
+  .p-price b {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .p-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 2px;
+  }
+
+  .p-feat {
+    flex: none;
+    width: 168px;
+    border-radius: 18px;
+    padding: 12px;
+    min-height: 92px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 6px;
+  }
+  .p-feat b {
+    font-size: 14px;
+  }
+  .p-feat small {
+    color: var(--p-muted);
+    font-size: 12px;
+  }
+
+  .p-brands {
+    display: flex;
+    gap: 14px;
+    padding-inline: 16px;
+    overflow: hidden;
+  }
+  .p-brand {
+    flex: none;
+    width: 64px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 500;
+  }
+  .p-brand .c {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 20px;
+    color: var(--p-chrome);
+  }
+
+  .p-card {
+    flex: none;
+    width: 128px;
+    background: var(--p-surface);
+    border: 1px solid var(--p-line);
+    border-radius: 16px;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .p-card .art {
+    height: 76px;
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 38px;
+  }
+  .p-card b {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .p-card small {
+    color: var(--p-muted);
+    font-size: 11.5px;
+  }
+  .p-quiet {
+    margin-inline: 16px;
+    background: var(--p-lilac);
+    border-radius: 16px;
+    padding: 12px 14px;
+    font-size: 13px;
+    color: var(--p-muted);
+  }
+  .p-foot {
+    text-align: center;
+    font-size: 12px;
+    color: var(--p-muted);
+    padding-bottom: 6px;
+  }
+
+  /* Fold marker: about where a 375 x 812 phone's first screen ends. */
+  .fold {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    border-top: 2px dashed #c0392b;
+    pointer-events: none;
+    z-index: 5;
+  }
+  .fold span {
+    position: absolute;
+    right: 8px;
+    top: 4px;
+    background: #c0392b;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+
+  /* Change markers */
+  .sec {
+    position: relative;
+  }
+  .mk,
+  .tg {
+    display: none;
+    position: absolute;
+    z-index: 4;
+    font-weight: 700;
+  }
+  .mk {
+    top: -22px;
+    left: 0;
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    background: var(--p-pop);
+    color: #2a1033;
+    border: 2px solid var(--mk);
+    place-items: center;
+    font-size: 13px;
+  }
+  .tg {
+    top: -20px;
+    right: 0;
+    background: var(--mk);
+    color: #fff;
+    font-size: 10.5px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .p-head .sec {
+    --mk: #b8e86b;
+  }
+  .p-head .tg {
+    color: #2a1033;
+  }
+  .p-head .mk {
+    border-color: #fff;
+  }
+  .show .sec.chg {
+    outline: 2px dashed var(--mk);
+    outline-offset: 5px;
+    border-radius: 10px;
+  }
+  .show .sec.chg .mk {
+    display: grid;
+  }
+  .show .sec.chg .tg {
+    display: block;
+  }
+  .show .p-head .sec.chg {
+    padding-left: 34px;
+    outline-offset: 3px;
+  }
+  .show .p-head .sec.chg .mk {
+    top: 1px;
+    left: 0;
+  }
+  .show .p-head .sec.chg .tg {
+    top: -10px;
+    right: 0;
+  }
+  .flash {
+    animation: flash 1.2s ease-out;
+  }
+  @keyframes flash {
+    0%,
+    60% {
+      background: rgba(184, 232, 107, 0.55);
+    }
+    100% {
+      background: transparent;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .flash {
+      animation: none;
+      background: rgba(184, 232, 107, 0.4);
+    }
+  }
+
+  @media (max-width: 1100px) {
+    .stage {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .panel {
+      position: static;
+      max-height: none;
+      overflow: visible;
+    }
+  }
+</style>
+
+<main class="page">
+  <header>
+    <div class="eyebrow">Phase 1 close-out · Home screen</div>
+    <h1>Home, today and after the change</h1>
+    <p class="lede">
+      The feed from the quick filters down, drawn at phone width with Roha sample content. Numbered
+      markers show the four changes; the list beside the phone says where each one is made in the
+      code. Daily essentials works: pick a tab, press ADD.
+    </p>
+  </header>
+
+  <div class="bar">
+    <div class="seg" role="group" aria-label="View">
+      <button type="button" data-view="after" aria-pressed="true">After</button>
+      <button type="button" data-view="before" aria-pressed="false">Today</button>
+      <button type="button" data-view="both" aria-pressed="false">Side by side</button>
+    </div>
+    <div class="seg" role="group" aria-label="Header colour" id="hdrSeg">
+      <button type="button" data-hdr="today" aria-pressed="false">Header: today</button>
+      <button type="button" data-hdr="a" aria-pressed="true">A</button>
+      <button type="button" data-hdr="b" aria-pressed="false">B</button>
+      <button type="button" data-hdr="c" aria-pressed="false">C</button>
+    </div>
+    <label class="toggle" for="show"
+      ><input id="show" type="checkbox" checked /> Mark the changes</label
+    >
+  </div>
+
+  <div class="stage">
+    <div class="phones" id="phones" aria-live="polite"></div>
+
+    <aside class="panel" aria-label="What changes">
+      <div class="card" id="hdrCard" aria-live="polite"></div>
+
+      <h2>What changes</h2>
+      <ol class="changes" id="changes"></ol>
+
+      <div class="card">
+        <h3>Page order below the filters</h3>
+        <div id="order"></div>
+      </div>
+
+      <div class="card">
+        <h3>Why Daily essentials sits second</h3>
+        <ul class="plain">
+          <li>
+            The first screen is already full, so it peeks in at the fold instead of fighting the
+            header.
+          </li>
+          <li>
+            Categories come first because they are the door for a shopper who wants to browse.
+          </li>
+          <li>
+            It stays above Shop for your need: needs open a page, essentials add right here, so it
+            is the faster path.
+          </li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <section class="below" aria-label="Notes">
+    <div class="card">
+      <h3>How Daily essentials differs from the other rows</h3>
+      <ul class="plain">
+        <li>
+          <b>Shop for your need</b> opens a page of items. <b>Daily essentials</b> adds to the cart
+          in place.
+        </li>
+        <li><b>Small prices</b> is a price filter. Essentials is what this town buys every day.</li>
+        <li>
+          <b>Order again</b> stays parked (owner, 2026-10-10). A "Your usual" tab is a follow-up
+          once order history is mocked.
+        </li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Also touched by these changes</h3>
+      <ul class="plain">
+        <li>
+          <b>The item list</b> is town data (a table with <code class="inline">town_id</code>), not
+          code, so each town sets its own.
+        </li>
+        <li>
+          <b>Loading skeleton</b> must mirror the new order (ADR 0035):
+          <code class="inline">home/HomeSkeleton.tsx</code>.
+        </li>
+        <li>
+          <b>Words</b> in en, hi and mr: the title and three tab names (a native speaker should
+          check them).
+        </li>
+        <li><b>Maestro</b> home flow, section-order tests, an ADR and the Phase 1 report.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Left out on purpose</h3>
+      <ul class="plain">
+        <li>
+          <b>Offers strip</b>: coupons already have a banner; add only if the people test asks.
+        </li>
+        <li><b>Product photos</b> and the card-shape decision: separate passes.</li>
+        <li><b>Popular in Roha</b> rail: needs order data, so Phase 2.</li>
+        <li><b>Subscriptions</b> (daily milk): V2.</li>
+        <li>
+          <b>Shorter delivery line</b>: dropped. The header already says "Delivering in 15–20 mins"
+          or "Arriving today, 8–9 AM"; the long sentence I mocked is not in the header.
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="note" role="note">
+    <b>Correction kept from last round.</b> "Featured this week" is three collection cards (Monthly
+    ration, Tiffin and lunchbox, Morning chai), not a product rail, so it keeps its name and place
+    here.
+  </div>
+
+  <p class="small">
+    Items and prices are the app's sample catalogue; heights are approximate. The red line marks
+    roughly where a 375 × 812 phone's first screen ends, with the bottom bar taken off. The real
+    header also slides away on scroll; this shows the page as it opens.
+  </p>
+</main>
+
+<script>
+  (function () {
+    var MK = { cat: 1, ess: 2, need: 3, brand: 4 };
+    var TAG = {
+      after: {
+        cat: 'Moved up',
+        ess: 'New',
+        need: 'Moved down',
+        brand: 'Moved down',
+      },
+      before: { cat: 'Moves up', need: 'Moves down', brand: 'Moves down' },
+    };
+    var ORDER = {
+      before: ['need', 'cat', 'brand', 'small', 'feat', 'rails'],
+      after: ['cat', 'ess', 'need', 'small', 'feat', 'brand', 'rails'],
+    };
+    var NAME = {
+      ess: 'Daily essentials',
+      cat: 'Shop by category',
+      need: 'Shop for your need',
+      brand: 'Shop by brand',
+      small: 'Small prices',
+      feat: 'Featured this week',
+      rails: 'Category rows',
+    };
+    var CHANGES = [
+      {
+        id: 'cat',
+        title: 'Shop by category moves up',
+        pill: 'Moved up',
+        why: 'It is how most people find an item, so it sits first under the filters, above the need cards.',
+        code: 'home/HomeFeed.tsx (order only)',
+        size: 'Small',
+      },
+      {
+        id: 'ess',
+        title: 'Daily essentials strip',
+        pill: 'New',
+        why: 'Up to six daily buys per tab with ADD and a stepper, right on Home: no search, no page change. Three tabs (Morning, Cooking, Evening) open on the one that suits the time. Items out of stock are left out.',
+        code: 'home/DailyEssentials.tsx and home/essentials.ts (new), placed in home/HomeFeed.tsx; HomeSkeleton.tsx mirrors it',
+        size: 'Built',
+        isNew: true,
+      },
+      {
+        id: 'need',
+        title: 'Shop for your need moves down',
+        pill: 'Moved down',
+        why: 'A helpful extra, not the main door. It goes below categories and essentials, from first place to third.',
+        code: 'home/HomeFeed.tsx (order only)',
+        size: 'Small',
+      },
+      {
+        id: 'brand',
+        title: 'Shop by brand moves down',
+        pill: 'Moved down',
+        why: 'Price matters to everyone; a brand only to a shopper who already has a favourite. It goes below Featured this week, ahead of the category rows.',
+        code: 'home/HomeFeed.tsx (order only)',
+        size: 'Small',
+      },
+    ];
+
+    /* Daily essentials: id, emoji, tint, name, size, price in rupees. Illustrative. */
+    var ESS = {
+      morning: [
+        ['milk', '\u{1F95B}', 'dairy', 'Amul Toned milk', '500 ml · 2 sizes', 29],
+        ['curd', '\u{1F963}', 'dairy', 'Gokul Fresh curd', '400 g · 2 sizes', 35],
+        ['eggs', '\u{1F95A}', 'dairy', 'Farm eggs', '6 pcs · 2 sizes', 48],
+        ['banana', '\u{1F34C}', 'fruit', 'Banana', '1 dozen', 60],
+        ['biscuits', '\u{1F36A}', 'bakery', 'Parle Tea biscuits', '1 pack', 10],
+        ['apple', '\u{1F34E}', 'fruit', 'Apple', '4 pcs', 120],
+      ],
+      cooking: [
+        ['tomato', '\u{1F345}', 'fruit', 'Tomato', 'per kg', 42],
+        ['potato', '\u{1F954}', 'staples', 'Potato', 'per kg', 34],
+        ['carrot', '\u{1F955}', 'veg', 'Carrot', 'per kg', 56],
+        ['atta', '\u{1F33E}', 'staples', 'Aashirvaad Wheat atta', '1 kg · 2 sizes', 52],
+        ['rice', '\u{1F35A}', 'staples', 'India Gate Rice', '1 kg · 2 sizes', 68],
+        ['oil', '\u{1F33B}', 'snacks', 'Fortune Sunflower oil', '500 ml · 2 sizes', 72],
+      ],
+      evening: [
+        ['chips', '\u{1F35F}', 'snacks', "Lay's Potato chips", '1 pack', 20],
+        ['biscuits', '\u{1F36A}', 'bakery', 'Parle Tea biscuits', '1 pack', 10],
+        ['popcorn', '\u{1F37F}', 'snacks', 'Popcorn', '1 pack', 30],
+        ['chocolate', '\u{1F36B}', 'sweets', 'Dairy Milk Chocolate', '1 pack', 10],
+        ['milk', '\u{1F95B}', 'dairy', 'Amul Toned milk', '500 ml · 2 sizes', 29],
+        ['sugar', '\u{1F36C}', 'sweets', 'Sugar', '1 kg · 2 sizes', 46],
+      ],
+    };
+    var TABS = [
+      ['morning', 'Morning'],
+      ['cooking', 'Cooking'],
+      ['evening', 'Evening'],
+    ];
+    var PRICE = {};
+    Object.keys(ESS).forEach(function (k) {
+      ESS[k].forEach(function (i) {
+        PRICE[i[0]] = i[5];
+      });
+    });
+
+    var hour = new Date().getHours();
+    var state = {
+      view: 'after',
+      show: true,
+      tab: hour < 11 ? 'morning' : hour < 17 ? 'cooking' : 'evening',
+      qty: {},
+    };
+
+    var tint = {
+      dairy: 't-dairy',
+      veg: 't-veg',
+      fruit: 't-fruit',
+      staples: 't-staples',
+      snacks: 't-snacks',
+      sweets: 't-sweets',
+      bakery: 't-bakery',
+      lilac: 't-lilac',
+    };
+    function bg(t) {
+      return 'style="background:var(--' + tint[t] + ')"';
+    }
+
+    function title(t, link) {
+      return (
+        '<div class="p-title p-pad"><h4>' +
+        t +
+        '</h4><i></i>' +
+        (link ? '<a>' + link + '</a>' : '') +
+        '</div>'
+      );
+    }
+    function plain(t, e1, e2, e3, name, sub) {
+      return (
+        '<div class="p-need" ' +
+        bg(t) +
+        '><div class="em"><span>' +
+        e1 +
+        '</span><span>' +
+        e2 +
+        '</span><span>' +
+        e3 +
+        '</span></div><div class="plate"><b>' +
+        name +
+        '</b><small>' +
+        sub +
+        '</small></div></div>'
+      );
+    }
+    function railCard(e, t, n, s, p) {
+      return (
+        '<div class="p-card"><div class="art" ' +
+        bg(t) +
+        '>' +
+        e +
+        '</div><b>' +
+        n +
+        '</b><small>' +
+        s +
+        '</small><div class="p-row"><b>' +
+        p +
+        '</b><span class="p-add">ADD</span></div></div>'
+      );
+    }
+    function priceCard(e, t, n, p) {
+      return (
+        '<div class="p-price"><div class="art" ' +
+        bg(t) +
+        '>' +
+        e +
+        '<span class="tag">' +
+        p +
+        '</span></div><b>' +
+        n +
+        '</b><div class="p-row"><span></span><span class="p-add">ADD</span></div></div>'
+      );
+    }
+    function cat(e, t, n) {
+      return '<div class="p-cat"><div class="sq" ' + bg(t) + '>' + e + '</div>' + n + '</div>';
+    }
+
+    function essInner() {
+      var tabs = TABS.map(function (t) {
+        return (
+          '<button type="button" data-tab="' +
+          t[0] +
+          '" class="' +
+          (state.tab === t[0] ? 'on' : '') +
+          '">' +
+          t[1] +
+          '</button>'
+        );
+      }).join('');
+      var cards = ESS[state.tab]
+        .map(function (i) {
+          var q = state.qty[i[0]] || 0;
+          var ctl =
+            q > 0
+              ? '<span class="p-step"><button type="button" data-dec="' +
+                i[0] +
+                '" aria-label="Remove one ' +
+                i[3] +
+                '">−</button><b>' +
+                q +
+                '</b><button type="button" data-inc="' +
+                i[0] +
+                '" aria-label="Add one ' +
+                i[3] +
+                '">+</button></span>'
+              : '<button type="button" class="p-add big" data-inc="' +
+                i[0] +
+                '" aria-label="Add ' +
+                i[3] +
+                '">ADD</button>';
+          return (
+            '<div class="p-ess"><div class="art" ' +
+            bg(i[2]) +
+            '>' +
+            i[1] +
+            '</div><div class="meta"><b>' +
+            i[3] +
+            '</b><small>' +
+            i[4] +
+            '</small></div>' +
+            '<div class="ctl"><span class="price">₹' +
+            i[5] +
+            '</span>' +
+            ctl +
+            '</div></div>'
+          );
+        })
+        .join('');
+      return (
+        '<div class="p-title p-pad"><h4>Daily essentials</h4><i></i></div>' +
+        '<div class="p-seg" role="tablist">' +
+        tabs +
+        '</div>' +
+        '<div class="p-ess-grid">' +
+        cards +
+        '</div>'
+      );
+    }
+
+    var BLOCKS = {
+      ess: function () {
+        return '<div class="ess-inner">' + essInner() + '</div>';
+      },
+      cat: function () {
+        return (
+          title('Shop by category', 'All categories') +
+          '<div class="p-grid">' +
+          cat('\u{1F96C}', 'veg', 'Vegetables &amp; fruits') +
+          cat('\u{1F95B}', 'dairy', 'Dairy &amp; eggs') +
+          cat('\u{1F33E}', 'staples', 'Atta, rice &amp; dal') +
+          cat('\u{1FAD9}', 'fruit', 'Oil &amp; masala') +
+          cat('\u{1F35F}', 'snacks', 'Chips') +
+          cat('\u{1F36A}', 'bakery', 'Biscuits &amp; bakery') +
+          cat('\u{1F36C}', 'sweets', 'Sweets') +
+          cat('\u{2795}', 'lilac', 'More') +
+          '</div>'
+        );
+      },
+      need: function () {
+        return (
+          title('Shop for your need') +
+          '<div class="p-scroll">' +
+          plain(
+            'staples',
+            '\u{1F95B}',
+            '\u{1F373}',
+            '\u{1F35E}',
+            'Breakfast',
+            'Milk, eggs, bread',
+          ) +
+          plain(
+            'dairy',
+            '\u{1F36A}',
+            '\u{2615}',
+            '\u{1F95B}',
+            'Tea time',
+            'Milk, sugar, biscuits',
+          ) +
+          plain('snacks', '\u{1F35F}', '\u{1F37F}', '\u{1F964}', 'Party snacks', 'Chips, namkeen') +
+          '</div>'
+        );
+      },
+      small: function () {
+        return (
+          title('Small prices') +
+          '<div class="p-seg static"><span class="on">Under ₹20</span><span>Under ₹50</span><span>Under ₹100</span></div>' +
+          '<div class="p-scroll">' +
+          priceCard('\u{1F9C5}', 'veg', 'Onion 500 g', '₹18') +
+          priceCard('\u{1F955}', 'veg', 'Carrot 250 g', '₹15') +
+          priceCard('\u{1F34B}', 'fruit', 'Lemon 4 pcs', '₹12') +
+          '</div>'
+        );
+      },
+      feat: function () {
+        return (
+          title('Featured this week') +
+          '<div class="p-scroll">' +
+          '<div class="p-feat" ' +
+          bg('staples') +
+          '><b>Monthly ration</b><small>Atta, rice, oil and dal</small></div>' +
+          '<div class="p-feat" ' +
+          bg('snacks') +
+          '><b>Tiffin and lunchbox</b><small>Quick bites and biscuits</small></div>' +
+          '<div class="p-feat" ' +
+          bg('bakery') +
+          '><b>Morning chai</b><small>Tea, biscuits and more</small></div></div>'
+        );
+      },
+      brand: function () {
+        function b(l, n) {
+          return '<div class="p-brand"><div class="c">' + l + '</div>' + n + '</div>';
+        }
+        return (
+          title('Shop by brand') +
+          '<div class="p-brands">' +
+          b('A', 'Amul') +
+          b('G', 'Gokul') +
+          b('C', 'Chitale') +
+          b('D', 'Dairy Milk') +
+          b('K', 'KitKat') +
+          b('P', 'Parle') +
+          '</div>'
+        );
+      },
+      rails: function () {
+        return (
+          title('Milk, curd and eggs', 'See all') +
+          '<div class="p-scroll">' +
+          railCard('\u{1F95B}', 'dairy', 'Toned milk', '500 ml', '₹29') +
+          railCard('\u{1F963}', 'dairy', 'Fresh curd', '400 g', '₹35') +
+          railCard('\u{1F9C0}', 'dairy', 'Paneer', '200 g', '₹85') +
+          '</div>' +
+          '<div style="height:22px"></div>' +
+          title('Fresh vegetables', 'See all') +
+          '<div class="p-scroll">' +
+          railCard('\u{1F345}', 'veg', 'Tomato', '500 g', '₹24') +
+          railCard('\u{1F954}', 'veg', 'Potato', '1 kg', '₹32') +
+          railCard('\u{1F955}', 'veg', 'Carrot', '250 g', '₹15') +
+          '</div>'
+        );
+      },
+    };
+
+    function wrap(id, view, html) {
+      var n = MK[id];
+      if (!n) return '<div class="sec" data-id="' + id + '">' + html + '</div>';
+      return (
+        '<div class="sec chg" data-id="' +
+        id +
+        '">' +
+        html +
+        '<span class="mk">' +
+        n +
+        '</span><span class="tg">' +
+        TAG[view][id] +
+        '</span></div>'
+      );
+    }
+
+    var SLIDERS =
+      '<svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="#2A1033" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M2 5h14M2 13h14"/><circle cx="6" cy="5" r="2" fill="#EFE4F5"/><circle cx="12" cy="13" r="2" fill="#EFE4F5"/></svg>';
+
+    function tabsHtml() {
+      var tabs = [
+        ['all', '\u{1F6D2}', 'All'],
+        ['dairy', '\u{1F95B}', 'Dairy'],
+        ['veg', '\u{1F955}', 'Vegetables'],
+        ['fruit', '\u{1F34E}', 'Fruits'],
+        ['staples', '\u{1F33E}', 'Staples'],
+        ['snacks', '\u{1F36A}', 'Snacks'],
+      ];
+      return tabs
+        .map(function (t) {
+          return (
+            '<div class="p-tab' +
+            (state.cat === t[0] ? ' on' : '') +
+            '"><span>' +
+            t[1] +
+            '</span>' +
+            t[2] +
+            '</div>'
+          );
+        })
+        .join('');
+    }
+
+    function phone(view) {
+      // "Today" is always the app as it is now, whatever header option is being looked at.
+      var hdr = view === 'before' ? 'today' : state.hdr;
+      var eta = 'Arriving today, 8–9 AM';
+      var head =
+        '<div class="p-head">' +
+        '<div class="p-status"><span>10:30</span><span>Roha</span></div>' +
+        '<div class="p-id"><div>' +
+        wrap('head', view, '<div class="p-eta">' + eta + '</div>') +
+        '<div class="p-addr">\u{1F4CD} Home · 12, Station Road, Roha ⌄</div></div>' +
+        '<div class="p-avatar">\u{1F464}</div></div>' +
+        '<div class="p-shops"><span class="p-dot"></span>7 local shops open now</div>' +
+        '<div class="p-search">\u{1F50D} Search "milk"</div>' +
+        '<div class="p-tabs">' +
+        tabsHtml() +
+        '</div>' +
+        '</div>';
+      var banner =
+        '<div class="p-banner"><div><b>Diwali essentials</b><small>Sweets, dry fruits and diyas</small></div><span class="em">\u{1FA94}</span></div>';
+      var chips =
+        '<div class="p-chips"><span class="p-badge">' +
+        SLIDERS +
+        '</span><span class="p-chip sel">All</span><span class="p-chip">⚡ Quick</span><span class="p-chip">\u{1F3F7} Offers</span><span class="p-chip">₹ Under ₹50</span><span class="p-chip">\u{1F33F} Veg</span></div>';
+      var blocks = ORDER[view]
+        .map(function (id) {
+          return wrap(id, view, BLOCKS[id]());
+        })
+        .join('');
+      var inHero = hdr === 'b';
+      if (inHero) head = head.replace(/<\/div>$/, '<div class="p-hero">' + banner + '</div></div>');
+      var headTint = state.cat !== 'all' ? tintFor(hdr, state.cat) : null;
+      var hstyle = headTint ? ' style="--hd-bg:' + headTint + '"' : '';
+      return (
+        '<div class="phone-wrap"><div class="phone" data-hdr="' +
+        hdr +
+        '"' +
+        hstyle +
+        '>' +
+        head +
+        '<div class="p-body">' +
+        (inHero ? '' : banner) +
+        chips +
+        blocks +
+        '<div class="p-quiet">Packed by a shop in your town. Prices are set by the shop.</div><div class="p-foot">Quibo Now · Roha</div>' +
+        '<div class="fold"><span>First screen ends about here</span></div></div></div></div>'
+      );
+    }
+
+    var HDR = {
+      today: {
+        name: 'Today: soft lilac',
+        text: 'The header is a soft lilac with dark text, and it turns pastel when a category tab is chosen.',
+        specs: [
+          ['headerBg', '#E9D8F0'],
+          ['onHeader', '#2A1033'],
+          ['tab marker', 'ink'],
+        ],
+        touches: 'Nothing: this is how the app is now.',
+        contrast: '',
+      },
+      a: {
+        name: 'A. Aubergine',
+        text: "The header takes the palette's own dark aubergine (the colour of the cart bar and bottom bar) with white text and a pistachio tab marker. The page stays as it is.",
+        specs: [
+          ['headerBg', '#3A1646'],
+          ['onHeader', '#FFFFFF'],
+          ['onHeaderMuted', '#D2BDDB'],
+          ['tab marker', 'pistachio'],
+          ['page', '#F8F4F7 (as now)'],
+        ],
+        touches:
+          'theme/palette.ts, light block only (headerBg, onHeader, onHeaderMuted and the five tints), plus the tab marker colour. No layout moves. Home, the tab headers, category headers, trust tiles and the saving ribbon all read these tokens, so they follow.',
+        contrast: 'White on it 15.2:1, muted text 8.7:1, pistachio 10.7:1.',
+      },
+      b: {
+        name: 'B. Aubergine hero',
+        text: "The same colour, and the offers banner moves up into the dark panel, so the header and the offer read as one hero. The panel's bottom corners are 16 and the page gets a faint lilac cast.",
+        specs: [
+          ['headerBg', '#3A1646'],
+          ['panel corners', '0 0 16 16'],
+          ['page', '#F6F0F8'],
+          ['banner', 'inside the panel'],
+        ],
+        touches:
+          'Everything in A, plus ui/HomeHeader.tsx (the banner sits inside the dark block and scrolls with it; search and tabs stay pinned) and the header part of HomeSkeleton. A layout change, so it needs its own phone check.',
+        contrast: 'Same pairs as A.',
+      },
+      c: {
+        name: 'C. Midnight plum',
+        text: 'Darker and moodier: the deepest plum of the palette fading to aubergine, on a cooler page. Pistachio carries the accent.',
+        specs: [
+          ['headerBg', '#2A1033 to #3A1646'],
+          ['onHeader', '#FFFFFF'],
+          ['page', '#F4F0F6'],
+        ],
+        touches:
+          'Everything in A, plus a gradient drawn with react-native-svg (already installed, so no new dependency): one extra layer behind the header.',
+        contrast: 'White on it 17.2:1, muted text 9.9:1, pistachio 12.1:1.',
+      },
+    };
+    var TINTS = {
+      today: [
+        ['all', 'All', '#E9D8F0'],
+        ['dairy', 'Dairy', '#DCE8F5'],
+        ['veg', 'Vegetables', '#DDEBCF'],
+        ['fruit', 'Fruits', '#F6DDD5'],
+        ['staples', 'Staples', '#F3E6C4'],
+        ['snacks', 'Snacks', '#F2D9E6'],
+      ],
+      dark: [
+        ['all', 'All', '#3A1646'],
+        ['dairy', 'Dairy', '#1F3350'],
+        ['veg', 'Vegetables', '#1F4030'],
+        ['fruit', 'Fruits', '#4D2A24'],
+        ['staples', 'Staples', '#463A1A'],
+        ['snacks', 'Snacks', '#4A2440'],
+      ],
+    };
+    state.hdr = 'a';
+    state.cat = 'all';
+
+    function tintFor(h, cat) {
+      var set = h === 'today' ? TINTS.today : TINTS.dark;
+      var hit = set.filter(function (x) {
+        return x[0] === cat;
+      })[0];
+      return hit ? hit[2] : null;
+    }
+
+    function renderHdrCard() {
+      var h = HDR[state.hdr];
+      var set = state.hdr === 'today' ? TINTS.today : TINTS.dark;
+      var sw = set
+        .map(function (x) {
+          return (
+            '<button type="button" data-cat="' +
+            x[0] +
+            '" aria-pressed="' +
+            (state.cat === x[0]) +
+            '"><i style="background:' +
+            x[2] +
+            '"></i>' +
+            x[1] +
+            '</button>'
+          );
+        })
+        .join('');
+      var specs = h.specs
+        .map(function (r) {
+          return '<li><span>' + r[0] + '</span><code>' + r[1] + '</code></li>';
+        })
+        .join('');
+      document.getElementById('hdrCard').innerHTML =
+        '<h3>Header colour: ' +
+        h.name +
+        '</h3><p class="small">' +
+        h.text +
+        '</p>' +
+        '<div><div class="colhead">When a category tab is chosen</div><div class="hdr-swatches" id="swatches">' +
+        sw +
+        '</div></div>' +
+        '<ul class="specs">' +
+        specs +
+        '</ul>' +
+        (h.contrast
+          ? '<p class="small"><b>Contrast:</b> ' +
+            h.contrast +
+            ' All clear the 4.5:1 the palette tests require.</p>'
+          : '') +
+        '<p class="small"><b>What it touches:</b> ' +
+        h.touches +
+        '</p>' +
+        '<div class="rec"><b>My pick: A first.</b> It is a token change with no layout risk, so every screen behaves as it does today. B is the premium upgrade once A is on your phone. The dark theme is unchanged: its header is already deep plum.</div>';
+    }
+
+    var phones = document.getElementById('phones');
+
+    function col(view, label, sub) {
+      return (
+        '<div class="phone-col"><div class="phone-label">' +
+        label +
+        '<span>' +
+        sub +
+        '</span></div>' +
+        phone(view) +
+        '</div>'
+      );
+    }
+
+    function render() {
+      var html = '';
+      if (state.view === 'both')
+        html = col('before', 'Today', 'what the app does now') + col('after', 'After', 'proposed');
+      else if (state.view === 'before') html = col('before', 'Today', 'what the app does now');
+      else html = col('after', 'After', 'proposed');
+      phones.innerHTML = html;
+      phones.classList.toggle('show', state.show);
+      Array.prototype.forEach.call(phones.querySelectorAll('.phone'), function (p) {
+        var f = p.querySelector('.fold');
+        f.style.top = 756 - p.querySelector('.p-head').offsetHeight + 'px';
+      });
+      fit();
+    }
+
+    function renderEss() {
+      Array.prototype.forEach.call(phones.querySelectorAll('.ess-inner'), function (el) {
+        el.innerHTML = essInner();
+      });
+    }
+
+    function fit() {
+      var avail = phones.clientWidth;
+      var cols = phones.querySelectorAll('.phone-col');
+      var single = cols.length === 1;
+      Array.prototype.forEach.call(cols, function (c) {
+        c.style.zoom = single && avail < 372 ? String(Math.max(0.6, avail / 372)) : '';
+      });
+    }
+
+    function buildPanel() {
+      document.getElementById('changes').innerHTML = CHANGES.map(function (c) {
+        return (
+          '<li><button type="button" class="change" data-id="' +
+          c.id +
+          '"><span class="n">' +
+          MK[c.id] +
+          '</span>' +
+          '<strong>' +
+          c.title +
+          ' <span class="pill' +
+          (c.isNew ? ' new' : '') +
+          '">' +
+          c.pill +
+          '</span></strong>' +
+          '<span class="why">' +
+          c.why +
+          '</span><code>' +
+          c.code +
+          ' · ' +
+          c.size +
+          '</code></button></li>'
+        );
+      }).join('');
+      var movedBefore = { need: 1, cat: 1, brand: 1 };
+      var movedAfter = { cat: 1, ess: 1, need: 1, brand: 1 };
+      function list(view, moved) {
+        return (
+          '<ol class="order"><li class="colhead">' +
+          (view === 'before' ? 'Today' : 'After') +
+          '</li>' +
+          ORDER[view]
+            .map(function (id, i) {
+              return (
+                '<li><span class="pos">' +
+                (i + 1) +
+                '</span><span class="' +
+                (moved[id] ? 'moved' : '') +
+                '">' +
+                NAME[id] +
+                '</span></li>'
+              );
+            })
+            .join('') +
+          '</ol>'
+        );
+      }
+      document.getElementById('order').innerHTML =
+        '<div class="order-cols">' +
+        list('before', movedBefore) +
+        list('after', movedAfter) +
+        '</div>';
+    }
+
+    function goTo(id) {
+      if (id === 'ess' && state.view === 'before') setView('after');
+      var all = phones.querySelectorAll('.sec[data-id="' + id + '"]');
+      var el = all[all.length - 1];
+      if (!el) return;
+      var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      el.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' });
+      el.classList.remove('flash');
+      void el.offsetWidth;
+      el.classList.add('flash');
+    }
+
+    function setView(v) {
+      state.view = v;
+      Array.prototype.forEach.call(document.querySelectorAll('[data-view]'), function (b) {
+        b.setAttribute('aria-pressed', String(b.getAttribute('data-view') === v));
+      });
+      render();
+    }
+
+    document.querySelector('.seg').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-view]');
+      if (b) setView(b.getAttribute('data-view'));
+    });
+    document.getElementById('show').addEventListener('change', function (e) {
+      state.show = e.target.checked;
+      phones.classList.toggle('show', state.show);
+    });
+    document.getElementById('changes').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-id]');
+      if (b) goTo(b.getAttribute('data-id'));
+    });
+    phones.addEventListener('click', function (e) {
+      var t = e.target.closest('[data-tab],[data-inc],[data-dec]');
+      if (!t) return;
+      if (t.hasAttribute('data-tab')) state.tab = t.getAttribute('data-tab');
+      else if (t.hasAttribute('data-inc')) {
+        var a = t.getAttribute('data-inc');
+        state.qty[a] = (state.qty[a] || 0) + 1;
+      } else {
+        var d = t.getAttribute('data-dec');
+        state.qty[d] = Math.max(0, (state.qty[d] || 0) - 1);
+        if (state.qty[d] === 0) delete state.qty[d];
+      }
+      renderEss();
+    });
+    document.getElementById('hdrSeg').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-hdr]');
+      if (!b) return;
+      state.hdr = b.getAttribute('data-hdr');
+      Array.prototype.forEach.call(document.querySelectorAll('#hdrSeg button'), function (x) {
+        x.setAttribute('aria-pressed', String(x.getAttribute('data-hdr') === state.hdr));
+      });
+      renderHdrCard();
+      render();
+    });
+    document.getElementById('hdrCard').addEventListener('click', function (e) {
+      var b = e.target.closest('[data-cat]');
+      if (!b) return;
+      state.cat = b.getAttribute('data-cat');
+      renderHdrCard();
+      render();
+    });
+    window.addEventListener('resize', fit);
+
+    buildPanel();
+    renderHdrCard();
+    render();
+  })();
+</script>
