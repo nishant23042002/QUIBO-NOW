@@ -170,10 +170,14 @@
         "morning": "Morning",
         "cooking": "Cooking",
         "evening": "Evening"
-      }
+      },
+      "word": "Daily",
+      "sticker": "essentials",
+      "sub": "Tick what you need, then add them in one tap"
     },
     "shopForNeed": {
-      "title": "Shop for your need"
+      "title": "Picks for your routine",
+      "sub": "Ready-made baskets for the moments in your day"
     },
     "shopByBrand": {
       "title": "Shop by brand"
@@ -181,7 +185,14 @@
     "smallPrices": {
       "title": "Small prices",
       "under": "Under {amount}",
-      "empty": "Nothing under {amount} right now."
+      "empty": "Nothing under {amount} right now.",
+      "word": "Small",
+      "sticker": "prices",
+      "sub": "Pick a price band and see what is in it",
+      "store": "and under",
+      "filter": "Filter",
+      "between": "{from} to {to}",
+      "emptyBetween": "Nothing between {from} and {to} right now."
     },
     "featured": {
       "title": "Featured this week",

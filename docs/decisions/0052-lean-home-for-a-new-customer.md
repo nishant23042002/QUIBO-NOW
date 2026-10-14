@@ -1,6 +1,8 @@
 # 0052. A switch leaves three sections off Home until a customer's first order
 
-- **Status:** Proposed (Phase 1, sub-phase 1l). Builds on [ADR 0048](0048-daily-essentials-and-home-order.md).
+- **Status:** Superseded by [ADR 0055](0055-home-v5-the-locked-redesign.md) and removed on 2026-10-14: Home reads the same for every
+  customer (the owner asked for one page on every phone), so the switch, its list and its environment variable are gone. Was: Proposed
+  (Phase 1, sub-phase 1l). Builds on [ADR 0048](0048-daily-essentials-and-home-order.md).
 - **Date:** 2026-10-14
 - **Source:** the owner, who wanted Home's first view for a new customer to be shorter, and to be able to turn that on and off from the
   environment file

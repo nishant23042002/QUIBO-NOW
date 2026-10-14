@@ -29,17 +29,6 @@ describe('loadEnv', () => {
     expect(env.REDIS_URL).toBe('redis://localhost:6379');
   });
 
-  it('accepts true or false for the lean Home switch and rejects anything else', () => {
-    expect(
-      loadEnv(publicEnvSchema, { EXPO_PUBLIC_HOME_FIRST_RUN_LEAN: 'true' })
-        .EXPO_PUBLIC_HOME_FIRST_RUN_LEAN,
-    ).toBe('true');
-    expect(loadEnv(publicEnvSchema, {}).EXPO_PUBLIC_HOME_FIRST_RUN_LEAN).toBeUndefined();
-    expect(() => loadEnv(publicEnvSchema, { EXPO_PUBLIC_HOME_FIRST_RUN_LEAN: 'yes' })).toThrow(
-      EnvValidationError,
-    );
-  });
-
   it('treats an empty string as unset', () => {
     const env = loadEnv(serverEnvSchema, { DATABASE_URL: '', APP_ENV: '' });
     expect(env.DATABASE_URL).toBeUndefined();

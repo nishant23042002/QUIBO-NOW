@@ -192,3 +192,20 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - Checks: lint, typecheck, test (705 customer tests) and build pass. Looked at on the web preview at 375 px: the groups, a wide
     tile, the soon tiles, the cards, Notify me on a tile and a card (kept across screens), and the Categories tab. Not seen on a
     real phone, at 200% text, or in Hindi and Marathi. The loading skeleton mirrors the groups and the cards.
+- **Step 6, essentials, prices, routines: built, waiting for the owner's phone check.**
+  - Daily essentials: a lettered title ("Daily" with an "essentials" sticker and the line "Tick what you need, then add them in one
+    tap"), the squared Morning, Cooking, Evening control and a grid of tiles, two to a row, on a soft aubergine block. A tile has its
+    picture with a tick box, the name (two lines), the price over the pack or "3 left", and a tap ticks it. A tile already in the
+    cart is green-washed with the usual stepper. Select all and "Add 3 items" stay under the grid. The ticking, the basket and the
+    tab data (`essentials.ts`) are unchanged; only the rows became tiles.
+  - Small prices: a lettered title on the pistachio wash (curved top and edge, like Fresh today), three price stores as price bands (up to
+    ₹30, ₹30 to ₹50, ₹50 to ₹100: each holds only what the one below does not, so "Under ₹100" is not a repeat of "Under ₹30") as
+    big buttons with the chosen one stamped, a row of filter chips (All, Dairy, Vegetables, Fruits, Staples, Snacks)
+    and the same cheapest-first card row. The picking rule gained an optional category (`pickUnder(..., category)`, tested).
+  - Picks for your routine: "Shop for your need" is renamed and shown as soft tinted cards two to a row with a line saying what
+    they are; each opens its need page as before. The needs data is unchanged.
+  - The lean switch (ADR 0052) is removed: `EXPO_PUBLIC_HOME_FIRST_RUN_LEAN`, its code, tests and `.env` lines are gone, so Picks,
+    Small prices and Featured show for every customer and the page is the same on every phone (ADR 0055 said it was replaced).
+  - Checks: lint, typecheck, test (701 customer tests) and build pass. Looked at on the web preview at 375 px: the tile grid (tick,
+    add, an in-cart tile with its stepper), the stores and chips (the Dairy filter), and the routine cards. Not seen on a real phone,
+    at 200% text, or in Hindi and Marathi. The loading skeleton mirrors the three sections.

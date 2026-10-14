@@ -26,7 +26,6 @@ import { useConditions } from './conditions';
 import { knowShown } from './knowRules';
 import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
-import { useHomeSectionShown } from './homeSections';
 import { Featured } from './Featured';
 import { QuieterNote } from './QuieterNote';
 import { ShopByBrand } from './ShopByBrand';
@@ -93,7 +92,6 @@ export const HomeFeed = memo(function HomeFeed({
 }: HomeFeedProps) {
   const { t } = useLanguage();
   const { colors } = useTheme();
-  const showSection = useHomeSectionShown();
   const { store } = useConditions();
   const showKnow = knowShown(store);
   // "How we check a shop" opens from the strip's chip and from the promise.
@@ -219,9 +217,9 @@ export const HomeFeed = memo(function HomeFeed({
         <Bestsellers onCategory={onSeeCategory} />
         <HomeCategories />
         <DailyEssentials />
-        {showSection('need') ? <ShopForNeed /> : null}
-        {showSection('small') ? <SmallPrices /> : null}
-        {showSection('featured') ? <Featured onCategory={onSeeAll} /> : null}
+        <ShopForNeed />
+        <SmallPrices />
+        <Featured onCategory={onSeeAll} />
         <ShopByBrand />
         {HOME_RAIL_ORDER.map((key) => {
           const row = listing.filter((item) => item.category === key);

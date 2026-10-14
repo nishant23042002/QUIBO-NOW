@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { MOST_SHOWN, PRICE_TIERS, pickUnder } from './priceTiers';
+import { MOST_SHOWN, PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
 
 const item = (id: string, price: number, out = false) => ({
   id,
@@ -45,6 +45,38 @@ describe('pickUnder', () => {
     const many = Array.from({ length: MOST_SHOWN + 5 }, (_, i) => item(`m${i}`, 100 + i));
     expect(pickUnder(many, 10000)).toHaveLength(MOST_SHOWN);
     expect(pickUnder(items, 500)).toEqual([]);
+  });
+
+  it('keeps only the chosen category, still cheapest first', () => {
+    const mixed = [
+      { id: 'milk', price: 2800, category: 'dairy' },
+      { id: 'chips', price: 1000, category: 'snacks' },
+      { id: 'curd', price: 1500, category: 'dairy' },
+    ];
+    expect(pickUnder(mixed, 3000, { category: 'dairy' }).map((i) => i.id)).toEqual([
+      'curd',
+      'milk',
+    ]);
+    expect(pickUnder(mixed, 3000).map((i) => i.id)).toEqual(['chips', 'curd', 'milk']);
+    expect(pickUnder(mixed, 3000, { category: 'fruits' })).toEqual([]);
+  });
+
+  it('keeps only what is above the band below, so the bands do not overlap', () => {
+    const priced = [
+      { id: 'a', price: 2000 },
+      { id: 'b', price: 3000 },
+      { id: 'c', price: 3001 },
+      { id: 'd', price: 5000 },
+      { id: 'e', price: 5001 },
+      { id: 'f', price: 10000 },
+    ];
+    const ids = (index: number) => {
+      const band = priceBand(index);
+      return pickUnder(priced, band.upTo, { above: band.above }).map((i) => i.id);
+    };
+    expect(ids(0)).toEqual(['a', 'b']);
+    expect(ids(1)).toEqual(['c', 'd']);
+    expect(ids(2)).toEqual(['e', 'f']);
   });
 
   it('does not change the list it is given', () => {

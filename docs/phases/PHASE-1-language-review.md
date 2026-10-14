@@ -260,11 +260,18 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 ## Small prices, on Home
 
-| Key                      | English                           | Hindi (draft)                        | Marathi (draft)                       | OK or change to |
-| ------------------------ | --------------------------------- | ------------------------------------ | ------------------------------------- | --------------- |
-| `home.smallPrices.title` | Small prices                      | छोटे दाम                             | छोटे दर                               |                 |
-| `home.smallPrices.under` | Under {amount}                    | {amount} से कम                       | {amount} पेक्षा कमी                   |                 |
-| `home.smallPrices.empty` | Nothing under {amount} right now. | अभी {amount} से कम की कोई चीज़ नहीं। | सध्या {amount} पेक्षा कमी काहीच नाही. |                 |
+| Key                             | English                                    | Hindi (draft)                                 | Marathi (draft)                            | OK or change to |
+| ------------------------------- | ------------------------------------------ | --------------------------------------------- | ------------------------------------------ | --------------- |
+| `home.smallPrices.title`        | Small prices                               | छोटे दाम                                      | छोटे दर                                    |                 |
+| `home.smallPrices.under`        | Under {amount}                             | {amount} से कम                                | {amount} पेक्षा कमी                        |                 |
+| `home.smallPrices.empty`        | Nothing under {amount} right now.          | अभी {amount} से कम की कोई चीज़ नहीं।          | सध्या {amount} पेक्षा कमी काहीच नाही.      |                 |
+| `home.smallPrices.word`         | Small                                      | छोटे                                          | लहान                                       |                 |
+| `home.smallPrices.sticker`      | prices                                     | दाम                                           | किमती                                      |                 |
+| `home.smallPrices.sub`          | Pick a price band and see what is in it    | एक दाम की श्रेणी चुनें और देखें उसमें क्या है | एक किंमत गट निवडा आणि त्यात काय आहे ते पहा |                 |
+| `home.smallPrices.store`        | and under                                  | और कम                                         | आणि कमी                                    |                 |
+| `home.smallPrices.filter`       | Filter                                     | फ़िल्टर                                       | फिल्टर                                     |                 |
+| `home.smallPrices.between`      | {from} to {to}                             | {from} से {to}                                | {from} ते {to}                             |                 |
+| `home.smallPrices.emptyBetween` | Nothing between {from} and {to} right now. | अभी {from} और {to} के बीच कुछ नहीं है।        | सध्या {from} आणि {to} दरम्यान काही नाही.   |                 |
 
 ## Featured, on Home
 
@@ -474,4 +481,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.categoryEmpty.title` | Nothing here right now          | अभी यहाँ कुछ नहीं है                | सध्या इथे काही नाही                   |                 |
 | `home.categoryEmpty.body`  | Check back soon, or choose All. | थोड़ी देर बाद देखें या "सभी" चुनें। | थोड्या वेळाने पहा किंवा "सर्व" निवडा. |                 |
 
-356 lines in all.
+363 lines in all.

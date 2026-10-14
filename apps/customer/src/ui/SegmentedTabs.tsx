@@ -49,7 +49,7 @@ const makeStyles = (c: ThemeColors) =>
 
 /**
  * A few options in one square-cornered track, like a segmented control: the chosen one raised with a hairline, the others bare on the
- * lilac. For choices that swap one row of content in place (the price tiers of "Small prices"), where a row of separate chips would
+ * lilac. For choices that swap one row of content in place (the parts of the day in "Daily essentials"), where a row of separate chips would
  * read as filters. Every option is 40 dp tall inside a 48 dp track.
  */
 export function SegmentedTabs({ options, selected, onSelect, label }: SegmentedTabsProps) {

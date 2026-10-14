@@ -16,15 +16,14 @@ import {
   space,
 } from '@/ui';
 import { DailyEssentialsSkeleton } from './DailyEssentials';
-import { useHomeSectionShown } from './homeSections';
 import { FEATURED_CARD_WIDTH, useFeaturedCardHeight } from './Featured';
 import { FEATURED } from './featuredPicks';
 import { liveNeeds } from './needs';
 import { HOME_RAIL_ORDER, anyCardNote, useHomeItems, useHomeListing } from './items';
-import { NEED_CARD_HEIGHT, NEED_CARD_WIDTH } from './ShopForNeed';
+import { NEED_CARD_HEIGHT } from './ShopForNeed';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { PriceTileSkeleton } from './PriceTile';
-import { MOST_SHOWN, PRICE_TIERS, pickUnder } from './priceTiers';
+import { MOST_SHOWN, PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
 import { QUIETER_NOTE_HEIGHT } from './QuieterNote';
 import type { HomeItem } from './items';
 import { SOON_CARD_HEIGHT, SOON_CARD_WIDTH } from './ComingSoonRail';
@@ -36,8 +35,8 @@ const GRID_CARDS = 4;
 const GRID_CARDS_MAX = 8;
 /** How many brand tiles show before the edge of the screen. */
 const BRAND_TILES = 4;
-/** The segmented control of the price tabs: as tall as the real one (a 40 dp option in a track with 4 of padding all round). */
-const TABS_HEIGHT = 48;
+/** A price store's button: the amount over "and under", in a box with its border. */
+const STORE_HEIGHT = 68;
 
 // These mirror `HomeFeed`, `ProductRail` and the sections Home keeps above the rows: the same gaps, gutters and heights, so nothing
 // jumps when the real sections replace the grey ones.
@@ -50,6 +49,10 @@ const styles = StyleSheet.create({
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
   sectionTitle: { justifyContent: 'center', paddingHorizontal: space[4] },
   note: { marginHorizontal: space[4] },
+  storeRow: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
+  store: { flex: 1 },
+  needGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
+  needCell: { width: '47.8%', flexGrow: 1 },
 });
 
 /** A row that does not scroll while it is only a skeleton. */
@@ -63,7 +66,7 @@ function StaticRow({ children }: { children: ReactNode }) {
 
 /**
  * What Home shows while items load. With "All" chosen it is the page's own sections in order (the category groups with their
- * named tiles and "Coming soon to Roha" cards, the shops strip, Small prices with its three tabs, Featured, a row under each category's title, the quieter-times note),
+ * named tiles and "Coming soon to Roha" cards, the shops strip, Small prices with its three stores and filter chips, Featured, a row under each category's title, the quieter-times note),
  * each with its real title's length and the same gaps and heights. With one category chosen (or on a shop page, with `titled`) it
  * is the two-column grid, as many cards as the category has (up to eight). The cards are `ProductCardSkeleton`, drawn from the
  * same measurements as the real cards.
@@ -86,7 +89,6 @@ export function HomeSkeleton({
   cards?: number;
 }) {
   const { t, locale } = useLanguage();
-  const showSection = useHomeSectionShown();
   const { width: screen } = useWindowDimensions();
   const groups = useCategoryGroups();
   const stocked = groups.filter((group) => group.live.length > 0);
@@ -134,7 +136,9 @@ export function HomeSkeleton({
       ))}
     </StaticRow>
   );
-  const cheap = pickUnder(items, PRICE_TIERS[1] ?? 0).slice(0, MOST_SHOWN);
+  // The store the section opens on (the second band), as many cards as it will have.
+  const opening = priceBand(1);
+  const cheap = pickUnder(items, opening.upTo, { above: opening.above }).slice(0, MOST_SHOWN);
 
   return (
     <SkeletonScope label={label}>
@@ -176,57 +180,59 @@ export function HomeSkeleton({
 
         <DailyEssentialsSkeleton />
 
-        {showSection('need') && needs.length > 0 ? (
+        {needs.length > 0 ? (
           <View style={styles.section}>
             <View style={styles.pad}>
               <RowTitleSkeleton title={t('home.shopForNeed.title')} />
             </View>
-            <StaticRow>
+            <View style={styles.needGrid}>
               {needs.map((entry) => (
-                <Skeleton
-                  key={entry.id}
-                  width={NEED_CARD_WIDTH}
-                  height={NEED_CARD_HEIGHT}
-                  rounded={radius.xl}
-                />
+                <View key={entry.id} style={styles.needCell}>
+                  <Skeleton height={NEED_CARD_HEIGHT} rounded={radius.xl} />
+                </View>
               ))}
-            </StaticRow>
+            </View>
           </View>
         ) : null}
 
-        {showSection('small') ? (
-          <View style={styles.section}>
-            <View style={styles.pad}>
-              <RowTitleSkeleton title={t('home.smallPrices.title')} />
-            </View>
-            <View style={styles.pad}>
-              <Skeleton height={TABS_HEIGHT} rounded={radius.md} />
-            </View>
-            <StaticRow>
-              {Array.from({ length: Math.min(RAIL_CARDS, cheap.length) }, (_, card) => (
-                <PriceTileSkeleton key={card} reserveNote={anyCardNote(cheap)} />
-              ))}
-            </StaticRow>
+        <View style={styles.section}>
+          <View style={styles.pad}>
+            <Skeleton width={190} height={36} rounded={radius.md} />
           </View>
-        ) : null}
+          <View style={styles.storeRow}>
+            {PRICE_TIERS.map((tier) => (
+              <View key={tier} style={styles.store}>
+                <Skeleton height={STORE_HEIGHT} rounded={radius.lg} />
+              </View>
+            ))}
+          </View>
+          <StaticRow>
+            {Array.from({ length: 4 }, (_, chip) => (
+              <Skeleton key={chip} width={72} height={36} rounded={radius.md} />
+            ))}
+          </StaticRow>
+          <StaticRow>
+            {Array.from({ length: Math.min(RAIL_CARDS, cheap.length) }, (_, card) => (
+              <PriceTileSkeleton key={card} reserveNote={anyCardNote(cheap)} />
+            ))}
+          </StaticRow>
+        </View>
 
-        {showSection('featured') ? (
-          <View style={styles.section}>
-            <View style={styles.pad}>
-              <RowTitleSkeleton title={t('home.featured.title')} />
-            </View>
-            <StaticRow>
-              {FEATURED.map((pick) => (
-                <Skeleton
-                  key={pick.title}
-                  width={FEATURED_CARD_WIDTH}
-                  height={featuredHeight}
-                  rounded={radius.md}
-                />
-              ))}
-            </StaticRow>
+        <View style={styles.section}>
+          <View style={styles.pad}>
+            <RowTitleSkeleton title={t('home.featured.title')} />
           </View>
-        ) : null}
+          <StaticRow>
+            {FEATURED.map((pick) => (
+              <Skeleton
+                key={pick.title}
+                width={FEATURED_CARD_WIDTH}
+                height={featuredHeight}
+                rounded={radius.md}
+              />
+            ))}
+          </StaticRow>
+        </View>
 
         <View style={styles.section}>
           <View style={styles.pad}>
