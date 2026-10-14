@@ -288,18 +288,58 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.featured.tiffinBody`  | Quick bites and biscuits | झटपट खाना और बिस्कुट     | झटपट खाणे आणि बिस्किटे      |                 |
 | `home.featured.chaiTitle`   | Morning chai             | सुबह की चाय              | सकाळचा चहा                  |                 |
 | `home.featured.chaiBody`    | Tea, biscuits and more   | चाय, बिस्कुट और बहुत कुछ | चहा, बिस्किटे आणि बरेच काही |                 |
+| `home.featured.tag`         | Featured                 | ख़ास                     | खास                         |                 |
+| `home.featured.shop`        | Shop now                 | अभी ख़रीदें              | आत्ता खरेदी करा             |                 |
 
-## Quieter times note, on Home
+## Offers for you, on Home
 
-| Key                | English                                                    | Hindi (draft)                                      | Marathi (draft)                                           | OK or change to |
-| ------------------ | ---------------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------------- | --------------- |
-| `home.quieterNote` | Quieter times cost less. Pick a window and see the saving. | शांत समय पर डिलीवरी सस्ती है। समय चुनकर बचत देखें। | शांत वेळेला डिलिव्हरी स्वस्त असते. वेळ निवडा आणि बचत पहा. |                 |
+| Key                         | English                             | Hindi (draft)                        | Marathi (draft)                      | OK or change to |
+| --------------------------- | ----------------------------------- | ------------------------------------ | ------------------------------------ | --------------- |
+| `home.offers.label`         | Offers                              | ऑफ़र                                 | ऑफर्स                                |                 |
+| `home.offers.diwaliTitle`   | Diwali essentials                   | दिवाली का सामान                      | दिवाळीचे सामान                       |                 |
+| `home.offers.diwaliBody`    | Sweets, dry fruits and diyas        | मिठाइयाँ, मेवे और दीये               | मिठाई, सुकामेवा आणि पणत्या           |                 |
+| `home.offers.deliveryTitle` | Free delivery over {amount}         | {amount} से ऊपर डिलीवरी मुफ़्त       | {amount} वरील डिलिव्हरी मोफत         |                 |
+| `home.offers.deliveryBody`  | On your first three orders          | आपके पहले तीन ऑर्डर पर               | तुमच्या पहिल्या तीन ऑर्डरवर          |                 |
+| `home.offers.milkTitle`     | Fresh milk every morning            | हर सुबह ताज़ा दूध                    | रोज सकाळी ताजे दूध                   |                 |
+| `home.offers.milkBody`      | Order tonight for the 7–9 AM window | आज रात ऑर्डर करें, सुबह 7–9 की विंडो | आज रात्री ऑर्डर करा, सकाळी 7–9 वेळेत |                 |
+| `home.offers.shopsTitle`    | Shop from your own kirana           | अपनी किराना दुकान से खरीदें          | तुमच्या किराणा दुकानातून घ्या        |                 |
+| `home.offers.shopsBody`     | Packed by a shop in your town       | आपके शहर की दुकान पैक करती है        | तुमच्या शहरातील दुकान पॅक करते       |                 |
+| `home.offers.title`         | Offers for you                      | आपके लिए ऑफ़र                        | तुमच्यासाठी ऑफर                      |                 |
+| `home.offers.freeTitle`     | Free delivery over {amount}         | {amount} से ऊपर मुफ़्त डिलीवरी       | {amount} पेक्षा जास्त मोफत डिलिव्हरी |                 |
+| `home.offers.freeSub`       | On the items in your cart           | आपके कार्ट के सामान पर               | तुमच्या कार्टमधील वस्तूंवर           |                 |
+| `home.offers.codeSub`       | Code {code}                         | कोड {code}                           | कोड {code}                           |                 |
+
+## Quieter times, on Home
+
+| Key                  | English                                                   | Hindi (draft)                                     | Marathi (draft)                                      | OK or change to |
+| -------------------- | --------------------------------------------------------- | ------------------------------------------------- | ---------------------------------------------------- | --------------- |
+| `home.quiet.title`   | Quieter times                                             | शांत समय                                          | शांत वेळा                                            |                 |
+| `home.quiet.word`    | Quieter                                                   | शांत                                              | शांत                                                 |                 |
+| `home.quiet.sticker` | cost less                                                 | समय सस्ता                                         | स्वस्त                                               |                 |
+| `home.quiet.sub`     | Pick a delivery window and see the saving before you pay. | डिलीवरी का समय चुनें और भुगतान से पहले बचत देखें। | डिलिव्हरीची वेळ निवडा आणि पैसे देण्यापूर्वी बचत पहा. |                 |
+| `home.quiet.pick`    | Pick a window                                             | समय चुनें                                         | वेळ निवडा                                            |                 |
+| `home.quiet.pickSub` | Today or tomorrow                                         | आज या कल                                          | आज किंवा उद्या                                       |                 |
+| `home.quiet.save`    | Save {amount}                                             | {amount} बचाएँ                                    | {amount} वाचवा                                       |                 |
+| `home.quiet.rush`    | Rush hour                                                 | भीड़ का समय                                       | गर्दीची वेळ                                          |                 |
+
+## Can't find something, on Home
+
+| Key                        | English                                                              | Hindi (draft)                                                     | Marathi (draft)                                                 | OK or change to |
+| -------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------- | --------------- |
+| `home.request.title`       | Can’t find something?                                                | कुछ नहीं मिल रहा?                                                 | काही सापडत नाही?                                                |                 |
+| `home.request.body`        | Tell your shops what you need. They will let you know when it is in. | अपनी दुकानों को बताइए कि आपको क्या चाहिए। आने पर वे आपको बताएँगी। | तुमच्या दुकानांना काय हवे ते सांगा. आल्यावर ते तुम्हाला कळवतील. |                 |
+| `home.request.placeholder` | For example, ragi flour 1 kg                                         | जैसे, रागी का आटा 1 किलो                                          | उदा. नाचणीचे पीठ 1 किलो                                         |                 |
+| `home.request.label`       | Item you need                                                        | आपको जो चाहिए                                                     | तुम्हाला हवी असलेली वस्तू                                       |                 |
+| `home.request.send`        | Ask shops                                                            | दुकानों से पूछें                                                  | दुकानांना विचारा                                                |                 |
+| `home.request.noted`       | Noted. Your shops will see it.                                       | दर्ज हो गया। आपकी दुकानें इसे देखेंगी।                            | नोंदवले. तुमच्या दुकानांना ते दिसेल.                            |                 |
+| `home.request.another`     | Ask for something else                                               | कुछ और पूछें                                                      | आणखी काही विचारा                                                |                 |
 
 ## Footer
 
-| Key           | English                                          | Hindi (draft)                                 | Marathi (draft)                                    | OK or change to |
-| ------------- | ------------------------------------------------ | --------------------------------------------- | -------------------------------------------------- | --------------- |
-| `footer.line` | Packed by shops in Roha. Delivered to your door. | रोहा की दुकानों से पैक, सीधे आपके दरवाज़े तक। | रोह्यातील दुकानांकडून पॅक, थेट तुमच्या दारापर्यंत. |                 |
+| Key            | English                                          | Hindi (draft)                                 | Marathi (draft)                                    | OK or change to |
+| -------------- | ------------------------------------------------ | --------------------------------------------- | -------------------------------------------------- | --------------- |
+| `footer.line`  | Packed by shops in Roha. Delivered to your door. | रोहा की दुकानों से पैक, सीधे आपके दरवाज़े तक। | रोह्यातील दुकानांकडून पॅक, थेट तुमच्या दारापर्यंत. |                 |
+| `footer.money` | Your money stays in Roha.                        | आपका पैसा रोहा में ही रहता है।                | तुमचा पैसा रोह्यातच राहतो.                         |                 |
 
 ## Brand page and brand filter
 
@@ -485,4 +525,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.categoryEmpty.title` | Nothing here right now          | अभी यहाँ कुछ नहीं है                | सध्या इथे काही नाही                   |                 |
 | `home.categoryEmpty.body`  | Check back soon, or choose All. | थोड़ी देर बाद देखें या "सभी" चुनें। | थोड्या वेळाने पहा किंवा "सर्व" निवडा. |                 |
 
-367 lines in all.
+397 lines in all.

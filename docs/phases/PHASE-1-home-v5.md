@@ -227,3 +227,22 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
     preview's storage (Buy again at today's prices), a product opened (Continue browsing), Trending and the brand store. The
     test data was removed. Not seen on a real phone, at 200% text, or in Hindi and Marathi. The loading skeleton draws Trending and
     the brand store; Buy again and Continue browsing are not drawn in it (the close-out step).
+- **Step 8, banners and close: built, waiting for the owner's phone check.**
+  - Featured this week: the same three picks, now each card says "Featured", names the pick and ends with "Shop now".
+  - Offers for you: a swipeable row of cards from what the app really has: free delivery over the town's line and the sample
+    coupons (the same ones the Coupons page lists); every card opens that page.
+  - Quieter times: a lettered title with a "cost less" sticker on a warm block, a big "Pick a window" tile and four windows spread
+    across the day, each with what it saves against a rush hour from the town's own rules (a window inside the rush hours says
+    "Rush hour" and promises no saving). Every tile opens the schedule page. It replaces the one-line note.
+  - A banner between the shelves (the monthly ration, one tap) after the second shelf.
+  - Can't find something: a field and "Ask shops". What was typed is kept on the phone (`quibo.requests`, the newest 20) with when
+    and under which wording they agreed, and goes to the shops in Phase 2. After sending it says it was noted.
+  - A help row opens Help, and the footer gains "Your money stays in Roha." under the line it had.
+  - Logic with tests: `quieterTimes.ts`, `askShops.ts`. New: `QuieterModule`, `OffersForYou`, `ShelfBanner`, `CantFind`, `HelpRow`,
+    `useAskShops`. `QuieterNote` and the `home.quieterNote` message are gone.
+  - Page order now: header, Know your shop (with the strip), Buy again, Fresh today, Bestsellers, Continue browsing, the category
+    groups and Coming soon, Daily essentials, Picks for your routine, Small prices, Trending, brand stores, Featured, Offers for
+    you, Quieter times, the shelves with the banner, the promise, Can't find something, the help row and the footer.
+  - Checks: lint, typecheck, test (740 customer tests) and build pass. Looked at on the web preview at 375 px: Quieter times, the
+    end of the page, and Ask shops saving with its consent log (the test entry was removed). Not seen on a real phone, at 200% text,
+    or in Hindi and Marathi.

@@ -62,7 +62,11 @@
       "milkTitle": "Fresh milk every morning",
       "milkBody": "Order tonight for the 7–9 AM window",
       "shopsTitle": "Shop from your own kirana",
-      "shopsBody": "Packed by a shop in your town"
+      "shopsBody": "Packed by a shop in your town",
+      "title": "Offers for you",
+      "freeTitle": "Free delivery over {amount}",
+      "freeSub": "On the items in your cart",
+      "codeSub": "Code {code}"
     },
     "items": {
       "milk": "Toned milk",
@@ -205,9 +209,10 @@
       "tiffinTitle": "Tiffin and lunchbox",
       "tiffinBody": "Quick bites and biscuits",
       "chaiTitle": "Morning chai",
-      "chaiBody": "Tea, biscuits and more"
+      "chaiBody": "Tea, biscuits and more",
+      "tag": "Featured",
+      "shop": "Shop now"
     },
-    "quieterNote": "Quieter times cost less. Pick a window and see the saving.",
     "categoryEmpty": {
       "title": "Nothing here right now",
       "body": "Check back soon, or choose All."
@@ -367,6 +372,31 @@
       "under": "Under {amount}",
       "veg": "Veg",
       "empty": "Nothing like this right now. Try another tab."
+    },
+    "quiet": {
+      "title": "Quieter times",
+      "word": "Quieter",
+      "sticker": "cost less",
+      "sub": "Pick a delivery window and see the saving before you pay.",
+      "pick": "Pick a window",
+      "pickSub": "Today or tomorrow",
+      "save": "Save {amount}",
+      "rush": "Rush hour"
+    },
+    "banner": {
+      "title": "Monthly ration, one tap"
+    },
+    "request": {
+      "title": "Can’t find something?",
+      "body": "Tell your shops what you need. They will let you know when it is in.",
+      "placeholder": "For example, ragi flour 1 kg",
+      "label": "Item you need",
+      "send": "Ask shops",
+      "noted": "Noted. Your shops will see it.",
+      "another": "Ask for something else"
+    },
+    "help": {
+      "row": "Need help? We are here to help"
     }
   },
   "brands": {
@@ -1308,7 +1338,8 @@
     }
   },
   "footer": {
-    "line": "Packed by shops in Roha. Delivered to your door."
+    "line": "Packed by shops in Roha. Delivered to your door.",
+    "money": "Your money stays in Roha."
   },
   "catalogue": {
     "groups": {

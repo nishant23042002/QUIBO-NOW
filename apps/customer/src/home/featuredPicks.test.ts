@@ -35,7 +35,7 @@ describe('the featured picks', () => {
   it('are worded in English, Hindi and Marathi', () => {
     for (const language of LANGUAGES) {
       for (const pick of FEATURED) {
-        for (const key of [pick.title, pick.body, 'home.featured.title', 'home.quieterNote']) {
+        for (const key of [pick.title, pick.body, 'home.featured.title']) {
           const words = lookup(messages[language], key);
           expect(typeof words, `${language}: ${key}`).toBe('string');
           expect((words as string).length).toBeGreaterThan(0);

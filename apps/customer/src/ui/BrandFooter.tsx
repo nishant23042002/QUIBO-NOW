@@ -14,6 +14,7 @@ const ROUTE_HEIGHT = 44;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
+    lines: { gap: space[1] },
     wrap: {
       paddingHorizontal: space[4],
       paddingTop: space[8],
@@ -41,7 +42,11 @@ export function BrandFooter() {
   const styles = useStyles(makeStyles);
 
   return (
-    <View style={styles.wrap} accessible aria-label={`${t('app.tagline')} ${t('footer.line')}`}>
+    <View
+      style={styles.wrap}
+      accessible
+      aria-label={`${t('app.tagline')} ${t('footer.line')} ${t('footer.money')}`}
+    >
       <View style={styles.ghost} aria-hidden>
         <Text variant="title" numberOfLines={3}>
           {t('app.tagline')}
@@ -70,9 +75,14 @@ export function BrandFooter() {
         </View>
         <Icon name="home" color={colors.ctl} size={22} />
       </View>
-      <Text variant="small" color="inkMuted">
-        {t('footer.line')}
-      </Text>
+      <View style={styles.lines}>
+        <Text variant="small" color="inkMuted">
+          {t('footer.line')}
+        </Text>
+        <Text variant="small" color="inkMuted">
+          {t('footer.money')}
+        </Text>
+      </View>
     </View>
   );
 }

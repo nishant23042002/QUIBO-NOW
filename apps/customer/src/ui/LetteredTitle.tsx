@@ -10,6 +10,8 @@ export interface LetteredTitleProps {
   sticker: string;
   /** A line under it, for example "Handpicked daily essentials from your kirana". */
   sub?: string;
+  /** No side padding, for a title already inside a block that has its own. */
+  flush?: boolean;
 }
 
 /** The depth of the sticker's stamped edge, as on the price badge. */
@@ -18,6 +20,7 @@ const EDGE = 3;
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     wrap: { gap: space[1], paddingHorizontal: space[4] },
+    flush: { paddingHorizontal: 0 },
     row: { flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: space[2] },
     sticker: {
       paddingHorizontal: space[2],
@@ -36,11 +39,11 @@ const makeStyles = (c: ThemeColors) =>
  * The title of a module that has a name of its own (Fresh today, Small prices): a big word and a sticker beside it, with the
  * price badge's stamped edge, so the lettering carries the app's signature without a new font. The sub line is quieter.
  */
-export function LetteredTitle({ word, sticker, sub }: LetteredTitleProps) {
+export function LetteredTitle({ word, sticker, sub, flush = false }: LetteredTitleProps) {
   const styles = useStyles(makeStyles);
 
   return (
-    <View style={styles.wrap}>
+    <View style={[styles.wrap, flush && styles.flush]}>
       <View style={styles.row}>
         <Text variant="title" numberOfLines={1}>
           {word}

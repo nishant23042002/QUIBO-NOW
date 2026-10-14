@@ -25,7 +25,8 @@ import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { PriceTileSkeleton } from './PriceTile';
 import { TRENDING_MOST } from './trendingRules';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
-import { QUIETER_NOTE_HEIGHT } from './QuieterNote';
+import { OFFER_CARD_HEIGHT, OFFER_CARD_WIDTH } from './OffersForYou';
+import { SHELF_BANNER_HEIGHT } from './ShelfBanner';
 import type { HomeItem } from './items';
 import { SOON_CARD_HEIGHT, SOON_CARD_WIDTH } from './ComingSoonRail';
 import { useCategoryGroups } from './useCategoryGroups';
@@ -38,6 +39,12 @@ const GRID_CARDS_MAX = 8;
 const BRAND_TILES = 4;
 /** A price store's button: the amount over "and under", in a box with its border. */
 const STORE_HEIGHT = 68;
+/** The quieter-times block, the "can't find" card and the help row. */
+const QUIET_HEIGHT = 230;
+const REQUEST_HEIGHT = 220;
+const HELP_HEIGHT = 56;
+/** The banner sits before the shelf at this place, as on the real page. */
+const BANNER_AFTER = 2;
 /** The row of text tabs of Trending in Roha, and the chosen brand's store (its head, a row of cards and its button). */
 const TAB_ROW_HEIGHT = 48;
 const BRAND_STORE_HEIGHT = 380;
@@ -273,8 +280,33 @@ export function HomeSkeleton({
           </View>
         </View>
 
-        {HOME_RAIL_ORDER.map((key) => (
+        <View style={styles.section}>
+          <View style={styles.pad}>
+            <RowTitleSkeleton title={t('home.offers.title')} />
+          </View>
+          <StaticRow>
+            {Array.from({ length: 2 }, (_, card) => (
+              <Skeleton
+                key={card}
+                width={OFFER_CARD_WIDTH}
+                height={OFFER_CARD_HEIGHT}
+                rounded={radius.lg}
+              />
+            ))}
+          </StaticRow>
+        </View>
+
+        <View style={styles.note}>
+          <Skeleton height={QUIET_HEIGHT} rounded={radius.xl} />
+        </View>
+
+        {HOME_RAIL_ORDER.map((key, index) => (
           <View key={key} style={styles.section}>
+            {index === BANNER_AFTER ? (
+              <View style={styles.note}>
+                <Skeleton height={SHELF_BANNER_HEIGHT} rounded={radius.xl} />
+              </View>
+            ) : null}
             <View style={styles.pad}>
               <RowTitleSkeleton title={t(`home.rails.${key}`)} />
             </View>
@@ -284,7 +316,10 @@ export function HomeSkeleton({
         ))}
 
         <View style={styles.note}>
-          <Skeleton height={QUIETER_NOTE_HEIGHT} rounded={radius.md} />
+          <Skeleton height={REQUEST_HEIGHT} rounded={radius.xl} />
+        </View>
+        <View style={styles.note}>
+          <Skeleton height={HELP_HEIGHT} rounded={radius.lg} />
         </View>
       </View>
     </SkeletonScope>

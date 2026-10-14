@@ -20,9 +20,11 @@ export function useFeaturedCardHeight(): number {
   return (
     space[4] * 2 +
     2 +
+    Math.round(fontSize.xs * lead) +
     Math.round(fontSize.sm * lead) * 2 +
     Math.round(fontSize.xs * lead) * 2 +
-    space[1]
+    Math.round(fontSize.sm * lead) +
+    space[1] * 3
   );
 }
 
@@ -80,11 +82,17 @@ export function Featured({ onCategory }: { onCategory: (category: ItemCategory) 
               ]}
             >
               <View style={styles.words}>
+                <Text variant="caption" color="inkMuted" numberOfLines={1}>
+                  {t('home.featured.tag')}
+                </Text>
                 <Text variant="strong" numberOfLines={2}>
                   {t(pick.title)}
                 </Text>
                 <Text variant="caption" color="inkMuted" numberOfLines={2}>
                   {t(pick.body)}
+                </Text>
+                <Text variant="strong" color="action" numberOfLines={1}>
+                  {t('home.featured.shop')}
                 </Text>
               </View>
               <View style={styles.picture} aria-hidden>

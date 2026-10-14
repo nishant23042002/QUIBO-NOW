@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react';
+import { Fragment, memo, useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
@@ -30,7 +30,11 @@ import { knowShown } from './knowRules';
 import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
 import { Featured } from './Featured';
-import { QuieterNote } from './QuieterNote';
+import { QuieterModule } from './QuieterModule';
+import { OffersForYou } from './OffersForYou';
+import { ShelfBanner } from './ShelfBanner';
+import { CantFind } from './CantFind';
+import { HelpRow } from './HelpRow';
 import { Trending } from './Trending';
 import { ShopForNeed } from './ShopForNeed';
 import { SmallPrices } from './SmallPrices';
@@ -46,6 +50,8 @@ import {
 
 /** How long the loading skeleton shows after a category is chosen. */
 const LOAD_MS = 200;
+/** The banner sits between the shelves, before the one at this place. */
+const BANNER_AFTER = 2;
 
 const styles = StyleSheet.create({
   feed: { gap: space[5], paddingVertical: space[5] },
@@ -225,27 +231,33 @@ export const HomeFeed = memo(function HomeFeed({
         <ShopForNeed />
         <SmallPrices />
         <Trending />
-        <Featured onCategory={onSeeAll} />
         <BrandStores />
-        {HOME_RAIL_ORDER.map((key) => {
+        <Featured onCategory={onSeeAll} />
+        <OffersForYou />
+        <QuieterModule />
+        {HOME_RAIL_ORDER.map((key, index) => {
           const row = listing.filter((item) => item.category === key);
           // Cards in a row stay one height: room for the low-stock line only when one of them has it.
           const note = anyCardNote(row);
           return (
-            <ProductRail
-              key={key}
-              title={t(`home.rails.${key}`)}
-              seeAllLabel={t('home.rails.seeAll')}
-              onSeeAll={() => {
-                onSeeAll(key);
-              }}
-            >
-              {row.map((item) => tile(item, RAIL_CARD_WIDTH, note))}
-            </ProductRail>
+            <Fragment key={key}>
+              {/* A banner breaks up the shelves after the second. */}
+              {index === BANNER_AFTER ? <ShelfBanner onShop={onSeeAll} /> : null}
+              <ProductRail
+                title={t(`home.rails.${key}`)}
+                seeAllLabel={t('home.rails.seeAll')}
+                onSeeAll={() => {
+                  onSeeAll(key);
+                }}
+              >
+                {row.map((item) => tile(item, RAIL_CARD_WIDTH, note))}
+              </ProductRail>
+            </Fragment>
           );
         })}
-        <QuieterNote />
         {showKnow ? <QuiboPromise onHow={openHow} /> : null}
+        <CantFind />
+        <HelpRow />
         <BrandFooter />
       </View>
       <HowWeCheckSheet open={howOpen} onClose={closeHow} />
