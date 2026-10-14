@@ -1,23 +1,13 @@
 import { useId, useState, type ReactNode } from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  View,
-  useWindowDimensions,
-  type NativeScrollEvent,
-  type NativeSyntheticEvent,
-} from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
-import { Icon, Text, radius, space } from '@/ui';
+import { Icon, Text, TAP_MIN, radius, space } from '@/ui';
 import { CompareScene } from './CompareScene';
-import { KNOW_QUESTIONS, KNOW_SCORE, type KnowQuestionId } from './knowRules';
+import { KNOW_QUESTIONS, KNOW_ROWS_COLLAPSED, KNOW_SCORE, type KnowQuestionId } from './knowRules';
 import { useSampleShops } from './sampleShops';
 
-/** One question card's width, and how much of the next one shows beside it. */
-const CARD_MAX = 296;
-const CARD_GAP = space[3];
 const EDGE = 3;
 
 const makeStyles = (c: ThemeColors) =>
@@ -42,37 +32,55 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.accent,
     },
     pad: { paddingHorizontal: space[4] },
-    titleRow: {
-      paddingHorizontal: space[4],
-      flexDirection: 'row',
-      alignItems: 'baseline',
-      justifyContent: 'space-between',
+    // The comparison: one card, the two kinds of place as two columns, every row answered side by side.
+    table: {
+      marginHorizontal: space[4],
+      padding: space[2],
       gap: space[2],
-    },
-    rail: { paddingHorizontal: space[4], gap: CARD_GAP },
-    card: {
       borderRadius: radius.xl,
       borderWidth: 1,
       borderColor: c.line,
       backgroundColor: c.surface,
-      padding: space[3],
-      gap: space[2],
     },
-    answer: {
+    cols: { flexDirection: 'row', gap: space[2] },
+    colHead: {
+      flex: 1,
+      minWidth: 0,
       flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: space[3],
+      alignItems: 'center',
+      gap: space[2],
       borderRadius: radius.lg,
-      paddingHorizontal: space[3],
+      paddingHorizontal: space[2],
       paddingVertical: space[2],
     },
-    answerDark: { backgroundColor: c.muted },
-    answerShop: { backgroundColor: c.accentSubtle },
-    answerText: { flex: 1, gap: 2 },
-    dots: { flexDirection: 'row', justifyContent: 'center', gap: 5 },
-    dot: { height: 6, width: 6, borderRadius: 6, backgroundColor: c.ink, opacity: 0.3 },
-    dotOn: { width: 18, opacity: 1 },
-    score: { paddingHorizontal: space[4], flexDirection: 'row', gap: space[3] },
+    headDark: { backgroundColor: c.plum },
+    headShop: { backgroundColor: c.accent },
+    headText: { flex: 1, minWidth: 0 },
+    row: {
+      gap: space[2],
+      paddingTop: space[2],
+      borderTopWidth: 1,
+      borderTopColor: c.line,
+    },
+    cell: {
+      flex: 1,
+      minWidth: 0,
+      borderRadius: radius.lg,
+      paddingHorizontal: space[2],
+      paddingVertical: space[2],
+    },
+    more: {
+      minHeight: TAP_MIN,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[1],
+      borderTopWidth: 1,
+      borderTopColor: c.line,
+    },
+    pressed: { opacity: 0.85 },
+    cellDark: { backgroundColor: c.muted },
+    cellShop: { backgroundColor: c.accentSubtle },
     tile: {
       flex: 1,
       alignItems: 'center',
@@ -113,34 +121,41 @@ function Backdrop({ solid }: { solid: number }) {
   );
 }
 
-/** One answer under a question: a dark store's (muted, with a cross) or the shop's (pistachio, with a tick). */
-function Answer({ kind, label, text }: { kind: 'dark' | 'shop'; label: string; text: string }) {
+/** One column's heading: the kind of place, with a cross (a dark store, in aubergine) or a tick (a connected store, in pistachio). */
+function ColumnHead({ kind, label }: { kind: 'dark' | 'shop'; label: string }) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
   const shop = kind === 'shop';
+  const ink = shop ? colors.onAccent : colors.onPlum;
   return (
-    <View style={[styles.answer, shop ? styles.answerShop : styles.answerDark]}>
-      <Icon
-        name={shop ? 'check' : 'close'}
-        color={shop ? colors.accentInk : colors.inkMuted}
-        size={22}
-      />
-      <View style={styles.answerText}>
-        <Text variant="caption" color={shop ? 'accentInk' : 'inkMuted'}>
+    <View style={[styles.colHead, shop ? styles.headShop : styles.headDark]}>
+      <Icon name={shop ? 'check' : 'close'} color={ink} size={20} />
+      <View style={styles.headText}>
+        <Text variant="label" color={shop ? 'onAccent' : 'onPlum'}>
           {label}
-        </Text>
-        <Text variant="small" color={shop ? 'ink' : 'inkMuted'}>
-          {text}
         </Text>
       </View>
     </View>
   );
 }
 
+/** One answer in a column: a dark store's (muted) or a connected store's (pistachio). */
+function Cell({ kind, text }: { kind: 'dark' | 'shop'; text: string }) {
+  const styles = useStyles(makeStyles);
+  const shop = kind === 'shop';
+  return (
+    <View style={[styles.cell, shop ? styles.cellShop : styles.cellDark]}>
+      <Text variant="small" color={shop ? 'ink' : 'inkMuted'}>
+        {text}
+      </Text>
+    </View>
+  );
+}
+
 /**
- * "Know your shop" (ADR 0054, ADR 0055 step 4). One idea: a customer can check a shop and cannot check a dark store. A scene to drag
- * opens it, five questions follow as swipeable cards (each answered for a dark store and for a shop), a 0 of 5 against 5 of 5 score
- * sums it up. It is kept compact: the page goes on to the shops' own rows straight after.
+ * "Dark Store vs Connected Store" (ADR 0054, ADR 0055 step 4). One idea: a customer can check a shop and cannot check a dark store.
+ * A scene to drag opens it, then one comparison with the two kinds of place side by side, five things a customer can check each
+ * answered in its own column, and a 0 of 5 against 5 of 5 score at the foot. Everything is on screen at once, nothing to swipe.
  *
  * It names no company and says nothing about anyone's food; it compares only what a customer can check for themselves, and says so.
  * The shop it names in the answers is a real shop from the shop data (name and the year it joined the town). `lead` is drawn at the
@@ -155,25 +170,16 @@ export function KnowYourShop({
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
   const shops = useSampleShops();
-  const { width: screen } = useWindowDimensions();
-  const [index, setIndex] = useState(0);
   // How far down the stage the heading ends, so the dark holds until the heading has been read and then fades.
   const [stageHeight, setStageHeight] = useState(0);
   const [headEnd, setHeadEnd] = useState(0);
   const solid =
     stageHeight > 0 ? Math.min(0.7, Math.max(0.2, (headEnd + space[4]) / stageHeight)) : 0.45;
   const shop = shops.find((candidate) => candidate.open) ?? shops[0];
-  const cardWidth = Math.min(CARD_MAX, screen - space[4] * 2 - space[6]);
-  const step = cardWidth + CARD_GAP;
+  const { colors } = useTheme();
+  const [open, setOpen] = useState(false);
   const total = KNOW_QUESTIONS.length;
-
-  const onScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const next = Math.min(
-      total - 1,
-      Math.max(0, Math.round(event.nativeEvent.contentOffset.x / step)),
-    );
-    if (next !== index) setIndex(next);
-  };
+  const rows = open ? KNOW_QUESTIONS : KNOW_QUESTIONS.slice(0, KNOW_ROWS_COLLAPSED);
 
   const shopAnswer = (id: KnowQuestionId): string => {
     switch (id) {
@@ -246,66 +252,66 @@ export function KnowYourShop({
       </View>
 
       <View style={{ gap: space[3] }}>
-        <View style={styles.titleRow}>
-          <Text variant="subheading">{t('home.know.fiveTitle')}</Text>
-          <Text variant="small" color="inkMuted">
-            {t('home.know.count', { n: index + 1, total })}
+        <View style={styles.pad}>
+          <Text variant="subheading" role="heading">
+            {t('home.know.compareTitle')}
           </Text>
         </View>
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.rail}
-          snapToInterval={step}
-          decelerationRate="fast"
-          onScroll={onScroll}
-          scrollEventThrottle={32}
-        >
-          {KNOW_QUESTIONS.map((id, position) => (
+        <View style={styles.table}>
+          <View style={styles.cols}>
+            <ColumnHead kind="dark" label={t('home.know.darkLabel')} />
+            <ColumnHead kind="shop" label={t('home.know.shopLabel')} />
+          </View>
+          {rows.map((id) => (
             <View
               key={id}
-              style={[styles.card, { width: cardWidth }]}
+              style={styles.row}
               accessible
-              aria-label={`${t('home.know.count', { n: position + 1, total })}. ${question(id)}`}
+              aria-label={`${question(id)}. ${t('home.know.darkLabel')}: ${darkAnswer(id)}. ${t('home.know.shopLabel')}: ${shopAnswer(id)}`}
             >
-              <Text variant="caption" color="inkMuted">
-                {t('home.know.count', { n: position + 1, total })}
-              </Text>
-              <Text variant="subheading">{question(id)}</Text>
-              <Answer kind="dark" label={t('home.know.darkLabel')} text={darkAnswer(id)} />
-              <Answer kind="shop" label={t('home.know.shopLabel')} text={shopAnswer(id)} />
+              <Text variant="strong">{question(id)}</Text>
+              <View style={styles.cols}>
+                <Cell kind="dark" text={darkAnswer(id)} />
+                <Cell kind="shop" text={shopAnswer(id)} />
+              </View>
             </View>
           ))}
-        </ScrollView>
-        <View style={styles.dots} aria-hidden>
-          {KNOW_QUESTIONS.map((id, position) => (
-            <View key={id} style={[styles.dot, position === index && styles.dotOn]} />
-          ))}
-        </View>
-      </View>
-
-      <View style={{ gap: space[2] }}>
-        <View style={styles.score}>
-          <View style={[styles.tile, styles.tileDark]}>
-            <Text variant="hero" color="onPlum">
-              {t('home.know.count', { n: KNOW_SCORE.darkStore, total })}
+          <Pressable
+            role="button"
+            aria-expanded={open}
+            aria-label={open ? t('home.know.less') : t('home.know.more')}
+            onPress={() => {
+              setOpen((was) => !was);
+            }}
+            style={({ pressed }) => [styles.more, pressed && styles.pressed]}
+          >
+            <Text variant="strong" color="action">
+              {open ? t('home.know.less') : t('home.know.more')}
             </Text>
-            <Text variant="strong" color="onPlumMuted" align="center">
-              {t('home.know.darkLabel')}
-            </Text>
+            <View style={{ transform: [{ rotate: open ? '-90deg' : '90deg' }] }}>
+              <Icon name="chevronRight" color={colors.action} size={18} />
+            </View>
+          </Pressable>
+          <View
+            style={styles.row}
+            accessible
+            aria-label={`${t('home.know.scoreCaption')}. ${t('home.know.darkLabel')}: ${t('home.know.count', { n: KNOW_SCORE.darkStore, total })}. ${t('home.know.shopLabel')}: ${t('home.know.count', { n: KNOW_SCORE.shop, total })}`}
+          >
+            <Text variant="strong">{t('home.know.scoreCaption')}</Text>
+            <View style={styles.cols}>
+              <View style={[styles.tile, styles.tileDark]}>
+                <Text variant="hero" color="onPlum">
+                  {t('home.know.count', { n: KNOW_SCORE.darkStore, total })}
+                </Text>
+              </View>
+              <View style={[styles.tile, styles.tileShop]}>
+                <Text variant="hero" color="onAccent">
+                  {t('home.know.count', { n: KNOW_SCORE.shop, total })}
+                </Text>
+              </View>
+            </View>
           </View>
-          <View style={[styles.tile, styles.tileShop]}>
-            <Text variant="hero" color="onAccent">
-              {t('home.know.count', { n: KNOW_SCORE.shop, total })}
-            </Text>
-            <Text variant="strong" color="onAccent" align="center">
-              {t('home.know.shopLabel')}
-            </Text>
-          </View>
         </View>
-        <Text variant="small" color="inkMuted" align="center">
-          {t('home.know.scoreCaption')}
-        </Text>
       </View>
     </View>
   );

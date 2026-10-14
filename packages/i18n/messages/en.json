@@ -284,49 +284,51 @@
       "titleStart": "Would you trust what you ",
       "titleEm": "can’t see",
       "titleEnd": "?",
-      "intro": "A dark store asks you to take its word. Your shop lets you see for yourself.",
+      "intro": "A Dark Store asks you to take its word. A Connected Store is a real shop in your town that lets you see for yourself.",
       "scene": {
-        "label": "Drag to compare a dark store with your shop",
+        "label": "Drag to compare a Dark Store with a Connected Store",
         "hint": "Drag to compare",
-        "darkName": "A dark store",
+        "darkName": "Dark Store",
         "darkSub": "Sealed. Staff only.",
         "tape": "STAFF ONLY",
-        "shopName": "Your Roha shop",
+        "shopName": "Connected Store",
         "shopSub": "Open. Walk in.",
         "open": "OPEN"
       },
-      "fiveTitle": "Five things you can check",
+      "compareTitle": "Dark Store vs Connected Store",
+      "more": "View more",
+      "less": "View less",
       "count": "{n} of {total}",
-      "darkLabel": "A dark store",
-      "shopLabel": "Your Roha shop",
+      "darkLabel": "Dark Store",
+      "shopLabel": "Connected Store",
       "q": {
         "where": {
-          "title": "Where was it packed?",
-          "dark": "Inside a warehouse you cannot enter. You take it on faith.",
-          "shop": "In a shop you have walked into, a few streets from you."
+          "title": "Where it is packed",
+          "dark": "A warehouse you cannot enter",
+          "shop": "A shop a few streets away that you can walk into"
         },
         "who": {
-          "title": "Who packed it?",
-          "dark": "Someone you will never meet.",
+          "title": "Who packs it",
+          "dark": "A stranger you will never meet",
           "shop": "{shop}, by name. In Roha since {year}."
         },
         "kept": {
-          "title": "How is it kept?",
-          "dark": "You see a photo of the product, never the shelf.",
-          "shop": "Go and look at the shelf yourself, any day."
+          "title": "How it is kept",
+          "dark": "A photo of the product, not the shelf",
+          "shop": "The shelf itself, open to see any day"
         },
         "wrong": {
           "title": "If something is wrong",
-          "dark": "Raise a ticket and wait for a reply.",
-          "shop": "Walk in and tell the person who packed it."
+          "dark": "Raise a ticket and wait for a reply",
+          "shop": "Walk in and tell the person who packed it"
         },
         "name": {
-          "title": "Whose name is on the bag?",
-          "dark": "A company’s.",
-          "shop": "{shop}’s. And they know yours."
+          "title": "Name on the bag",
+          "dark": "A company’s",
+          "shop": "{shop}’s, and they know yours"
         }
       },
-      "scoreCaption": "Things you can check for yourself"
+      "scoreCaption": "Things you can check yourself"
     },
     "promise": {
       "title": "The Quibo promise",

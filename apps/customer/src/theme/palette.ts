@@ -123,7 +123,7 @@ export interface ThemeColors {
 
 export const palettes: Record<Scheme, ThemeColors> = {
   light: {
-    bg: '#F8F4F7',
+    bg: '#FBFAFC',
     surface: '#FFFFFF',
     muted: '#EFE6EC',
     ink: '#2A1033',

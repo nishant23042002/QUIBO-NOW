@@ -246,3 +246,10 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - Checks: lint, typecheck, test (740 customer tests) and build pass. Looked at on the web preview at 375 px: Quieter times, the
     end of the page, and Ask shops saving with its consent log (the test entry was removed). Not seen on a real phone, at 200% text,
     or in Hindi and Marathi.
+
+- Owner change after step 8: Know your shop's five swipeable cards became one side-by-side table named "Dark Store vs Connected
+  Store" (`KnowYourShop.tsx`; message `home.know.fiveTitle` is now `compareTitle`; labels read "Dark Store" and "Connected
+  Store" in en, hi and mr, and the scene names match). The light page colour is `#FBFAFC`. Lint, typecheck and 740 tests pass;
+  looked at on the web preview at 375 px. Hindi and Marathi wording is a draft for a native reader.
+- Know your shop's table is compact: it shows two rows, then "View more" opens the other three (and "View less" closes them);
+  the 0 of 5 against 5 of 5 score sits under the button and is always on screen (`KNOW_ROWS_COLLAPSED` in `knowRules.ts`).

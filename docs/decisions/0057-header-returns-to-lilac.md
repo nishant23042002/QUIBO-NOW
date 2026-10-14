@@ -44,3 +44,8 @@ and for a few accent cards.
 - The Home v5 mock (`docs/design/home-v5-mock.html`) was locked with a deep header; it stays as history and this ADR is the owner's
   change to it.
 - Any new dark card uses `plum`, not the header tokens, so a header colour change never touches it again.
+- Light page colour is now `#FBFAFC` (was `#F8F4F7`): a near-white with the faintest aubergine tint, so it reads as white and not
+  as grey. It was chosen by eye; no verified reference value for another app was found. Cards stay `#FFFFFF` and are held by
+  their border.
+- Know your shop shows "Dark Store vs Connected Store" as one table with the two kinds of place side by side, five rows and a
+  0 of 5 against 5 of 5 score at the foot. The swipeable cards and their dots are gone.
