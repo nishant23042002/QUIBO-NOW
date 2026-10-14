@@ -29,6 +29,9 @@ const makeStyles = (c: ThemeColors) =>
       flex: 1,
       overflow: 'hidden',
       borderRadius: radius.lg,
+      // A fine, light border, so each tile reads as its own object against the page.
+      borderWidth: 1,
+      borderColor: c.line,
       padding: space[2] + 2,
     },
     pressed: { opacity: 0.85 },
@@ -57,6 +60,8 @@ const makeStyles = (c: ThemeColors) =>
       gap: space[3],
       padding: space[2] + 2,
       borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: c.line,
       backgroundColor: c.surface,
     },
     avatars: { flexDirection: 'row', alignItems: 'center' },

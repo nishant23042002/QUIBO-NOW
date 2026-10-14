@@ -14,7 +14,7 @@ appId: host.exp.exponent
 - tapOn: 'Skip sign-in (testing)'
 - assertVisible: 'Estimated delivery|Scheduled delivery'
 
-# Add the milk from Daily essentials: tick it and add it. The tile then has its stepper, so one more is a tap on plus.
+# Add the milk from Daily essentials: tick it and add it. The row then has its stepper, so one more is a tap on plus.
 - tapOn: 'Morning'
 - tapOn: 'Amul Toned milk\. 500 ml.*'
 - tapOn: 'Add 1 item.*'

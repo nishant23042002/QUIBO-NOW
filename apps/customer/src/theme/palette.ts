@@ -123,8 +123,10 @@ export interface ThemeColors {
 
 export const palettes: Record<Scheme, ThemeColors> = {
   light: {
-    bg: '#FBFAFC',
-    surface: '#FFFFFF',
+    // The page is plain white. Whatever sits on it (cards, fields, sheets) takes the faint tint the page used to have, so it still
+    // reads as its own object with a fine border and never merges into the page.
+    bg: '#FFFFFF',
+    surface: '#FBFAFC',
     muted: '#EFE6EC',
     ink: '#2A1033',
     inkMuted: '#6A5173',

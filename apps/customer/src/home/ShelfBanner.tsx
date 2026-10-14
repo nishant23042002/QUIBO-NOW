@@ -8,7 +8,7 @@ import type { ItemCategory } from './items';
 /** The banner's least height, shared with the loading skeleton. */
 export const SHELF_BANNER_HEIGHT = 88;
 
-const makeStyles = (_c: ThemeColors) =>
+const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     banner: {
       marginHorizontal: space[4],
@@ -18,6 +18,8 @@ const makeStyles = (_c: ThemeColors) =>
       gap: space[3],
       padding: space[3],
       borderRadius: radius.xl,
+      borderWidth: 1,
+      borderColor: c.line,
     },
     words: { flex: 1, minWidth: 0, gap: 2 },
     go: { paddingHorizontal: space[2] },

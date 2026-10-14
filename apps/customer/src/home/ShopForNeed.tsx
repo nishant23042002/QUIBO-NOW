@@ -26,6 +26,8 @@ const makeStyles = (c: ThemeColors) =>
     card: {
       height: NEED_CARD_HEIGHT,
       borderRadius: radius.xl,
+      borderWidth: 1,
+      borderColor: c.line,
       padding: space[3],
       overflow: 'hidden',
     },

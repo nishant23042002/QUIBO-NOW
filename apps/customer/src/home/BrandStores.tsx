@@ -22,6 +22,8 @@ const makeStyles = (c: ThemeColors) =>
       paddingVertical: space[3],
       gap: space[3],
       borderRadius: radius.xl,
+      borderWidth: 1,
+      borderColor: c.line,
       backgroundColor: c.lilac,
       overflow: 'hidden',
     },

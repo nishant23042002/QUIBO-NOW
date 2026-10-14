@@ -7,7 +7,8 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   Button,
   DietMark,
-  LetteredTitle,
+  RowTitle,
+  RowTitleSkeleton,
   SegmentedTabs,
   Skeleton,
   TAP_MIN,
@@ -27,85 +28,70 @@ import { essentialBasket, essentialLeft, liveEssentialTabs, openingTab } from '.
 import { useHomeItems, type HomeItem } from './items';
 import { ItemControl } from './ItemTile';
 
-/** The picture in a tile, the tick box, and the room round and between tiles. */
-const PICTURE = 64;
+/** The picture square in a row. */
+const PICTURE = 44;
 const CHECK = 24;
 const PADDING = space[2];
-const GAP = space[2];
-const BORDER = 2;
-/** The one line under the name: the price, and the pack or the stepper. It is as tall as a thumb needs. */
-const FOOT = 40;
+/** The hairline between rows, and round the card. */
+const HAIRLINE = 1;
 /** The segmented control's height: a 40 dp option in a track with 4 of padding all round. */
 const TABS_HEIGHT = 48;
 
 /**
- * One tile's height, from the text styles' own line heights (so a Hindi or Marathi tile is as tall as it needs to be): the picture,
- * two lines of name, and the foot, with the tile's padding and border. Every tile has it, so the grid is level whatever the names
- * and prices are, and the loading skeleton uses it too.
+ * One row's height, from the text styles' own line heights (so a Hindi or Marathi row is as tall as it needs to be): the picture or
+ * the price over its struck MRP, whichever is taller, with the row's padding, and never less than a thumb needs. Every row has it,
+ * so the list is level whatever the names and prices are, and the loading skeleton uses it too.
  */
-function useEssentialTileHeight(): number {
+function useEssentialRowHeight(): number {
   const { locale } = useLanguage();
   const script = locale === 'en' ? 'latin' : 'devanagari';
-  const name = Math.round(fontSize.sm * leading[script].tight) * 2;
-  return BORDER * 2 + PADDING * 2 + PICTURE + GAP + name + GAP + FOOT;
+  const price = Math.round(fontSize.sm * leading[script].tight);
+  const mrp = Math.round(fontSize.xs * leading[script].tight);
+  return PADDING * 2 + Math.max(PICTURE, price + mrp, TAP_MIN - PADDING * 2 + 4);
 }
-
-/** How many tile rows `count` tiles take, two to a row. */
-const rowsOf = (count: number): number => Math.ceil(count / 2);
-const gridHeight = (count: number, tile: number): number =>
-  rowsOf(count) * tile + Math.max(0, rowsOf(count) - 1) * GAP;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     section: { gap: space[3] },
     pad: { paddingHorizontal: space[4] },
-    // The tabs, the tiles and the bar sit on a soft aubergine block, so the module is set apart from the rows around it.
-    inset: {
-      backgroundColor: c.lilac,
-      borderRadius: radius.xl,
-      padding: space[3],
-      gap: space[3],
-    },
-    grid: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP },
-    // Two to a row: half the width less half the gap.
-    cell: { width: '48.6%', flexGrow: 1 },
-    tile: {
-      borderWidth: BORDER,
-      borderColor: 'transparent',
-      borderRadius: radius.lg,
-      backgroundColor: c.surface,
-      padding: PADDING,
-      gap: GAP,
-      flex: 1,
-      justifyContent: 'space-between',
-    },
-    tileOn: { borderColor: c.action },
-    // A tile that is already in the cart: a soft green wash, the stepper where the pack was.
-    tileInCart: { backgroundColor: c.accentSubtle },
-    picture: {
-      height: PICTURE,
+    // One card holds the whole list, rows divided by a hairline.
+    card: {
       borderRadius: radius.md,
-      alignItems: 'center',
-      justifyContent: 'center',
+      borderWidth: HAIRLINE,
+      borderColor: c.line,
+      backgroundColor: c.surface,
+      overflow: 'hidden',
     },
-    check: {
-      position: 'absolute',
-      top: space[1],
-      left: space[1],
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[3],
+      paddingHorizontal: space[3],
+    },
+    ticked: { backgroundColor: c.lilac },
+    divided: { borderTopWidth: HAIRLINE, borderTopColor: c.line },
+    box: {
       width: CHECK,
       height: CHECK,
       borderRadius: radius.sm,
       borderWidth: 2,
       borderColor: c.action,
-      backgroundColor: c.surface,
       alignItems: 'center',
       justifyContent: 'center',
     },
-    checkOn: { backgroundColor: c.action },
+    boxOn: { backgroundColor: c.action },
+    picture: {
+      width: PICTURE,
+      height: PICTURE,
+      borderRadius: radius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    diet: { position: 'absolute', top: 2, right: 2 },
+    // A row that is already in the cart: a soft green wash, a pistachio tick where the box was, and the stepper where the price was.
+    inCartRow: { backgroundColor: c.accentSubtle },
+    openArea: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: space[3] },
     inCartMark: {
-      position: 'absolute',
-      top: space[1],
-      left: space[1],
       width: CHECK,
       height: CHECK,
       borderRadius: radius.full,
@@ -113,30 +99,33 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    diet: { position: 'absolute', top: space[1], right: space[1] },
-    name: { minHeight: 0 },
-    foot: { height: FOOT, flexDirection: 'row', alignItems: 'center', gap: space[1] },
-    footWords: { flex: 1, minWidth: 0 },
-    footControl: { flexShrink: 0 },
-    tools: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    priceInline: { flexDirection: 'row', alignItems: 'center', gap: space[1], minWidth: 0 },
+    words: { flex: 1, minWidth: 0 },
+    packLine: { flexDirection: 'row', alignItems: 'center', gap: space[1], minWidth: 0 },
+    pack: { flexShrink: 1, minWidth: 0 },
+    price: { alignItems: 'flex-end' },
     footer: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     main: { flex: 1 },
   });
 
 /**
- * One daily essential as a tile. Not in the cart: a tickable tile with a box over its picture, the name (up to two lines), the
- * price over its pack and, when stock is short, "3 left"; a tap anywhere ticks it and the bar under the grid adds what is ticked.
- * Already in the cart: a green-washed tile with a tick, the name, the price and the usual compact stepper, so it can be changed or
- * taken out right here (at 1, minus takes it out and the tile is tickable again). A press and hold, or a tap on a tile in the
- * cart, opens the product.
+ * One daily essential. Not in the cart: a tickable row with a box, a picture, the name on one line (cut with an ellipsis when long)
+ * over the pack and, when stock is short, "3 left", and at the end the price over its struck MRP; a tap anywhere ticks it and the
+ * bar under the list adds what is ticked. Already in the cart: a green-washed row with a tick, the picture, the name over the price
+ * and pack, and the usual stepper at the end, so it can be changed or taken out right here (at 1, minus takes it out and the row is
+ * tickable again). A tap on the words opens the product.
  */
-const EssentialTile = memo(function EssentialTile({
+const EssentialRow = memo(function EssentialRow({
   item,
   ticked,
+  divided,
+  height,
   onToggle,
 }: {
   item: HomeItem;
   ticked: boolean;
+  divided: boolean;
+  height: number;
   onToggle: (id: string) => void;
 }) {
   const router = useRouter();
@@ -150,24 +139,10 @@ const EssentialTile = memo(function EssentialTile({
   const open = () => {
     router.push({ pathname: '/product/[id]', params: { id: item.id } });
   };
-  const picture = (
-    <View style={[styles.picture, { backgroundColor: tintOf(item.category) }]}>
-      <NativeText
-        allowFontScaling={false}
-        aria-hidden
-        style={{ fontSize: 36, lineHeight: 44, textAlign: 'center' }}
-      >
-        {item.emoji}
-      </NativeText>
-      <View style={styles.diet} pointerEvents="none">
-        <DietMark kind={item.diet.kind} label={item.diet.label} size={12} />
-      </View>
-    </View>
-  );
 
   if (inCart > 0) {
     return (
-      <View style={[styles.tile, styles.tileInCart]}>
+      <View style={[styles.row, styles.inCartRow, divided && styles.divided, { height }]}>
         <Pressable
           role="button"
           aria-label={[
@@ -177,9 +152,8 @@ const EssentialTile = memo(function EssentialTile({
             t('home.essentials.inCart', { count: inCart }),
           ].join('. ')}
           onPress={open}
-          style={({ pressed }) => [{ gap: GAP }, pressed && { opacity: 0.85 }]}
+          style={({ pressed }) => [styles.openArea, pressed && { opacity: 0.85 }]}
         >
-          {picture}
           <View style={styles.inCartMark} aria-hidden>
             <NativeText
               allowFontScaling={false}
@@ -188,20 +162,35 @@ const EssentialTile = memo(function EssentialTile({
               {'✓'}
             </NativeText>
           </View>
-          <Text variant="strong" tight numberOfLines={2}>
-            {item.fullName}
-          </Text>
-        </Pressable>
-        <View style={styles.foot}>
-          <View style={styles.footWords}>
+          <View style={[styles.picture, { backgroundColor: tintOf(item.category) }]}>
+            <NativeText
+              allowFontScaling={false}
+              aria-hidden
+              style={{ fontSize: 26, lineHeight: 32, textAlign: 'center' }}
+            >
+              {item.emoji}
+            </NativeText>
+            <View style={styles.diet} pointerEvents="none">
+              <DietMark kind={item.diet.kind} label={item.diet.label} size={12} />
+            </View>
+          </View>
+          <View style={styles.words}>
             <Text variant="strong" tight numberOfLines={1}>
-              {formatRupees(item.price)}
+              {item.fullName}
             </Text>
+            <View style={styles.priceInline}>
+              <Text variant="strong" tight numberOfLines={1}>
+                {formatRupees(item.price)}
+              </Text>
+              <View style={styles.pack}>
+                <Text variant="fine" tight color="inkMuted" numberOfLines={1}>
+                  {`· ${item.pack}`}
+                </Text>
+              </View>
+            </View>
           </View>
-          <View style={styles.footControl}>
-            <ItemControl item={item} compact />
-          </View>
-        </View>
+        </Pressable>
+        <ItemControl item={item} compact />
       </View>
     );
   }
@@ -222,10 +211,15 @@ const EssentialTile = memo(function EssentialTile({
         onToggle(item.id);
       }}
       onLongPress={open}
-      style={({ pressed }) => [styles.tile, ticked && styles.tileOn, pressed && { opacity: 0.85 }]}
+      style={({ pressed }) => [
+        styles.row,
+        divided && styles.divided,
+        ticked && styles.ticked,
+        pressed && { opacity: 0.85 },
+        { height },
+      ]}
     >
-      {picture}
-      <View style={[styles.check, ticked && styles.checkOn]} aria-hidden>
+      <View style={[styles.box, ticked && styles.boxOn]} aria-hidden>
         {ticked ? (
           <NativeText
             allowFontScaling={false}
@@ -235,34 +229,55 @@ const EssentialTile = memo(function EssentialTile({
           </NativeText>
         ) : null}
       </View>
-      <Text variant="strong" tight numberOfLines={2}>
-        {item.fullName}
-      </Text>
-      <View style={styles.foot}>
-        <View style={styles.footWords}>
-          <Text variant="strong" tight numberOfLines={1}>
-            {formatRupees(item.price)}
-          </Text>
-          <Text
-            variant="fine"
-            tight
-            color={left !== undefined ? 'warning' : 'inkMuted'}
-            numberOfLines={1}
-          >
-            {left !== undefined ? t('home.essentials.left', { count: left }) : item.pack}
-          </Text>
+      <View style={[styles.picture, { backgroundColor: tintOf(item.category) }]}>
+        <NativeText
+          allowFontScaling={false}
+          aria-hidden
+          style={{ fontSize: 26, lineHeight: 32, textAlign: 'center' }}
+        >
+          {item.emoji}
+        </NativeText>
+        <View style={styles.diet} pointerEvents="none">
+          <DietMark kind={item.diet.kind} label={item.diet.label} size={12} />
         </View>
+      </View>
+      <View style={styles.words}>
+        <Text variant="strong" tight numberOfLines={1}>
+          {item.fullName}
+        </Text>
+        <View style={styles.packLine}>
+          <View style={styles.pack}>
+            <Text variant="fine" tight color="inkMuted" numberOfLines={1}>
+              {item.pack}
+            </Text>
+          </View>
+          {left !== undefined ? (
+            <Text variant="caption" tight color="warning" numberOfLines={1}>
+              {`· ${t('home.essentials.left', { count: left })}`}
+            </Text>
+          ) : null}
+        </View>
+      </View>
+      <View style={styles.price}>
+        <Text variant="strong" tight numberOfLines={1}>
+          {formatRupees(item.price)}
+        </Text>
+        {mrp !== undefined ? (
+          <Text variant="fine" tight color="inkMuted" strike numberOfLines={1}>
+            {formatRupees(mrp)}
+          </Text>
+        ) : null}
       </View>
     </Pressable>
   );
 });
 
 /**
- * "Daily essentials" on Home (ADR 0048, ADR 0055 step 6): the things the town buys every day, to add without searching. A lettered
- * title, one segmented control (Morning, Cooking, Evening) over a grid of up to six tickable tiles, two to a row, and under it a
- * bar: "Select all" and "Add 3 items · ₹112". A shopper ticks the usual and adds the basket once. It opens on the tab that suits
- * the time of day; changing tab clears the ticks. Items that are not stocked or are out of stock are left out, a tab with nothing is
- * left out, and with no tab left the section is not shown. A press and hold on a tile opens the product.
+ * "Daily essentials" on Home (ADR 0048): the things the town buys every day, to add without searching. One segmented control
+ * (Morning, Cooking, Evening) over one card of up to six tickable rows, and under it a bar: "Select all" and "Add 3 items · ₹112".
+ * A shopper ticks the usual and adds the basket once. It opens on the tab that suits the time of day; changing tab clears the
+ * ticks. Items that are not stocked or are out of stock are left out, a tab with nothing is left out, and with no tab left the
+ * section is not shown. A press and hold on a row opens the product.
  */
 export function DailyEssentials() {
   const { t } = useLanguage();
@@ -273,7 +288,7 @@ export function DailyEssentials() {
   const { setQuantity } = useCartActions();
   const [picked, setPicked] = useState<EssentialTabId | undefined>(undefined);
   const [ticked, setTicked] = useState<ReadonlySet<string>>(() => new Set());
-  const tileHeight = useEssentialTileHeight();
+  const rowHeight = useEssentialRowHeight();
 
   if (live.length === 0) return null;
 
@@ -317,68 +332,73 @@ export function DailyEssentials() {
           });
 
   return (
-    <View style={styles.section} aria-label={t('home.essentials.title')}>
-      <LetteredTitle
-        word={t('home.essentials.word')}
-        sticker={t('home.essentials.sticker')}
-        sub={t('home.essentials.sub')}
-      />
+    <View style={styles.section}>
       <View style={styles.pad}>
-        <View style={styles.inset}>
-          <SegmentedTabs
-            label={t('home.essentials.title')}
-            options={live.map((entry) => ({ key: entry.tab.id, label: t(entry.tab.label) }))}
-            selected={current.tab.id}
-            onSelect={(key) => {
-              setPicked(live.find((entry) => entry.tab.id === key)?.tab.id);
-              setTicked(new Set());
-            }}
-          />
-          {/* As tall as the fullest tab, so choosing a tab does not move what is under it. */}
-          <View style={{ minHeight: gridHeight(most, tileHeight) }} role="group">
-            <View style={styles.grid}>
-              {current.items.map((item) => (
-                <View key={item.id} style={[styles.cell, { height: tileHeight }]}>
-                  <EssentialTile item={item} ticked={ticked.has(item.id)} onToggle={toggle} />
-                </View>
-              ))}
-            </View>
-          </View>
-          {selectable.length > 0 ? (
-            <View style={styles.footer}>
-              <Button
-                label={all ? t('home.essentials.clearAll') : t('home.essentials.selectAll')}
-                variant="secondary"
-                onPress={() => {
-                  setTicked(all ? new Set() : new Set(selectable.map((item) => item.id)));
-                }}
-              />
-              <View style={styles.main}>
-                <Button
-                  label={label}
-                  disabled={basket.count === 0}
-                  shine={basket.count > 0}
-                  shineKey={String(basket.count)}
-                  onPress={addTicked}
-                />
-              </View>
-            </View>
-          ) : null}
+        <RowTitle title={t('home.essentials.title')} />
+      </View>
+      <View style={styles.pad}>
+        <SegmentedTabs
+          label={t('home.essentials.title')}
+          options={live.map((entry) => ({ key: entry.tab.id, label: t(entry.tab.label) }))}
+          selected={current.tab.id}
+          onSelect={(key) => {
+            setPicked(live.find((entry) => entry.tab.id === key)?.tab.id);
+            setTicked(new Set());
+          }}
+        />
+      </View>
+      {/* As tall as the fullest tab, so choosing a tab does not move what is under it. */}
+      <View style={styles.pad}>
+        <View
+          style={[styles.card, { minHeight: most * rowHeight + (most - 1) * HAIRLINE + 2 }]}
+          role="group"
+        >
+          {current.items.map((item, index) => (
+            <EssentialRow
+              key={item.id}
+              item={item}
+              ticked={ticked.has(item.id)}
+              divided={index > 0}
+              height={rowHeight}
+              onToggle={toggle}
+            />
+          ))}
         </View>
       </View>
+      {selectable.length > 0 ? (
+        <View style={[styles.pad, styles.footer]}>
+          <Button
+            label={all ? t('home.essentials.clearAll') : t('home.essentials.selectAll')}
+            variant="secondary"
+            onPress={() => {
+              setTicked(all ? new Set() : new Set(selectable.map((item) => item.id)));
+            }}
+          />
+          <View style={styles.main}>
+            <Button
+              label={label}
+              disabled={basket.count === 0}
+              shine={basket.count > 0}
+              shineKey={String(basket.count)}
+              onPress={addTicked}
+            />
+          </View>
+        </View>
+      ) : null}
     </View>
   );
 }
 
 /**
- * The module's loading shape: the lettered title's place, the lilac block with the control, a grid as tall as the opening tab's
- * tiles will be (each tile the height of the real one), and the bar under it.
+ * The strip's loading shape: the title, the control, a card as tall as the opening tab's list will be, each row the height of the
+ * real one, and the bar under it.
  */
 export function DailyEssentialsSkeleton() {
+  const { t } = useLanguage();
   const styles = useStyles(makeStyles);
   const items = useHomeItems();
   const live = liveEssentialTabs(items);
-  const tileHeight = useEssentialTileHeight();
+  const rowHeight = useEssentialRowHeight();
   const opening = openingTab(live, new Date().getHours());
 
   if (opening === undefined) return null;
@@ -388,22 +408,16 @@ export function DailyEssentialsSkeleton() {
   return (
     <View style={styles.section}>
       <View style={styles.pad}>
-        <Skeleton width={220} height={36} rounded={radius.md} />
+        <RowTitleSkeleton title={t('home.essentials.title')} />
       </View>
       <View style={styles.pad}>
-        <View style={styles.inset}>
-          <Skeleton height={TABS_HEIGHT} rounded={radius.md} />
-          <View style={{ minHeight: gridHeight(most, tileHeight) }}>
-            <View style={styles.grid}>
-              {Array.from({ length: shown }, (_, tile) => (
-                <View key={tile} style={styles.cell}>
-                  <Skeleton height={tileHeight} rounded={radius.lg} />
-                </View>
-              ))}
-            </View>
-          </View>
-          <Skeleton height={TAP_MIN} rounded={radius.md} />
-        </View>
+        <Skeleton height={TABS_HEIGHT} rounded={radius.md} />
+      </View>
+      <View style={[styles.pad, { minHeight: most * rowHeight + (most - 1) * HAIRLINE + 2 }]}>
+        <Skeleton height={shown * rowHeight + (shown - 1) * HAIRLINE + 2} rounded={radius.md} />
+      </View>
+      <View style={styles.pad}>
+        <Skeleton height={TAP_MIN} rounded={radius.md} />
       </View>
     </View>
   );

@@ -49,3 +49,6 @@ and for a few accent cards.
   their border.
 - Know your shop shows "Dark Store vs Connected Store" as one table with the two kinds of place side by side, five rows and a
   0 of 5 against 5 of 5 score at the foot. The swipeable cards and their dots are gone.
+- The light page is plain white (`bg` `#FFFFFF`), and `surface` (cards, fields, sheets, the bottom bar) takes the tint the page had
+  (`#FBFAFC`), so a card still reads as its own object, held by its fine border, and never merges into the page. This replaces the
+  note above that put `#FBFAFC` on the page. The dark theme is unchanged.

@@ -18,6 +18,8 @@ const makeStyles = (c: ThemeColors) =>
       padding: space[3],
       gap: space[3],
       borderRadius: radius.xl,
+      borderWidth: 1,
+      borderColor: c.line,
       backgroundColor: c.warningBg,
     },
     grid: { flexDirection: 'row', gap: space[2] },

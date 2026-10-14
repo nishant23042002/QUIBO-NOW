@@ -22,7 +22,7 @@ appId: host.exp.exponent
 - scrollUntilVisible:
     element: 'Coming soon to Roha'
 
-# Daily essentials (ADR 0048, ADR 0055): a tab swaps the tiles, a tile ticks, and the bar adds what is ticked.
+# Daily essentials (ADR 0048): a tab swaps the list, a row ticks, and the bar adds what is ticked.
 - assertVisible: 'Daily essentials'
 - tapOn: 'Cooking'
 - assertVisible: 'Potato\. .*'

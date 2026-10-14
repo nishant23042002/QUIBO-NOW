@@ -297,3 +297,14 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - **Copy:** the six facts are claims about shops and the plan; like Know your shop they need a legal read before launch.
   - Checks: lint, typecheck, test (757 customer tests) and build pass. Looked at on the web preview at 375 px: the launch pill,
     a fact on the third screen opened, and an order placed. Not seen on a real phone, at 200% text, or in Hindi and Marathi.
+- Owner change after step 11: the light page is plain white and `surface` carries the faint tint (`#FBFAFC`), so cards, fields,
+  sheets and the bottom bar no longer merge into a near-white page. One change in `palette.ts`; lint, typecheck and 757 tests pass.
+  Looked at on the web preview at 375 px: Home, the comparison table, Fresh today, Categories and a product page.
+- Owner change after step 11: Daily essentials is back to the list it had before step 6 (ADR 0048): the segmented control over one
+  card of tickable rows, a hairline between them, the "Select all" and "Add N items" bar under it, and the green in-cart rows with
+  a stepper. The tile grid and its lettered title are removed, with the three strings only they used (`home.essentials.word`,
+  `sticker` and `sub`). Behaviour is unchanged; lint, typecheck and 757 tests pass, and ticking and adding was tried on the web
+  preview at 375 px.
+- Owner change after step 11: a fine, light border (`line`) on the tinted tiles and cards that sat on the white page without one:
+  the "Right now in Roha" tiles and the shops strip, the Bestsellers tiles, Picks for your routine, Brand stores, Quieter times and
+  the shelf banner. No new colour. Lint, typecheck and 757 tests pass; looked at on the web preview at 375 px.

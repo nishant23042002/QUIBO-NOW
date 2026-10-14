@@ -25,6 +25,8 @@ const makeStyles = (c: ThemeColors) =>
       width: '100%',
       aspectRatio: 1,
       borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: c.line,
       padding: space[2],
       flexDirection: 'row',
       flexWrap: 'wrap',

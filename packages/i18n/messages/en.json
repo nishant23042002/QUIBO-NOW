@@ -174,10 +174,7 @@
         "morning": "Morning",
         "cooking": "Cooking",
         "evening": "Evening"
-      },
-      "word": "Daily",
-      "sticker": "essentials",
-      "sub": "Tick what you need, then add them in one tap"
+      }
     },
     "shopForNeed": {
       "title": "Picks for your routine",
