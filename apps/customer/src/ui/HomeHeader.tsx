@@ -99,13 +99,14 @@ const makeStyles = (c: ThemeColors) =>
     // The hero is the header's own colour carried down under the tabs, so the header and the first block are one surface. It
     // scrolls away with the page.
     hero: { backgroundColor: c.headerBg, paddingTop: space[3], paddingBottom: space[8] },
-    // The page slides up over the hero's lower edge with rounded top corners.
+    // The page slides up over the hero's lower edge with rounded top corners. It clips what is inside, so a wash that starts at the
+    // top follows the curve instead of showing square corners over the hero.
     sheet: {
       marginTop: -space[5],
-      paddingTop: space[1],
       borderTopLeftRadius: radius.xl,
       borderTopRightRadius: radius.xl,
       backgroundColor: c.bg,
+      overflow: 'hidden',
     },
     pressed: { opacity: 0.7 },
   });
