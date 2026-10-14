@@ -282,3 +282,18 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - Checks: lint, typecheck, test (750 customer tests) and build pass. Looked at on the web preview at 375 px: the screen, the
     pincode and a town saved to Notify me (the test entries were removed), looking around, and checkout's off button.
     Not seen on a real phone, at 200% text, or in Hindi and Marathi.
+- **Step 11, moment screens: built, waiting for the owner's phone check.**
+  - **Launch:** the splash gains a small pill under the tagline with one fact's heading (a different one each day), shown with the
+    tagline so it never changes language on screen. Not in a town served by one dark store.
+  - **Between screens:** a "Why Quibo" screen (`FactMoment`) with one fact, about a second and a half, closed at a tap. It comes
+    on the first screen opened and then every third, never twice within 20 seconds of any moment (launch and order placed
+    count), and never in front of a task screen (cart, checkout, orders, addresses, search, help, profile). `momentRules.ts`
+    holds the rules with tests; `momentClock.ts` is the shared clock.
+  - **Order placed:** on pistachio now, as the mock has it, naming the shops the order is with and that one rider brings one bag
+    with their names on it, with the order number, and a tap moves on at once. It still opens the order underneath while solid.
+  - **Rules kept:** no progress line and nothing counts down (decision 4). With reduce motion on, or a screen reader on (the web
+    cannot tell, so it is taken as off there), the between-screens fact does not appear at all; the launch and order screens only
+    cover the change of screen, as they did.
+  - **Copy:** the six facts are claims about shops and the plan; like Know your shop they need a legal read before launch.
+  - Checks: lint, typecheck, test (757 customer tests) and build pass. Looked at on the web preview at 375 px: the launch pill,
+    a fact on the third screen opened, and an order placed. Not seen on a real phone, at 200% text, or in Hindi and Marathi.

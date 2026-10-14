@@ -1,18 +1,31 @@
 import { SplashScreen } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
-import { AccessibilityInfo, Animated, Easing, Platform, StyleSheet, View } from 'react-native';
+import {
+  AccessibilityInfo,
+  Text as NativeText,
+  Animated,
+  Easing,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { palettes } from '@/theme';
 import { LogoStacked } from './brand/Logo';
 import { SPLASH_FADE_MS, splashMinimumMs, splashPhase } from './logic/splash';
 import { Text } from './Text';
-import { space } from './tokens';
+import { radius, space } from './tokens';
 
 export interface AppSplashProps {
   /** True once the saved theme and language are read. The app is drawn behind the splash from then on. */
   ready: boolean;
   /** The app. It is drawn as soon as it is ready, under the splash, so the fade reveals a finished screen. */
   children: ReactNode;
+  /**
+   * One true thing about how Quibo works, as a small pill under the tagline (ADR 0055, step 11). It comes in with the tagline, so it
+   * never changes language while it is on screen. Leave out where the fact would not be true (a town served by one dark store).
+   */
+  fact?: { emoji: string; title: string };
 }
 
 // The splash is the brand moment, so it is the same aubergine in both themes. Using the palette's
@@ -31,6 +44,18 @@ const styles = StyleSheet.create({
     gap: space[5],
     padding: space[8],
   },
+  // The fact pill under the tagline: a lighter aubergine, so it reads as a small label on the brand ground.
+  fact: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space[2],
+    paddingVertical: space[1],
+    paddingLeft: space[2],
+    paddingRight: space[3],
+    borderRadius: radius.full,
+    backgroundColor: palettes.light.plumEnd,
+  },
+  factEmoji: { fontSize: 18, lineHeight: 24 },
 });
 
 /** Do nothing if there is no native splash to hide (web, or a build without one). */
@@ -43,7 +68,7 @@ function hideNativeSplash() {
  * the tagline follows, and the whole splash fades away once the app is ready and the logo has been
  * seen. With "reduce motion" on there is no movement, only a short cover while things load.
  */
-export function AppSplash({ ready, children }: AppSplashProps) {
+export function AppSplash({ ready, children, fact }: AppSplashProps) {
   const { t } = useLanguage();
   const [reduceMotion, setReduceMotion] = useState<boolean | null>(null);
   const [minimumElapsed, setMinimumElapsed] = useState(false);
@@ -145,6 +170,16 @@ export function AppSplash({ ready, children }: AppSplashProps) {
           <Animated.View style={taglineStyle}>
             {ready ? <Text color="onChromeMuted">{t('app.tagline')}</Text> : null}
           </Animated.View>
+          {ready && fact !== undefined ? (
+            <Animated.View style={[styles.fact, taglineStyle]}>
+              <NativeText allowFontScaling={false} aria-hidden style={styles.factEmoji}>
+                {fact.emoji}
+              </NativeText>
+              <Text variant="small" color="onChrome">
+                {fact.title}
+              </Text>
+            </Animated.View>
+          ) : null}
         </Animated.View>
       )}
     </View>

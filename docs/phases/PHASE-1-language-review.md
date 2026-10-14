@@ -44,6 +44,25 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `outOfArea.browse`       | Look around Roha anyway                                                                     | फिर भी रोहा देखें                                                                                      | तरीही रोहा पाहा                                                                                   |                 |
 | `outOfArea.browsing`     | You are looking around Roha. We do not deliver to your address yet, so ordering is paused.  | आप रोहा देख रहे हैं। हम आपके पते पर अभी डिलीवरी नहीं करते, इसलिए ऑर्डर रुका है।                        | तुम्ही रोहा पाहत आहात. आम्ही तुमच्या पत्त्यावर अजून डिलिव्हरी करत नाही, म्हणून ऑर्डर थांबवली आहे. |                 |
 
+## Why Quibo, the moment between screens
+
+| Key                       | English                                                  | Hindi (draft)                                                  | Marathi (draft)                                              | OK or change to |
+| ------------------------- | -------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------ | --------------- |
+| `moment.kicker`           | Why Quibo                                                | Quibo क्यों                                                    | Quibo का                                                     |                 |
+| `moment.skip`             | Tap to skip                                              | छोड़ने के लिए छुएँ                                             | वगळण्यासाठी स्पर्श करा                                       |                 |
+| `moment.fact.shop.title`  | Packed by a shop you know                                | पैक किया एक जानी-पहचानी दुकान ने                               | तुम्हाला माहीत असलेल्या दुकानाने पॅक केले                    |                 |
+| `moment.fact.shop.body`   | {shop} has been in Roha since {year}.                    | {shop} रोहा में {year} से है।                                  | {shop} रोह्यात {year} पासून आहे.                             |                 |
+| `moment.fact.visit.title` | Walk in and see                                          | अंदर जाइए और देखिए                                             | आत या आणि पाहा                                               |                 |
+| `moment.fact.visit.body`  | Every shop on Quibo is open to visitors. Go and look.    | Quibo की हर दुकान आने वालों के लिए खुली है। जाकर देखिए।        | Quibo वरील प्रत्येक दुकान पाहुण्यांसाठी खुले आहे. जाऊन पाहा. |                 |
+| `moment.fact.name.title`  | The shop’s name is on your bag                           | आपके बैग पर दुकान का नाम है                                    | तुमच्या पिशवीवर दुकानाचे नाव आहे                             |                 |
+| `moment.fact.name.body`   | You always know who packed it.                           | आप हमेशा जानते हैं कि इसे किसने पैक किया।                      | ते कोणी पॅक केले हे तुम्हाला नेहमी कळते.                     |                 |
+| `moment.fact.plan.title`  | Shops keep what they sell                                | दुकानें अपनी कमाई रखती हैं                                     | दुकाने त्यांची कमाई ठेवतात                                   |                 |
+| `moment.fact.plan.body`   | They pay us a flat plan, not a cut of your bill.         | वे हमें एक तय योजना की फ़ीस देती हैं, आपके बिल का हिस्सा नहीं। | ती आम्हाला ठरलेली योजना फी देतात, तुमच्या बिलातील वाटा नाही. |                 |
+| `moment.fact.check.title` | We visit before we list                                  | सूची में रखने से पहले हम जाते हैं                              | यादीत घेण्यापूर्वी आम्ही भेट देतो                            |                 |
+| `moment.fact.check.body`  | Storage, scales and the FSSAI number, checked in person. | भंडारण, तराज़ू और FSSAI नंबर, सब खुद जाकर जाँचा जाता है।       | साठवण, तराजू आणि FSSAI क्रमांक, प्रत्यक्ष जाऊन तपासले जातात. |                 |
+| `moment.fact.price.title` | Prices are the shop’s own                                | दाम दुकान के अपने हैं                                          | किमती दुकानाच्या स्वतःच्या आहेत                              |                 |
+| `moment.fact.price.body`  | At or below MRP, checked every week.                     | MRP या उससे कम, हर हफ़्ते जाँचे जाते हैं।                      | MRP किंवा त्यापेक्षा कमी, दर आठवड्याला तपासल्या जातात.       |                 |
+
 ## Dark Store vs Connected Store, on Home
 
 | Key                        | English                                                                                                               | Hindi (draft)                                                                                                    | Marathi (draft)                                                                                                                             | OK or change to |
@@ -125,11 +144,15 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 
 ## Order placed
 
-| Key             | English                       | Hindi (draft)              | Marathi (draft)                | OK or change to |
-| --------------- | ----------------------------- | -------------------------- | ------------------------------ | --------------- |
-| `placed.title`  | Order placed                  | ऑर्डर हो गया               | ऑर्डर दिली                     |                 |
-| `placed.number` | Order {number}                | ऑर्डर {number}             | ऑर्डर {number}                 |                 |
-| `placed.body`   | We will keep you posted here. | हम आपको यहीं बताते रहेंगे। | आम्ही तुम्हाला इथेच कळवत राहू. |                 |
+| Key                  | English                                                                              | Hindi (draft)                                                                     | Marathi (draft)                                                                  | OK or change to |
+| -------------------- | ------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | --------------- |
+| `placed.title`       | Order placed                                                                         | ऑर्डर हो गया                                                                      | ऑर्डर दिली                                                                       |                 |
+| `placed.number`      | Order {number}                                                                       | ऑर्डर {number}                                                                    | ऑर्डर {number}                                                                   |                 |
+| `placed.withOne`     | Your order is with a shop you know                                                   | आपका ऑर्डर एक जानी-पहचानी दुकान के पास है                                         | तुमची ऑर्डर तुम्हाला माहीत असलेल्या दुकानाकडे आहे                                |                 |
+| `placed.withMany`    | Your order is with {count} shops you know                                            | आपका ऑर्डर {count} जानी-पहचानी दुकानों के पास है                                  | तुमची ऑर्डर तुम्हाला माहीत असलेल्या {count} दुकानांकडे आहे                       |                 |
+| `placed.packingOne`  | {names} is packing it now. One rider will bring your bag with the shop’s name on it. | {names} अभी इसे पैक कर रही है। एक राइडर आपका बैग लाएगा, जिस पर दुकान का नाम होगा। | {names} ती आता पॅक करत आहे. एक रायडर तुमची पिशवी आणेल, ज्यावर दुकानाचे नाव असेल. |                 |
+| `placed.packingMany` | {names} are packing it now. One rider will bring one bag with their names on it.     | {names} अभी इसे पैक कर रही हैं। एक राइडर एक बैग लाएगा, जिस पर उनके नाम होंगे।     | {names} ती आता पॅक करत आहेत. एक रायडर एक पिशवी आणेल, ज्यावर त्यांची नावे असतील.  |                 |
+| `placed.continue`    | Tap to continue                                                                      | आगे बढ़ने के लिए छुएँ                                                             | पुढे जाण्यासाठी स्पर्श करा                                                       |                 |
 
 ## Orders
 
@@ -607,4 +630,4 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `home.categoryEmpty.title` | Nothing here right now          | अभी यहाँ कुछ नहीं है                | सध्या इथे काही नाही                   |                 |
 | `home.categoryEmpty.body`  | Check back soon, or choose All. | थोड़ी देर बाद देखें या "सभी" चुनें। | थोड्या वेळाने पहा किंवा "सर्व" निवडा. |                 |
 
-459 lines in all.
+477 lines in all.

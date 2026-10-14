@@ -1,18 +1,26 @@
 import { useRouter } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Animated, Easing, Platform, StyleSheet, View } from 'react-native';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { Animated, Easing, Platform, Pressable, StyleSheet, View } from 'react-native';
 import type { Order } from '@quibo/contracts';
+import { markMoment } from '@/home/momentClock';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { palettes } from '@/theme';
-import { Icon, Text, radius, space, useReduceMotion } from '@/ui';
+import { Text, radius, space, useReduceMotion } from '@/ui';
 import { orderNumber } from './ids';
-import { ThumbRow } from './ItemThumb';
 import { PLACED_FADE_MS, PLACED_MS, PLACED_REDUCED_MS } from './timing';
 
-// Like the opening splash and the welcome, a brand moment: the same aubergine in both themes.
-const BACKGROUND = palettes.light.chrome;
+// Like the opening splash and the welcome, a brand moment: the same pistachio in both themes.
+const BACKGROUND = palettes.light.accent;
 const NATIVE_DRIVER = Platform.OS !== 'web';
-const BADGE = 88;
+const AVATAR = 56;
+/** The most shop avatars shown side by side; the heading and the line below still name all of them. */
+const AVATARS_MAX = 3;
+/** The avatars' colours, in turn: shop tints from the palette. */
+const AVATAR_TINTS = [
+  palettes.light.tintStaples,
+  palettes.light.tintVegetables,
+  palettes.light.tintDairy,
+] as const;
 
 const styles = StyleSheet.create({
   root: {
@@ -27,21 +35,29 @@ const styles = StyleSheet.create({
     gap: space[5],
     padding: space[8],
   },
-  badge: {
-    width: BADGE,
-    height: BADGE,
+  avatars: { flexDirection: 'row', justifyContent: 'center' },
+  avatar: {
+    width: AVATAR,
+    height: AVATAR,
+    borderRadius: radius.full,
+    borderWidth: 3,
+    borderColor: palettes.light.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: radius.full,
-    backgroundColor: palettes.light.accent,
   },
-  words: { alignItems: 'center', gap: space[1] },
+  overlap: { marginLeft: -14 },
+  words: { alignItems: 'center', gap: space[2], maxWidth: 340 },
 });
 
+/** The first letter of a shop's name, as one character even for a name in Devanagari. */
+function initialOf(name: string): string {
+  return [...name.trim()][0] ?? '';
+}
+
 /**
- * Shown over the app the moment an order is placed: a check mark comes in, it says the order is placed and its number, and then it
- * fades away onto the Orders tab. The tab is opened under it while the screen is still solid, so nothing flashes. With "reduce
- * motion" on it only covers the change of screen and does not move.
+ * Shown over the app the moment an order is placed (ADR 0055, step 11): the shops the order is with, by name, and that one rider will
+ * bring one bag with their names on it. It opens the order's page underneath while the screen is still solid, then fades away onto
+ * it by itself, or at a tap. Nothing counts down. With "reduce motion" on it only covers the change of screen and does not move.
  */
 export function OrderPlaced({ order, onDone }: { order: Order; onDone: () => void }) {
   const { t } = useLanguage();
@@ -49,10 +65,33 @@ export function OrderPlaced({ order, onDone }: { order: Order; onDone: () => voi
   const reduceMotion = useReduceMotion();
   const [enter] = useState(() => new Animated.Value(0));
   const [fade] = useState(() => new Animated.Value(0));
+  const opened = useRef(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  // The list goes under the order's page, so "back" from the page is the list.
+  const open = useCallback(() => {
+    if (opened.current) return;
+    opened.current = true;
+    router.navigate('/orders');
+    router.push({ pathname: '/order', params: { id: order.id } });
+  }, [router, order.id]);
+
+  const leave = useCallback(() => {
+    open();
+    Animated.timing(fade, {
+      toValue: 0,
+      duration: reduceMotion ? 0 : PLACED_FADE_MS,
+      easing: Easing.inOut(Easing.quad),
+      useNativeDriver: NATIVE_DRIVER,
+    }).start(({ finished }) => {
+      if (finished) onDone();
+    });
+  }, [open, fade, reduceMotion, onDone]);
 
   useEffect(() => {
+    // A moment screen has begun: no fact comes up for a while after it.
+    markMoment();
     const total = reduceMotion ? PLACED_REDUCED_MS : PLACED_MS;
-    const duration = reduceMotion ? 0 : 240;
     if (reduceMotion) enter.setValue(1);
     else {
       Animated.timing(enter, {
@@ -62,65 +101,87 @@ export function OrderPlaced({ order, onDone }: { order: Order; onDone: () => voi
         useNativeDriver: NATIVE_DRIVER,
       }).start();
     }
-    // Cover the page first, then open the Orders tab underneath once the cover is solid, then fade the cover away.
+    // Cover the page first, then open the order underneath once the cover is solid, then fade the cover away.
     Animated.timing(fade, {
       toValue: 1,
-      duration,
+      duration: reduceMotion ? 0 : 240,
       easing: Easing.out(Easing.quad),
       useNativeDriver: NATIVE_DRIVER,
     }).start();
-    const open = setTimeout(
-      () => {
-        // The list goes under the order's page, so "back" from the page is the list.
-        router.navigate('/orders');
-        router.push({ pathname: '/order', params: { id: order.id } });
-      },
-      reduceMotion ? 0 : 300,
-    );
-    const leave = setTimeout(() => {
-      Animated.timing(fade, {
-        toValue: 0,
-        duration: reduceMotion ? 0 : PLACED_FADE_MS,
-        easing: Easing.inOut(Easing.quad),
-        useNativeDriver: NATIVE_DRIVER,
-      }).start(({ finished }) => {
-        if (finished) onDone();
-      });
-    }, total);
+    const waiting = timers.current;
+    waiting.push(setTimeout(open, reduceMotion ? 0 : 300));
+    waiting.push(setTimeout(leave, total));
     return () => {
-      clearTimeout(open);
-      clearTimeout(leave);
+      waiting.forEach(clearTimeout);
     };
-  }, [reduceMotion, enter, fade, router, onDone, order.id]);
+  }, [reduceMotion, enter, fade, open, leave]);
 
   const pop = {
     opacity: enter,
     transform: [{ scale: enter.interpolate({ inputRange: [0, 1], outputRange: [0.6, 1] }) }],
   };
+  const names = order.shops.map((shop) => shop.name).join(', ');
+  const many = order.shops.length > 1;
+  const heading = many ? t('placed.withMany', { count: order.shops.length }) : t('placed.withOne');
+  const packing = many ? t('placed.packingMany', { names }) : t('placed.packingOne', { names });
 
   return (
     <Animated.View
       style={[styles.root, { opacity: fade }]}
       accessible
-      aria-label={`${t('placed.title')}. ${t('placed.number', { number: orderNumber(order.id) })}`}
+      aria-label={`${t('placed.title')}. ${heading}. ${packing}`}
       role="alert"
     >
-      <Animated.View style={[styles.badge, pop]}>
-        <Icon name="check" color={palettes.light.chrome} size={44} />
+      {/* A tap anywhere moves on at once. */}
+      <Pressable
+        accessible={false}
+        onPress={() => {
+          waitingClear(timers.current);
+          leave();
+        }}
+        style={StyleSheet.absoluteFill}
+      />
+      <Animated.View style={[styles.avatars, pop]} aria-hidden pointerEvents="none">
+        {order.shops.slice(0, AVATARS_MAX).map((shop, index) => (
+          <View
+            key={shop.id}
+            style={[
+              styles.avatar,
+              index > 0 && styles.overlap,
+              { backgroundColor: AVATAR_TINTS[index % AVATAR_TINTS.length] },
+            ]}
+          >
+            <Text variant="subheading" color="ink">
+              {initialOf(shop.name)}
+            </Text>
+          </View>
+        ))}
       </Animated.View>
-      <View style={styles.words}>
-        <Text variant="heading" color="onChrome" align="center">
+      <View style={styles.words} pointerEvents="none">
+        <Text variant="caption" color="onAccent">
           {t('placed.title')}
         </Text>
-        <Text color="onChromeMuted" align="center">
+        <Text variant="hero" color="onAccent" align="center" role="heading">
+          {heading}
+        </Text>
+        <Text color="onAccent" align="center">
+          {packing}
+        </Text>
+        <Text variant="small" color="onAccent" align="center">
           {t('placed.number', { number: orderNumber(order.id) })}
         </Text>
-        <Text color="onChromeMuted" align="center">
-          {t('placed.body')}
+      </View>
+      <View pointerEvents="none">
+        <Text variant="small" color="onAccent">
+          {t('placed.continue')}
         </Text>
       </View>
-      {/* What was ordered, so the moment is about their own things. */}
-      <ThumbRow items={order.items} size={44} fit={5} ring={BACKGROUND} />
     </Animated.View>
   );
+}
+
+/** Stops the waiting timers, so a tap does not also run what they were waiting to do. */
+function waitingClear(timers: ReturnType<typeof setTimeout>[]): void {
+  timers.forEach(clearTimeout);
+  timers.length = 0;
 }

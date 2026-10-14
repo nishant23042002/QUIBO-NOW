@@ -1,0 +1,32 @@
+# Moment screens: the launch pill, a "why Quibo" fact between screens, and the order placed screen.
+#
+# Run it against the app open in Expo Go, on a fresh install:
+#   maestro test apps/customer/.maestro/moments.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (Home v5, step 11). It has not been run yet: the Maestro tool is not installed on the machine this was written on.
+# A fact never follows another moment within 20 seconds, so the flow waits that long before opening screens.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Estimated delivery|Scheduled delivery'
+
+# Past the 20 seconds, the third screen opened brings a fact, which a tap closes.
+- extendedWaitUntil:
+    visible: 'Estimated delivery|Scheduled delivery'
+    timeout: 25000
+- tapOn: 'Categories'
+- tapOn: 'Home'
+- assertVisible: 'Why Quibo'
+- tapOn: 'Tap to skip'
+- assertNotVisible: 'Why Quibo'
+
+# An order placed says which shops it is with, and a tap moves on.
+- tapOn: 'ADD'
+- tapOn: 'View cart'
+- tapOn: 'Continue'
+- tapOn: 'Place order'
+- assertVisible: 'Your order is with a shop you know|Your order is with .* shops you know'
+- tapOn: 'Tap to continue'

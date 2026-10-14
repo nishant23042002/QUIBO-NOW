@@ -1129,7 +1129,41 @@
   "placed": {
     "title": "Order placed",
     "number": "Order {number}",
-    "body": "We will keep you posted here."
+    "withOne": "Your order is with a shop you know",
+    "withMany": "Your order is with {count} shops you know",
+    "packingOne": "{names} is packing it now. One rider will bring your bag with the shop’s name on it.",
+    "packingMany": "{names} are packing it now. One rider will bring one bag with their names on it.",
+    "continue": "Tap to continue"
+  },
+  "moment": {
+    "kicker": "Why Quibo",
+    "skip": "Tap to skip",
+    "fact": {
+      "shop": {
+        "title": "Packed by a shop you know",
+        "body": "{shop} has been in Roha since {year}."
+      },
+      "visit": {
+        "title": "Walk in and see",
+        "body": "Every shop on Quibo is open to visitors. Go and look."
+      },
+      "name": {
+        "title": "The shop’s name is on your bag",
+        "body": "You always know who packed it."
+      },
+      "plan": {
+        "title": "Shops keep what they sell",
+        "body": "They pay us a flat plan, not a cut of your bill."
+      },
+      "check": {
+        "title": "We visit before we list",
+        "body": "Storage, scales and the FSSAI number, checked in person."
+      },
+      "price": {
+        "title": "Prices are the shop’s own",
+        "body": "At or below MRP, checked every week."
+      }
+    }
   },
   "orders": {
     "title": "Orders",

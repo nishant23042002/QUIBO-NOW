@@ -15,6 +15,7 @@ const read = (locale) =>
 const SECTIONS = [
   ['Language sheet, from the header chip', 'languageSheet'],
   ['Out of the area, on Home', 'outOfArea'],
+  ['Why Quibo, the moment between screens', 'moment'],
   ['Dark Store vs Connected Store, on Home', 'home.know'],
   ['The Quibo promise and How we check a shop, on Home', 'home.promise'],
   ['Checkout', 'checkout'],

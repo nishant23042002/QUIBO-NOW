@@ -1,4 +1,5 @@
 import { SplashScreen, Stack } from 'expo-router';
+import { useState } from 'react';
 import { NavigationBar } from 'expo-navigation-bar';
 import { StatusBar } from 'expo-status-bar';
 import { StatusBar as NativeStatusBar, StyleSheet, View } from 'react-native';
@@ -9,6 +10,9 @@ import { Welcome } from '@/account/Welcome';
 import { ReportsProvider } from '@/help/ReportsProvider';
 import { AddressProvider } from '@/home/AddressProvider';
 import { CartProvider } from '@/home/CartProvider';
+import { useConditions } from '@/home/conditions';
+import { FactMoment } from '@/home/FactMoment';
+import { momentFact } from '@/home/momentRules';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
 import { LanguageSheetProvider } from '@/i18n/LanguageSheet';
 import { OrderPlaced } from '@/orders/OrderPlaced';
@@ -46,6 +50,8 @@ function Screens() {
         <Stack.Screen name="profile" options={{ title: t('settings.title') }} />
         <Stack.Screen name="components" options={{ title: t('components.title') }} />
       </Stack>
+      {/* One true thing about Quibo, now and then between screens (ADR 0055, step 11). */}
+      <FactMoment />
       {/* A solid strip behind the phone's own navigation buttons (or gesture bar), so the page never shows through
           them. It has the colour of the cards, which is also the colour the bottom navigation bar will have. */}
       <View
@@ -67,11 +73,19 @@ function Gate() {
   const language = useLanguage();
   const account = useAccount();
   const orders = useOrders();
+  const { store } = useConditions();
   const ready = theme.ready && language.ready && account.loaded;
+  // The launch screen names one fact, a different one each day. Not in a town served by one dark store: the facts are about shops.
+  const [day] = useState(() => Math.floor(Date.now() / 86_400_000));
+  const fact = momentFact(day);
+  const launchFact =
+    store === 'partner'
+      ? { emoji: fact.emoji, title: language.t(`moment.fact.${fact.id}.title`) }
+      : undefined;
 
   // Until the shopper has chosen a language and checked their number, the first-run steps are the whole app.
   return (
-    <AppSplash ready={ready}>
+    <AppSplash ready={ready} {...(launchFact !== undefined ? { fact: launchFact } : {})}>
       {ready ? (
         account.stage === 'done' ? (
           <>
