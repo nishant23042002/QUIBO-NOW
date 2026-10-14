@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { useIsFocused, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Animated, Easing, Image, Pressable, StyleSheet, View } from 'react-native';
 import SCOOTER from '../../assets/delivery-scooter.png';
@@ -79,7 +79,8 @@ function useLiftAboveCart(follow: boolean): Animated.AnimatedNode | undefined {
 
 /**
  * The "removed, undo" note shown when the last unit of something leaves the cart. `bottom` is how far above the
- * screen's bottom edge the note's own bottom sits; `aboveBar` lifts it clear of the docked cart bar when that shows.
+ * screen's bottom edge the note's own bottom sits; `aboveBar` lifts it clear of the docked cart bar when that shows. It is the
+ * only note about a removal, and it names what was removed.
  */
 export function UndoToast({
   bottom,
@@ -95,11 +96,18 @@ export function UndoToast({
   const cart = useCart();
   const shift = useLiftAboveCart(follow);
   const filled = useHasItems();
+  // Every screen that is still mounted has a copy of this note; only the one the navigator says is in front shows it, so a
+  // removal is told once. (`useIsFocused` is right from the first draw, including for a tab that was built in the background.)
+  const focused = useIsFocused();
+  // The name stays on the note while it slides away: with the removal cleared it would otherwise read "removed" alone for a
+  // moment, which looks like a second note.
+  const [name, setName] = useState('');
+  if (cart.removed !== null && cart.removed.name !== name) setName(cart.removed.name);
 
   return (
     <Toast
-      visible={cart.removed !== null}
-      message={t('home.cart.removed', { name: cart.removed?.name ?? '' })}
+      visible={focused && cart.removed !== null}
+      message={t('home.cart.removed', { name: cart.removed?.name ?? name })}
       actionLabel={t('home.cart.undo')}
       onAction={cart.undoRemove}
       onTimeout={cart.clearRemoved}
@@ -176,7 +184,7 @@ function FreeDeliveryPop({
   const { colors } = useTheme();
   const reduceMotion = useReduceMotion();
   const lift = useLiftAboveCart(follow);
-  const [visible, setVisible] = useState(false);
+  const [moment, setMoment] = useState(false);
   const [show] = useState(() => new Animated.Value(0));
   const [burst] = useState(() => new Animated.Value(0));
   // Whether the cart was free at the last look. Only a change from "not free" to "free" while the cart is in use is a moment; the
@@ -184,9 +192,14 @@ function FreeDeliveryPop({
   const [wasFree, setWasFree] = useState<boolean | null>(null);
   if (wasFree !== cart.free) {
     setWasFree(cart.free);
-    if (cart.ready && wasFree === false && cart.free && cart.count > 0) setVisible(true);
-    if (!cart.free && visible) setVisible(false);
+    if (cart.ready && wasFree === false && cart.free && cart.count > 0) setMoment(true);
+    if (!cart.free && moment) setMoment(false);
   }
+  // A removal takes the moment away for good: it must not come back when the "removed" note has gone.
+  if (cart.removed !== null && moment) setMoment(false);
+  // Only the screen in front says it, and never at the same moment as the "removed" note, which has the word that matters.
+  const focused = useIsFocused();
+  const visible = moment && focused && cart.removed === null;
 
   useEffect(() => {
     if (!visible) {
@@ -215,7 +228,7 @@ function FreeDeliveryPop({
         ]);
     enter.start();
     const timer = setTimeout(() => {
-      setVisible(false);
+      setMoment(false);
     }, SHOWN_FOR_MS);
     return () => {
       enter.stop();
@@ -247,7 +260,7 @@ function FreeDeliveryPop({
         aria-live="polite"
         aria-label={`${t('home.cart.freeUnlockedTitle')}. ${t('home.cart.freeUnlockedBody')}`}
         onPress={() => {
-          setVisible(false);
+          setMoment(false);
         }}
         style={styles.card}
       >
