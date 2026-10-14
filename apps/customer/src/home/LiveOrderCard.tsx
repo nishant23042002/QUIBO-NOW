@@ -25,7 +25,9 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.onHeaderMuted,
       opacity: 0.35,
     },
+    // A step that is done is solid; the one being worked on is the same colour, half strength; the rest wait.
     segmentOn: { backgroundColor: c.accent, opacity: 1 },
+    segmentNow: { backgroundColor: c.accent, opacity: 0.55 },
     foot: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     tile: {
       width: TILE,
@@ -137,7 +139,9 @@ export function LiveOrderCard() {
           </Text>
           <View style={styles.steps} aria-hidden>
             {steps.map((step) => {
-              const on = step.state === 'done' || step.state === 'current';
+              const done = step.state === 'done';
+              const now = step.state === 'current';
+              const on = done || now;
               const label =
                 step.status === 'accepted' ||
                 step.status === 'ready' ||
@@ -147,11 +151,13 @@ export function LiveOrderCard() {
                   : '';
               return (
                 <View key={step.status} style={styles.stepCell}>
-                  <View style={[styles.segment, on && styles.segmentOn]} />
+                  <View
+                    style={[styles.segment, done && styles.segmentOn, now && styles.segmentNow]}
+                  />
                   <Text
                     variant="caption"
                     color={on ? 'onHeader' : 'onHeaderMuted'}
-                    numberOfLines={1}
+                    numberOfLines={2}
                     maxFontSizeMultiplier={1.2}
                   >
                     {label}

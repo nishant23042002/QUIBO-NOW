@@ -33,11 +33,12 @@ const makeStyles = (c: ThemeColors) =>
     },
     pressed: { opacity: 0.85 },
     art: { position: 'absolute', right: space[2], bottom: space[1] },
+    // Sits just above the price tag, so a label or a second line that wraps (a narrow phone, large text) never runs under it.
     tallArt: {
       position: 'absolute',
       left: 0,
       right: 0,
-      top: space[10] + space[2],
+      bottom: space[2] + 56 + space[1],
       alignItems: 'center',
     },
     price: {
@@ -135,7 +136,7 @@ export function HeroMosaic({ shopNames, onCategory, onNeed, onMeetShops }: HeroM
         ) : null}
         {tall ? (
           <View style={styles.tallArt} aria-hidden>
-            <NativeText allowFontScaling={false} style={{ fontSize: 64, lineHeight: 76 }}>
+            <NativeText allowFontScaling={false} style={{ fontSize: 52, lineHeight: 62 }}>
               {tile.emoji}
             </NativeText>
           </View>
