@@ -30,10 +30,13 @@ export interface ThemeColors {
   onChromeMuted: string;
 
   /**
-   * The tinted block at the top of Home: address, profile and search. It paints behind the status bar too.
-   * Light and soft in the light theme, deep in the dark one; text on it uses `onHeader`.
+   * The block at the top of Home and the tabs: address, profile and search. It paints behind the status bar too.
+   * Deep aubergine in the light theme (the colour of the cart bar) and deep plum in the dark one; text on it uses `onHeader`,
+   * which is white in both. `onHeader` is for text on the header and not on the pale `tint*` blocks: use `ink` there.
    */
   headerBg: string;
+  /** The far (right-hand) end of the header's very light sheen; `headerBg` is the left end. Text on it uses `onHeader` too. */
+  headerBgEnd: string;
   onHeader: string;
   onHeaderMuted: string;
   /**
@@ -112,9 +115,10 @@ export const palettes: Record<Scheme, ThemeColors> = {
     chrome: '#3A1646',
     onChrome: '#FFFFFF',
     onChromeMuted: '#D2BDDB',
-    headerBg: '#E9D8F0',
-    onHeader: '#2A1033',
-    onHeaderMuted: '#563E60',
+    headerBg: '#3A1646',
+    headerBgEnd: '#4A2160',
+    onHeader: '#FFFFFF',
+    onHeaderMuted: '#D2BDDB',
     headerControl: '#FFFFFF',
     onHeaderControl: '#2A1033',
     tintDairy: '#DCE8F5',
@@ -160,6 +164,7 @@ export const palettes: Record<Scheme, ThemeColors> = {
     onChrome: '#FFFFFF',
     onChromeMuted: '#CDBFD6',
     headerBg: '#3E1A4C',
+    headerBgEnd: '#4E2663',
     onHeader: '#FFFFFF',
     onHeaderMuted: '#DCCBE4',
     headerControl: '#F6EEF8',

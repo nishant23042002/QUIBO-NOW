@@ -73,7 +73,11 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[4],
       paddingVertical: space[3],
       borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: 'transparent',
     },
+    // The white card sits on the page's near-white, so it keeps a fine edge.
+    lightEdge: { borderColor: c.line },
     pressed: { opacity: 0.92, transform: [{ scale: 0.99 }] },
     text: { flex: 1, minWidth: 0, gap: 2 },
     emoji: { fontSize: 40, lineHeight: 48, textAlign: 'center', width: 56 },
@@ -84,14 +88,14 @@ const makeStyles = (c: ThemeColors) =>
       gap: space[1],
       marginTop: space[2],
     },
-    dot: { height: DOT, borderRadius: DOT, backgroundColor: c.onHeader },
+    dot: { height: DOT, borderRadius: DOT, backgroundColor: c.ink },
   });
 
 /**
  * A row of offers that slides on its own, one card at a time. The card in front is centred, with the same
  * space on both sides and its neighbours peeking in, and a dot for each card sits underneath. A swipe takes over, and the row waits a few seconds before sliding again.
- * With the phone's "reduce motion" setting on it never slides by itself. It is built for the home header,
- * so the dots take the header's ink colour.
+ * With the phone's "reduce motion" setting on it never slides by itself. It sits on the page under Home's header, so the dots take
+ * the page's ink colour.
  */
 export function PromoCarousel({ slides, label, onPress }: PromoCarouselProps) {
   const styles = useStyles(makeStyles);
@@ -200,6 +204,7 @@ function PromoCard({ slide, width, onPress }: PromoCardProps) {
       style={({ pressed }) => [
         styles.card,
         { width, backgroundColor: colors[look.background] },
+        slide.tone === 'light' && styles.lightEdge,
         pressed && styles.pressed,
       ]}
     >

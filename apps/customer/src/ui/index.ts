@@ -16,6 +16,7 @@ export { CategoryTabs, type CategoryTab, type CategoryTabsProps } from './Catego
 export { CategoryTile, type CategoryTileProps } from './CategoryTile';
 export { ComingSoon } from './ComingSoon';
 export { Chip, type ChipProps } from './Chip';
+export { HeaderGradient } from './HeaderGradient';
 export { HomeHeader, type HomeHeaderProps } from './HomeHeader';
 export { Icon, type IconName } from './Icon';
 export { IconButton, type IconButtonProps } from './IconButton';

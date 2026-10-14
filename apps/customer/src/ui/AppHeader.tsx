@@ -6,7 +6,7 @@ import { HeaderLogo } from './brand/HeaderLogo';
 import { IconButton } from './IconButton';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { Text } from './Text';
-import { HEADER_HEIGHT, radius, space } from './tokens';
+import { HEADER_HEIGHT, space } from './tokens';
 
 export interface AppHeaderProps {
   /** On the first screen: the QUIBO NOW logo, named for screen readers. Leave out on other screens. */
@@ -33,13 +33,9 @@ const CIRCLE_INSET = 5;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    // One block of the deep aubergine with a rounded lower edge, on every screen but Home and the item page (which wear the colour
+    // One block of the deep aubergine with a square lower edge, on every screen but Home and the item page (which wear the colour
     // of their category).
-    bar: {
-      backgroundColor: c.chrome,
-      borderBottomLeftRadius: radius.lg,
-      borderBottomRightRadius: radius.lg,
-    },
+    bar: { backgroundColor: c.chrome },
     row: { minHeight: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center', gap: space[2] },
     // Pulled out by the circle's inset, so the circle's outer edge lines up with the page's cards.
     back: { marginLeft: -CIRCLE_INSET },

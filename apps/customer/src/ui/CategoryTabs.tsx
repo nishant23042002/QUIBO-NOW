@@ -74,7 +74,7 @@ const makeStyles = (c: ThemeColors) =>
       height: UNDERLINE,
       borderTopLeftRadius: UNDERLINE,
       borderTopRightRadius: UNDERLINE,
-      backgroundColor: c.onHeader,
+      backgroundColor: c.accent,
     },
   });
 

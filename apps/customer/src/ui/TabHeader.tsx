@@ -9,10 +9,11 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { HeaderGradient } from './HeaderGradient';
 import { HeaderIdentity, type HeaderIdentityProps } from './HeaderIdentity';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { SearchBar, type SearchHint } from './SearchBar';
-import { radius, space } from './tokens';
+import { space } from './tokens';
 
 /** Layers that meet overlap by this much, so a fraction of a pixel never shows a hairline of the page between them. */
 const SEAM = 1;
@@ -48,17 +49,13 @@ const makeStyles = (c: ThemeColors) =>
     // One dp more than it looks, because the lower part overlaps the upper by 1 dp (see SEAM).
     search: { paddingTop: space[2] + SEAM, paddingBottom: space[2] },
     rail: { paddingBottom: space[2] },
-    cap: {
-      height: CAP,
-      borderBottomLeftRadius: radius.lg,
-      borderBottomRightRadius: radius.lg,
-    },
+    cap: { height: CAP },
     bleed: { position: 'absolute', top: -BLEED, left: 0, right: 0, height: BLEED },
   });
 
 /**
  * The header Home wears, for the tabs that are not Home: the same delivery promise, address and profile button on the same
- * lilac tint, with the search bar under them. It behaves exactly as Home's does. As the page scrolls the upper part slides up and
+ * deep header colour, with the search bar under them. It behaves exactly as Home's does. As the page scrolls the upper part slides up and
  * out, one for one with the finger, and the search bar (with the rail under it, if the tab has one) rises with it and stops under
  * the status bar. It only moves, on the phone's animation thread, and nothing is laid out while it does.
  *
@@ -81,7 +78,7 @@ export function TabHeader({
   children,
 }: TabHeaderProps) {
   const insets = useSafeAreaInsets();
-  const { colors, scheme } = useTheme();
+  const { colors } = useTheme();
   const styles = useStyles(makeStyles);
   const tint = colors.headerBg;
   const [scrollY] = useState(() => new Animated.Value(0));
@@ -125,7 +122,7 @@ export function TabHeader({
 
   return (
     <View style={styles.frame}>
-      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+      <ScreenStatusBar style="light" />
       <Animated.ScrollView
         // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit at
         // the top and then drop; held back, it appears where it belongs.
@@ -146,6 +143,7 @@ export function TabHeader({
         }}
       >
         <View style={[styles.cap, { backgroundColor: tint }]}>
+          <HeaderGradient />
           <View pointerEvents="none" style={[styles.bleed, { backgroundColor: tint }]} />
         </View>
         {children}
@@ -155,7 +153,9 @@ export function TabHeader({
       <View
         pointerEvents="none"
         style={[styles.overlay, { top: 0, height: insets.top + SEAM, backgroundColor: tint }]}
-      />
+      >
+        <HeaderGradient />
+      </View>
 
       {/* The upper part: it moves with the page and leaves through the very top of the screen. */}
       <Animated.View
@@ -164,6 +164,7 @@ export function TabHeader({
         style={[styles.overlay, { top: insets.top, transform: [{ translateY: slideTop }] }]}
       >
         <View style={{ backgroundColor: tint }}>
+          <HeaderGradient />
           <Animated.View
             style={[styles.top, { opacity: fadeOut }]}
             onLayout={(event) => {
@@ -201,6 +202,7 @@ export function TabHeader({
             setLowerHeight(Math.round(event.nativeEvent.layout.height));
           }}
         >
+          <HeaderGradient />
           <View style={[styles.search, gutter]}>
             <SearchBar placeholder={searchLabel} hint={searchHint} onPress={onSearchPress} />
           </View>

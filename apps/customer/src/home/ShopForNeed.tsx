@@ -116,11 +116,11 @@ function NeedCard({ need, onPress }: { need: Need; onPress: () => void }) {
         </View>
       </View>
       <View style={[styles.plate, { backgroundColor: withAlpha(tint, PLATE_ALPHA) }]}>
-        <Text variant="label" color="onHeader" numberOfLines={2}>
+        <Text variant="label" color="ink" numberOfLines={2}>
           {t(need.label)}
         </Text>
         <View style={styles.kinds}>
-          <Text variant="fine" color="onHeaderMuted" numberOfLines={2}>
+          <Text variant="fine" color="inkMuted" numberOfLines={2}>
             {blurb}
           </Text>
         </View>

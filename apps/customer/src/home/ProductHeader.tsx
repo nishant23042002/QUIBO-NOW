@@ -154,11 +154,11 @@ export function ProductHeader({
         },
       ]}
     >
-      {/* The tint is pale on the light theme and deep on the dark one, like the Home header, so the text follows it. */}
+      {/* The tint is pale on the light theme and deep on the dark one, so the text and the status bar follow it. */}
       <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
       <View
         pointerEvents="none"
-        style={[styles.edge, { backgroundColor: colors.onHeader }]}
+        style={[styles.edge, { backgroundColor: colors.ink }]}
         aria-hidden
       />
       <View style={styles.where} accessible aria-label={`${deliveryLabel}. ${addressLabel}`}>
@@ -168,13 +168,13 @@ export function ProductHeader({
             {deliveryLabel}
           </Text>
         </View>
-        <View style={[styles.dot, { backgroundColor: colors.onHeaderMuted }]} aria-hidden />
+        <View style={[styles.dot, { backgroundColor: colors.inkMuted }]} aria-hidden />
         <View style={styles.address}>
-          <Text variant="strong" color="onHeaderMuted" numberOfLines={1}>
+          <Text variant="strong" color="inkMuted" numberOfLines={1}>
             {addressLabel}
           </Text>
         </View>
-        <Icon name="chevron" color={colors.onHeaderMuted} size={16} />
+        <Icon name="chevron" color={colors.inkMuted} size={16} />
       </View>
       <View style={styles.row}>
         <View style={styles.back}>
@@ -182,7 +182,7 @@ export function ProductHeader({
         </View>
         <View style={styles.slot}>
           <Animated.View style={[styles.title, { opacity: titleOpacity }]}>
-            <Text variant="label" color="onHeader" numberOfLines={1} role="heading">
+            <Text variant="label" color="ink" numberOfLines={1} role="heading">
               {name}
             </Text>
           </Animated.View>
@@ -196,15 +196,15 @@ export function ProductHeader({
               </NativeText>
             </View>
             <View style={styles.text}>
-              <Text variant="strong" color="onHeader" numberOfLines={1}>
+              <Text variant="strong" color="ink" numberOfLines={1}>
                 {name}
               </Text>
               <View style={styles.price}>
-                <Text variant="caption" color="onHeader">
+                <Text variant="caption" color="ink">
                   {formatRupees(price)}
                 </Text>
                 {mrp !== undefined && mrp > price ? (
-                  <Text variant="caption" color="onHeaderMuted" strike>
+                  <Text variant="caption" color="inkMuted" strike>
                     {formatRupees(mrp)}
                   </Text>
                 ) : null}

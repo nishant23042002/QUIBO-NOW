@@ -2,6 +2,7 @@ import { Animated, ScrollView, StyleSheet, View } from 'react-native';
 import { ShopInfoCard, type ShopInfoCardProps } from './ShopInfoCard';
 import { Text } from './Text';
 import { space } from './tokens';
+import { HeaderGradient } from './HeaderGradient';
 
 export interface ShopsPanelProps {
   /** 0 while shut, 1 while open, moved by the header with the phone's native animation. */
@@ -69,6 +70,7 @@ export function ShopsPanel({
         }}
       >
         <Animated.View style={{ backgroundColor: background }}>
+          <HeaderGradient />
           <View style={styles.panel}>
             <View style={styles.title}>
               <Text variant="strong" color="onHeaderMuted">

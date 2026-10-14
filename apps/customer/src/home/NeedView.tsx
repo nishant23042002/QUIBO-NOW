@@ -42,14 +42,12 @@ const makeStyles = (c: ThemeColors) =>
     page: { flex: 1, backgroundColor: c.bg },
     content: { gap: space[5] },
     gutter: { paddingHorizontal: space[4] },
-    // The page's own colour, as a band under the header: the need's name large, and a line under it.
+    // The page's own colour, as a band under the header with a square lower edge: the need's name large, and a line under it.
     band: {
       gap: space[1],
       paddingHorizontal: space[4],
       paddingTop: space[4],
       paddingBottom: space[5],
-      borderBottomLeftRadius: radius.xl,
-      borderBottomRightRadius: radius.xl,
     },
     chips: { flexDirection: 'row', gap: space[2], paddingHorizontal: space[4] },
     shelves: { gap: space[6] },
@@ -121,10 +119,10 @@ function NeedPage({ need }: { need: Need }) {
       }}
     >
       <View style={[styles.band, { backgroundColor: tintColor(colors, need.tint) }]}>
-        <Text variant="title" color="onHeader" role="heading">
+        <Text variant="title" color="ink" role="heading">
           {t(need.label)}
         </Text>
-        <Text color="onHeaderMuted">{t('needs.band')}</Text>
+        <Text color="inkMuted">{t('needs.band')}</Text>
       </View>
       <View style={[styles.content, { paddingTop: space[4] }]}>
         {online ? null : (

@@ -1,7 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { useStyles, type ThemeColors } from '@/theme';
 import { IconButton } from './IconButton';
+import { HeaderGradient } from './HeaderGradient';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { Text } from './Text';
 import { HEADER_HEIGHT, space } from './tokens';
@@ -22,7 +23,7 @@ const CIRCLE_INSET = 5;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    // The same lilac the Home header wears, with a square lower edge: the screen under it is a list that runs up to it.
+    // The same deep aubergine the Home header wears, with a square lower edge: the screen under it is a list that runs up to it.
     bar: { backgroundColor: c.headerBg },
     row: { minHeight: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center', gap: space[2] },
     back: { marginLeft: -CIRCLE_INSET },
@@ -31,7 +32,7 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /**
- * The header of a category screen: lilac like Home's, with a back button, the category's name with a line under it, and a search
+ * The header of a category screen: aubergine like Home's, with a back button, the category's name with a line under it, and a search
  * button. The colour of the category itself lives in the page under it (the right-hand side), not here.
  */
 export function CategoryHeader({
@@ -43,7 +44,6 @@ export function CategoryHeader({
   onSearch,
 }: CategoryHeaderProps) {
   const insets = useSafeAreaInsets();
-  const { scheme } = useTheme();
   const styles = useStyles(makeStyles);
 
   return (
@@ -58,7 +58,8 @@ export function CategoryHeader({
         },
       ]}
     >
-      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+      <HeaderGradient />
+      <ScreenStatusBar style="light" />
       <View style={styles.row}>
         <View style={styles.back}>
           <IconButton icon="back" label={backLabel} onPress={onBack} ground="header" />

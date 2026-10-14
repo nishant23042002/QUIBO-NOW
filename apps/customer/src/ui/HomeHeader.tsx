@@ -11,6 +11,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
+import { HeaderGradient } from './HeaderGradient';
 import { HeaderIdentity } from './HeaderIdentity';
 import { PromoCarousel, type PromoSlide } from './PromoCarousel';
 import { SearchBar, type SearchHint } from './SearchBar';
@@ -18,7 +19,7 @@ import type { ShopInfoCardProps } from './ShopInfoCard';
 import { ShopsChip } from './ShopsChip';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { ShopsPanel } from './ShopsPanel';
-import { radius, space } from './tokens';
+import { space } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
 
 /**
@@ -26,7 +27,6 @@ import { useReduceMotion } from './useReduceMotion';
  * can never leave a hairline of the page showing between them.
  */
 const SEAM = 1;
-const BLEED = 600;
 
 export interface HomeHeaderProps {
   /** The delivery promise as a clock window, already worded, for example "Delivery today, 4–6 PM". Never minutes. */
@@ -82,15 +82,9 @@ const makeStyles = (c: ThemeColors) =>
     // One dp more than it looks, because the lower part overlaps the upper by 1 dp (see SEAM).
     search: { paddingTop: space[2] + SEAM },
     tabs: { marginTop: space[2] },
-    // The offers sit in the page, under the tabs, in the same colour, and scroll away with it.
-    offers: {
-      paddingTop: space[3] + SEAM,
-      paddingBottom: space[4],
-      borderBottomLeftRadius: radius.lg,
-      borderBottomRightRadius: radius.lg,
-    },
-    // Above the offers, in the same colour, so pulling the page down past the top shows the tint and not the page.
-    bleed: { position: 'absolute', top: -BLEED, left: 0, right: 0, height: BLEED },
+    // The offers sit in the page, on its own colour under the tabs, and scroll away with it. The chips under them bring their own
+    // top room, so the gap above the banner and the gap below it are the same.
+    offers: { paddingTop: space[4] },
     pressed: { opacity: 0.7 },
   });
 
@@ -99,12 +93,12 @@ const makeStyles = (c: ThemeColors) =>
  * button and shops chip) slides up, one for one with the finger, all the way out through the top of the screen,
  * fading as it goes. The search bar and the category tabs rise with it and stop under the status bar, square
  * at the bottom, with the tabs' fine line as their lower edge.
- * The offers belong to the page: they sit under the tabs in the header's colour, with rounded corners, and
+ * The offers belong to the page: they sit under the tabs on the page's own colour, outside the header, and
  * scroll away. Nothing here resizes while scrolling or while the shops row opens: the header only moves, on the phone's own animation
  * thread, so the movement stays smooth however busy the rest of the app is.
  *
- * Everything, including the status bar area, takes the chosen category's tint, and the status bar text
- * follows it: dark on the light theme's soft tint, light on the dark theme's deep one.
+ * Everything, including the status bar area, is the header's deep colour (aubergine in the light theme, plum in the dark one), so
+ * the status bar text is always light.
  */
 export function HomeHeader({
   deliveryLine,
@@ -132,7 +126,7 @@ export function HomeHeader({
   children,
 }: HomeHeaderProps) {
   const insets = useSafeAreaInsets();
-  const { colors, scheme } = useTheme();
+  const { colors } = useTheme();
   const styles = useStyles(makeStyles);
   const [shopsOpen, setShopsOpen] = useState(false);
   const reduceMotion = useReduceMotion();
@@ -247,7 +241,7 @@ export function HomeHeader({
 
   return (
     <View style={styles.frame}>
-      <ScreenStatusBar style={scheme === 'light' ? 'dark' : 'light'} />
+      <ScreenStatusBar style="light" />
       <Animated.ScrollView
         ref={scrollRef}
         // The page starts below the header, whose height is measured a moment after the first draw. Until then it would sit
@@ -270,13 +264,9 @@ export function HomeHeader({
         }}
       >
         <Animated.View style={{ transform: [{ translateY: push }] }}>
-          <Animated.View style={[styles.offers, { backgroundColor: background }]}>
-            <Animated.View
-              pointerEvents="none"
-              style={[styles.bleed, { backgroundColor: background }]}
-            />
+          <View style={styles.offers}>
             <PromoCarousel slides={offers} label={offersLabel} onPress={onOfferPress} />
-          </Animated.View>
+          </View>
           {children}
         </Animated.View>
       </Animated.ScrollView>
@@ -310,7 +300,9 @@ export function HomeHeader({
       <Animated.View
         pointerEvents="none"
         style={[styles.overlay, { top: 0, height: insets.top + SEAM, backgroundColor: background }]}
-      />
+      >
+        <HeaderGradient />
+      </Animated.View>
 
       {/* The upper part: it moves with the page and leaves through the very top of the screen. */}
       <Animated.View
@@ -319,6 +311,7 @@ export function HomeHeader({
         style={[styles.overlay, { top: insets.top, transform: [{ translateY: slideTop }] }]}
       >
         <Animated.View style={{ backgroundColor: background }}>
+          <HeaderGradient />
           <Animated.View
             style={[styles.top, { opacity: fadeOut }]}
             onLayout={(event) => {
@@ -369,6 +362,7 @@ export function HomeHeader({
             setLowerHeight(Math.round(event.nativeEvent.layout.height));
           }}
         >
+          <HeaderGradient />
           <View style={[styles.search, gutter]}>
             <SearchBar placeholder={searchLabel} hint={searchHint} onPress={onSearchPress} />
           </View>
