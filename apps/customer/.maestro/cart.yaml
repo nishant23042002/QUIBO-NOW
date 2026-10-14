@@ -12,7 +12,7 @@ appId: host.exp.exponent
 - openLink: ${APP_URL}
 # A fresh install starts with the first-run steps: a development build lets a tester pass them.
 - tapOn: 'Skip sign-in (testing)'
-- assertVisible: 'Delivering in.*|Arriving.*'
+- assertVisible: 'Estimated delivery|Scheduled delivery'
 
 # Add the milk from Daily essentials: tick it and add it. The row then has its stepper, so one more is a tap on plus.
 - tapOn: 'Morning'

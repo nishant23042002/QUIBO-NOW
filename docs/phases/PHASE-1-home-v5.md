@@ -98,4 +98,18 @@ step for a phone check in Expo Go.
 
 ## Approval
 
-Not yet approved.
+Approved by the owner on 2026-10-14 ("approved"), with the recommendations on the six points above standing.
+
+## Progress
+
+- **Step 0, housekeeping: done.** The plan edits and the plan itself are committed; ADR 0055 is written (Proposed).
+- **Step 1, header and hero: built, waiting for the owner's phone check.**
+  - Header: the estimate leads (a small "Estimated delivery" label, then the range in big type), the language chip sits beside the
+    profile button (it opens Profile until the sheet is built in step 9), and the search bar has a "Schedule a slot" button that
+    opens the schedule page. Categories and Orders wear the same header through `TabHeader`.
+  - Hero: "Right now in Roha" replaces the sliding offers, on the header's colour, with a tall milk tile showing the lowest milk
+    price in town, four small tiles, and a "Meet your shops" strip that opens the shops row. The page slides up over it with
+    rounded corners (16).
+  - Checks: lint, typecheck, test (664 customer tests) and build pass; looked at on the web preview in light and dark, on Home,
+    Categories and Orders. The Maestro assertions on the header line now look for "Estimated delivery" or "Scheduled delivery".
+  - Not yet looked at on a real phone, at 200% text, or in Hindi and Marathi.

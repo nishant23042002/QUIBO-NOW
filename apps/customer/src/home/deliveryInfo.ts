@@ -14,6 +14,8 @@ export interface DeliveryWhen {
   short: string;
   /** Quick delivery, rather than a window the shopper picked. */
   quick: boolean;
+  /** The small line over `short` in the header: "Estimated delivery" for the quick estimate, "Scheduled delivery" for a window. */
+  label: string;
 }
 
 /**
@@ -28,19 +30,26 @@ export function useDeliveryWhenFor(delivery: DraftCart['delivery']): DeliveryWhe
 
   if (current === undefined) {
     const closed = t('cart.quickClosed');
-    return { headline: closed, short: closed, quick: false };
+    return {
+      headline: closed,
+      short: closed,
+      quick: false,
+      label: t('home.header.deliveryLabel'),
+    };
   }
   if (current.kind === 'quick') {
     return {
       headline: t('cart.quickTitle', { from: eta.from, to: eta.to }),
       short: t('cart.quickSub', { from: eta.from, to: eta.to }),
       quick: true,
+      label: t('home.header.estimated'),
     };
   }
   return {
     headline: slotText.arriving(current.slot),
     short: slotText.dayWindow(current.slot),
     quick: false,
+    label: t('home.header.scheduled'),
   };
 }
 

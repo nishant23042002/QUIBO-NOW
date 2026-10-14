@@ -28,6 +28,9 @@ export interface TabHeaderProps extends HeaderIdentityProps {
   /** The search bar's hint: a fixed part ("Search") and example words that type themselves in. */
   searchHint: SearchHint;
   onSearchPress: () => void;
+  /** The "Schedule a slot" button inside the search bar, with its words. */
+  scheduleLabel: string;
+  onSchedulePress: () => void;
   /**
    * A row that sits under the search bar and stays with it, in the place Home keeps its category tabs: for Orders, the filter
    * chips. Leave out when a tab has nothing to put there.
@@ -63,15 +66,21 @@ const makeStyles = (c: ThemeColors) =>
  * the categories or the orders, so repeating them would only push the page down.
  */
 export function TabHeader({
-  deliveryLine,
+  deliveryLabel,
+  deliveryValue,
   address,
   addressCaption,
   profileLabel,
+  languageCode,
+  languageLabel,
+  onLanguagePress,
   onAddressPress,
   onProfilePress,
   searchLabel,
   searchHint,
   onSearchPress,
+  scheduleLabel,
+  onSchedulePress,
   rail,
   bottomSpace = 0,
   onScrollY,
@@ -172,10 +181,14 @@ export function TabHeader({
             }}
           >
             <HeaderIdentity
-              deliveryLine={deliveryLine}
+              deliveryLabel={deliveryLabel}
+              deliveryValue={deliveryValue}
               address={address}
               addressCaption={addressCaption}
               profileLabel={profileLabel}
+              languageCode={languageCode}
+              languageLabel={languageLabel}
+              onLanguagePress={onLanguagePress}
               onAddressPress={onAddressPress}
               onProfilePress={onProfilePress}
             />
@@ -204,7 +217,12 @@ export function TabHeader({
         >
           <HeaderGradient />
           <View style={[styles.search, gutter]}>
-            <SearchBar placeholder={searchLabel} hint={searchHint} onPress={onSearchPress} />
+            <SearchBar
+              placeholder={searchLabel}
+              hint={searchHint}
+              onPress={onSearchPress}
+              slot={{ label: scheduleLabel, onPress: onSchedulePress }}
+            />
           </View>
           {rail !== undefined ? <View style={[styles.rail, gutter]}>{rail}</View> : null}
         </View>

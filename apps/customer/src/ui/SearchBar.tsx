@@ -24,6 +24,11 @@ export interface SearchBarProps {
   /** Give these and the bar is a real text field. */
   value?: string;
   onChangeText?: (text: string) => void;
+  /**
+   * A second button inside the bar, at its right, behind a fine divider: Home puts "Schedule a slot" here, so choosing a window is
+   * one tap from the first screen. Only a button bar (with `onPress`) has one.
+   */
+  slot?: { label: string; onPress: () => void };
 }
 
 /** Compact: the field is 44 dp tall, and its touch area is made up to 48 with a little slop above and below. */
@@ -54,6 +59,25 @@ const makeStyles = (c: ThemeColors) =>
     pressed: { opacity: 0.9, transform: [{ scale: 0.99 }] },
     input: { flex: 1, paddingVertical: space[1], fontSize: fontSize.sm, color: c.ink },
     hint: { flex: 1, minWidth: 0, justifyContent: 'center' },
+    // With a slot, the bar is a row of two buttons: the search itself, a fine divider, and the slot.
+    main: {
+      flex: 1,
+      minWidth: 0,
+      minHeight: BAR_HEIGHT,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[2],
+    },
+    divider: { width: 1, alignSelf: 'stretch', marginVertical: space[2], backgroundColor: c.line },
+    slot: {
+      maxWidth: 128,
+      minHeight: BAR_HEIGHT,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: space[1],
+      paddingLeft: space[2],
+    },
+    slotText: { flexShrink: 1 },
   });
 
 /**
@@ -149,7 +173,14 @@ function TypedHint({ hint }: { hint: SearchHint }) {
  * hairline edge), so it reads on the tinted header in both themes. As a button it can type out example
  * searches, which also teaches people they can type "dudh" or "atta".
  */
-export function SearchBar({ placeholder, onPress, hint, value, onChangeText }: SearchBarProps) {
+export function SearchBar({
+  placeholder,
+  onPress,
+  hint,
+  value,
+  onChangeText,
+  slot,
+}: SearchBarProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
   const icon = <Icon name="search" color={colors.inkMuted} size={20} />;
@@ -171,6 +202,47 @@ export function SearchBar({ placeholder, onPress, hint, value, onChangeText }: S
     );
   }
 
+  const field =
+    hint !== undefined ? (
+      <TypedHint hint={hint} />
+    ) : (
+      <View style={styles.hint}>
+        <Text variant="small" color="inkMuted" numberOfLines={1}>
+          {placeholder}
+        </Text>
+      </View>
+    );
+
+  if (slot !== undefined) {
+    return (
+      <View style={styles.bar}>
+        <Pressable
+          role="button"
+          aria-label={placeholder}
+          onPress={onPress}
+          style={({ pressed }) => [styles.main, pressed && styles.pressed]}
+        >
+          {icon}
+          {field}
+        </Pressable>
+        <View style={styles.divider} aria-hidden />
+        <Pressable
+          role="button"
+          aria-label={slot.label}
+          onPress={slot.onPress}
+          style={({ pressed }) => [styles.slot, pressed && styles.pressed]}
+        >
+          <Icon name="calendar" color={colors.ink} size={20} />
+          <View style={styles.slotText}>
+            <Text variant="caption" numberOfLines={2} maxFontSizeMultiplier={1.2}>
+              {slot.label}
+            </Text>
+          </View>
+        </Pressable>
+      </View>
+    );
+  }
+
   return (
     <Pressable
       role="button"
@@ -180,15 +252,7 @@ export function SearchBar({ placeholder, onPress, hint, value, onChangeText }: S
       style={({ pressed }) => [styles.bar, pressed && styles.pressed]}
     >
       {icon}
-      {hint !== undefined ? (
-        <TypedHint hint={hint} />
-      ) : (
-        <View style={styles.hint}>
-          <Text variant="small" color="inkMuted" numberOfLines={1}>
-            {placeholder}
-          </Text>
-        </View>
-      )}
+      {field}
     </Pressable>
   );
 }

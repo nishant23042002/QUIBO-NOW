@@ -12,7 +12,7 @@ appId: host.exp.exponent
     clearState: true
 - openLink: ${APP_URL}
 - tapOn: 'Skip sign-in (testing)'
-- assertVisible: 'Delivering in.*|Arriving.*'
+- assertVisible: 'Estimated delivery|Scheduled delivery'
 
 # Switch the town to one dark store, then come back.
 - tapOn: 'Profile'

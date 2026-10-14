@@ -10,7 +10,7 @@ appId: host.exp.exponent
     clearState: true
 - openLink: ${APP_URL}
 - tapOn: 'Skip sign-in (testing)'
-- assertVisible: 'Delivering in.*|Arriving.*'
+- assertVisible: 'Estimated delivery|Scheduled delivery'
 
 # From Home's profile button.
 - tapOn: 'Profile'

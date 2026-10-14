@@ -33,7 +33,7 @@ appId: host.exp.exponent
 - inputText: '123456'
 
 # Home, then the address list from the header.
-- assertVisible: 'Delivering in.*|Arriving.*'
+- assertVisible: 'Estimated delivery|Scheduled delivery'
 - tapOn: 'Deliver to.*'
 - assertVisible: 'Delivery address'
 - tapOn: 'Add new address'

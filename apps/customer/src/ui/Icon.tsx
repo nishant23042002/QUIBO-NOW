@@ -92,6 +92,12 @@ const SHAPES = {
     dot(13.4, 14, 0.9),
   ],
   calendar: [path('M5 6.5h14V20H5z'), path('M5 10.5h14'), path('M8.5 4v4M15.5 4v4')],
+  // A globe: the language.
+  globe: [
+    ring(12, 12, 9),
+    path('M3 12h18'),
+    path('M12 3c2.4 2.5 3.6 5.5 3.6 9s-1.2 6.5-3.6 9c-2.4-2.5-3.6-5.5-3.6-9S9.6 5.5 12 3z'),
+  ],
   clock: [ring(12, 12, 9), path('M12 7v5.5l3.5 2')],
   sun: [
     ring(12, 12, 4.2),

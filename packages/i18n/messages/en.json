@@ -10,7 +10,12 @@
     "header": {
       "addressCaption": "Deliver to",
       "profile": "Profile",
-      "shopsOpen": "{count} local shops open now"
+      "shopsOpen": "{count} local shops open now",
+      "estimated": "Estimated delivery",
+      "scheduled": "Scheduled delivery",
+      "deliveryLabel": "Delivery",
+      "language": "Change language",
+      "scheduleSlot": "Schedule a slot"
     },
     "shopsSheet": {
       "title": "Verified local shops in Roha",
@@ -200,6 +205,18 @@
         "title": "Nothing like this right now",
         "body": "Check back soon, or choose All."
       }
+    },
+    "hero": {
+      "title": "Right now in Roha",
+      "milk": "Morning milk",
+      "milkSub": "7–9 AM window",
+      "from": "from",
+      "veg": "Sabzi mandi",
+      "chai": "Chai time",
+      "kirana": "Kirana basics",
+      "fruit": "Fruit basket",
+      "shopsTitle": "Meet your shops",
+      "shopsSub": "{names} and {count} more"
     }
   },
   "brands": {

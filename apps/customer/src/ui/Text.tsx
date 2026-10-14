@@ -30,6 +30,8 @@ const WEIGHTS = {
 
 const variants = {
   title: { fontSize: fontSize['3xl'], role: 'display', leading: 'tight' },
+  /** The one big line of a header: the delivery estimate. Between a title and a heading. */
+  hero: { fontSize: fontSize['2xl'], role: 'display', leading: 'tight' },
   heading: { fontSize: fontSize.xl, role: 'display', leading: 'tight' },
   subheading: { fontSize: fontSize.lg, role: 'display', leading: 'tight' },
   lead: { fontSize: fontSize.lg, role: 'regular', leading: 'relaxed' },

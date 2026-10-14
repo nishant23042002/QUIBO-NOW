@@ -36,8 +36,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [store] = useState(createQuantityStore);
   const latest = useRef(cart);
   const when = useDeliveryWhenFor(cart.delivery);
-  const { headline, short, quick } = when;
-  const sharedWhen = useMemo(() => ({ headline, short, quick }), [headline, short, quick]);
+  const { headline, short, quick, label } = when;
+  const sharedWhen = useMemo(
+    () => ({ headline, short, quick, label }),
+    [headline, short, quick, label],
+  );
 
   // The numbers the cards read follow the cart as soon as it has settled, in the same frame, before anything is drawn.
   useLayoutEffect(() => {

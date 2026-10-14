@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
 import {
   Animated,
   Easing,
@@ -13,13 +13,12 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
 import { HeaderGradient } from './HeaderGradient';
 import { HeaderIdentity } from './HeaderIdentity';
-import { PromoCarousel, type PromoSlide } from './PromoCarousel';
 import { SearchBar, type SearchHint } from './SearchBar';
 import type { ShopInfoCardProps } from './ShopInfoCard';
 import { ShopsChip } from './ShopsChip';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { ShopsPanel } from './ShopsPanel';
-import { space } from './tokens';
+import { radius, space } from './tokens';
 import { useReduceMotion } from './useReduceMotion';
 
 /**
@@ -28,9 +27,24 @@ import { useReduceMotion } from './useReduceMotion';
  */
 const SEAM = 1;
 
+/** What the page's top block (the mosaic) can ask of the header it sits in. */
+export interface HeroControls {
+  /** Opens the row of shops under the shops chip and brings the page back to its top. */
+  openShops: () => void;
+}
+
 export interface HomeHeaderProps {
-  /** The delivery promise as a clock window, already worded, for example "Delivery today, 4–6 PM". Never minutes. */
-  deliveryLine: string;
+  /** The small line over the estimate, for example "Estimated delivery". */
+  deliveryLabel: string;
+  /** The estimate in big type, already worded: a range ("15–20 mins") or a window ("Today, 5–6 PM"). Never a guarantee. */
+  deliveryValue: string;
+  /** The language in use, short, and what a screen reader says for the chip that changes it. */
+  languageCode: string;
+  languageLabel: string;
+  onLanguagePress: () => void;
+  /** The "Schedule a slot" button inside the search bar, with its words. */
+  scheduleLabel: string;
+  onSchedulePress: () => void;
   /** Where the order is going, for example "Roha, Raigad, Maharashtra". */
   address: string;
   /** Names the address row for a screen reader, for example "Deliver to". */
@@ -53,11 +67,11 @@ export interface HomeHeaderProps {
   /** Names the row of tabs for a screen reader, for example "Categories". */
   categoriesLabel: string;
   onCategoryChange: (key: string) => void;
-  /** The offers that slide under the tabs. */
-  offers: readonly PromoSlide[];
-  /** Names the row of offers for a screen reader, for example "Offers". */
-  offersLabel: string;
-  onOfferPress: (id: string) => void;
+  /**
+   * The top block of the page, drawn on the header's own colour straight under the tabs, so the header and it are one surface. It
+   * scrolls away with the page. Home puts its "Right now in Roha" mosaic here.
+   */
+  hero: (controls: HeroControls) => ReactNode;
   profileLabel: string;
   onSearchPress: () => void;
   onAddressPress: () => void;
@@ -82,9 +96,17 @@ const makeStyles = (c: ThemeColors) =>
     // One dp more than it looks, because the lower part overlaps the upper by 1 dp (see SEAM).
     search: { paddingTop: space[2] + SEAM },
     tabs: { marginTop: space[2] },
-    // The offers sit in the page, on its own colour under the tabs, and scroll away with it. The chips under them bring their own
-    // top room, so the gap above the banner and the gap below it are the same.
-    offers: { paddingTop: space[4] },
+    // The hero is the header's own colour carried down under the tabs, so the header and the first block are one surface. It
+    // scrolls away with the page.
+    hero: { backgroundColor: c.headerBg, paddingTop: space[3], paddingBottom: space[8] },
+    // The page slides up over the hero's lower edge with rounded top corners.
+    sheet: {
+      marginTop: -space[5],
+      paddingTop: space[1],
+      borderTopLeftRadius: radius.xl,
+      borderTopRightRadius: radius.xl,
+      backgroundColor: c.bg,
+    },
     pressed: { opacity: 0.7 },
   });
 
@@ -93,15 +115,21 @@ const makeStyles = (c: ThemeColors) =>
  * button and shops chip) slides up, one for one with the finger, all the way out through the top of the screen,
  * fading as it goes. The search bar and the category tabs rise with it and stop under the status bar, square
  * at the bottom, with the tabs' fine line as their lower edge.
- * The offers belong to the page: they sit under the tabs on the page's own colour, outside the header, and
- * scroll away. Nothing here resizes while scrolling or while the shops row opens: the header only moves, on the phone's own animation
+ * The hero (Home's mosaic) is the header's own colour carried down under the tabs, so the two are one surface, and it scrolls
+ * away with the page; the page then slides up over its lower edge with rounded top corners. Nothing here resizes while scrolling or while the shops row opens: the header only moves, on the phone's own animation
  * thread, so the movement stays smooth however busy the rest of the app is.
  *
  * Everything, including the status bar area, is the header's deep colour (aubergine in the light theme, plum in the dark one), so
  * the status bar text is always light.
  */
 export function HomeHeader({
-  deliveryLine,
+  deliveryLabel,
+  deliveryValue,
+  languageCode,
+  languageLabel,
+  onLanguagePress,
+  scheduleLabel,
+  onSchedulePress,
   address,
   addressCaption,
   shops,
@@ -114,9 +142,7 @@ export function HomeHeader({
   selectedCategory,
   categoriesLabel,
   onCategoryChange,
-  offers,
-  offersLabel,
-  onOfferPress,
+  hero,
   profileLabel,
   onSearchPress,
   onAddressPress,
@@ -144,6 +170,15 @@ export function HomeHeader({
   // The shops row: how tall it is (measured once), and how open it is (0 to 1, driven natively).
   const [panelHeight, setPanelHeight] = useState(0);
   const [panelAt] = useState(() => new Animated.Value(0));
+  // The mosaic's "Meet your shops" strip opens the row and brings the page back to its top, where the row is.
+  const [toTop, setToTop] = useState(0);
+  const openShops = useCallback(() => {
+    setShopsOpen(true);
+    setToTop((count) => count + 1);
+  }, []);
+  useEffect(() => {
+    if (toTop > 0) scrollRef.current?.scrollTo({ y: 0, animated: true });
+  }, [toTop]);
 
   // Opening and closing the shops row is one number moving on the phone's animation thread. Nothing is
   // measured or laid out while it runs.
@@ -264,10 +299,11 @@ export function HomeHeader({
         }}
       >
         <Animated.View style={{ transform: [{ translateY: push }] }}>
-          <View style={styles.offers}>
-            <PromoCarousel slides={offers} label={offersLabel} onPress={onOfferPress} />
+          <View style={styles.hero}>
+            <HeaderGradient />
+            {hero({ openShops })}
           </View>
-          {children}
+          <View style={styles.sheet}>{children}</View>
         </Animated.View>
       </Animated.ScrollView>
 
@@ -319,10 +355,14 @@ export function HomeHeader({
             }}
           >
             <HeaderIdentity
-              deliveryLine={deliveryLine}
+              deliveryLabel={deliveryLabel}
+              deliveryValue={deliveryValue}
               address={address}
               addressCaption={addressCaption}
               profileLabel={profileLabel}
+              languageCode={languageCode}
+              languageLabel={languageLabel}
+              onLanguagePress={onLanguagePress}
               onAddressPress={onAddressPress}
               onProfilePress={onProfilePress}
             />
@@ -364,7 +404,12 @@ export function HomeHeader({
         >
           <HeaderGradient />
           <View style={[styles.search, gutter]}>
-            <SearchBar placeholder={searchLabel} hint={searchHint} onPress={onSearchPress} />
+            <SearchBar
+              placeholder={searchLabel}
+              hint={searchHint}
+              onPress={onSearchPress}
+              slot={{ label: scheduleLabel, onPress: onSchedulePress }}
+            />
           </View>
           <View style={styles.tabs}>
             <CategoryTabs
