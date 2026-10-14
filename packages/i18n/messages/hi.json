@@ -230,10 +230,20 @@
       "upiSub": "चेकआउट पर ऑनलाइन"
     },
     "live": {
-      "kicker": "आपका ऑर्डर",
-      "shops": "{names} से",
       "track": "देखें",
-      "etaRange": "लगभग {from}⁠–⁠{to} मिनट में पहुँचेगा"
+      "etaRange": "लगभग {from}⁠–⁠{to} मिनट में पहुँचेगा",
+      "kickerPlaced": "ऑर्डर दिया गया",
+      "kickerPacking": "पैक हो रहा है",
+      "kickerReady": "पैक हो गया, रास्ते में है",
+      "kickerWay": "ऑर्डर रास्ते में है",
+      "stepAccepted": "मंज़ूर",
+      "stepReady": "पैक हुआ",
+      "stepWay": "रास्ते में",
+      "stepDelivered": "पहुँचा",
+      "packing": "{names} पैक कर रहे हैं।",
+      "packed": "{names} ने पैक किया। {rider} एक थैला ला रहे हैं, जिस पर उनके नाम हैं।",
+      "two": "{a} और {b}",
+      "many": "{first} और {count} और"
     },
     "closed": {
       "title": "त्वरित डिलीवरी अभी बंद है",

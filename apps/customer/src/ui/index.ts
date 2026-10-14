@@ -18,6 +18,7 @@ export { ComingSoon } from './ComingSoon';
 export { Chip, type ChipProps } from './Chip';
 export { HeaderGradient } from './HeaderGradient';
 export { HomeHeader, type HeroControls, type HomeHeaderProps } from './HomeHeader';
+export { GlassPanel, type GlassPanelProps } from './GlassPanel';
 export { LanguageChip, type LanguageChipProps } from './LanguageChip';
 export { Icon, type IconName } from './Icon';
 export { IconButton, type IconButtonProps } from './IconButton';

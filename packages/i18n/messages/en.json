@@ -230,10 +230,20 @@
       "upiSub": "Online, at checkout"
     },
     "live": {
-      "kicker": "Your order",
-      "shops": "From {names}",
       "track": "Track",
-      "etaRange": "Arriving in about {from}⁠–⁠{to} mins"
+      "etaRange": "Arriving in about {from}⁠–⁠{to} mins",
+      "kickerPlaced": "Order placed",
+      "kickerPacking": "Being packed",
+      "kickerReady": "Packed, on its way to you",
+      "kickerWay": "Order on the way",
+      "stepAccepted": "Accepted",
+      "stepReady": "Packed",
+      "stepWay": "On the way",
+      "stepDelivered": "Delivered",
+      "packing": "Being packed by {names}.",
+      "packed": "Packed by {names}. {rider} is bringing one bag with their names on it.",
+      "two": "{a} and {b}",
+      "many": "{first} and {count} more"
     },
     "closed": {
       "title": "Quick delivery is closed for now",

@@ -122,5 +122,12 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
     keeps and goes when the last one is over.
   - Closed banner while quick delivery is closed (the town's quick hours): says so, names the window the order is set for, and puts
     the schedule page one tap away. It reads `quickClosed` and `hasWindow`, added to the shared delivery words.
+  - **Follow-up, 2026-10-14 (owner's phone check).** The live card was rebuilt to the mock: a state kicker, the arrival range,
+    four named steps (Accepted, Packed, On the way, Delivered), the shops packing and, once packed, who brings it, and Track. It is
+    drawn on a new `GlassPanel` (a white sheen, an accent glow, a bright edge; no blur library, so no new dependency). A true
+    backdrop blur would need `expo-blur` and shows nothing on a flat canvas, so it was not added.
+  - **Bug fixed: a second order could not be placed without reloading.** Checkout stays mounted in the tab group, so after an
+    order its "placed" step and its order key carried over: "Place order" did nothing and a second order would have been taken for
+    the first. The page now resets the flow, the payment choice and the key once it is left after an order. A test covers the flow.
   - Checks: lint, typecheck, test (670 customer tests) and build pass. Looked at on the web preview in light: the strip, and the
     live card after placing a real mock order. The closed banner depends on the clock and has not been seen on screen.
