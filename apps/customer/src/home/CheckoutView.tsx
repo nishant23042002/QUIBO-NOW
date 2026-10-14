@@ -1,5 +1,5 @@
 import { formatRupees, type PaymentMethod } from '@quibo/contracts';
-import { useRouter } from 'expo-router';
+import { useIsFocused, useRouter } from 'expo-router';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -174,8 +174,17 @@ function CheckoutPage() {
   const [chosen, setChosen] = useState<PaymentMethod | null>(null);
   const [flow, dispatch] = useReducer(nextFlow, IDLE);
   // Made when checkout opens: asking to place the same order twice (a double tap, a retry) gives back the one order.
-  const [orderKey] = useState(newUuid);
+  const [orderKey, setOrderKey] = useState(newUuid);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+  // Checkout lives in the tab group, so it stays mounted after an order is placed. Once the shopper has left it, the next visit is
+  // a new checkout: the flow starts again, the payment choice is forgotten and the next order gets its own key. Without this the
+  // "placed" step and the old key stayed, "Place order" did nothing, and a second order would have been mistaken for the first.
+  const focused = useIsFocused();
+  if (!focused && flow.step === 'placed') {
+    dispatch({ type: 'reset' });
+    setChosen(null);
+    setOrderKey(newUuid());
+  }
   const [dockHeight, setDockHeight] = useState(CHECKOUT_DOCK);
   const room = insets.bottom + BOTTOM_BAR_HEIGHT;
   const { bill } = cart;

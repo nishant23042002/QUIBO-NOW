@@ -65,6 +65,18 @@ describe('out-of-order events', () => {
   });
 });
 
+describe('starting again after an order', () => {
+  it('goes back to the beginning from a placed order, so the next order can be placed', () => {
+    const placed = run([{ type: 'place', method: 'cod' }, { type: 'saved' }]);
+    expect(placed.step).toBe('placed');
+    expect(isBusy(placed)).toBe(true);
+    const again = nextFlow(placed, { type: 'reset' });
+    expect(again).toBe(IDLE);
+    expect(isBusy(again)).toBe(false);
+    expect(nextFlow(again, { type: 'place', method: 'cod' }).step).toBe('placing');
+  });
+});
+
 describe('isBusy', () => {
   it('is true while a payment or an order is being worked on', () => {
     expect(isBusy(IDLE)).toBe(false);

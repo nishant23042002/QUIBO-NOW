@@ -23,7 +23,9 @@ export type FlowEvent =
   /** The order has been saved. */
   | { type: 'saved' }
   /** The shopper closed the sheet. */
-  | { type: 'close' };
+  | { type: 'close' }
+  /** The checkout page is left after an order: the next visit starts from the beginning. */
+  | { type: 'reset' };
 
 /** The next state. A press that does not apply in the current step (a second tap, say) changes nothing. */
 export function nextFlow(state: FlowState, event: FlowEvent): FlowState {
@@ -48,6 +50,8 @@ export function nextFlow(state: FlowState, event: FlowEvent): FlowState {
       return state.step === 'placing' ? { ...state, step: 'placed' } : state;
     case 'close':
       return state.step === 'sheet' || state.step === 'failed' ? IDLE : state;
+    case 'reset':
+      return IDLE;
   }
 }
 
