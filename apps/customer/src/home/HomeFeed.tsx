@@ -9,6 +9,7 @@ import { DailyEssentials } from './DailyEssentials';
 import { IntentChips } from './IntentChips';
 import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
+import { useHomeSectionShown } from './homeSections';
 import { Featured } from './Featured';
 import { QuieterNote } from './QuieterNote';
 import { ShopByBrand } from './ShopByBrand';
@@ -74,6 +75,7 @@ export const HomeFeed = memo(function HomeFeed({
 }: HomeFeedProps) {
   const { t } = useLanguage();
   const { colors } = useTheme();
+  const showSection = useHomeSectionShown();
   const { width: screen } = useWindowDimensions();
   const items = useHomeItems();
   const listing = useHomeListing();
@@ -175,9 +177,9 @@ export const HomeFeed = memo(function HomeFeed({
       <View style={styles.rails}>
         <ShopByCategory />
         <DailyEssentials />
-        <ShopForNeed />
-        <SmallPrices />
-        <Featured onCategory={onSeeAll} />
+        {showSection('need') ? <ShopForNeed /> : null}
+        {showSection('small') ? <SmallPrices /> : null}
+        {showSection('featured') ? <Featured onCategory={onSeeAll} /> : null}
         <ShopByBrand />
         {HOME_RAIL_ORDER.map((key) => {
           const row = listing.filter((item) => item.category === key);

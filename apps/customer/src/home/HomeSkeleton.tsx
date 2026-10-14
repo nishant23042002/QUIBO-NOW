@@ -16,6 +16,7 @@ import {
   space,
 } from '@/ui';
 import { DailyEssentialsSkeleton } from './DailyEssentials';
+import { useHomeSectionShown } from './homeSections';
 import { FEATURED_CARD_WIDTH, useFeaturedCardHeight } from './Featured';
 import { FEATURED } from './featuredPicks';
 import { liveNeeds } from './needs';
@@ -84,6 +85,7 @@ export function HomeSkeleton({
   cards?: number;
 }) {
   const { t, locale } = useLanguage();
+  const showSection = useHomeSectionShown();
   const { width: screen } = useWindowDimensions();
   const tiles = useCategoryTiles();
   const needs = liveNeeds(useHomeItems());
@@ -144,7 +146,7 @@ export function HomeSkeleton({
 
         <DailyEssentialsSkeleton />
 
-        {needs.length > 0 ? (
+        {showSection('need') && needs.length > 0 ? (
           <View style={styles.section}>
             <View style={styles.pad}>
               <RowTitleSkeleton title={t('home.shopForNeed.title')} />
@@ -162,35 +164,39 @@ export function HomeSkeleton({
           </View>
         ) : null}
 
-        <View style={styles.section}>
-          <View style={styles.pad}>
-            <RowTitleSkeleton title={t('home.smallPrices.title')} />
+        {showSection('small') ? (
+          <View style={styles.section}>
+            <View style={styles.pad}>
+              <RowTitleSkeleton title={t('home.smallPrices.title')} />
+            </View>
+            <View style={styles.pad}>
+              <Skeleton height={TABS_HEIGHT} rounded={radius.md} />
+            </View>
+            <StaticRow>
+              {Array.from({ length: Math.min(RAIL_CARDS, cheap.length) }, (_, card) => (
+                <PriceTileSkeleton key={card} reserveNote={anyCardNote(cheap)} />
+              ))}
+            </StaticRow>
           </View>
-          <View style={styles.pad}>
-            <Skeleton height={TABS_HEIGHT} rounded={radius.md} />
-          </View>
-          <StaticRow>
-            {Array.from({ length: Math.min(RAIL_CARDS, cheap.length) }, (_, card) => (
-              <PriceTileSkeleton key={card} reserveNote={anyCardNote(cheap)} />
-            ))}
-          </StaticRow>
-        </View>
+        ) : null}
 
-        <View style={styles.section}>
-          <View style={styles.pad}>
-            <RowTitleSkeleton title={t('home.featured.title')} />
+        {showSection('featured') ? (
+          <View style={styles.section}>
+            <View style={styles.pad}>
+              <RowTitleSkeleton title={t('home.featured.title')} />
+            </View>
+            <StaticRow>
+              {FEATURED.map((pick) => (
+                <Skeleton
+                  key={pick.title}
+                  width={FEATURED_CARD_WIDTH}
+                  height={featuredHeight}
+                  rounded={radius.md}
+                />
+              ))}
+            </StaticRow>
           </View>
-          <StaticRow>
-            {FEATURED.map((pick) => (
-              <Skeleton
-                key={pick.title}
-                width={FEATURED_CARD_WIDTH}
-                height={featuredHeight}
-                rounded={radius.md}
-              />
-            ))}
-          </StaticRow>
-        </View>
+        ) : null}
 
         <View style={styles.section}>
           <View style={styles.pad}>

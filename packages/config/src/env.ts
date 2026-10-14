@@ -54,6 +54,8 @@ export function loadEnv<S extends z.ZodType>(
  */
 export const publicEnvSchema = z.object({
   EXPO_PUBLIC_API_URL: z.url().optional(),
+  /** "true" leaves a few sections off Home for a customer who has not ordered yet (ADR 0052). Anything else shows them all. */
+  EXPO_PUBLIC_HOME_FIRST_RUN_LEAN: z.enum(['true', 'false']).optional(),
 });
 
 /** Variables that must stay on the server. DATABASE_URL and REDIS_URL are used from Phase 2. */
