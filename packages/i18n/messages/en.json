@@ -196,15 +196,9 @@
       "chaiBody": "Tea, biscuits and more"
     },
     "quieterNote": "Quieter times cost less. Pick a window and see the saving.",
-    "intents": {
-      "label": "Quick filters",
-      "quick": "Quick",
-      "offers": "Offers",
-      "veg": "Veg",
-      "empty": {
-        "title": "Nothing like this right now",
-        "body": "Check back soon, or choose All."
-      }
+    "categoryEmpty": {
+      "title": "Nothing here right now",
+      "body": "Check back soon, or choose All."
     },
     "hero": {
       "title": "Right now in Roha",

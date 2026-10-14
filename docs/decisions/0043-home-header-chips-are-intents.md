@@ -1,8 +1,8 @@
 # 0043. The Home header's chips are intents, and the header stays lilac
 
-- **Status:** Accepted (Phase 1). Replaces the category tabs of the Home header described in ADR 0028 and the per-category header colour.
-  Where the chips sit is superseded by [ADR 0044](0044-home-is-organised-by-departments-and-needs.md): they are now a row under the
-  banner, and the header rail shows departments. Points 1 (what the chips are) and 2 (the header stays lilac) still stand.
+- **Status:** Superseded by [ADR 0056](0056-home-quick-filters-removed.md): the quick-filter row was removed from Home on 2026-10-14.
+  It replaced the category tabs of the Home header described in ADR 0028 and the per-category header colour. Where the chips sat was
+  changed by [ADR 0044](0044-home-is-organised-by-departments-and-needs.md) (a row under the banner, the header rail showing departments).
 - **Date:** 2026-10-13
 - **Source:** the owner, once categories had their own screens (ADR 0041)
 

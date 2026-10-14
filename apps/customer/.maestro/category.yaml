@@ -1,4 +1,4 @@
-# The category flow: use a chip under Home's banner and a category in its header rail, open a category from the Categories tab, move between its kinds, sort it and filter it.
+# The category flow: use a category in Home's header rail, open a category from the Categories tab, move between its kinds, sort it and filter it.
 #
 # Run it against the app open in Expo Go, on a fresh install so the language is English:
 #   maestro test apps/customer/.maestro/category.yaml -e APP_URL=exp://<your computer's address>:8081
@@ -13,12 +13,6 @@ appId: host.exp.exponent
 # A fresh install starts with the first-run steps: a development build lets a tester pass them.
 - tapOn: 'Skip sign-in (testing)'
 - assertVisible: 'Estimated delivery|Scheduled delivery'
-
-# A chip under Home's banner shows what suits it, and "All" brings the usual page back.
-- tapOn: 'Offers'
-- assertVisible: 'Amul Toned milk.*'
-- tapOn: 'All'
-- assertVisible: 'Shop by category'
 
 # A category in the header rail shows its own page, and "All" in the rail brings the usual page back.
 - tapOn: 'Dairy'

@@ -2,13 +2,20 @@ import { memo, useEffect, useState } from 'react';
 import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { BrandFooter, Icon, ProductRail, RowTitle, SeeAllButton, Text, space } from '@/ui';
+import {
+  AccentWash,
+  BrandFooter,
+  Icon,
+  ProductRail,
+  RowTitle,
+  SeeAllButton,
+  Text,
+  space,
+} from '@/ui';
 import { itemsInCategory, type Category } from './catalogueTree';
-import { matchesIntent, type IntentId } from './homeIntents';
 import { Bestsellers } from './Bestsellers';
 import { DailyEssentials } from './DailyEssentials';
 import { FreshToday } from './FreshToday';
-import { IntentChips } from './IntentChips';
 import { PaymentStrip } from './PaymentStrip';
 import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
@@ -29,18 +36,19 @@ import {
   type ItemCategory,
 } from './items';
 
-/** How long the loading skeleton shows after a chip or a category is chosen. */
+/** How long the loading skeleton shows after a category is chosen. */
 const LOAD_MS = 200;
 
 const styles = StyleSheet.create({
   feed: { gap: space[5], paddingVertical: space[5] },
   // The category rows, one under another with room between them: no divider line.
-  rails: { gap: space[6], paddingVertical: space[5] },
+  rails: { gap: space[6], paddingBottom: space[5] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
-  // The strip sits under the mosaic, above the chips.
-  strip: { paddingTop: space[3] },
-  // The chips sit under the banner, above whichever page is showing.
-  chips: { paddingTop: space[4] },
+  // The opening of the page: the payment strip and Fresh today on one pistachio wash, strongest under the mosaic and gone by the end
+  // of the module, so the two read as one section.
+  opening: { paddingTop: space[3], paddingBottom: space[6] },
+  // Room between the opening and the rows after it, as the rows have between each other.
+  after: { paddingTop: space[2] },
   head: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space[4] },
   empty: {
     alignItems: 'center',
@@ -51,9 +59,6 @@ const styles = StyleSheet.create({
 });
 
 interface HomeFeedProps {
-  /** The chosen chip. "all" is the page as it is; any other narrows it to the items that suit it, in a grid. */
-  intent: IntentId;
-  onIntentChange: (intent: IntentId) => void;
   /** The category chosen in the header rail, or undefined for "All". */
   category: Category | undefined;
   onSeeAll: (category: ItemCategory) => void;
@@ -62,18 +67,15 @@ interface HomeFeedProps {
 }
 
 /**
- * The items on Home, under a row of chips (All, Quick, Offers, Under ₹50, Veg).
+ * The items on Home.
  *
- * - "All" in the rail with the chip All: the usual page, a swipeable row for each category with a "See all" button.
- * - "All" in the rail with another chip: the items that suit it, from every shelf, one of each kind, in a two-column grid.
- * - A category chosen in the rail: its items, one of each kind, in the same grid, narrowed by the chip when one is chosen, with a
- *   "See all" button to the category's own screen (every brand, filters and sort).
+ * - "All" in the rail: the usual page, the sections and a swipeable row for each category with a "See all" button.
+ * - A category chosen in the rail: its items, one of each kind, in a two-column grid, with a "See all" button to the category's own
+ *   screen (every brand, filters and sort).
  *
  * ADD turns into a stepper in place. The quantities live in the cart, which the floating cart bar reads.
  */
 export const HomeFeed = memo(function HomeFeed({
-  intent,
-  onIntentChange,
   category,
   onSeeAll,
   onSeeCategory,
@@ -84,8 +86,8 @@ export const HomeFeed = memo(function HomeFeed({
   const { width: screen } = useWindowDimensions();
   const items = useHomeItems();
   const listing = useHomeListing();
-  // Choosing another chip or category shows the loading skeleton for a moment first, as real data would arrive.
-  const view = `${category?.id ?? 'all'}:${intent}`;
+  // Choosing another category shows the loading skeleton for a moment first, as real data would arrive.
+  const view = category?.id ?? 'all';
   const [shown, setShown] = useState(view);
   useEffect(() => {
     if (shown === view) return undefined;
@@ -106,31 +108,20 @@ export const HomeFeed = memo(function HomeFeed({
       {...(reserveNote !== undefined ? { reserveNote } : {})}
     />
   );
-  const grid = category !== undefined || intent !== 'all';
-  // The items that suit the chip, one of each kind: the first listed of a kind that suits it, so an offer shows the brand that has it.
-  // A category narrows the pool to its own shelves first.
-  const pool = category === undefined ? items : itemsInCategory(items, category);
-  const matching = grid ? oneOfEachKind(pool.filter((item) => matchesIntent(item, intent))) : [];
+  const grid = category !== undefined;
+  // A category's items, one of each kind: the first listed of a kind, so a kind shows the brand that is listed first.
+  const matching = category === undefined ? [] : oneOfEachKind(itemsInCategory(items, category));
   const title = category === undefined ? undefined : t(category.label);
-
-  // The payment and trust strip belongs to the usual page, not to a category's or a filter's grid.
-  const strip = grid ? null : (
-    <View style={styles.strip}>
-      <PaymentStrip />
-    </View>
-  );
-
-  const chips = (
-    <View style={styles.chips}>
-      <IntentChips selected={intent} onSelect={onIntentChange} label={t('home.intents.label')} />
-    </View>
-  );
 
   if (loading) {
     return (
       <View>
-        {strip}
-        {chips}
+        {grid ? null : (
+          <View style={styles.opening}>
+            <AccentWash />
+            <PaymentStrip />
+          </View>
+        )}
         <HomeSkeleton
           label={t('common.loading')}
           grid={grid}
@@ -146,23 +137,19 @@ export const HomeFeed = memo(function HomeFeed({
     const gridWidth = gridCardWidth(screen);
     if (matching.length === 0) {
       return (
-        <View>
-          {chips}
-          <View style={styles.empty}>
-            <Icon name="search" color={colors.inkMuted} size={40} />
-            <Text variant="heading" align="center">
-              {t('home.intents.empty.title')}
-            </Text>
-            <Text color="inkMuted" align="center">
-              {t('home.intents.empty.body')}
-            </Text>
-          </View>
+        <View style={styles.empty}>
+          <Icon name="search" color={colors.inkMuted} size={40} />
+          <Text variant="heading" align="center">
+            {t('home.categoryEmpty.title')}
+          </Text>
+          <Text color="inkMuted" align="center">
+            {t('home.categoryEmpty.body')}
+          </Text>
         </View>
       );
     }
     return (
       <View>
-        {chips}
         <View style={styles.feed}>
           {title !== undefined ? (
             <View style={styles.head}>
@@ -186,10 +173,12 @@ export const HomeFeed = memo(function HomeFeed({
 
   return (
     <View>
-      {strip}
-      {chips}
-      <View style={styles.rails}>
+      <View style={styles.opening}>
+        <AccentWash />
+        <PaymentStrip />
         <FreshToday onSeeAll={onSeeAll} />
+      </View>
+      <View style={[styles.rails, styles.after]}>
         <Bestsellers onCategory={onSeeCategory} />
         <ShopByCategory />
         <DailyEssentials />

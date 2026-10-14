@@ -11,11 +11,6 @@ export interface ChipProps {
   /** Without a handler the chip is a plain label. */
   onPress?: () => void;
   icon?: IconName;
-  /**
-   * `outline` (the usual): the chosen chip is lilac with a dark outline. `solid`: the chosen chip is filled with the action colour,
-   * and the others sit on the surface with a hairline, with squarer corners; used for the quick filters under Home's banner.
-   */
-  tone?: 'outline' | 'solid';
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -32,33 +27,12 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },
-    // The solid tone is a button you can see: a little taller, with a hard edge under it (the same stamped look as the price badge)
-    // that pistachio-lines the chosen one.
-    solid: {
-      minHeight: 40,
-      borderWidth: 1,
-      borderBottomWidth: 3,
-      borderColor: c.line,
-      borderBottomColor: c.ctl,
-    },
-    solidSelected: {
-      borderColor: c.action,
-      borderBottomColor: c.accent,
-      backgroundColor: c.action,
-    },
     disabled: { opacity: 0.5 },
     pressed: { opacity: 0.8 },
   });
 
 /** A small, square-cornered button for filters and tabs. It is 36 dp tall and has a 48 dp touch area. */
-export function Chip({
-  label,
-  selected = false,
-  disabled = false,
-  onPress,
-  icon,
-  tone = 'outline',
-}: ChipProps) {
+export function Chip({ label, selected = false, disabled = false, onPress, icon }: ChipProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
 
@@ -72,22 +46,13 @@ export function Chip({
       hitSlop={6}
       style={({ pressed }) => [
         styles.chip,
-        tone === 'solid' && styles.solid,
-        selected && (tone === 'solid' ? styles.solidSelected : styles.selected),
+        selected && styles.selected,
         disabled && styles.disabled,
         pressed && styles.pressed,
       ]}
     >
-      {icon !== undefined ? (
-        <Icon
-          name={icon}
-          color={tone === 'solid' && selected ? colors.onAction : colors.ink}
-          size={tone === 'solid' ? 16 : 14}
-        />
-      ) : null}
-      <Text variant="strong" color={tone === 'solid' && selected ? 'onAction' : 'ink'}>
-        {label}
-      </Text>
+      {icon !== undefined ? <Icon name={icon} color={colors.ink} size={14} /> : null}
+      <Text variant="strong">{label}</Text>
     </Pressable>
   );
 }

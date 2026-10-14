@@ -441,15 +441,11 @@ Made by `node scripts/language-review.mjs`. Run it again after the wording chang
 | `catalogue.tags.tomorrow`         | Tomorrow                                             | कल                                     | उद्या                                |                 |
 | `catalogue.tags.soon`             | Soon                                                 | जल्द                                   | लवकरच                                |                 |
 
-## The chips on Home's header
+## A category's page on Home, when it is empty
 
 | Key                        | English                         | Hindi (draft)                       | Marathi (draft)                       | OK or change to |
 | -------------------------- | ------------------------------- | ----------------------------------- | ------------------------------------- | --------------- |
-| `home.intents.label`       | Quick filters                   | तुरंत विकल्प                        | झटपट पर्याय                           |                 |
-| `home.intents.quick`       | Quick                           | जल्दी                               | झटपट                                  |                 |
-| `home.intents.offers`      | Offers                          | ऑफ़र                                | ऑफर                                   |                 |
-| `home.intents.veg`         | Veg                             | शाकाहारी                            | शाकाहारी                              |                 |
-| `home.intents.empty.title` | Nothing like this right now     | अभी ऐसी कोई चीज़ नहीं है            | सध्या असे काही नाही                   |                 |
-| `home.intents.empty.body`  | Check back soon, or choose All. | थोड़ी देर बाद देखें या "सभी" चुनें। | थोड्या वेळाने पहा किंवा "सर्व" निवडा. |                 |
+| `home.categoryEmpty.title` | Nothing here right now          | अभी यहाँ कुछ नहीं है                | सध्या इथे काही नाही                   |                 |
+| `home.categoryEmpty.body`  | Check back soon, or choose All. | थोड़ी देर बाद देखें या "सभी" चुनें। | थोड्या वेळाने पहा किंवा "सर्व" निवडा. |                 |
 
-339 lines in all.
+335 lines in all.

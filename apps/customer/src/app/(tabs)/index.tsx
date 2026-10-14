@@ -11,7 +11,6 @@ import { ClosedBanner } from '@/home/ClosedBanner';
 import { HeroMosaic } from '@/home/HeroMosaic';
 import { LiveOrderCard } from '@/home/LiveOrderCard';
 import { HomeFeed } from '@/home/HomeFeed';
-import type { IntentId } from '@/home/homeIntents';
 import type { ItemCategory } from '@/home/items';
 import type { NeedId } from '@/home/needs';
 import { useSampleShops } from '@/home/sampleShops';
@@ -25,7 +24,7 @@ const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
 
 // Home: the header (the delivery estimate, the shops row it opens, the search bar with its Schedule slot and the categories rail),
-// the "Right now in Roha" mosaic on the same surface, the chips under it, and the item rows (ADR 0055).
+// the "Right now in Roha" mosaic on the same surface, and the item rows under it (ADR 0055).
 export default function HomeScreen() {
   const { t } = useLanguage();
   const router = useRouter();
@@ -33,9 +32,8 @@ export default function HomeScreen() {
   const shops = useSampleShops();
   const rail = useHomeRail();
   const header = useTabHeaderProps();
-  // The rail's tab chosen ("all" or a category's id) and the chip under the banner.
+  // The rail's tab chosen: "all" or a category's id.
   const [picked, setPicked] = useState('all');
-  const [intent, setIntent] = useState<IntentId>('all');
   const selected = rail.some((tab) => tab.key === picked) ? picked : 'all';
   const category = selected === 'all' ? undefined : categoryById(selected);
   const cartCount = useCartCount();
@@ -59,7 +57,6 @@ export default function HomeScreen() {
   // A mosaic tile shows that category on Home itself, as choosing its tab in the rail does.
   const showCategory = (id: MainCategoryId) => {
     setPicked(id);
-    setIntent('all');
   };
   const openNeed = (id: NeedId) => {
     router.push({ pathname: '/need/[id]', params: { id } });
@@ -81,9 +78,7 @@ export default function HomeScreen() {
             router.navigate('/categories');
             return;
           }
-          // Another category is shown from its start, whichever chip was chosen on the last one.
           setPicked(key);
-          setIntent('all');
         }}
         hero={({ openShops }) => (
           <>
@@ -105,13 +100,7 @@ export default function HomeScreen() {
         // The floating cart bar covers the bottom of the page when it shows, so the page leaves room for it.
         bottomSpace={BOTTOM_BAR_HEIGHT + (cartCount > 0 ? CART_ROOM : 0)}
       >
-        <HomeFeed
-          intent={intent}
-          onIntentChange={setIntent}
-          category={category}
-          onSeeAll={openCategory}
-          onSeeCategory={openMainCategory}
-        />
+        <HomeFeed category={category} onSeeAll={openCategory} onSeeCategory={openMainCategory} />
       </HomeHeader>
       <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
     </View>

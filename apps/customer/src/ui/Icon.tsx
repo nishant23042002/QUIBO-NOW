@@ -31,10 +31,6 @@ const SHAPES = {
   ],
   back: [path('M15 5l-7 7 7 7')],
   check: [path('M5 12.5l4.5 4.5L19 7.5')],
-  // A leaf: the vegetarian filter.
-  leaf: [path('M5 19C5 10 10 5 19 5c0 9-5 14-14 14z'), path('M5 19l8-8')],
-  // The rupee sign: the price filter.
-  rupee: [path('M7 5h10M7 9.5h10'), path('M7 5h1c3.5 0 6 1.7 6 4.5S11.5 14 8 14H7l7 6')],
   info: [ring(12, 12, 9), path('M12 11v5.5'), dot(12, 7.6, 1.2)],
   share: [path('M12 15V4'), path('M8 7.5L12 4l4 3.5'), path('M6 11v8h12v-8')],
   // A large four-pointed star with a small one at its upper right.

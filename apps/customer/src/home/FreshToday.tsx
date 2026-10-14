@@ -3,7 +3,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { AccentWash, IconTabs, LetteredTitle, SeeAllButton, Text, space, type IconTab } from '@/ui';
+import { IconTabs, LetteredTitle, SeeAllButton, Text, space, type IconTab } from '@/ui';
 import { FRESH_TABS, UNDER_LIMIT, freshItems, type FreshTabId } from './fresh';
 import { anyCardNote, useHomeListing, type ItemCategory } from './items';
 import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
@@ -19,7 +19,8 @@ const styles = makeStyles();
 /**
  * "Fresh today" (ADR 0055, step 3): a lettered title, a row of round tabs (a price, vegetables, fruits, dairy, what is new) and the
  * item cards of the chosen tab, with a See all button under them. The cards are the usual item cards, so ADD, the stepper and
- * the cart bar behave exactly as on every other row.
+ * the cart bar behave exactly as on every other row. It draws no background of its own: Home puts it on the same pistachio wash
+ * as the payment strip above it.
  */
 export function FreshToday({ onSeeAll }: { onSeeAll: (category: ItemCategory) => void }) {
   const { t } = useLanguage();
@@ -43,7 +44,6 @@ export function FreshToday({ onSeeAll }: { onSeeAll: (category: ItemCategory) =>
 
   return (
     <View style={styles.module} aria-label={t('home.fresh.label')}>
-      <AccentWash />
       <LetteredTitle
         word={t('home.fresh.word')}
         sticker={t('home.fresh.sticker')}

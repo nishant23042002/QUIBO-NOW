@@ -341,12 +341,6 @@ export function ComponentsGallery() {
             />
           </View>
         </Demo>
-        <Demo name="solid tone (Home's quick filters)">
-          <View style={styles.row}>
-            <Chip label={sample('chipAll')} tone="solid" selected onPress={noop} />
-            <Chip label={sample('chipOffers')} tone="solid" onPress={noop} />
-          </View>
-        </Demo>
         <Demo name="disabled, and a plain label">
           <View style={styles.row}>
             <Chip label={sample('chipAll')} disabled onPress={noop} />

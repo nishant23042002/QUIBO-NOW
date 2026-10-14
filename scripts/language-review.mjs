@@ -32,7 +32,7 @@ const SECTIONS = [
   ['If something is unavailable (the swap rule)', 'substitute'],
   ['Other brands button, on the product page picture', 'product.otherBrandsButton'],
   ['Categories and sub-categories', 'catalogue'],
-  ["The chips on Home's header", 'home.intents'],
+  ["A category's page on Home, when it is empty", 'home.categoryEmpty'],
 ];
 
 const en = read('en');

@@ -1,8 +1,9 @@
 # 0044. Home is organised by departments and needs, and both are data
 
-- **Status:** Proposed (Phase 1, sub-phase 1l). Supersedes ADR 0043 for where the intents sit; the intents themselves stay.
-  Amended by [ADR 0046](0046-one-list-of-categories.md): a department is a category, and the All departments screen is the
-  Categories tab. Decisions 1 and 2 below read with that.
+- **Status:** Proposed (Phase 1, sub-phase 1l). Supersedes ADR 0043 for where the intents sit. Amended by
+  [ADR 0046](0046-one-list-of-categories.md): a department is a category, and the All departments screen is the
+  Categories tab. Decisions 1 and 2 below read with that. Decision 5 (the intents as a filter row) was withdrawn by
+  [ADR 0056](0056-home-quick-filters-removed.md): the row is gone.
 - **Date:** 2026-10-13
 - **Source:** the owner, after the departments mock; see `docs/phases/PHASE-1-departments.md`
 
