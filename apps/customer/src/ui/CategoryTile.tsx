@@ -29,6 +29,8 @@ export interface CategoryTileProps {
 
 /** The picture is a square the width of the tile. */
 const EMOJI_SIZE = 30;
+/** The band of the category's colour round a picture's plate, like the mat round a framed photograph. */
+const FRAME = 5;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -47,9 +49,16 @@ const makeStyles = (c: ThemeColors) =>
     },
     // Sized outright: left to `absoluteFill` alone, the web build keeps the picture at its own pixel size and the tile clips it.
     artwork: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' },
-    // A tile with artwork is the picture on its neutral plate, without the category's tint. It keeps the hairline: the plate is
-    // almost the page's own colour, so without it the tile has no edge and sits oddly beside the tinted ones.
-    plate: { backgroundColor: c.artworkPlate },
+    // A tile with artwork is the picture on its neutral plate, set in a band of the category's own colour. The plate is almost the
+    // page's colour, so on its own the tile had no edge; the band gives it one, and ties the tile to the category's colour.
+    framed: { borderWidth: 0, padding: FRAME },
+    plate: {
+      flex: 1,
+      width: '100%',
+      borderRadius: radius.md,
+      backgroundColor: c.artworkPlate,
+      overflow: 'hidden',
+    },
     dimmed: { opacity: 0.55 },
     // The tag sits on the picture's lower edge, centred, and never wider than the picture.
     tag: {
@@ -101,18 +110,20 @@ export function CategoryTile({
           style={[
             styles.box,
             { backgroundColor: tint },
-            picture !== undefined && styles.plate,
+            picture !== undefined && styles.framed,
             dimmed && styles.dimmed,
           ]}
         >
           {picture !== undefined ? (
-            <Image
-              source={picture}
-              style={styles.artwork}
-              resizeMode="cover"
-              accessibilityIgnoresInvertColors
-              aria-hidden
-            />
+            <View style={styles.plate}>
+              <Image
+                source={picture}
+                style={styles.artwork}
+                resizeMode="cover"
+                accessibilityIgnoresInvertColors
+                aria-hidden
+              />
+            </View>
           ) : (
             <NativeText
               allowFontScaling={false}
