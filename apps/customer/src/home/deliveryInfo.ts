@@ -16,6 +16,10 @@ export interface DeliveryWhen {
   quick: boolean;
   /** The small line over `short` in the header: "Estimated delivery" for the quick estimate, "Scheduled delivery" for a window. */
   label: string;
+  /** Quick delivery is closed right now (outside the town's quick hours). Home says so and offers a window. */
+  quickClosed: boolean;
+  /** There is a window the order is set for, so `short` names it. False when quick is closed and no window is set. */
+  hasWindow: boolean;
 }
 
 /**
@@ -35,6 +39,8 @@ export function useDeliveryWhenFor(delivery: DraftCart['delivery']): DeliveryWhe
       short: closed,
       quick: false,
       label: t('home.header.deliveryLabel'),
+      quickClosed: true,
+      hasWindow: false,
     };
   }
   if (current.kind === 'quick') {
@@ -43,6 +49,8 @@ export function useDeliveryWhenFor(delivery: DraftCart['delivery']): DeliveryWhe
       short: t('cart.quickSub', { from: eta.from, to: eta.to }),
       quick: true,
       label: t('home.header.estimated'),
+      quickClosed: false,
+      hasWindow: false,
     };
   }
   return {
@@ -50,6 +58,8 @@ export function useDeliveryWhenFor(delivery: DraftCart['delivery']): DeliveryWhe
     short: slotText.dayWindow(current.slot),
     quick: false,
     label: t('home.header.scheduled'),
+    quickClosed: !delivery.quickOpen,
+    hasWindow: true,
   };
 }
 

@@ -7,6 +7,7 @@ import { itemsInCategory, type Category } from './catalogueTree';
 import { matchesIntent, type IntentId } from './homeIntents';
 import { DailyEssentials } from './DailyEssentials';
 import { IntentChips } from './IntentChips';
+import { PaymentStrip } from './PaymentStrip';
 import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
 import { useHomeSectionShown } from './homeSections';
@@ -34,6 +35,8 @@ const styles = StyleSheet.create({
   // The category rows, one under another with room between them: no divider line.
   rails: { gap: space[6], paddingVertical: space[5] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
+  // The strip sits under the mosaic, above the chips.
+  strip: { paddingTop: space[3] },
   // The chips sit under the banner, above whichever page is showing.
   chips: { paddingTop: space[4] },
   head: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space[4] },
@@ -108,6 +111,13 @@ export const HomeFeed = memo(function HomeFeed({
   const matching = grid ? oneOfEachKind(pool.filter((item) => matchesIntent(item, intent))) : [];
   const title = category === undefined ? undefined : t(category.label);
 
+  // The payment and trust strip belongs to the usual page, not to a category's or a filter's grid.
+  const strip = grid ? null : (
+    <View style={styles.strip}>
+      <PaymentStrip />
+    </View>
+  );
+
   const chips = (
     <View style={styles.chips}>
       <IntentChips selected={intent} onSelect={onIntentChange} label={t('home.intents.label')} />
@@ -117,6 +127,7 @@ export const HomeFeed = memo(function HomeFeed({
   if (loading) {
     return (
       <View>
+        {strip}
         {chips}
         <HomeSkeleton
           label={t('common.loading')}
@@ -173,6 +184,7 @@ export const HomeFeed = memo(function HomeFeed({
 
   return (
     <View>
+      {strip}
       {chips}
       <View style={styles.rails}>
         <ShopByCategory />

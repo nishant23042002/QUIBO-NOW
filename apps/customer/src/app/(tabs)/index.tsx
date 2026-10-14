@@ -7,7 +7,9 @@ import { RAIL_MORE, useHomeRail } from '@/home/useHomeRail';
 import { seeAllTarget } from '@/home/catalogueTree';
 import type { Category, MainCategoryId } from '@/home/catalogueTree';
 import { category as categoryById } from '@/home/categoryLists';
+import { ClosedBanner } from '@/home/ClosedBanner';
 import { HeroMosaic } from '@/home/HeroMosaic';
+import { LiveOrderCard } from '@/home/LiveOrderCard';
 import { HomeFeed } from '@/home/HomeFeed';
 import type { IntentId } from '@/home/homeIntents';
 import type { ItemCategory } from '@/home/items';
@@ -84,12 +86,16 @@ export default function HomeScreen() {
           setIntent('all');
         }}
         hero={({ openShops }) => (
-          <HeroMosaic
-            shopNames={shopNames}
-            onCategory={showCategory}
-            onNeed={openNeed}
-            onMeetShops={openShops}
-          />
+          <>
+            <LiveOrderCard />
+            <ClosedBanner />
+            <HeroMosaic
+              shopNames={shopNames}
+              onCategory={showCategory}
+              onNeed={openNeed}
+              onMeetShops={openShops}
+            />
+          </>
         )}
         onShopPress={(id) => {
           router.push({ pathname: '/shop/[id]', params: { id } });

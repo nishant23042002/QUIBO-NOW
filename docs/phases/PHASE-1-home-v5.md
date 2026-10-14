@@ -113,3 +113,14 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   - Checks: lint, typecheck, test (664 customer tests) and build pass; looked at on the web preview in light and dark, on Home,
     Categories and Orders. The Maestro assertions on the header line now look for "Estimated delivery" or "Scheduled delivery".
   - Not yet looked at on a real phone, at 200% text, or in Hindi and Marathi.
+- **Step 2, strip and states: built, waiting for the owner's phone check.**
+  - Payment and trust strip under the mosaic: Pay on delivery (the one filled chip, with the price badge's stamped edge; shown
+    only where cash is allowed, ADR 0019), Visited shops only, Free delivery over the town's line, and Pay by UPI. The chips are
+    statements; "Visited shops only" opens its sheet in step 4.
+  - Live order card on the canvas above the mosaic while an order is still going: the arrival range or window (never a countdown),
+    segments for where it is, the headline and the shops, and Track, which opens the order page. It reads the orders the phone
+    keeps and goes when the last one is over.
+  - Closed banner while quick delivery is closed (the town's quick hours): says so, names the window the order is set for, and puts
+    the schedule page one tap away. It reads `quickClosed` and `hasWindow`, added to the shared delivery words.
+  - Checks: lint, typecheck, test (670 customer tests) and build pass. Looked at on the web preview in light: the strip, and the
+    live card after placing a real mock order. The closed banner depends on the clock and has not been seen on screen.

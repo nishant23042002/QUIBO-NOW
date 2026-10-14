@@ -217,6 +217,29 @@
       "fruit": "Fruit basket",
       "shopsTitle": "Meet your shops",
       "shopsSub": "{names} and {count} more"
+    },
+    "strip": {
+      "label": "Payment and delivery",
+      "cod": "Pay on delivery",
+      "codSub": "Cash or UPI at the door",
+      "visited": "Visited shops only",
+      "visitedSub": "Checked in person",
+      "free": "Free delivery",
+      "freeSub": "Over {amount}",
+      "upi": "Pay by UPI",
+      "upiSub": "Online, at checkout"
+    },
+    "live": {
+      "kicker": "Your order",
+      "shops": "From {names}",
+      "track": "Track",
+      "etaRange": "Arriving in about {from}⁠–⁠{to} mins"
+    },
+    "closed": {
+      "title": "Quick delivery is closed for now",
+      "body": "Your order is set for {when}. You can change it any time.",
+      "bodyNone": "Pick a window and we will bring it then.",
+      "action": "Pick a window"
     }
   },
   "brands": {
