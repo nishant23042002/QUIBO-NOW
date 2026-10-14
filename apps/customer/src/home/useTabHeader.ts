@@ -1,4 +1,5 @@
 import { useRouter } from 'expo-router';
+import { useLanguageSheet } from '@/i18n/LanguageSheet';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import type { Locale } from '@quibo/i18n';
 import type { TabHeaderProps } from '@/ui';
@@ -14,6 +15,7 @@ export function useTabHeaderProps(): Omit<
   'children' | 'rail' | 'bottomSpace' | 'onScrollY'
 > {
   const { t, locale } = useLanguage();
+  const { openLanguageSheet } = useLanguageSheet();
   const router = useRouter();
   const when = useDeliveryWhen();
   const address = useDeliveryAddress();
@@ -27,10 +29,8 @@ export function useTabHeaderProps(): Omit<
     profileLabel: t('home.header.profile'),
     languageCode: LANGUAGE_CODE[locale],
     languageLabel: t('home.header.language'),
-    // The language is set in Profile until the language sheet is built (ADR 0055, step 9).
-    onLanguagePress: () => {
-      router.push('/profile');
-    },
+    // The chip opens the language sheet, over whichever tab it is on (ADR 0055, step 9).
+    onLanguagePress: openLanguageSheet,
     searchLabel: t('home.search.label'),
     searchHint,
     onSearchPress: () => {

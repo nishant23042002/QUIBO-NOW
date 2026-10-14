@@ -253,3 +253,15 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   looked at on the web preview at 375 px. Hindi and Marathi wording is a draft for a native reader.
 - Know your shop's table is compact: it shows two rows, then "View more" opens the other three (and "View less" closes them);
   the 0 of 5 against 5 of 5 score sits under the button and is always on screen (`KNOW_ROWS_COLLAPSED` in `knowRules.ts`).
+- **Step 9, language: built, waiting for the owner's phone check.**
+  - The language chip on every tab's header opens a sheet (`i18n/LanguageSheet.tsx`, mounted once above the screens in
+    `_layout.tsx`): English, हिन्दी and मराठी as large rows, each with its English name beneath, the one in use ticked, and a
+    line naming the other two languages' headings so someone in a language they do not read can still find theirs. A choice
+    changes the words at once, closes the sheet and is kept. Profile still has the same setting.
+  - **First-run card on Home: not built, on purpose.** The sign-in flow already opens with a language step for every new customer
+    (`account/FirstRun.tsx`, stage `language`), so nobody reaches Home without having chosen. A second card would never show.
+    Say if you still want one (for example for a customer who skipped sign-in in a later phase).
+  - Hindi and Marathi: every key added in steps 1 to 9 has both. The review sheet (`PHASE-1-language-review.md`) now includes
+    the language sheet, Dark Store vs Connected Store and the Quibo promise. New Maestro flow `language.yaml`.
+  - Checks: lint, typecheck, test (741 customer tests) pass. Looked at on the web preview at 375 px: the sheet in English, then
+    Home in Hindi. Not seen on a real phone, at 200% text, or in Marathi.

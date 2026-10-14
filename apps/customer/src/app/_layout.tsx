@@ -10,6 +10,7 @@ import { ReportsProvider } from '@/help/ReportsProvider';
 import { AddressProvider } from '@/home/AddressProvider';
 import { CartProvider } from '@/home/CartProvider';
 import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
+import { LanguageSheetProvider } from '@/i18n/LanguageSheet';
 import { OrderPlaced } from '@/orders/OrderPlaced';
 import { OrdersProvider, useOrders } from '@/orders/OrdersProvider';
 import { ThemeProvider, useTheme } from '@/theme';
@@ -74,7 +75,10 @@ function Gate() {
       {ready ? (
         account.stage === 'done' ? (
           <>
-            <Screens />
+            {/* The language sheet is opened from the header chip on any tab, so it is mounted once, above them. */}
+            <LanguageSheetProvider>
+              <Screens />
+            </LanguageSheetProvider>
             {/* Home is drawn underneath from the first frame; the welcome covers it until it has loaded. */}
             {account.welcoming ? <Welcome onDone={account.finishWelcome} /> : null}
             {/* Covers the app for a moment when an order is placed, and opens the Orders tab under it. */}

@@ -1,0 +1,28 @@
+# Language sheet: the chip on Home's header opens it, a choice changes the words at once, and the choice is kept.
+#
+# Run it against the app open in Expo Go, on a fresh install:
+#   maestro test apps/customer/.maestro/language.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (Home v5, step 9). It has not been run yet: the Maestro tool is not installed on the machine this was written on.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Estimated delivery|Scheduled delivery'
+
+# The chip opens the sheet with the three languages, English ticked.
+- tapOn: 'Change language'
+- assertVisible: 'Choose your language'
+- assertVisible: 'हिन्दी'
+- assertVisible: 'मराठी'
+
+# Hindi: the sheet closes and the words change at once.
+- tapOn: 'हिन्दी'
+- assertVisible: 'अनुमानित डिलीवरी|तय समय पर डिलीवरी'
+
+# And back to English from the same chip.
+- tapOn: 'भाषा बदलें'
+- tapOn: 'English'
+- assertVisible: 'Estimated delivery|Scheduled delivery'

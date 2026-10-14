@@ -444,6 +444,10 @@
     "hi": "हिन्दी",
     "mr": "मराठी"
   },
+  "languageSheet": {
+    "title": "Choose your language",
+    "note": "You can change this any time, here or in Profile."
+  },
   "theme": {
     "system": "Same as phone",
     "light": "Light",
