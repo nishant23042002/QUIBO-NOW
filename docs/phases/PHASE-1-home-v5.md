@@ -368,3 +368,35 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
   a ₹299 basket by `bestCoupon`), and Quieter times (only when a window saves something). At most four. Free delivery and the coupon
   open the Coupons page; Quieter times opens the delivery windows. The "Pay by UPI" chip is gone: Pay on delivery already says
   "Cash or UPI at the door".
+- **Home's opening is for "All" only (2026-10-15):** the offers strip and "Right now in Roha" (with the shops strip) no longer stay
+  when a category is chosen in the header rail (Fresh, Dairy and the rest). The order's live card and the delivery and out-of-area
+  notices still follow the shopper onto any category, and the hero's padding is cut so the category's list starts right under the
+  rail. Choosing "All" brings the opening back.
+- **Own tint for each wash (2026-10-15):** the washes that divide Home each have their own faded tint, all from the theme and all with
+  the same curved top and fine edge: Fresh today stays pistachio; Buy again is a lighter butter yellow (`warningBg`, edge `tagBg`);
+  Small prices is a faint lilac (`lilac`, edge `onChromeMuted`), the brand's aubergine at a whisper. `AccentWash` takes a `tone`.
+  All three follow the dark theme through the same tokens.
+- **Header spacing and the slot button (2026-10-15):** the address line sits closer under the delivery estimate (4 dp where it was 8; it was
+  held 40 dp tall, its touch area is now made with hit slop), and keeps its 8 dp of room below it before the shops chip. The search bar's button reads "Schedule slot" on one line, in a
+  slot that does not shrink, so it no longer breaks on a phone. A stray NUL character in `SearchBar.tsx` (written by a script
+  instead of the `\u0000` escape) was fixed.
+- **Clearing test data on a phone (2026-10-15):** Settings, Testing tools (development builds only) now has "Clear test data (orders,
+  cart, viewed)". It removes the orders and help reports, the cart and what was put aside, the coupon, delivery window,
+  substitution choice and delivery notes, the products opened and the Notify me choices, then reloads the app. The language, theme,
+  account and saved addresses are kept. The storage keys now live in one file, `storageKeys.ts`, so the tool and the screens that
+  save them cannot drift apart.
+- **Know your shop, names that no longer break (2026-10-15):** on a real phone with a larger system font, "Connected Store" broke into
+  "Conne / cted / Store" in its narrow column. The two store names are now a legend of two pills above the rows (each on one line,
+  the colours of the score pills), the result columns are only as wide as a score pill needs (40%, never under 128 dp), and the
+  check names beside them have the room (no mid-word breaks at 320 dp, or with the text enlarged by a quarter).
+- **Know your shop, in two rows (2026-10-15):** the matrix's five rows all said the same cross and tick, and the store names had to
+  squeeze into narrow columns. The card is now two rows. Row one is always in view: Dark Store and Connected Store as two equal
+  halves, each a name and its score (0 of 5, 5 of 5), in the scene's colours. Row two opens with a tap on the title, smoothly: "In
+  a Connected Store you can check:" and the five checks once, each a chip with its picture. The ✕ ✓ columns, the score pills in the
+  title row and the legend are gone. At 320 dp, and with the text enlarged by a quarter, both halves stay equal and on one line.
+- **Know your shop, comparison first again (2026-10-15):** the chip list under the two stores told what can be checked but did not
+  compare. The card is the two stores side by side (name and score, always in view) and, opening under them, the five checks as
+  comparison rows read left to right: a plum cross (a Dark Store), what is checked with its picture, a pistachio tick (a
+  Connected Store). The cross and the tick sit at the card's two edges, under the store each belongs to, in that store's colour.
+  No name is squeezed into a column; at 320 dp, or with the text enlarged by a quarter, a long check name wraps at a space and
+  nothing overflows.
