@@ -46,7 +46,7 @@ export const HERO_TILES: readonly HeroTile[] = [
     label: 'home.hero.chai',
     emoji: '\u{2615}',
     tint: 'snacks',
-    target: { kind: 'need', id: 'teaTime' },
+    target: { kind: 'need', id: 'teaBreak' },
   },
   {
     id: 'kirana',

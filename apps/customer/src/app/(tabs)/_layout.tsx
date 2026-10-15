@@ -164,7 +164,7 @@ export default function TabsLayout() {
       <Tabs.Screen name="category/[id]" options={{ href: null }} />
       {/* The "Coming to Roha" page of a category that is not stocked yet, with the bar kept (ADR 0046). */}
       <Tabs.Screen name="coming/[id]" options={{ href: null }} />
-      {/* A need's page ("Tea time"), reached from Home's "Picks for your routine", with the bar kept. */}
+      {/* A moment's page ("Tea Break"), reached from Home's "Picks for your routine", with the bar kept. */}
       <Tabs.Screen name="need/[id]" options={{ href: null }} />
       {/* An item's page, the same: reached from a card, with the bottom bar kept. */}
       <Tabs.Screen name="product/[id]" options={{ href: null }} />

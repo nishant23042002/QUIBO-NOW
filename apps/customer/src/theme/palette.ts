@@ -235,3 +235,135 @@ export const palettes: Record<Scheme, ThemeColors> = {
     onOverlayMuted: '#D9D9D9',
   },
 };
+
+/** The moments that have a page of their own (the same ids as `NeedId`; kept here so the palette has no import from `home`). */
+export type MomentId = 'teaBreak' | 'breakfast' | 'cookToday' | 'movieNight';
+
+/**
+ * The colours of a moment's page, from its header down to its background. Each moment has a mood of its own: Tea Break is tea and
+ * biscuit browns, Breakfast Ready morning sun, Cook Today turmeric and chilli, Movie Night a dark cinema with popcorn gold. Text,
+ * its quiet form and the label on the accent are each checked for 4.5:1 against what they sit on in palette.test.ts.
+ */
+export interface MomentColors {
+  /** The page behind everything. */
+  bg: string;
+  /** The header, and the status bar behind it. */
+  header: string;
+  /** The band under the header that names the moment. */
+  band: string;
+  /** Text. */
+  ink: string;
+  /** Captions and hints. */
+  inkMuted: string;
+  /** The add button, the chosen state and the jump chip that is on. */
+  accent: string;
+  /** The label on the accent. */
+  onAccent: string;
+  /** Cards and the picture of a product. */
+  card: string;
+  /** Fine borders. */
+  line: string;
+}
+
+/**
+ * Light values are the moment as designed. In the dark theme the three light moments take darker values of the same hues, and Movie
+ * Night, which is dark already, is the same in both.
+ */
+export const momentPalettes: Record<MomentId, Record<Scheme, MomentColors>> = {
+  teaBreak: {
+    light: {
+      bg: '#FFF8EE',
+      header: '#F0D3A6',
+      band: '#F7DDB0',
+      ink: '#3A2111',
+      inkMuted: '#6B4A2E',
+      accent: '#A8501A',
+      onAccent: '#FFFFFF',
+      card: '#FFFFFF',
+      line: '#EBCFA8',
+    },
+    dark: {
+      bg: '#1F150C',
+      header: '#3A2615',
+      band: '#46301A',
+      ink: '#F6E7D3',
+      inkMuted: '#D3B898',
+      accent: '#E58A45',
+      onAccent: '#2A1405',
+      card: '#2B1D10',
+      line: '#5A4129',
+    },
+  },
+  breakfast: {
+    light: {
+      bg: '#FFFCF2',
+      header: '#FFE08A',
+      band: '#FFEDB5',
+      ink: '#3A2A08',
+      inkMuted: '#735A1E',
+      accent: '#B85A0D',
+      onAccent: '#FFFFFF',
+      card: '#FFFFFF',
+      line: '#F0DCA0',
+    },
+    dark: {
+      bg: '#211B08',
+      header: '#4A3C0C',
+      band: '#5A4A12',
+      ink: '#FFF1C2',
+      inkMuted: '#DCC77E',
+      accent: '#F2B544',
+      onAccent: '#2B1C00',
+      card: '#2E2610',
+      line: '#6B5A1E',
+    },
+  },
+  cookToday: {
+    light: {
+      bg: '#FFFBEF',
+      header: '#F6D463',
+      band: '#FBE6A0',
+      ink: '#33210A',
+      inkMuted: '#6A5320',
+      accent: '#C4351F',
+      onAccent: '#FFFFFF',
+      card: '#FFFFFF',
+      line: '#EBD79A',
+    },
+    dark: {
+      bg: '#201A08',
+      header: '#4A3F10',
+      band: '#594C16',
+      ink: '#FFF3C9',
+      inkMuted: '#E0CC85',
+      accent: '#F0705A',
+      onAccent: '#2A0A04',
+      card: '#2D2610',
+      line: '#695A1D',
+    },
+  },
+  movieNight: {
+    light: {
+      bg: '#130F1F',
+      header: '#231A3B',
+      band: '#2D2150',
+      ink: '#F7F2FF',
+      inkMuted: '#C9BEE0',
+      accent: '#FFC857',
+      onAccent: '#241A00',
+      card: '#1E1730',
+      line: '#3A2E57',
+    },
+    dark: {
+      bg: '#130F1F',
+      header: '#231A3B',
+      band: '#2D2150',
+      ink: '#F7F2FF',
+      inkMuted: '#C9BEE0',
+      accent: '#FFC857',
+      onAccent: '#241A00',
+      card: '#1E1730',
+      line: '#3A2E57',
+    },
+  },
+};

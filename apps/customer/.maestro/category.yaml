@@ -34,7 +34,7 @@ appId: host.exp.exponent
 # Picks for your routine: a card opens its own page with a shelf for each thing it gathers. It is below the first screen now.
 - scrollUntilVisible:
     element: 'Picks for your routine'
-- tapOn: 'Tea Time.*'
+- tapOn: 'Tea Break.*'
 - assertVisible: 'Picked from shops in Roha'
 - assertVisible: 'Amul Toned milk.*'
 - tapOn: 'Back'

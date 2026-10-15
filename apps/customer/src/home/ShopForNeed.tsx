@@ -99,7 +99,7 @@ function NeedCard({ need, onPress }: { need: Need; onPress: () => void }) {
 /**
  * "Picks for your routine" on Home (ADR 0044, ADR 0047, ADR 0055 step 6): ready-made baskets for the moments of a day, as soft
  * tinted cards two to a row under the same dotted-line title the other rows have, with a line saying what they are. A need cuts
- * across categories ("Tea time" is milk, sugar, biscuits and chips): each card opens its own page. With no need in stock the
+ * across categories ("Tea Break" is milk, sugar, biscuits, rusk and namkeen): each card opens its own page. With no need in stock the
  * section is not shown. The needs and their kinds are the same data as before.
  */
 export function ShopForNeed() {

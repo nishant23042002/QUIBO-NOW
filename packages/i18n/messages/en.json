@@ -205,7 +205,7 @@
       "milkSub": "7–9 AM window",
       "from": "from",
       "veg": "Sabzi mandi",
-      "chai": "Chai time",
+      "chai": "Tea Break",
       "kirana": "Kirana basics",
       "fruit": "Fruit basket",
       "shopsTitle": "Meet your shops",
@@ -417,7 +417,11 @@
     "noted": "Noted",
     "notedLine": "Noted. We will tell you when Quibo reaches {pincode}.",
     "townsTitle": "Where we deliver today",
-    "town": { "roha": "Roha", "mhasla": "Mhasla", "tala": "Tala" },
+    "town": {
+      "roha": "Roha",
+      "mhasla": "Mhasla",
+      "tala": "Tala"
+    },
     "townLive": "Open now · {count} shops",
     "townSoon": "Shops are signing up",
     "pillLive": "Shop in Roha",
@@ -1490,10 +1494,49 @@
   },
   "needs": {
     "names": {
-      "breakfast": "Breakfast",
-      "teaTime": "Tea Time",
-      "partySnacks": "Party Snacks",
-      "cookingBasics": "Cooking Basics"
+      "teaBreak": "Tea Break",
+      "breakfast": "Breakfast Ready",
+      "cookToday": "Cook Today",
+      "movieNight": "Movie Night"
+    },
+    "lines": {
+      "teaBreak": "Milk, biscuits and something to dip.",
+      "breakfast": "Be out of the door on time.",
+      "cookToday": "Staples and fresh vegetables for today's meal.",
+      "movieNight": "Snacks for the whole couch."
+    },
+    "goes": {
+      "teaBreak": {
+        "milk": "Goes with sugar",
+        "biscuits": "Goes with tea",
+        "rusk": "For dipping",
+        "namkeen": "A little crunch"
+      },
+      "breakfast": {
+        "bread": "Goes with eggs",
+        "eggs": "Goes with bread",
+        "pav": "Goes with paneer",
+        "paneer": "For a quick bhurji"
+      },
+      "cookToday": {
+        "atta": "Goes with dal",
+        "dal": "Goes with rice",
+        "oil": "Goes with masala",
+        "tomato": "Base of most dishes",
+        "potato": "Base of most dishes",
+        "paneer": "For a richer dish",
+        "masala": "The finishing touch"
+      },
+      "movieNight": {
+        "popcorn": "Goes with chips",
+        "chips": "Goes with popcorn",
+        "namkeen": "Something spicy",
+        "chocolate": "Something sweet",
+        "cake": "To share"
+      }
+    },
+    "soon": {
+      "drinks": "Cold drinks"
     },
     "band": "Picked from shops in Roha",
     "rail": "Kinds in this list",

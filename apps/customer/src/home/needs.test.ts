@@ -18,9 +18,9 @@ describe('the needs', () => {
   });
 
   it('list their items in the order of their kinds', () => {
-    const tea = need('teaTime');
+    const tea = need('teaBreak');
     const items = [
-      { id: 'chips', type: 'chips' },
+      { id: 'namkeen', type: 'namkeen' },
       { id: 'milk', type: 'milk' },
       { id: 'tomato', type: 'tomato' },
       { id: 'biscuits', type: 'biscuits' },
@@ -28,14 +28,14 @@ describe('the needs', () => {
     expect(tea && needItems(items, tea).map((item) => item.id)).toEqual([
       'milk',
       'biscuits',
-      'chips',
+      'namkeen',
     ]);
-    expect(tea && needKinds(items, tea)).toEqual(['milk', 'biscuits', 'chips']);
+    expect(tea && needKinds(items, tea)).toEqual(['milk', 'biscuits', 'namkeen']);
   });
 
   it('leave out a need with nothing in stock, so its card is never an empty page', () => {
     expect(liveNeeds([{ id: 'x', type: 'tomato' }]).map((entry) => entry.id)).toEqual([
-      'cookingBasics',
+      'cookToday',
     ]);
     expect(liveNeeds([])).toEqual([]);
     expect(need('nope')).toBeUndefined();
@@ -56,7 +56,7 @@ describe('the shelves of a need', () => {
   ];
 
   it('group kinds by the sub-category they sit in, in the order the need lists them', () => {
-    const basics = need('cookingBasics');
+    const basics = need('cookToday');
     const sections = basics ? needSections(items, basics) : [];
     // rice (Rice), then tomato and potato together (Fresh Vegetables): atta, oil and sugar have no items so they are left out.
     expect(sections.map((section) => section.id)).toEqual(['rice', 'freshVegetables']);
@@ -71,17 +71,53 @@ describe('the shelves of a need', () => {
   });
 
   it('are empty for a need with nothing in stock', () => {
-    const party = need('partySnacks');
-    expect(party && needSections(items, party)).toEqual([]);
+    const movie = need('movieNight');
+    expect(movie && needSections(items, movie)).toEqual([]);
   });
 
   it('name the first shelves of a need whatever is in stock', () => {
-    const tea = need('teaTime');
+    const tea = need('teaBreak');
     expect(tea && needBlurb(tea)).toEqual([
       'catalogue.subs.milk',
       'catalogue.subs.sugar',
       'catalogue.subs.biscuits',
     ]);
     expect(tea && needBlurb(tea, 1)).toEqual(['catalogue.subs.milk']);
+  });
+});
+
+describe('the moments as a page is built from them', () => {
+  it('are the four launch moments, in the order Home lists them', () => {
+    expect(NEEDS.map((entry) => entry.id)).toEqual([
+      'teaBreak',
+      'breakfast',
+      'cookToday',
+      'movieNight',
+    ]);
+  });
+
+  it('hint only at kinds they gather, and never list a kind twice', () => {
+    for (const entry of NEEDS) {
+      expect(new Set(entry.kinds).size, entry.id).toBe(entry.kinds.length);
+      for (const kind of Object.keys(entry.goes)) {
+        expect(entry.kinds.includes(kind), `${entry.id}: hint for ${kind}`).toBe(true);
+      }
+    }
+  });
+
+  it('name a kind that is coming soon only where the town lacks it (cold drinks for Movie Night)', () => {
+    expect(NEEDS.filter((entry) => entry.soon !== undefined).map((entry) => entry.id)).toEqual([
+      'movieNight',
+    ]);
+  });
+
+  it('lead with the kind the moment is about', () => {
+    const first = Object.fromEntries(NEEDS.map((entry) => [entry.id, entry.kinds[0]]));
+    expect(first).toEqual({
+      teaBreak: 'milk',
+      breakfast: 'bread',
+      cookToday: 'atta',
+      movieNight: 'popcorn',
+    });
   });
 });

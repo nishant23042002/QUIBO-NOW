@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { palettes, type Scheme, type ThemeColors } from './palette';
+import { momentPalettes, palettes, type MomentId, type Scheme, type ThemeColors } from './palette';
 
 /** Relative luminance of a #rrggbb colour, as WCAG 2.x defines it. */
 function luminance(hex: string): number {
@@ -149,5 +149,62 @@ describe('the contrast check itself', () => {
   it('reports the well-known near miss: #777777 on white is 4.48:1, below 4.5', () => {
     expect(contrast('#777777', '#FFFFFF')).toBeCloseTo(4.48, 2);
     expect(contrast('#777777', '#FFFFFF')).toBeLessThan(4.5);
+  });
+});
+
+describe('the moment palettes', () => {
+  const moments = Object.keys(momentPalettes) as MomentId[];
+
+  it('use only #rrggbb values, in both themes', () => {
+    for (const id of moments) {
+      for (const scheme of SCHEMES) {
+        for (const [name, value] of Object.entries(momentPalettes[id][scheme])) {
+          expect(value, `${id}.${scheme}.${name}`).toMatch(/^#[0-9A-F]{6}$/);
+        }
+      }
+    }
+  });
+
+  it('keep text readable (4.5:1) on the header, the band, the background and the cards', () => {
+    for (const id of moments) {
+      for (const scheme of SCHEMES) {
+        const c = momentPalettes[id][scheme];
+        for (const surface of [c.bg, c.header, c.band, c.card]) {
+          expect(
+            contrast(c.ink, surface),
+            `${id}.${scheme} ink on ${surface}`,
+          ).toBeGreaterThanOrEqual(4.5);
+          expect(
+            contrast(c.inkMuted, surface),
+            `${id}.${scheme} caption on ${surface}`,
+          ).toBeGreaterThanOrEqual(4.5);
+        }
+      }
+    }
+  });
+
+  it('keep the label on the accent readable, and the accent itself visible on the page (3:1)', () => {
+    for (const id of moments) {
+      for (const scheme of SCHEMES) {
+        const c = momentPalettes[id][scheme];
+        expect(
+          contrast(c.onAccent, c.accent),
+          `${id}.${scheme} label on accent`,
+        ).toBeGreaterThanOrEqual(4.5);
+        expect(contrast(c.accent, c.bg), `${id}.${scheme} accent on page`).toBeGreaterThanOrEqual(
+          3,
+        );
+        expect(contrast(c.accent, c.card), `${id}.${scheme} accent on card`).toBeGreaterThanOrEqual(
+          3,
+        );
+      }
+    }
+  });
+
+  it('give each moment its own header colour', () => {
+    for (const scheme of SCHEMES) {
+      const headers = moments.map((id) => momentPalettes[id][scheme].header);
+      expect(new Set(headers).size).toBe(moments.length);
+    }
   });
 });

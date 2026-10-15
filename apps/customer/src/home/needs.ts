@@ -3,57 +3,97 @@ import { CATEGORIES } from './catalogueTree';
 import type { TileTint } from './categoryGroups';
 
 /**
- * The needs Home offers (ADR 0044). A need cuts across categories ("Tea time" is milk, sugar, biscuits and chips): a list of product
- * kinds, not a category. It is data: a town lists the needs it offers, so adding one is a change to this list (a record per town
- * once the API exists) and not a change to the app. Sample data until the catalogue comes from the API (Phase 2).
+ * The moments Home offers (ADR 0044, and the moments plan): a moment cuts across categories ("Tea Break" is milk, sugar, biscuits,
+ * rusk and namkeen), a list of product kinds and not a category. It is data: a town lists the moments it offers, so adding one is a
+ * change to this list (a record per town once the API exists) and not a change to the app. The code still calls them needs. Sample
+ * data until the catalogue comes from the API (Phase 2).
  */
 
-export type NeedId = 'breakfast' | 'teaTime' | 'partySnacks' | 'cookingBasics';
+export type NeedId = 'teaBreak' | 'breakfast' | 'cookToday' | 'movieNight';
 
 export interface Need {
   id: NeedId;
   label: MessageKey;
+  /** The one line under the name, on the moment's page. */
+  line: MessageKey;
   /** The main picture of its card, and two smaller ones beside it, until each need has a picture of its own. */
   emoji: string;
   extras: readonly [string, string];
   tint: TileTint;
   /** The product kinds (an item's `type`) it gathers, in the order its page lists them. */
   kinds: readonly string[];
+  /** A short hint under a kind's shelf, saying what it goes with. A hint, never a bundle: every brand can still be chosen alone. */
+  goes: Readonly<Record<string, MessageKey>>;
+  /** A kind the moment wants that the town does not stock yet, named for a quiet "coming soon" row with Notify me. */
+  soon?: MessageKey;
 }
 
-/** Made only of kinds the catalogue holds today, so no need page is empty. */
+/** Made only of kinds the catalogue holds today, so no moment page is empty. */
 export const NEEDS: readonly Need[] = [
   {
-    id: 'breakfast',
-    label: 'needs.names.breakfast',
-    emoji: '\u{1F373}',
-    extras: ['\u{1F95B}', '\u{1F35E}'],
-    tint: 'dairy',
-    kinds: ['milk', 'eggs', 'atta', 'sugar', 'oil'],
-  },
-  {
-    id: 'teaTime',
-    label: 'needs.names.teaTime',
+    id: 'teaBreak',
+    label: 'needs.names.teaBreak',
+    line: 'needs.lines.teaBreak',
     emoji: '\u{2615}',
     extras: ['\u{1F36A}', '\u{1F95B}'],
     tint: 'snacks',
-    kinds: ['milk', 'sugar', 'biscuits', 'chips'],
+    kinds: ['milk', 'sugar', 'biscuits', 'rusk', 'namkeen'],
+    goes: {
+      milk: 'needs.goes.teaBreak.milk',
+      biscuits: 'needs.goes.teaBreak.biscuits',
+      rusk: 'needs.goes.teaBreak.rusk',
+      namkeen: 'needs.goes.teaBreak.namkeen',
+    },
   },
   {
-    id: 'partySnacks',
-    label: 'needs.names.partySnacks',
-    emoji: '\u{1F389}',
-    extras: ['\u{1F35F}', '\u{1F36B}'],
-    tint: 'snacks',
-    kinds: ['chips', 'popcorn', 'chocolate', 'biscuits'],
+    id: 'breakfast',
+    label: 'needs.names.breakfast',
+    line: 'needs.lines.breakfast',
+    emoji: '\u{1F373}',
+    extras: ['\u{1F95B}', '\u{1F35E}'],
+    tint: 'dairy',
+    kinds: ['bread', 'eggs', 'milk', 'pav', 'paneer', 'banana'],
+    goes: {
+      bread: 'needs.goes.breakfast.bread',
+      eggs: 'needs.goes.breakfast.eggs',
+      pav: 'needs.goes.breakfast.pav',
+      paneer: 'needs.goes.breakfast.paneer',
+    },
   },
   {
-    id: 'cookingBasics',
-    label: 'needs.names.cookingBasics',
+    id: 'cookToday',
+    label: 'needs.names.cookToday',
+    line: 'needs.lines.cookToday',
     emoji: '\u{1F958}',
     extras: ['\u{1F33E}', '\u{1F345}'],
     tint: 'staples',
-    kinds: ['atta', 'rice', 'oil', 'sugar', 'tomato', 'potato'],
+    kinds: ['atta', 'rice', 'dal', 'oil', 'tomato', 'potato', 'brinjal', 'paneer', 'masala'],
+    goes: {
+      atta: 'needs.goes.cookToday.atta',
+      dal: 'needs.goes.cookToday.dal',
+      oil: 'needs.goes.cookToday.oil',
+      tomato: 'needs.goes.cookToday.tomato',
+      potato: 'needs.goes.cookToday.potato',
+      paneer: 'needs.goes.cookToday.paneer',
+      masala: 'needs.goes.cookToday.masala',
+    },
+  },
+  {
+    id: 'movieNight',
+    label: 'needs.names.movieNight',
+    line: 'needs.lines.movieNight',
+    emoji: '\u{1F37F}',
+    extras: ['\u{1F35F}', '\u{1F36B}'],
+    tint: 'snacks',
+    kinds: ['popcorn', 'chips', 'namkeen', 'chocolate', 'cake'],
+    goes: {
+      popcorn: 'needs.goes.movieNight.popcorn',
+      chips: 'needs.goes.movieNight.chips',
+      namkeen: 'needs.goes.movieNight.namkeen',
+      chocolate: 'needs.goes.movieNight.chocolate',
+      cake: 'needs.goes.movieNight.cake',
+    },
+    soon: 'needs.soon.drinks',
   },
 ];
 
