@@ -5,7 +5,7 @@ import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import { AccentWash, Chip, LetteredTitle, Text, radius, space } from '@/ui';
 import { anyCardNote, useHomeListing } from './items';
-import { PRICE_TILE_WIDTH, PriceTile } from './PriceTile';
+import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 import { PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
 
 /** The depth of a chosen price store's hard edge, as the stamped look of the price badge. */
@@ -63,7 +63,7 @@ const makeStyles = (c: ThemeColors) =>
 /**
  * "Small prices" (ADR 0047, ADR 0055 step 6): three price stores as big buttons, each a band (up to ₹30, ₹30 to ₹50, ₹50 to ₹100,
  * so a store holds what the one below does not), a row of
- * filter chips (all, dairy, vegetables, fruits, staples, snacks) and one swipeable row of price-first cards, cheapest first. The
+ * filter chips (all, dairy, vegetables, fruits, staples, snacks) and one swipeable row of the standard cards (the locked price badge), cheapest first. The
  * title is a lettered word with a sticker, on a pistachio wash. Nothing in it loads or moves: choosing a store or a filter only
  * swaps the row. The tiers and the picking rule are the same as before; only how they are chosen has changed.
  */
@@ -127,7 +127,6 @@ export function SmallPrices() {
           {PRICE_FILTERS.map((entry) => (
             <Chip
               key={entry.key}
-              light
               label={t(entry.label)}
               selected={filter === entry.key}
               onPress={() => {
@@ -152,7 +151,7 @@ export function SmallPrices() {
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
           <View style={styles.row}>
             {picked.map((item) => (
-              <PriceTile key={item.id} item={item} width={PRICE_TILE_WIDTH} reserveNote={note} />
+              <ItemTile key={item.id} item={item} width={RAIL_CARD_WIDTH} reserveNote={note} />
             ))}
           </View>
         </ScrollView>

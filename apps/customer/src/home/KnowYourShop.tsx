@@ -37,16 +37,16 @@ const makeStyles = (c: ThemeColors) =>
     kicker: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     kickerDot: { width: 8, height: 8, borderRadius: radius.full, backgroundColor: c.accent },
     pad: { paddingHorizontal: space[4] },
-    // The card under the scene: the two kinds of store side by side with their score (always in view), and, opening under them,
-    // the five checks compared.
+    // One container for the scene and what is under it: the two kinds of store side by side with their score (always in view),
+    // and, opening under them, the five checks compared.
     card: {
       borderRadius: radius.xl,
       borderWidth: 1,
       borderColor: c.line,
       backgroundColor: c.surface,
-      paddingHorizontal: space[3],
       overflow: 'hidden',
     },
+    inside: { paddingHorizontal: space[3] },
     titleRow: {
       minHeight: TAP_MIN,
       flexDirection: 'row',
@@ -213,129 +213,129 @@ export function KnowYourShop() {
         </View>
 
         <View style={styles.pad}>
-          <CompareScene
-            labels={{
-              scene: t('home.know.scene.label'),
-              hint: t('home.know.scene.hint'),
-              darkName: t('home.know.scene.darkName'),
-              darkSub: t('home.know.scene.darkSub'),
-              tape: t('home.know.scene.tape'),
-              shopName: t('home.know.scene.shopName'),
-              shopSub: t('home.know.scene.shopSub'),
-              open: t('home.know.scene.open'),
-            }}
-          />
-        </View>
-
-        <View style={styles.pad}>
           <View style={styles.card}>
-            <Pressable
-              role="button"
-              aria-expanded={open}
-              aria-label={`${t('home.know.scoreCaption')}. ${t('home.know.darkLabel')}: ${scoreOf(KNOW_SCORE.darkStore)}. ${t('home.know.shopLabel')}: ${scoreOf(KNOW_SCORE.shop)}`}
-              onPress={() => {
-                setOpen((was) => !was);
+            <CompareScene
+              flush
+              labels={{
+                scene: t('home.know.scene.label'),
+                hint: t('home.know.scene.hint'),
+                darkName: t('home.know.scene.darkName'),
+                darkSub: t('home.know.scene.darkSub'),
+                tape: t('home.know.scene.tape'),
+                shopName: t('home.know.scene.shopName'),
+                shopSub: t('home.know.scene.shopSub'),
+                open: t('home.know.scene.open'),
               }}
-              style={({ pressed }) => [styles.titleRow, pressed && styles.pressed]}
-            >
-              <View style={styles.title}>
-                <Text variant="strong" tight>
-                  {t('home.know.scoreCaption')}
-                </Text>
+            />
+            <View style={styles.inside}>
+              <Pressable
+                role="button"
+                aria-expanded={open}
+                aria-label={`${t('home.know.scoreCaption')}. ${t('home.know.darkLabel')}: ${scoreOf(KNOW_SCORE.darkStore)}. ${t('home.know.shopLabel')}: ${scoreOf(KNOW_SCORE.shop)}`}
+                onPress={() => {
+                  setOpen((was) => !was);
+                }}
+                style={({ pressed }) => [styles.titleRow, pressed && styles.pressed]}
+              >
+                <View style={styles.title}>
+                  <Text variant="strong" tight>
+                    {t('home.know.scoreCaption')}
+                  </Text>
+                </View>
+                <Animated.View
+                  style={{
+                    transform: [
+                      {
+                        rotate: progress.interpolate({
+                          inputRange: [0, 1],
+                          outputRange: ['90deg', '-90deg'],
+                        }),
+                      },
+                    ],
+                  }}
+                  aria-hidden
+                >
+                  <Icon name="chevronRight" color={colors.accentInk} size={18} />
+                </Animated.View>
+              </Pressable>
+
+              {/* The two kinds of store, side by side, each a name and its score. */}
+              <View style={styles.stores}>
+                <View style={[styles.store, styles.storeDark]}>
+                  <Text variant="strong" color="onPlum" align="center" numberOfLines={1}>
+                    {t('home.know.darkLabel')}
+                  </Text>
+                  <Text variant="subheading" color="onPlum" align="center" numberOfLines={1}>
+                    {scoreOf(KNOW_SCORE.darkStore)}
+                  </Text>
+                </View>
+                <View style={[styles.store, styles.storeShop]}>
+                  <Text variant="strong" color="onAccent" align="center" numberOfLines={1}>
+                    {t('home.know.shopLabel')}
+                  </Text>
+                  <Text variant="subheading" color="onAccent" align="center" numberOfLines={1}>
+                    {scoreOf(KNOW_SCORE.shop)}
+                  </Text>
+                </View>
               </View>
+
+              {/* The five checks, compared. Measured once, then the height runs between nothing and that, with the opacity. */}
               <Animated.View
-                style={{
-                  transform: [
-                    {
-                      rotate: progress.interpolate({
-                        inputRange: [0, 1],
-                        outputRange: ['90deg', '-90deg'],
-                      }),
-                    },
-                  ],
-                }}
-                aria-hidden
+                style={[
+                  styles.body,
+                  {
+                    height: progress.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0, bodyHeight],
+                    }),
+                    opacity: progress,
+                  },
+                ]}
+                aria-hidden={!open}
+                pointerEvents={open ? 'auto' : 'none'}
               >
-                <Icon name="chevronRight" color={colors.accentInk} size={18} />
+                <View
+                  style={styles.bodyInner}
+                  onLayout={(event) => {
+                    setBodyHeight(event.nativeEvent.layout.height);
+                  }}
+                >
+                  {KNOW_QUESTIONS.map((id) => (
+                    <View
+                      key={id}
+                      style={styles.row}
+                      accessible
+                      aria-label={`${question(id)}. ${t('home.know.darkLabel')}: ${t('home.know.cannot')}. ${t('home.know.shopLabel')}: ${t('home.know.can')}`}
+                    >
+                      <View style={styles.markCell} aria-hidden>
+                        <View style={[styles.mark, styles.markNo]}>
+                          <Icon name="close" color={colors.onPlum} size={16} />
+                        </View>
+                      </View>
+                      <View style={styles.rowLabel}>
+                        <NativeText
+                          allowFontScaling={false}
+                          aria-hidden
+                          style={{ fontSize: 18, lineHeight: 24 }}
+                        >
+                          {ICON[id]}
+                        </NativeText>
+                        <View style={styles.rowText}>
+                          <Text variant="strong" tight align="center">
+                            {question(id)}
+                          </Text>
+                        </View>
+                      </View>
+                      <View style={styles.markCell} aria-hidden>
+                        <View style={[styles.mark, styles.markYes]}>
+                          <Icon name="check" color={colors.onAccent} size={16} />
+                        </View>
+                      </View>
+                    </View>
+                  ))}
+                </View>
               </Animated.View>
-            </Pressable>
-
-            {/* The two kinds of store, side by side, each a name and its score. */}
-            <View style={styles.stores}>
-              <View style={[styles.store, styles.storeDark]}>
-                <Text variant="strong" color="onPlum" align="center" numberOfLines={1}>
-                  {t('home.know.darkLabel')}
-                </Text>
-                <Text variant="subheading" color="onPlum" align="center" numberOfLines={1}>
-                  {scoreOf(KNOW_SCORE.darkStore)}
-                </Text>
-              </View>
-              <View style={[styles.store, styles.storeShop]}>
-                <Text variant="strong" color="onAccent" align="center" numberOfLines={1}>
-                  {t('home.know.shopLabel')}
-                </Text>
-                <Text variant="subheading" color="onAccent" align="center" numberOfLines={1}>
-                  {scoreOf(KNOW_SCORE.shop)}
-                </Text>
-              </View>
             </View>
-
-            {/* The five checks, compared. Measured once, then the height runs between nothing and that, with the opacity. */}
-            <Animated.View
-              style={[
-                styles.body,
-                {
-                  height: progress.interpolate({
-                    inputRange: [0, 1],
-                    outputRange: [0, bodyHeight],
-                  }),
-                  opacity: progress,
-                },
-              ]}
-              aria-hidden={!open}
-              pointerEvents={open ? 'auto' : 'none'}
-            >
-              <View
-                style={styles.bodyInner}
-                onLayout={(event) => {
-                  setBodyHeight(event.nativeEvent.layout.height);
-                }}
-              >
-                {KNOW_QUESTIONS.map((id) => (
-                  <View
-                    key={id}
-                    style={styles.row}
-                    accessible
-                    aria-label={`${question(id)}. ${t('home.know.darkLabel')}: ${t('home.know.cannot')}. ${t('home.know.shopLabel')}: ${t('home.know.can')}`}
-                  >
-                    <View style={styles.markCell} aria-hidden>
-                      <View style={[styles.mark, styles.markNo]}>
-                        <Icon name="close" color={colors.onPlum} size={16} />
-                      </View>
-                    </View>
-                    <View style={styles.rowLabel}>
-                      <NativeText
-                        allowFontScaling={false}
-                        aria-hidden
-                        style={{ fontSize: 18, lineHeight: 24 }}
-                      >
-                        {ICON[id]}
-                      </NativeText>
-                      <View style={styles.rowText}>
-                        <Text variant="strong" tight align="center">
-                          {question(id)}
-                        </Text>
-                      </View>
-                    </View>
-                    <View style={styles.markCell} aria-hidden>
-                      <View style={[styles.mark, styles.markYes]}>
-                        <Icon name="check" color={colors.onAccent} size={16} />
-                      </View>
-                    </View>
-                  </View>
-                ))}
-              </View>
-            </Animated.View>
           </View>
         </View>
       </View>

@@ -109,7 +109,7 @@ export function ProductSkeleton({
   const optionHeight =
     3 + space[3] + space[2] + small + 2 + (body - 2) + (saves ? 2 + quiet : 0) + 2 + small;
   // A fact chip is a quiet line over a strong one, with its padding.
-  const chipHeight = quiet + small + space[2] * 2;
+  const chipHeight = quiet + small + space[2] * 2 + 2;
   // The rows after the title card, as tall as the real ones: the icon or the text, whichever is taller, with the card's padding.
   const rows = [
     Math.max(SHOP_ICON, small * 2 + (item.otherShops !== undefined ? body + 4 : 0)),
@@ -123,7 +123,7 @@ export function ProductSkeleton({
         CHIP_MAX,
         Math.max(
           CHIP_MIN,
-          space[3] * 2 + Math.max([...chip.label].length * 6, [...chip.value].length * 7.4),
+          space[3] * 2 + 2 + Math.max([...chip.label].length * 6, [...chip.value].length * 7.4),
         ),
       ),
     );

@@ -108,7 +108,7 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[3],
       borderRadius: radius.full,
       borderWidth: 1.5,
-      borderColor: c.ctl,
+      borderColor: c.line,
     },
     pillLive: { backgroundColor: c.accent, borderColor: c.accent },
     pillOn: { backgroundColor: c.accentSubtle, borderColor: c.accentSubtle },

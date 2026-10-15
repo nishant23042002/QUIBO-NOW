@@ -12,19 +12,19 @@ const PICTURE = 56;
 
 /**
  * The height of a card whose title and line each take two lines: the padding and border around them, the two lines of each in the
- * chosen script, and the gap between. The loading skeleton uses it too, so the row is as tall before the cards arrive as after.
+ * chosen script, the "Shop now" line and the gaps between. The loading skeleton uses it too, so the row is as tall before the cards
+ * arrive as after.
  */
 export function useFeaturedCardHeight(): number {
   const { locale } = useLanguage();
   const lead = leading[locale === 'en' ? 'latin' : 'devanagari'].normal;
   return (
-    space[4] * 2 +
+    space[3] * 2 +
     2 +
-    Math.round(fontSize.xs * lead) +
     Math.round(fontSize.sm * lead) * 2 +
     Math.round(fontSize.xs * lead) * 2 +
     Math.round(fontSize.sm * lead) +
-    space[1] * 3
+    space[1] * 2
   );
 }
 
@@ -38,7 +38,7 @@ const makeStyles = (c: ThemeColors) =>
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[2],
-      padding: space[4],
+      padding: space[3],
       borderRadius: radius.md,
       borderWidth: 1,
       borderColor: c.line,
@@ -49,8 +49,9 @@ const makeStyles = (c: ThemeColors) =>
   });
 
 /**
- * "Featured this week": a few picks, each a tinted card with a title, a line under it and a picture, in one swipeable row under the
- * same dotted-line title as every row. A pick opens a category on Home, or search for a word, the way a category tile does.
+ * "Featured this week": a few picks, each a tinted card with a title, a line under it, "Shop now" and a picture, in one swipeable
+ * row under the same dotted-line title as every row. The cards are kept short: no tag line (the row's title says it) and a tight
+ * padding. A pick opens a category on Home, or search for a word, the way a category tile does.
  */
 export function Featured({ onCategory }: { onCategory: (category: ItemCategory) => void }) {
   const { t } = useLanguage();
@@ -82,9 +83,6 @@ export function Featured({ onCategory }: { onCategory: (category: ItemCategory) 
               ]}
             >
               <View style={styles.words}>
-                <Text variant="caption" color="inkMuted" numberOfLines={1}>
-                  {t('home.featured.tag')}
-                </Text>
                 <Text variant="strong" numberOfLines={2}>
                   {t(pick.title)}
                 </Text>

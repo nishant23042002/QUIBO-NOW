@@ -62,7 +62,7 @@ const makeStyles = (c: ThemeColors) =>
     closedTag: {
       backgroundColor: c.surface,
       borderWidth: 1,
-      borderColor: c.ctl,
+      borderColor: c.line,
       paddingVertical: 0,
     },
     text: { paddingHorizontal: space[1] },

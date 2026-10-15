@@ -190,10 +190,6 @@
         "evening": "Evening"
       }
     },
-    "shopForNeed": {
-      "title": "Picks for your routine",
-      "sub": "Pick your brands for the moments in your day"
-    },
     "shopByBrand": {
       "title": "Shop by brand",
       "sub": "Open a brand store",
@@ -221,7 +217,6 @@
       "tiffinBody": "Quick bites and biscuits",
       "chaiTitle": "Morning chai",
       "chaiBody": "Tea, biscuits and more",
-      "tag": "Featured",
       "shop": "Shop now"
     },
     "categoryEmpty": {
@@ -229,14 +224,10 @@
       "body": "Check back soon, or choose All."
     },
     "hero": {
-      "title": "Right now in Roha",
+      "title": "Picks for your routine",
       "milk": "Morning milk",
       "milkSub": "7–9 AM window",
       "from": "from",
-      "veg": "Sabzi mandi",
-      "chai": "Tea Break",
-      "kirana": "Kirana basics",
-      "fruit": "Fruit basket",
       "shopsTitle": "Meet your shops",
       "shopsSub": "{names} and {count} more"
     },
@@ -383,9 +374,6 @@
       "pick": "Pick a window",
       "save": "Save {amount}",
       "rush": "Rush hour"
-    },
-    "banner": {
-      "title": "Monthly ration, one tap"
     },
     "help": {
       "row": "Need help? We are here to help"
@@ -1582,8 +1570,11 @@
     },
     "soon": {
       "drinks": "Cold drinks",
-      "line": "Coming soon to Roha"
+      "line": "Coming soon to Roha",
+      "notify": "Tell me when {name} arrives",
+      "notified": "You will be told when {name} arrives. Tap to undo"
     },
+    "jump": "Go to {name}",
     "band": "Picked from shops in Roha",
     "rail": "Kinds in this list",
     "empty": {

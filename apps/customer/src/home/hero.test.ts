@@ -1,10 +1,13 @@
 import { describe, expect, it } from 'vitest';
 import { MAIN_CATEGORIES } from './catalogueTree';
-import { HERO_TILES, lowestPrice } from './hero';
+import { heroTiles, lowestPrice } from './hero';
 import { NEEDS } from './needs';
 
-describe('HERO_TILES', () => {
-  it('holds a tall tile and four small ones, each once', () => {
+const HERO_TILES = heroTiles(NEEDS);
+
+describe('the hero tiles', () => {
+  it('holds a tall tile and the four moments, each once', () => {
+    expect(HERO_TILES.slice(1).map((tile) => tile.id)).toEqual(NEEDS.map((entry) => entry.id));
     expect(HERO_TILES).toHaveLength(5);
     expect(new Set(HERO_TILES.map((tile) => tile.id)).size).toBe(5);
   });
@@ -34,6 +37,17 @@ describe('HERO_TILES', () => {
       expect(tile.sub).toBeUndefined();
       expect(tile.fromType).toBeUndefined();
     }
+  });
+});
+
+describe('the hero tiles of a town', () => {
+  it('hold only the moments the town has, after the milk tile', () => {
+    expect(heroTiles(NEEDS.slice(0, 2)).map((tile) => tile.id)).toEqual([
+      'milk',
+      'teaBreak',
+      'breakfast',
+    ]);
+    expect(heroTiles([]).map((tile) => tile.id)).toEqual(['milk']);
   });
 });
 

@@ -56,7 +56,6 @@ export function Trending() {
           {TRENDING_TABS.map((entry) => (
             <Chip
               key={entry}
-              light
               label={label(entry)}
               selected={tab === entry}
               onPress={() => {

@@ -39,6 +39,8 @@ const variants = {
   lead: { fontSize: fontSize.lg, role: 'regular', leading: 'relaxed' },
   body: { fontSize: fontSize.base, role: 'regular', leading: 'normal' },
   label: { fontSize: fontSize.base, role: 'emphasis', leading: 'normal' },
+  /** The name on a product card: a step larger than a label and a weight heavier, so what an item is reads first. */
+  cardName: { fontSize: fontSize.base, role: 'display', leading: 'normal' },
   caption: { fontSize: fontSize.xs, role: 'emphasis', leading: 'normal' },
   small: { fontSize: fontSize.sm, role: 'regular', leading: 'normal' },
   /** The smallest regular text: a line of supporting detail under something, not a label. */

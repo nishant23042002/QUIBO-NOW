@@ -141,3 +141,15 @@ each kind), so the Snacks and Staples rows are longer.
 - The hero tile and "Picks for your routine" already read the new names from the moments data (steps 1 and 3), in fixed order.
 - The line under "Picks for your routine" no longer says "ready-made baskets", which promised a bundle: it now says to pick your
   brands for the moments in your day (en, hi, mr; the Hindi and Marathi are drafts for a native speaker).
+
+## Step 5: accessibility, Maestro, ADR (built; stop for sign-off)
+
+- Jump chips are announced as buttons named "Go to <shelf>" and not as pressed or not pressed (`Chip` takes `ariaLabel` and
+  `action`). The Notify me button says what it is for ("Tell me when Cold drinks arrives") and its undo. The jump scroll does not
+  animate when the phone asks for reduced motion. Touch targets are 48 dp (36 dp chips with hit slop), text is 14 dp or more, and
+  every colour pairing is in the contrast tests.
+- `apps/customer/.maestro/moment.yaml` covers the four names on Home, a moment's band, brands on a shelf, a chip jump, and Notify me
+  on and off. Not run yet: Maestro is not installed on this machine, like the category flow.
+- ADR 0058 records the decisions.
+- Gate so far: lint, typecheck and unit tests pass; the page was checked in the browser preview in light and dark. Not done: a run on
+  a real low-end phone, Maestro, and the native-speaker review. The owner signs off after the phone check.

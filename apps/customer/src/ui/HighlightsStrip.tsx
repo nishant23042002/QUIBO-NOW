@@ -29,6 +29,8 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[3],
       paddingVertical: space[2],
       borderRadius: radius.md,
+      borderWidth: 1,
+      borderColor: c.line,
       backgroundColor: c.lilac,
     },
     action: {

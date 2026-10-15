@@ -5,9 +5,9 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon, Text, radius, space } from '@/ui';
 import { tintColor } from './categoryGroups';
 import type { MainCategoryId } from './catalogueTree';
-import { HERO_TILES, lowestPrice, type HeroTile } from './hero';
+import { heroTiles, lowestPrice, type HeroTile } from './hero';
 import { useHomeItems } from './items';
-import type { NeedId } from './needs';
+import { liveNeeds, type NeedId } from './needs';
 
 /** One small tile's height. The tall tile is two of them and the gap between. */
 const ROW = 112;
@@ -98,9 +98,9 @@ export interface HeroMosaicProps {
 }
 
 /**
- * "Right now in Roha": the block under Home's category tabs, drawn on the header's own colour (ADR 0055). A tall tile (morning
- * milk, with the lowest price in town) and four small ones, each a way in to something the town supplies today, then a strip that
- * opens the shops. The pictures are emoji until each tile has a picture of its own.
+ * "Picks for your routine": the block under Home's category tabs, drawn on the header's own colour (ADR 0055). A tall tile (morning
+ * milk, with the lowest price in town) and the four moments (Tea Break, Breakfast Ready, Cook Today, Movie Night), each opening its
+ * own page, then a strip that opens the shops. The pictures are emoji until each tile has a picture of its own.
  */
 export function HeroMosaic({ shopNames, onCategory, onNeed, onMeetShops }: HeroMosaicProps) {
   const { t } = useLanguage();
@@ -166,7 +166,7 @@ export function HeroMosaic({ shopNames, onCategory, onNeed, onMeetShops }: HeroM
     );
   };
 
-  const [milk, veg, chai, kirana, fruit] = HERO_TILES;
+  const [milk, first, second, third, fourth] = heroTiles(liveNeeds(items));
   const names = shopNames.slice(0, 2).join(', ');
   const more = shopNames.length - 2;
   const strip = more > 0 ? t('home.hero.shopsSub', { names, count: more }) : shopNames.join(', ');
@@ -183,15 +183,19 @@ export function HeroMosaic({ shopNames, onCategory, onNeed, onMeetShops }: HeroM
         <View style={styles.tall}>{milk !== undefined ? renderTile(milk, true) : null}</View>
         <View style={styles.col}>
           <View style={styles.pair}>
-            <View style={styles.small}>{veg !== undefined ? renderTile(veg, false) : null}</View>
-            <View style={styles.small}>{chai !== undefined ? renderTile(chai, false) : null}</View>
+            <View style={styles.small}>
+              {first !== undefined ? renderTile(first, false) : null}
+            </View>
+            <View style={styles.small}>
+              {second !== undefined ? renderTile(second, false) : null}
+            </View>
           </View>
           <View style={styles.pair}>
             <View style={styles.small}>
-              {kirana !== undefined ? renderTile(kirana, false) : null}
+              {third !== undefined ? renderTile(third, false) : null}
             </View>
             <View style={styles.small}>
-              {fruit !== undefined ? renderTile(fruit, false) : null}
+              {fourth !== undefined ? renderTile(fourth, false) : null}
             </View>
           </View>
         </View>

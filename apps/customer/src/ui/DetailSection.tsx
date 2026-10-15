@@ -15,7 +15,13 @@ export interface DetailSectionProps {
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    section: { borderRadius: radius.lg, backgroundColor: c.bg, overflow: 'hidden' },
+    section: {
+      borderRadius: radius.lg,
+      borderWidth: 1,
+      borderColor: c.line,
+      backgroundColor: c.bg,
+      overflow: 'hidden',
+    },
     head: {
       minHeight: TAP_MIN + space[1],
       flexDirection: 'row',

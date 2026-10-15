@@ -990,6 +990,7 @@ export function ProductView({
           setDetailsOpen(false);
         }}
         title={item.fullName}
+        largeTitle
         heightPercent={SHEET_HEIGHT}
         closeLabel={t('product.closeDetails')}
         footer={

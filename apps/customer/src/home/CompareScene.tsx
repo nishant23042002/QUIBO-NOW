@@ -47,6 +47,8 @@ const makeStyles = (c: ThemeColors) =>
       borderColor: c.plumEnd,
       backgroundColor: c.night,
     },
+    // The top of a container that holds the border and the corners.
+    flush: { borderRadius: 0, borderWidth: 0 },
     // The sealed store: the night colour, so it is the darkest thing on the page in both themes.
     sealed: {
       position: 'absolute',
@@ -224,7 +226,14 @@ function makeResponder(divider: Divider, onChange: (at: number) => void) {
  * It is a slider for a screen reader (increase and decrease move it a step). Dragging only claims a mostly sideways move, so the page
  * still scrolls when a finger goes up or down on it.
  */
-export function CompareScene({ labels }: { labels: CompareSceneLabels }) {
+export function CompareScene({
+  labels,
+  flush = false,
+}: {
+  labels: CompareSceneLabels;
+  /** Drawn without its own border and rounded corners, as the top of a container that has them. */
+  flush?: boolean;
+}) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
   const [width, setWidth] = useState(0);
@@ -248,7 +257,7 @@ export function CompareScene({ labels }: { labels: CompareSceneLabels }) {
 
   return (
     <View
-      style={styles.scene}
+      style={[styles.scene, flush && styles.flush]}
       onLayout={onLayout}
       accessible
       role="slider"

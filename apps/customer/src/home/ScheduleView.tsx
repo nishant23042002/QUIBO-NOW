@@ -87,7 +87,7 @@ const makeStyles = (c: ThemeColors) =>
       padding: space[3],
       borderWidth: 1.5,
       borderRadius: radius.lg,
-      borderColor: c.ctl,
+      borderColor: c.line,
       backgroundColor: c.surface,
     },
     optionOn: { borderColor: c.action, backgroundColor: c.lilac },

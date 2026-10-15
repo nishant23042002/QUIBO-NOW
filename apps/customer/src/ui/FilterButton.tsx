@@ -32,7 +32,7 @@ const makeStyles = (c: ThemeColors) =>
       // Squarer than a chip, so it reads as a button that does something, not a label.
       borderRadius: radius.sm,
       borderWidth: 1.5,
-      borderColor: c.ctl,
+      borderColor: c.line,
       backgroundColor: c.surface,
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },

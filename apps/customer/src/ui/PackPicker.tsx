@@ -55,7 +55,7 @@ const makeStyles = (c: ThemeColors) =>
       paddingBottom: space[2],
       borderRadius: radius.lg,
       borderWidth: 1.5,
-      borderColor: c.ctl,
+      borderColor: c.line,
       backgroundColor: c.surface,
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },

@@ -26,6 +26,8 @@ export interface SheetProps {
   onClose: () => void;
   /** Heading of the sheet. */
   title: string;
+  /** Set the heading larger, for a sheet whose title is the thing the page is about (the product's name). */
+  largeTitle?: boolean;
   /** Name of the close button for screen readers. Pass a translated string. */
   closeLabel: string;
   children: ReactNode;
@@ -125,6 +127,7 @@ export function Sheet({
   open,
   onClose,
   title,
+  largeTitle = false,
   closeLabel,
   children,
   footer,
@@ -211,7 +214,7 @@ export function Sheet({
               >
                 <View style={[styles.header, !ruled && styles.headerPlain]}>
                   <View style={styles.title}>
-                    <Text variant="heading">{title}</Text>
+                    <Text variant={largeTitle ? 'hero' : 'heading'}>{title}</Text>
                   </View>
                   <Pressable
                     role="button"

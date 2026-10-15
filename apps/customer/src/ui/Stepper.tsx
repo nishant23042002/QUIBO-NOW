@@ -39,8 +39,6 @@ export interface StepperProps {
    * what to press and the press is plainly seen.
    */
   large?: boolean;
-  /** ADD is filled with the accent colour (pistachio) and not outlined. Once the item is in the cart the stepper looks as usual. */
-  accent?: boolean;
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -105,7 +103,6 @@ const makeStyles = (c: ThemeColors) =>
     sideLarge: { width: 48, height: 48, alignItems: 'center', justifyContent: 'center' },
     valueLarge: { minWidth: 32, alignItems: 'center' },
     pressedAddLarge: { transform: [{ scale: 0.96 }], opacity: 0.85 },
-    addAccent: { borderColor: c.accent, backgroundColor: c.accent },
     sideCompact: { width: 26, height: 28, alignItems: 'center', justifyContent: 'center' },
     valueCompact: { minWidth: 18, alignItems: 'center' },
     // The press is seen the moment the finger lands: ADD dips and takes the lilac, and a - or + dips and dims, so the control
@@ -152,7 +149,6 @@ export function Stepper({
   unitLabel,
   compact = false,
   large = false,
-  accent = false,
 }: StepperProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
@@ -264,13 +260,12 @@ export function Stepper({
           }}
           style={({ pressed }) => [
             large ? styles.addLarge : compact ? styles.addCompact : styles.add,
-            accent && !large && styles.addAccent,
             pressed && (large ? styles.pressedAddLarge : styles.pressedAdd),
           ]}
         >
           <Text
             variant={large ? 'label' : compact ? 'caption' : 'strong'}
-            color={large ? 'onAction' : accent ? 'onAccent' : 'action'}
+            color={large ? 'onAction' : 'action'}
             maxFontSizeMultiplier={CONTROL_SCALE_MAX}
           >
             {addLabel}

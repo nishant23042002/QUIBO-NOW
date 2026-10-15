@@ -31,9 +31,8 @@ appId: host.exp.exponent
 - tapOn: 'Lay.s Potato chips\. .*'
 - assertVisible: 'Add 1 item.*'
 
-# Picks for your routine: a card opens its own page with a shelf for each thing it gathers. It is below the first screen now.
-- scrollUntilVisible:
-    element: 'Picks for your routine'
+# Picks for your routine is the block under the header rail: a moment's tile opens its own page with a shelf for each thing it gathers.
+- assertVisible: 'Picks for your routine'
 - tapOn: 'Tea Break.*'
 - assertVisible: 'Picked from shops in Roha'
 - assertVisible: 'Amul Toned milk.*'

@@ -11,8 +11,10 @@ export interface ChipProps {
   /** Without a handler the chip is a plain label. */
   onPress?: () => void;
   icon?: IconName;
-  /** The same light border the cards have, for a row of filters on Home, instead of the stronger control border. */
-  light?: boolean;
+  /** What a screen reader says when it differs from the label, for example "Go to Biscuits". */
+  ariaLabel?: string;
+  /** A chip that does something (jumps, opens) and is not a switch: it is not announced as pressed or not pressed. */
+  action?: boolean;
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -25,11 +27,10 @@ const makeStyles = (c: ThemeColors) =>
       gap: space[1],
       borderWidth: 1.5,
       borderRadius: radius.md,
-      borderColor: c.ctl,
+      borderColor: c.line,
       backgroundColor: c.surface,
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },
-    light: { borderColor: c.line },
     disabled: { opacity: 0.5 },
     pressed: { opacity: 0.8 },
   });
@@ -49,7 +50,8 @@ export function Chip({
   disabled = false,
   onPress,
   icon,
-  light = false,
+  ariaLabel,
+  action = false,
 }: ChipProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
@@ -57,14 +59,14 @@ export function Chip({
   return (
     <Pressable
       role="button"
-      aria-pressed={selected}
+      {...(ariaLabel !== undefined ? { 'aria-label': ariaLabel } : {})}
+      {...(action ? {} : { 'aria-pressed': selected })}
       aria-disabled={disabled}
       disabled={disabled || onPress === undefined}
       onPress={onPress}
       hitSlop={6}
       style={({ pressed }) => [
         styles.chip,
-        light && styles.light,
         selected && styles.selected,
         disabled && styles.disabled,
         pressed && styles.pressed,

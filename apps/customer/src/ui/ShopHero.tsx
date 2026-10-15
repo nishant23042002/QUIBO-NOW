@@ -39,7 +39,7 @@ const makeStyles = (c: ThemeColors) =>
     closedTag: {
       backgroundColor: c.surface,
       borderWidth: 1,
-      borderColor: c.ctl,
+      borderColor: c.line,
       paddingVertical: 0,
     },
     nameRow: { flexDirection: 'row', alignItems: 'center', gap: space[2] },

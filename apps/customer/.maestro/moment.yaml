@@ -1,0 +1,43 @@
+# The moment pages: open Movie Night from Home, jump to a shelf with a chip, and turn on Notify me for what is not stocked yet.
+#
+# Run it against the app open in Expo Go, on a fresh install so the language is English:
+#   maestro test apps/customer/.maestro/moment.yaml -e APP_URL=exp://<your computer's address>:8081
+#
+# Written in Phase 1 (moments, step 5). It has not been run yet: the Maestro tool is not installed on the machine this was written
+# on. The chips and the Notify me button are found by the names a screen reader says, so the flow also checks that they exist.
+appId: host.exp.exponent
+---
+- launchApp:
+    clearState: true
+- openLink: ${APP_URL}
+- tapOn: 'Skip sign-in (testing)'
+- assertVisible: 'Estimated delivery|Scheduled delivery'
+
+# Picks for your routine, under the header rail, lists the four moments by name.
+- assertVisible: 'Picks for your routine'
+- assertVisible: 'Tea Break.*'
+- assertVisible: 'Breakfast Ready.*'
+- assertVisible: 'Cook Today.*'
+- assertVisible: 'Movie Night.*'
+
+# A moment's page: its name, where the items come from, one row for each shelf, and every brand on a shelf.
+- tapOn: 'Movie Night.*'
+- assertVisible: 'Picked from shops in Roha'
+- assertVisible: 'Go to Popcorn'
+- assertVisible: 'Go to Chocolates'
+- assertVisible: 'Act II.*'
+- assertVisible: 'Weikfield.*'
+
+# A chip jumps to its shelf, and the shelf's own hint is there.
+- tapOn: 'Go to Chocolates'
+- assertVisible: 'Something sweet'
+- assertVisible: 'Dairy Milk.*'
+
+# What the town does not stock yet: a quiet row, and Notify me turns on and back off.
+- scrollUntilVisible:
+    element: 'Coming soon to Roha'
+- tapOn: 'Tell me when Cold drinks arrives'
+- assertVisible: 'We.ll tell you'
+- tapOn: 'You will be told when Cold drinks arrives.*'
+- assertVisible: 'Notify me'
+- tapOn: 'Back'

@@ -42,8 +42,6 @@ const EMOJI_SIZE = 30;
  * height as the square tiles beside it.
  */
 const WIDE_RATIO = 2.15;
-/** The band of the category's colour round a picture's plate, like the mat round a framed photograph. */
-const FRAME = 3;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -62,13 +60,11 @@ const makeStyles = (c: ThemeColors) =>
     },
     // Sized outright: left to `absoluteFill` alone, the web build keeps the picture at its own pixel size and the tile clips it.
     artwork: { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' },
-    // A tile with artwork is the picture on its neutral plate, set in a band of the category's own colour. The plate is almost the
-    // page's colour, so on its own the tile had no edge; the band gives it one, and ties the tile to the category's colour.
-    framed: { borderWidth: 0, padding: FRAME },
+    // A tile with artwork is the picture on its neutral plate, inside the same fine light border as every card.
     plate: {
       flex: 1,
       width: '100%',
-      borderRadius: radius.md,
+      borderRadius: radius.lg,
       backgroundColor: c.artworkPlate,
       overflow: 'hidden',
     },
@@ -132,7 +128,6 @@ export function CategoryTile({
             styles.box,
             { backgroundColor: tint },
             wide && styles.boxWide,
-            picture !== undefined && !wide && styles.framed,
             dimmed && !notified && styles.dimmed,
             notified && styles.notified,
           ]}

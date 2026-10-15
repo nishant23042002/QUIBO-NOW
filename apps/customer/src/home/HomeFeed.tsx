@@ -31,10 +31,8 @@ import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
 import { Featured } from './Featured';
 import { QuieterModule } from './QuieterModule';
-import { ShelfBanner } from './ShelfBanner';
 import { HelpRow } from './HelpRow';
 import { Trending } from './Trending';
-import { ShopForNeed } from './ShopForNeed';
 import { SmallPrices } from './SmallPrices';
 import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import {
@@ -48,8 +46,6 @@ import {
 
 /** How long the loading skeleton shows after a category is chosen. */
 const LOAD_MS = 200;
-/** The banner sits between the shelves, before the one at this place. */
-const BANNER_AFTER = 2;
 
 const styles = StyleSheet.create({
   // A category's grid: its title, the grid and the "See all" button the same 12 apart as inside a row on Home.
@@ -221,21 +217,18 @@ export const HomeFeed = memo(function HomeFeed({
         {/* The aisles end here; the routine (essentials, needs, small prices) begins. */}
         <SectionRule />
         <DailyEssentials />
-        <ShopForNeed />
         <SmallPrices />
         <Trending />
         <BrandStores />
         <Featured onCategory={onSeeAll} />
         {/* What is on show ends here; the shelves, a row for each category, begin. */}
         <SectionRule />
-        {HOME_RAIL_ORDER.map((key, index) => {
+        {HOME_RAIL_ORDER.map((key) => {
           const row = listing.filter((item) => item.category === key);
           // Cards in a row stay one height: room for the low-stock line only when one of them has it.
           const note = anyCardNote(row);
           return (
             <Fragment key={key}>
-              {/* A banner breaks up the shelves after the second. */}
-              {index === BANNER_AFTER ? <ShelfBanner onShop={onSeeAll} /> : null}
               <ProductRail
                 title={t(`home.rails.${key}`)}
                 seeAllLabel={t('home.rails.seeAll')}

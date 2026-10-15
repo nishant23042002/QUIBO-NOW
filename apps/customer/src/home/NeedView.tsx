@@ -30,6 +30,7 @@ import {
   radius,
   space,
   useChromeScroll,
+  useReduceMotion,
   useScreenLoad,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
@@ -218,6 +219,11 @@ function SoonRow({ need }: { need: Need }) {
       </View>
       <Button
         label={on ? t('catalogue.notify.on') : t('catalogue.notify.me')}
+        aria-label={
+          on
+            ? t('needs.soon.notified', { name: t(soon.label) })
+            : t('needs.soon.notify', { name: t(soon.label) })
+        }
         variant={on ? 'secondary' : 'primary'}
         onPress={() => {
           notify.toggle(soon.id);
@@ -234,6 +240,7 @@ function NeedPage({ need }: { need: Need }) {
   const chromeScroll = useChromeScroll();
   const cart = useCart();
   const online = useOnline();
+  const reduceMotion = useReduceMotion();
   const sections = needSections(useHomeItems(), need);
   const hasChips = sections.length > 1;
   const scroller = useRef<ScrollView>(null);
@@ -247,7 +254,7 @@ function NeedPage({ need }: { need: Need }) {
   const jump = (id: string) => {
     const at = place.current;
     const y = at.content + at.shelves + (at.shelf[id] ?? 0);
-    scroller.current?.scrollTo({ y: Math.max(0, y - CHIP_BAR_HEIGHT), animated: true });
+    scroller.current?.scrollTo({ y: Math.max(0, y - CHIP_BAR_HEIGHT), animated: !reduceMotion });
   };
 
   return (
@@ -274,6 +281,8 @@ function NeedPage({ need }: { need: Need }) {
               <Chip
                 key={section.id}
                 label={t(section.label)}
+                ariaLabel={t('needs.jump', { name: t(section.label) })}
+                action
                 onPress={() => {
                   jump(section.id);
                 }}

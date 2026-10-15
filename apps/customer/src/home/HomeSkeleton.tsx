@@ -36,14 +36,10 @@ import { FEATURED_CARD_WIDTH, useFeaturedCardHeight } from './Featured';
 import { FEATURED } from './featuredPicks';
 import { FRESH_TABS, freshItems } from './fresh';
 import { knowShown } from './knowRules';
-import { liveNeeds } from './needs';
 import { HOME_RAIL_ORDER, anyCardNote, useHomeItems, useHomeListing } from './items';
-import { NEED_CARD_HEIGHT } from './ShopForNeed';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
-import { PriceTileSkeleton } from './PriceTile';
 import { PRICE_FILTERS } from './SmallPrices';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
-import { SHELF_BANNER_HEIGHT } from './ShelfBanner';
 import { TRENDING_TABS, TRENDING_UNDER, trendingItems } from './trendingRules';
 import { useCategoryGroups } from './useCategoryGroups';
 import { useViewed } from './useViewed';
@@ -53,8 +49,6 @@ import type { HomeItem } from './items';
 /** How many cards a grid shows when it is not known. */
 const GRID_CARDS = 4;
 const GRID_CARDS_MAX = 8;
-/** The banner sits before the shelf at this place, as on the real page. */
-const BANNER_AFTER = 2;
 /** The round tab of "Fresh today", and the filter chip of Trending and Small prices: as tall as the real ones. */
 const TAB_CIRCLE = 56;
 const CHIP_HEIGHT = 36;
@@ -97,12 +91,14 @@ const makeStyles = (c: ThemeColors) =>
     stage: { paddingTop: space[4], paddingBottom: space[6], gap: space[4] },
     knowModule: { paddingBottom: space[4] },
     head: { paddingHorizontal: space[4], gap: space[1] },
+    // The one container: the scene across its top, then the title row and the two stores.
     nightCard: {
       marginHorizontal: space[4],
-      paddingHorizontal: space[3],
       borderWidth: 1,
       borderColor: 'transparent',
+      overflow: 'hidden',
     },
+    nightInside: { paddingHorizontal: space[3] },
     nightTitle: { minHeight: TAP_MIN, justifyContent: 'center' },
     nightStores: { flexDirection: 'row', gap: space[2], paddingBottom: space[3] },
     // The tab strip of Fresh today.
@@ -128,13 +124,6 @@ const makeStyles = (c: ThemeColors) =>
       minHeight: TAP_MIN,
       paddingHorizontal: space[4],
     },
-    needGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: space[3],
-      paddingHorizontal: space[4],
-    },
-    needCell: { width: '47.8%', flexGrow: 1 },
     stores: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
     store: { flex: 1 },
     columns: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
@@ -156,18 +145,7 @@ const makeStyles = (c: ThemeColors) =>
     storePad: { paddingHorizontal: space[3] },
     storeHead: { paddingHorizontal: space[3], gap: 2 },
     storeRow: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[3] },
-    // The shelf banner, the quieter-times card and the promise: cards with a fine border, as on the page.
-    banner: {
-      marginHorizontal: space[4],
-      minHeight: SHELF_BANNER_HEIGHT,
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: space[3],
-      padding: space[3],
-      borderWidth: 1,
-      borderColor: 'transparent',
-    },
-    bannerWords: { flex: 1, minWidth: 0 },
+    // The quieter-times card and the promise: cards with a fine border, as on the page.
     quiet: {
       marginHorizontal: space[4],
       paddingVertical: space[3],
@@ -290,7 +268,6 @@ export function HomeSkeleton({
   const groups = useCategoryGroups();
   const stocked = groups.filter((group) => group.live.length > 0);
   const homeItems = useHomeItems();
-  const needs = liveNeeds(homeItems);
   const items = useHomeListing();
   const featuredHeight = useFeaturedCardHeight();
   const orders = useOrders();
@@ -396,19 +373,19 @@ export function HomeSkeleton({
                   <SkeletonLine size="sm" width="58%" />
                 </View>
               </View>
-              <View style={styles.pad}>
-                <Skeleton height={COMPARE_SCENE_HEIGHT} rounded={radius.lg} />
-              </View>
               <View style={styles.nightCard}>
-                <View style={styles.nightTitle}>
-                  <Skeleton width="56%" height={16} />
-                </View>
-                <View style={styles.nightStores}>
-                  <View style={styles.store}>
-                    <Skeleton height={70} rounded={radius.lg} />
+                <Skeleton height={COMPARE_SCENE_HEIGHT} rounded={0} />
+                <View style={styles.nightInside}>
+                  <View style={styles.nightTitle}>
+                    <Skeleton width="56%" height={16} />
                   </View>
-                  <View style={styles.store}>
-                    <Skeleton height={70} rounded={radius.lg} />
+                  <View style={styles.nightStores}>
+                    <View style={styles.store}>
+                      <Skeleton height={70} rounded={radius.lg} />
+                    </View>
+                    <View style={styles.store}>
+                      <Skeleton height={70} rounded={radius.lg} />
+                    </View>
                   </View>
                 </View>
               </View>
@@ -517,22 +494,6 @@ export function HomeSkeleton({
 
         <DailyEssentialsSkeleton />
 
-        {needs.length > 0 ? (
-          <View style={styles.section}>
-            <View style={styles.padTight}>
-              <RowTitleSkeleton title={t('home.shopForNeed.title')} />
-              <SkeletonLine size="sm" width="78%" />
-            </View>
-            <View style={styles.needGrid}>
-              {needs.map((entry) => (
-                <View key={entry.id} style={styles.needCell}>
-                  <Skeleton height={NEED_CARD_HEIGHT} rounded={radius.xl} />
-                </View>
-              ))}
-            </View>
-          </View>
-        ) : null}
-
         {/* Small prices: on its lilac wash, the title, three stores, filter chips and the row. */}
         <View style={[styles.smallModule, styles.wash]}>
           <AccentWash tone="lilac" />
@@ -556,7 +517,7 @@ export function HomeSkeleton({
           </StaticRow>
           <StaticRow>
             {Array.from({ length: Math.max(1, Math.min(across, cheap.length)) }, (_, card) => (
-              <PriceTileSkeleton key={card} reserveNote={anyCardNote(cheap)} />
+              <ProductCardSkeleton key={card} width={RAIL_CARD_WIDTH} {...rowCardContent(cheap)} />
             ))}
           </StaticRow>
         </View>
@@ -655,9 +616,8 @@ export function HomeSkeleton({
 
         <SectionRule />
 
-        {HOME_RAIL_ORDER.map((key, index) => (
+        {HOME_RAIL_ORDER.map((key) => (
           <Fragment key={key}>
-            {index === BANNER_AFTER ? <BannerSkeleton /> : null}
             {rail(
               t(`home.rails.${key}`),
               items.filter((item) => item.category === key),
@@ -715,22 +675,5 @@ export function HomeSkeleton({
         <BrandFooter />
       </View>
     </SkeletonScope>
-  );
-}
-
-/** The banner between the shelves: a picture, two lines of words and a "Shop now". */
-function BannerSkeleton() {
-  const styles = useStyles(makeStyles);
-  return (
-    <View style={styles.banner}>
-      <Skeleton width={40} height={40} rounded={radius.md} />
-      <View style={styles.bannerWords}>
-        <SkeletonLine size="base" width="82%" />
-        <SkeletonLine size="base" width="54%" />
-        <View style={{ height: 2 }} />
-        <SkeletonLine size="xs" width="70%" />
-      </View>
-      <Skeleton width={64} height={16} />
-    </View>
   );
 }

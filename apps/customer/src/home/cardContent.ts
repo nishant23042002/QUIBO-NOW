@@ -1,7 +1,7 @@
 import { anyCardNote, type HomeItem } from './items';
 
 /** About how many letters of a product name fit on one line of a rail card. */
-const NAME_FITS = 14;
+const NAME_FITS = 12;
 
 /**
  * What a skeleton needs to draw a row of cards as tall as the real row: whether the row keeps room for the extra line, and what

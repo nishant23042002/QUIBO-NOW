@@ -81,12 +81,12 @@ export function useProductCardMetrics(width?: number, reserveNote?: boolean): Pr
   const { locale } = useLanguage();
   const script = locale === 'en' ? 'latin' : 'devanagari';
   const compact = width !== undefined && isCompactCard(width);
-  // The name is what tells a shopper which item it is, so it keeps the full 16 even on a compact card (its lines packed close);
-  // only the pack and the low-stock line step down to 14.
+  // The name is what tells a shopper which item it is, so it is set at 18 and a little bold even on a compact card (its lines packed
+  // close); only the pack and the low-stock line step down to 14.
   const line = Math.round(
     (compact ? fontSize.xs : fontSize.sm) * leading[script][compact ? 'tight' : 'normal'],
   );
-  const nameLine = Math.round(fontSize.sm * leading[script][compact ? 'tight' : 'normal']);
+  const nameLine = Math.round(fontSize.base * leading[script][compact ? 'tight' : 'normal']);
   const priceHeight =
     Math.round((compact ? fontSize.sm : fontSize.base) * leading[script].normal) +
     (compact ? 6 : 8);
@@ -134,7 +134,7 @@ const makeStyles = (c: ThemeColors) =>
       justifyContent: 'center',
       borderRadius: radius.md,
       borderWidth: 1,
-      borderColor: c.ctl,
+      borderColor: c.line,
       backgroundColor: c.surface,
     },
     text: { gap: space[1], paddingHorizontal: space[1] },
@@ -227,7 +227,7 @@ export const ProductCard = memo(function ProductCard({
       >
         <PriceBadge amount={price} compact={compact} {...(mrp !== undefined ? { mrp } : {})} />
         <View style={styles.name}>
-          <Text variant="strong" tight={compact} numberOfLines={NAME_LINES}>
+          <Text variant="cardName" tight={compact} numberOfLines={NAME_LINES}>
             {name}
           </Text>
         </View>

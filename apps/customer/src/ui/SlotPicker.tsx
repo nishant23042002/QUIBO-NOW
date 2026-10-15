@@ -65,7 +65,7 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[1],
       borderWidth: 1.5,
       borderRadius: radius.md,
-      borderColor: c.ctl,
+      borderColor: c.line,
       backgroundColor: c.surface,
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },
