@@ -3,9 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { readSetting, writeSetting } from '@/storage';
 import { bestCoupon, couponDiscount, findCoupon, isEligible, shortBy } from './coupons';
 import { SAMPLE_COUPONS, type Offer } from './sampleCoupons';
-
-/** Where the phone keeps the applied coupon, so it is still there after the app is closed. */
-const COUPON_KEY = 'quibo.coupon';
+import { COUPON_KEY } from '../storageKeys';
 
 /** A coupon as the screens show it, worked out against what is in the cart now. */
 export interface OfferView {

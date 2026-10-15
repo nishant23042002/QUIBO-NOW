@@ -10,9 +10,8 @@ import {
   type DeliveryNote,
   type SlotChoice,
 } from './slots';
+import { SLOT_KEY } from '../storageKeys';
 
-/** Where the phone keeps the chosen delivery time, so it is still there after the app is closed. */
-const SLOT_KEY = 'quibo.slot';
 /** How often the clock is looked at again, so windows that have gone stop being offered. */
 const TICK_MS = 60_000;
 

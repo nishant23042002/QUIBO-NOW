@@ -4,7 +4,7 @@
  */
 
 /** Where it is saved on the phone. */
-export const VIEWED_KEY = 'quibo.viewed';
+export { VIEWED_KEY } from '../storageKeys';
 
 /** The most things kept: the newest. */
 export const VIEWED_MOST = 8;

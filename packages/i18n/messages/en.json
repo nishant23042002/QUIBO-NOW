@@ -15,7 +15,7 @@
       "scheduled": "Scheduled delivery",
       "deliveryLabel": "Delivery",
       "language": "Change language",
-      "scheduleSlot": "Schedule a slot"
+      "scheduleSlot": "Schedule slot"
     },
     "shopsSheet": {
       "title": "Verified local shops in Roha",
@@ -477,6 +477,7 @@
     "dev": {
       "network": "Network (testing)",
       "area": "Delivery area (testing)",
+      "clearData": "Clear test data (orders, cart, viewed)",
       "areaIn": "Inside the area",
       "areaOut": "Outside the area",
       "online": "Online",

@@ -10,9 +10,7 @@ import {
 import { newUuid } from '@/orders/ids';
 import { readSetting, writeSetting } from '@/storage';
 import { buildReport, parseReports, serialiseReports, type Draft, type Report } from './report';
-
-/** Where the phone keeps the problems the shopper reported, until there is a server to send them to (Phase 2). */
-const REPORTS_KEY = 'quibo.reports';
+import { REPORTS_KEY } from '../storageKeys';
 
 export interface Reports {
   /** False until the saved reports have been read back, so a list does not first look empty and then fill. */

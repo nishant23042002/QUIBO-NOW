@@ -1,10 +1,12 @@
 import { useRouter } from 'expo-router';
-import { View } from 'react-native';
+import { DevSettings, Platform, View } from 'react-native';
 import { setConditions, useConditions } from '@/home/conditions';
 import { setForceOutside, useForceOutside } from '@/home/useAreaStatus';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { armFailNext, setSimulatedOffline, useFailNextArmed, useSimulatedOffline } from '@/network';
+import { clearSettings } from '@/storage';
 import { Button, OptionGroup, space } from '@/ui';
+import { TEST_DATA_KEYS } from './testData';
 
 /**
  * The switches testers use to rehearse a bad connection, a festival day, rain, a busy hour, the kind of store, how fast an order
@@ -117,6 +119,17 @@ export default function TestingTools() {
           variant="secondary"
           disabled={failArmed}
           onPress={armFailNext}
+        />
+        <Button
+          label={t('profile.dev.clearData')}
+          variant="secondary"
+          onPress={() => {
+            // Remove what testing left on the phone, then start the app again so every screen reads the empty state.
+            void clearSettings(TEST_DATA_KEYS).then(() => {
+              if (Platform.OS === 'web') window.location.reload();
+              else DevSettings.reload();
+            });
+          }}
         />
         <Button
           label={t('components.title')}

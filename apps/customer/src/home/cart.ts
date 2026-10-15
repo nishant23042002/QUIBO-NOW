@@ -16,6 +16,7 @@ import { useSlotChoice, type SlotState } from './useSlotChoice';
 import { useSubstitution, type SubstitutionState } from './useSubstitution';
 import { useHomeItems, type HomeItem, type ItemCategory } from './items';
 import { formatQuantity } from '@/ui';
+import { CART_KEY, SAVED_KEY } from '../storageKeys';
 
 /** One pack of an item in the cart. The cart is one flat list: it is one order, however many stores it comes from. */
 export interface CartItem {
@@ -150,10 +151,8 @@ export interface DraftCart {
 const COUNT_MAX = 20;
 
 /** Where the phone keeps the cart, so it is still there after the app is closed. */
-const CART_KEY = 'quibo.cart';
 
 /** Where the phone keeps what the shopper put aside for later. */
-const SAVED_KEY = 'quibo.saved';
 
 interface Removal {
   packId: string;

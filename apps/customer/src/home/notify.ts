@@ -5,7 +5,7 @@
  */
 
 /** Where it is saved on the phone. */
-export const NOTIFY_KEY = 'quibo.notify';
+export { NOTIFY_KEY } from '../storageKeys';
 
 /**
  * The wording of the consent the shopper agreed to by tapping Notify me. Change it when the wording changes, so the log says which

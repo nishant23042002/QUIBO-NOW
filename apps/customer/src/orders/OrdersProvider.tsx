@@ -10,6 +10,7 @@ import {
 import type { Order } from '@quibo/contracts';
 import { useOnline } from '@/network';
 import { readSetting, writeSetting } from '@/storage';
+import { ORDERS_KEY } from '../storageKeys';
 import { advance, cancelByCustomer, nextDueAt, type TrackedOrder } from './machine';
 import {
   DEFAULT_PLAN,
@@ -19,9 +20,6 @@ import {
   type ClockPlan,
   type PlaceRequest,
 } from './place';
-
-/** Where the phone keeps the orders, so an order placed a moment ago is still there after the app is closed. */
-const ORDERS_KEY = 'quibo.orders';
 
 export interface Orders {
   /** False until the saved orders have been read back, so the Orders tab does not first look empty and then fill. */

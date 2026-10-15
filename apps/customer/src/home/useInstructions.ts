@@ -9,9 +9,7 @@ import {
   type InstructionKey,
   type Instructions,
 } from './instructions';
-
-/** Where the phone keeps the instructions for the rider, so a shopper does not have to say "beware of the dog" every time. */
-const INSTRUCTIONS_KEY = 'quibo.instructions';
+import { INSTRUCTIONS_KEY } from '../storageKeys';
 
 export interface InstructionsState extends Instructions {
   /** False until the saved instructions have been read back, so the cart does not first show none and then jump. */

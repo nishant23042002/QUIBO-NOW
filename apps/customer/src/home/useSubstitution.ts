@@ -10,9 +10,7 @@ import {
   type SubstituteChoice,
   type Substitution,
 } from './substitution';
-
-/** Where the phone keeps what to do when an item is unavailable, so the shopper chooses once, not on every order. */
-const SUBSTITUTION_KEY = 'quibo.substitution';
+import { SUBSTITUTION_KEY } from '../storageKeys';
 
 export interface SubstitutionState extends Substitution {
   /** False until the saved choice has been read back, so the card does not show the default and then jump. */
