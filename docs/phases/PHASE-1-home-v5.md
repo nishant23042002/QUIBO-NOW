@@ -77,7 +77,10 @@ step for a phone check in Expo Go.
 - **Standing orders (daily, chosen days, monthly list):** not designed yet; parked in `PHASE-1-trust-and-plan-notes.md`.
 - **Real shop stories and photos:** removed from the design; they need shop data and consent.
 - **Pharmacy and Only on Quibo as real catalogues:** placeholders only (ADR 0053).
-- **A new display font and a palette change:** dropped for now.
+- **Ask your shops ("Can't find something?"):** built in step 8 and removed from Home after step 11 at the owner's request, with its
+  code, tests, messages and the `quibo.requests` store. Kept in the plan: bring it back in a later phase only if wanted (a field to
+  type what is missing, kept with when the shopper agreed, sent to the shops in Phase 2).
+- **A palette change:** dropped for now. The display font is built (Bricolage Grotesque, see below).
 
 ## Risks and how they are handled
 
@@ -308,3 +311,60 @@ Approved by the owner on 2026-10-14 ("approved"), with the recommendations on th
 - Owner change after step 11: a fine, light border (`line`) on the tinted tiles and cards that sat on the white page without one:
   the "Right now in Roha" tiles and the shops strip, the Bestsellers tiles, Picks for your routine, Brand stores, Quieter times and
   the shelf banner. No new colour. Lint, typecheck and 757 tests pass; looked at on the web preview at 375 px.
+
+## Changes after step 11 (owner's list, 2026-10-15)
+
+1. **Strip chip:** "Visited shops only" is replaced by "Quieter times · Save up to ₹4", which opens the delivery windows. The
+   "visited in person" message is said in Know your shop and the promise. The chip shows in dark-store towns too.
+2. **Coming soon to Roha** (the row of cards) is removed from Home, with its component and strings; the Categories tab has them.
+3. **Light borders:** "All categories" and the other "See all" buttons, the filter chips and "Select all" now take the cards' light
+   border (`line`). The ADD button and the steppers keep their stronger border, as the main action.
+4. **Trending in Roha** is two rows that scroll sideways together, with the same filter chips as Small prices.
+5. **Quieter times** moved to the end (after the shelves, before the promise) and is one small card: a head with "Pick a window", one
+   line of words, and a row of windows that scrolls sideways (about 150 px, down from about 230).
+6. **Know your shop:** four compact designs were put to the owner, who chose option B (the check matrix); see "Know your shop, option B" below.
+7. **Ask your shops** removed (see "Left out on purpose").
+8. **The promise** is one small card with a two by two grid: each promise a short claim over how it is kept, and a "How we check"
+   link.
+9. **Font:** Bricolage Grotesque (SemiBold and Bold) is installed (`@expo-google-fonts/bricolage-grotesque`, `expo-font`) and used
+   for the display text styles only (title, hero, heading, subheading) in English. Body text, labels and prices keep the phone's
+   font, and Hindi and Marathi keep it too (the font has no Devanagari). The splash waits for the font.
+
+## Know your shop, option B, and the strip moved (owner's choice, 2026-10-15)
+
+- **The stage stays as it was:** the heading, the intro and the drag scene are unchanged.
+- **Under the scene, one matrix** replaces the "Dark Store vs Connected Store" table: the five checks as rows (each with its picture),
+  a cross under Dark Store and a tick under Connected Store, and the 0 of 5 against 5 of 5 score under them. "View more" opens a
+  sentence for each kind of store under each row. It sits on the same dark-to-white stage, so the scene and the matrix read as one
+  module. About 330 px below the scene, against about 560 px for the table.
+- **Rows, not columns:** the option's mock had the five checks across with icon-only headings. The project's rule is text of 14 and up,
+  and five columns leave about 44 px each, so the checks run down the side with their words, and the two kinds of store are the two
+  columns. It says the same thing at a glance and holds at 200% text and in Devanagari.
+- **The strip** (Pay on delivery, Quieter times, Free delivery, UPI) left the Know your shop stage and is now the first thing in the
+  header's hero, above "Right now in Roha", on the page, with the cards' light border. It shows in every town, including dark-store
+  towns.
+- Removed: `KNOW_ROWS_COLLAPSED`, the table's strings (`home.know.compareTitle` is now `home.know.matrixTitle`) and the strip's
+  `lead` slot and ground colours.
+- **Rounder dividing blocks (2026-10-15):** a new corner radius, `radius.section` (28, was 16), is used for the top corners of the
+  coloured blocks that divide Home: the Know your shop stage, the Fresh today and Small prices washes (and the pistachio edge drawn
+  along them), Buy again, and the sheet the page slides up in. Cards keep `radius.xl`.
+- **Know your shop, collapsed by default (2026-10-15):** under the scene there is now one compact row, "Things you can check
+  yourself" with the 0 of 5 and 5 of 5 scores and a chevron. A tap opens the five checks beneath it, smoothly (a height and opacity
+  run of 280 ms, instant with reduced motion). Each check has its picture, a cross under Dark Store and a tick under Connected
+  Store; the store names, the scores and the marks all sit in one block of two equal columns, so everything lines up. The "View
+  more" answers are removed completely, with the ten answer strings, `home.know.more`, `home.know.less` and the matrix title; two
+  short phrases ("Can be checked", "Cannot be checked") were added for screen readers.
+- **Search bar hint (2026-10-15):** the typewriter (typing, erasing and a blinking caret) is removed from `SearchBar.tsx`, with its
+  timers. "Search" stays still; beside it the example words (milk, atta, vegetables, bread) take turns: each holds about 2.2 seconds,
+  then slides up a few points and fades out while the next slides up from below and fades in (0.38 s, on the phone's animation
+  thread). With reduce motion on it shows the first example, still. Nothing else in the bar moves.
+- **Heading weight (2026-10-15):** after the display font went in, section headings (the `heading` and `subheading` styles, such as
+  "Daily essentials" and "Trending in Roha") read thin: Bricolage SemiBold is lighter than a phone's own bold at the same size. They
+  are now Bricolage Bold, like the title and hero styles, and the SemiBold file is no longer loaded. Nothing else changed: labels,
+  names, prices and body text keep their weights.
+- **Offers in the strip (2026-10-15):** "Offers for you" is removed from Home (its component, loading shape and strings, and the
+  unused `offers.ts` with its old carousel strings). The strip at the top now holds the best offers: Pay on delivery (the green
+  chip, unchanged), Free delivery over ₹99, the best coupon ("Save up to ₹50", code WELCOME50, chosen as the one that takes most off
+  a ₹299 basket by `bestCoupon`), and Quieter times (only when a window saves something). At most four. Free delivery and the coupon
+  open the Coupons page; Quieter times opens the delivery windows. The "Pay by UPI" chip is gone: Pay on delivery already says
+  "Cash or UPI at the door".
