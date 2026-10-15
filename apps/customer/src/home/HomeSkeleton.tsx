@@ -23,12 +23,10 @@ import { HOME_RAIL_ORDER, anyCardNote, useHomeItems, useHomeListing } from './it
 import { NEED_CARD_HEIGHT } from './ShopForNeed';
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { PriceTileSkeleton } from './PriceTile';
-import { TRENDING_MOST } from './trendingRules';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
-import { OFFER_CARD_HEIGHT, OFFER_CARD_WIDTH } from './OffersForYou';
+import { QUIET_HEIGHT } from './QuieterModule';
 import { SHELF_BANNER_HEIGHT } from './ShelfBanner';
 import type { HomeItem } from './items';
-import { SOON_CARD_HEIGHT, SOON_CARD_WIDTH } from './ComingSoonRail';
 import { useCategoryGroups } from './useCategoryGroups';
 
 /** How many cards of a rail show before the edge of the screen, and how many a grid shows when it is not known. */
@@ -39,15 +37,14 @@ const GRID_CARDS_MAX = 8;
 const BRAND_TILES = 4;
 /** A price store's button: the amount over "and under", in a box with its border. */
 const STORE_HEIGHT = 68;
-/** The quieter-times block, the "can't find" card and the help row. */
-const QUIET_HEIGHT = 230;
-const REQUEST_HEIGHT = 220;
+/** The help row. */
 const HELP_HEIGHT = 56;
 /** The banner sits before the shelf at this place, as on the real page. */
 const BANNER_AFTER = 2;
-/** The row of text tabs of Trending in Roha, and the chosen brand's store (its head, a row of cards and its button). */
-const TAB_ROW_HEIGHT = 48;
+/** The chosen brand's store (its head, a row of cards and its button). */
 const BRAND_STORE_HEIGHT = 380;
+/** A filter chip of Trending in Roha, as tall as the real one. */
+const CHIP_HEIGHT = 36;
 
 // These mirror `HomeFeed`, `ProductRail` and the sections Home keeps above the rows: the same gaps, gutters and heights, so nothing
 // jumps when the real sections replace the grey ones.
@@ -77,7 +74,7 @@ function StaticRow({ children }: { children: ReactNode }) {
 
 /**
  * What Home shows while items load. With "All" chosen it is the page's own sections in order (the category groups with their
- * named tiles and "Coming soon to Roha" cards, the shops strip, Small prices with its three stores and filter chips, Featured, a row under each category's title, the quieter-times note),
+ * named tiles, the shops strip, Small prices with its three stores and filter chips, Featured, a row under each category's title, the quieter-times note),
  * each with its real title's length and the same gaps and heights. With one category chosen (or on a shop page, with `titled`) it
  * is the two-column grid, as many cards as the category has (up to eight). The cards are `ProductCardSkeleton`, drawn from the
  * same measurements as the real cards.
@@ -103,7 +100,6 @@ export function HomeSkeleton({
   const { width: screen } = useWindowDimensions();
   const groups = useCategoryGroups();
   const stocked = groups.filter((group) => group.live.length > 0);
-  const coming = groups.filter((group) => group.live.length === 0);
   const needs = liveNeeds(useHomeItems());
   const items = useHomeListing();
   const featuredHeight = useFeaturedCardHeight();
@@ -170,23 +166,6 @@ export function HomeSkeleton({
             />
           </View>
         ))}
-        {coming.length > 0 ? (
-          <View style={styles.section}>
-            <View style={styles.pad}>
-              <RowTitleSkeleton title={t('home.comingSoon.title')} />
-            </View>
-            <StaticRow>
-              {coming.map((group) => (
-                <Skeleton
-                  key={group.id}
-                  width={SOON_CARD_WIDTH}
-                  height={SOON_CARD_HEIGHT}
-                  rounded={radius.lg}
-                />
-              ))}
-            </StaticRow>
-          </View>
-        ) : null}
         <SeeAllButtonSkeleton />
 
         <DailyEssentialsSkeleton />
@@ -233,14 +212,20 @@ export function HomeSkeleton({
           <View style={styles.pad}>
             <RowTitleSkeleton title={t('home.trending.title')} />
           </View>
-          <View style={styles.pad}>
-            <Skeleton height={TAB_ROW_HEIGHT} rounded={radius.md} />
-          </View>
-          <View style={styles.grid}>
-            {Array.from({ length: Math.min(4, TRENDING_MOST) }, (_, card) => (
-              <ProductCardSkeleton key={card} width={gridCardWidth(screen)} />
+          <StaticRow>
+            {Array.from({ length: 4 }, (_, chip) => (
+              <Skeleton key={chip} width={84} height={CHIP_HEIGHT} rounded={radius.md} />
             ))}
-          </View>
+          </StaticRow>
+          {/* Two rows that scroll sideways: each column is one card over the next. */}
+          <StaticRow>
+            {Array.from({ length: RAIL_CARDS }, (_, column) => (
+              <View key={column} style={styles.section}>
+                <ProductCardSkeleton width={RAIL_CARD_WIDTH} />
+                <ProductCardSkeleton width={RAIL_CARD_WIDTH} />
+              </View>
+            ))}
+          </StaticRow>
           <SeeAllButtonSkeleton />
         </View>
 
@@ -280,26 +265,6 @@ export function HomeSkeleton({
           </View>
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.pad}>
-            <RowTitleSkeleton title={t('home.offers.title')} />
-          </View>
-          <StaticRow>
-            {Array.from({ length: 2 }, (_, card) => (
-              <Skeleton
-                key={card}
-                width={OFFER_CARD_WIDTH}
-                height={OFFER_CARD_HEIGHT}
-                rounded={radius.lg}
-              />
-            ))}
-          </StaticRow>
-        </View>
-
-        <View style={styles.note}>
-          <Skeleton height={QUIET_HEIGHT} rounded={radius.xl} />
-        </View>
-
         {HOME_RAIL_ORDER.map((key, index) => (
           <View key={key} style={styles.section}>
             {index === BANNER_AFTER ? (
@@ -316,7 +281,7 @@ export function HomeSkeleton({
         ))}
 
         <View style={styles.note}>
-          <Skeleton height={REQUEST_HEIGHT} rounded={radius.xl} />
+          <Skeleton height={QUIET_HEIGHT} rounded={radius.xl} />
         </View>
         <View style={styles.note}>
           <Skeleton height={HELP_HEIGHT} rounded={radius.lg} />

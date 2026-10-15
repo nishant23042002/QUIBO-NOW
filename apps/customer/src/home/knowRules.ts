@@ -7,9 +7,6 @@
 export const KNOW_QUESTIONS = ['where', 'who', 'kept', 'wrong', 'name'] as const;
 export type KnowQuestionId = (typeof KNOW_QUESTIONS)[number];
 
-/** How many of the rows show before "View more": the rest open under them. The score is always on screen. */
-export const KNOW_ROWS_COLLAPSED = 2;
-
 /**
  * The score under the cards: how many of the things a customer can check, for each kind of place. It is counted from the list of
  * questions, so adding or taking one away keeps the score honest.

@@ -21,7 +21,8 @@
         {
           "enforceContrast": false
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }

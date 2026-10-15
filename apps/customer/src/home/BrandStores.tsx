@@ -98,6 +98,7 @@ export function BrandStores() {
           <Button
             label={t('home.shopByBrand.explore', { name: chosen.name })}
             variant="secondary"
+            light
             onPress={() => {
               router.push({ pathname: '/brand/[id]', params: { id: chosen.id } });
             }}

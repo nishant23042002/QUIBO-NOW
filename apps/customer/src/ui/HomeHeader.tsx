@@ -60,7 +60,7 @@ export interface HomeHeaderProps {
   onShopPress: (id: string) => void;
   /** The search bar's name for a screen reader, for example "Search for items and shops". */
   searchLabel: string;
-  /** The search bar's hint: a fixed part ("Search") and example words that type themselves in. */
+  /** The search bar's hint: a fixed part ("Search") and example words that take turns, each sliding up and fading in. */
   searchHint: SearchHint;
   /** The category tabs. Each carries the colour the header turns into while it is chosen. */
   categories: readonly (CategoryTab & { tint: string })[];
@@ -104,8 +104,8 @@ const makeStyles = (c: ThemeColors) =>
     // top follows the curve instead of showing square corners over the hero.
     sheet: {
       marginTop: -space[5],
-      borderTopLeftRadius: radius.xl,
-      borderTopRightRadius: radius.xl,
+      borderTopLeftRadius: radius.section,
+      borderTopRightRadius: radius.section,
       backgroundColor: c.bg,
       overflow: 'hidden',
     },

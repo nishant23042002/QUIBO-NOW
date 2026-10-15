@@ -28,6 +28,8 @@ export interface ButtonProps extends Omit<PressableProps, 'children' | 'style'> 
    */
   shine?: boolean;
   shineKey?: string;
+  /** A secondary button with the cards' light border, for Home, instead of the stronger control border. */
+  light?: boolean;
 }
 
 /** How far a button shrinks while it is pressed. */
@@ -70,6 +72,7 @@ export function Button({
   onPress,
   shine = false,
   shineKey,
+  light = false,
   onLayout,
   ...rest
 }: ButtonProps) {
@@ -94,9 +97,12 @@ export function Button({
       style={({ pressed }) => [
         styles.base,
         size === 'lg' && styles.large,
+        light && variant === 'secondary' && !isDisabled && styles.light,
         {
           backgroundColor: paint(pressed && !loading ? look.pressed : look.background),
-          borderColor: paint(look.border),
+          borderColor: paint(
+            light && variant === 'secondary' && !isDisabled ? 'line' : look.border,
+          ),
           opacity: pressed && !loading && variant === 'primary' && !isDisabled ? 0.85 : 1,
           // A small press into the page, so the button answers the thumb at once.
           transform: [{ scale: pressed && !loading && !isDisabled ? PRESS_SCALE : 1 }],
@@ -158,4 +164,5 @@ const styles = StyleSheet.create({
     gap: space[2],
   },
   large: { minHeight: 56 },
+  light: { borderWidth: 1 },
 });

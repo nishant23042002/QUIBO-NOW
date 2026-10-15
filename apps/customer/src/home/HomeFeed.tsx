@@ -23,7 +23,6 @@ import { FreshToday } from './FreshToday';
 import { HomeCategories } from './HomeCategories';
 import { HowWeCheckSheet } from './HowWeCheckSheet';
 import { KnowYourShop } from './KnowYourShop';
-import { PaymentStrip } from './PaymentStrip';
 import { QuiboPromise } from './QuiboPromise';
 import { useConditions } from './conditions';
 import { knowShown } from './knowRules';
@@ -31,9 +30,7 @@ import { oneOfEachKind } from './product';
 import { HomeSkeleton } from './HomeSkeleton';
 import { Featured } from './Featured';
 import { QuieterModule } from './QuieterModule';
-import { OffersForYou } from './OffersForYou';
 import { ShelfBanner } from './ShelfBanner';
-import { CantFind } from './CantFind';
 import { HelpRow } from './HelpRow';
 import { Trending } from './Trending';
 import { ShopForNeed } from './ShopForNeed';
@@ -58,14 +55,16 @@ const styles = StyleSheet.create({
   // The category rows, one under another with room between them: no divider line.
   rails: { gap: space[6], paddingBottom: space[5] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
-  // The opening of the page: the payment strip and Fresh today on one pistachio wash, strongest under the mosaic and gone by the end
-  // of the module, so the two read as one section.
+  // The opening of the page where there is no Know your shop (a dark-store town): Fresh today on a pistachio wash, strongest at the
+  // top and gone by the end of the module.
   opening: { paddingTop: space[3], paddingBottom: space[6] },
-  // With "Know your shop" above it, Fresh today keeps a wash of its own.
-  stripBlock: { paddingTop: space[3], paddingBottom: space[5] },
   freshBlock: { paddingBottom: space[6] },
   // Where a block's colour meets the page's, its top edge is curved (and the wash draws a fine edge along the curve).
-  rounded: { borderTopLeftRadius: radius.xl, borderTopRightRadius: radius.xl, overflow: 'hidden' },
+  rounded: {
+    borderTopLeftRadius: radius.section,
+    borderTopRightRadius: radius.section,
+    overflow: 'hidden',
+  },
   // Room between the opening and the rows after it, as the rows have between each other.
   after: { paddingTop: space[2] },
   head: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: space[4] },
@@ -103,7 +102,7 @@ export const HomeFeed = memo(function HomeFeed({
   const { colors } = useTheme();
   const { store } = useConditions();
   const showKnow = knowShown(store);
-  // "How we check a shop" opens from the strip's chip and from the promise.
+  // "How we check a shop" opens from the promise.
   const [howOpen, setHowOpen] = useState(false);
   const openHow = () => {
     setHowOpen(true);
@@ -144,12 +143,6 @@ export const HomeFeed = memo(function HomeFeed({
   if (loading) {
     return (
       <View>
-        {grid ? null : (
-          <View style={[styles.stripBlock, styles.rounded]}>
-            <AccentWash />
-            <PaymentStrip onVisitedPress={openHow} ground="wash" />
-          </View>
-        )}
         <HomeSkeleton
           label={t('common.loading')}
           grid={grid}
@@ -199,17 +192,12 @@ export const HomeFeed = memo(function HomeFeed({
     );
   }
 
-  const strip = (ground: 'night' | 'wash') => (
-    <PaymentStrip onVisitedPress={openHow} ground={ground} />
-  );
-
   return (
     <View>
       {showKnow ? (
-        // "Know your shop" is the first thing under the header for everyone: the strip sits at the top of its stage, and Fresh today
-        // keeps a wash of its own under it.
+        // "Know your shop" is the first thing under the header for everyone, and Fresh today keeps a wash of its own under it.
         <>
-          <KnowYourShop lead={strip('night')} />
+          <KnowYourShop />
           <BuyAgain />
           <View style={[styles.freshBlock, styles.rounded]}>
             <AccentWash />
@@ -219,7 +207,6 @@ export const HomeFeed = memo(function HomeFeed({
       ) : (
         <View style={[styles.opening, styles.rounded]}>
           <AccentWash />
-          {strip('wash')}
           <FreshToday onSeeAll={onSeeAll} />
         </View>
       )}
@@ -233,8 +220,6 @@ export const HomeFeed = memo(function HomeFeed({
         <Trending />
         <BrandStores />
         <Featured onCategory={onSeeAll} />
-        <OffersForYou />
-        <QuieterModule />
         {HOME_RAIL_ORDER.map((key, index) => {
           const row = listing.filter((item) => item.category === key);
           // Cards in a row stay one height: room for the low-stock line only when one of them has it.
@@ -255,8 +240,9 @@ export const HomeFeed = memo(function HomeFeed({
             </Fragment>
           );
         })}
+        {/* Quieter delivery times sit near the end: they are a saving to find once the shopper has what they came for. */}
+        <QuieterModule />
         {showKnow ? <QuiboPromise onHow={openHow} /> : null}
-        <CantFind />
         <HelpRow />
         <BrandFooter />
       </View>

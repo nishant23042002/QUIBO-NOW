@@ -30,8 +30,8 @@ const makeStyles = (c: ThemeColors) =>
       paddingTop: space[5],
       paddingBottom: space[5],
       gap: space[3],
-      borderTopLeftRadius: radius.xl,
-      borderTopRightRadius: radius.xl,
+      borderTopLeftRadius: radius.section,
+      borderTopRightRadius: radius.section,
       overflow: 'hidden',
     },
     stores: {
@@ -127,6 +127,7 @@ export function SmallPrices() {
           {PRICE_FILTERS.map((entry) => (
             <Chip
               key={entry.key}
+              light
               label={t(entry.label)}
               selected={filter === entry.key}
               onPress={() => {

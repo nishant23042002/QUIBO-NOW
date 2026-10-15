@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { money } from '@quibo/contracts';
-import { QUIETER_COUNT, quieterWindows } from './quieterTimes';
+import { QUIETER_COUNT, quieterSaving, quieterWindows } from './quieterTimes';
 
 const SLOTS = { firstHour: 7, lastEndHour: 22, leadMinutes: 30, full: [] };
 const DELIVERY = {
@@ -40,5 +40,22 @@ describe('quieterWindows', () => {
 
   it('is empty when the day has no hours', () => {
     expect(quieterWindows({ ...SLOTS, firstHour: 9, lastEndHour: 9 }, DELIVERY)).toEqual([]);
+  });
+});
+
+describe('quieterSaving', () => {
+  it('is the most any window saves', () => {
+    expect(
+      quieterSaving([
+        { hour: 7, save: 400 },
+        { hour: 12, save: undefined },
+        { hour: 16, save: 600 },
+      ]),
+    ).toBe(600);
+  });
+
+  it('is nothing when every window is inside the rush hours', () => {
+    expect(quieterSaving([{ hour: 8, save: undefined }])).toBe(0);
+    expect(quieterSaving([])).toBe(0);
   });
 });

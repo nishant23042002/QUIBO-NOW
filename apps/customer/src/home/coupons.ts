@@ -63,3 +63,6 @@ export function bestCoupon<T extends Coupon>(
   }
   return best;
 }
+
+/** A typical basket, for naming "the best offer" on the first screen: a ₹299 order, a little over the free delivery line. */
+export const TYPICAL_BASKET: Money = money(29_900);

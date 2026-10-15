@@ -40,3 +40,8 @@ export function quieterWindows(
     save: isRushHour(hour, delivery) ? undefined : Number(delivery.rushExtra),
   }));
 }
+
+/** The most any window saves, in paise, for the strip's chip. Nothing (0) when no window is outside the rush hours. */
+export function quieterSaving(windows: readonly QuieterWindow[] = quieterWindows()): number {
+  return windows.reduce((most, entry) => Math.max(most, entry.save ?? 0), 0);
+}

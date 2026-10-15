@@ -1,6 +1,6 @@
 import type { MessageKey } from '@quibo/i18n';
 import { useId, useState } from 'react';
-import { formatRupees } from '@quibo/contracts';
+import { formatRupees, money } from '@quibo/contracts';
 import {
   Text as NativeText,
   Pressable,
@@ -15,22 +15,24 @@ import Svg, { Defs, LinearGradient, Rect, Stop } from 'react-native-svg';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Text, radius, space } from '@/ui';
-import { useConditions } from './conditions';
 import { FREE_DELIVERY_FROM, ZONE } from './delivery';
+import { TYPICAL_BASKET, bestCoupon } from './coupons';
+import { quieterSaving } from './quieterTimes';
+import { SAMPLE_COUPONS } from './sampleCoupons';
 import { stripChips, type StripChipId } from './stripChips';
 
 const EMOJI: Readonly<Record<StripChipId, string>> = {
   cod: '\u{1F4B5}',
-  visited: '\u{2705}',
   free: '\u{1F6F5}',
-  upi: '\u{1F4F2}',
+  code: '\u{1F3F7}\u{FE0F}',
+  quiet: '\u{1F550}',
 };
 
 const WORDS: Readonly<Record<StripChipId, { title: MessageKey; sub: MessageKey }>> = {
   cod: { title: 'home.strip.cod', sub: 'home.strip.codSub' },
-  visited: { title: 'home.strip.visited', sub: 'home.strip.visitedSub' },
   free: { title: 'home.strip.free', sub: 'home.strip.freeSub' },
-  upi: { title: 'home.strip.upi', sub: 'home.strip.upiSub' },
+  code: { title: 'home.strip.code', sub: 'home.strip.codeSub' },
+  quiet: { title: 'home.strip.quiet', sub: 'home.strip.quietSub' },
 };
 
 /** The stamped edge under a filled chip, like the price badge's. */
@@ -38,9 +40,6 @@ const EDGE = 3;
 /** How wide the fade is where chips run off the edge, and how near the end counts as the end. */
 const FADE = 28;
 const END_SLACK = 4;
-
-/** What the strip sits on, so the fade at its edges melts into it: Home's night stage, or a pistachio wash. */
-export type StripGround = 'night' | 'wash';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -112,31 +111,41 @@ function EdgeFade({ side, color }: { side: 'left' | 'right'; color: string }) {
 }
 
 /**
- * The payment and trust strip under Home's mosaic: what a first-time customer wants to know before anything else. Pay on delivery
+ * The strip at the top of Home, above "Right now in Roha": how to pay, then the best offers (free delivery, the best coupon, quieter
+ * delivery times). At most four chips. Pay on delivery
  * is the one filled chip, with the same stamped edge as the price badge, so it is found at once. The chips are statements, not
- * buttons, except "Visited shops only", which opens "How we check a shop".
+ * buttons, except "Quieter times", which opens the delivery windows.
  */
 export function PaymentStrip({
-  onVisitedPress,
-  ground,
+  onQuietPress,
+  onOffersPress,
 }: {
-  onVisitedPress: () => void;
-  ground: StripGround;
+  /** The Quieter times chip: the delivery windows. */
+  onQuietPress: () => void;
+  /** The free delivery and coupon chips: the coupons page. */
+  onOffersPress: () => void;
 }) {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
-  const { store } = useConditions();
   // Where the row is, and how wide it and its chips are, so a fade shows on the side that has more to scroll to and each chip
   // snaps to the page's left margin.
   const [offset, setOffset] = useState(0);
   const [viewWidth, setViewWidth] = useState(0);
   const [contentWidth, setContentWidth] = useState(0);
   const [starts, setStarts] = useState<Readonly<Record<string, number>>>({});
-  const fadeColor = ground === 'night' ? colors.night : colors.accentSubtle;
+  // The strip sits on the page, above the mosaic, so the fade at its edges melts into the page's own colour.
+  const fadeColor = colors.bg;
   const moreLeft = offset > END_SLACK;
   const moreRight = contentWidth - viewWidth - offset > END_SLACK;
-  const chips = stripChips({ codMax: ZONE.payment.codMaxNewCustomer, store });
+  const best = bestCoupon(SAMPLE_COUPONS, TYPICAL_BASKET);
+  const coupon = best?.coupon;
+  const saving = quieterSaving();
+  const chips = stripChips({
+    codMax: ZONE.payment.codMaxNewCustomer,
+    hasCoupon: coupon !== undefined,
+    hasSaving: saving > 0,
+  });
 
   return (
     <View>
@@ -164,7 +173,15 @@ export function PaymentStrip({
           const sub =
             id === 'free'
               ? t(words.sub, { amount: formatRupees(FREE_DELIVERY_FROM) })
-              : t(words.sub);
+              : id === 'quiet'
+                ? t(words.sub, { amount: formatRupees(money(saving)) })
+                : id === 'code'
+                  ? t(words.sub, { code: coupon?.code ?? '' })
+                  : t(words.sub);
+          const title =
+            id === 'code' && best !== undefined
+              ? t(words.title, { amount: formatRupees(best.discount) })
+              : t(words.title);
           const content = (
             <>
               <View style={[styles.bubble, filled && styles.bubbleFilled]} aria-hidden>
@@ -174,7 +191,7 @@ export function PaymentStrip({
               </View>
               <View style={styles.words}>
                 <Text variant="strong" color={filled ? 'onAccent' : 'ink'} numberOfLines={1}>
-                  {t(words.title)}
+                  {title}
                 </Text>
                 <Text variant="fine" color={filled ? 'onAccent' : 'inkMuted'} numberOfLines={1}>
                   {sub}
@@ -182,13 +199,13 @@ export function PaymentStrip({
               </View>
             </>
           );
-          if (id === 'visited') {
+          if (id === 'quiet' || id === 'free' || id === 'code') {
             return (
               <Pressable
                 key={id}
                 role="button"
-                aria-label={`${t(words.title)}. ${sub}. ${t('home.strip.visitedHint')}`}
-                onPress={onVisitedPress}
+                aria-label={`${title}. ${sub}. ${t(id === 'quiet' ? 'home.strip.quietHint' : 'home.strip.offersHint')}`}
+                onPress={id === 'quiet' ? onQuietPress : onOffersPress}
                 onLayout={(event) => {
                   const { x } = event.nativeEvent.layout;
                   setStarts((all) => (all[id] === x ? all : { ...all, [id]: x }));
@@ -203,7 +220,7 @@ export function PaymentStrip({
             <View
               key={id}
               accessible
-              aria-label={`${t(words.title)}. ${sub}`}
+              aria-label={`${title}. ${sub}`}
               onLayout={(event) => {
                 const { x } = event.nativeEvent.layout;
                 setStarts((all) => (all[id] === x ? all : { ...all, [id]: x }));

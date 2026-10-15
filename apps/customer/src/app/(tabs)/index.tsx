@@ -15,16 +15,20 @@ import type { ItemCategory } from '@/home/items';
 import type { NeedId } from '@/home/needs';
 import { OutOfArea } from '@/home/OutOfArea';
 import { OutsideBanner } from '@/home/OutsideBanner';
+import { PaymentStrip } from '@/home/PaymentStrip';
 import { useSampleShops } from '@/home/sampleShops';
 import { useAreaStatus } from '@/home/useAreaStatus';
 import { useTabHeaderProps } from '@/home/useTabHeader';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { BOTTOM_BAR_HEIGHT, HomeHeader, useChromeReport } from '@/ui';
+import { BOTTOM_BAR_HEIGHT, HomeHeader, space, useChromeReport } from '@/ui';
 
 const makeStyles = (c: ThemeColors) =>
-  StyleSheet.create({ page: { flex: 1, backgroundColor: c.bg } });
+  StyleSheet.create({
+    page: { flex: 1, backgroundColor: c.bg },
+    strip: { paddingBottom: space[3] },
+  });
 
 // Home is the shops, or, for an address outside the delivery area (until the shopper chooses to look around anyway), the screen that
 // says so and takes a pincode (ADR 0055, step 10).
@@ -95,6 +99,17 @@ function ShopsHome() {
             <LiveOrderCard />
             <OutsideBanner />
             <ClosedBanner />
+            {/* Payment and delivery, at the very top: what a new customer asks first, above what is on today. */}
+            <View style={styles.strip}>
+              <PaymentStrip
+                onQuietPress={() => {
+                  router.push('/schedule');
+                }}
+                onOffersPress={() => {
+                  router.push('/coupons');
+                }}
+              />
+            </View>
             <HeroMosaic
               shopNames={shopNames}
               onCategory={showCategory}

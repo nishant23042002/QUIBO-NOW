@@ -12,7 +12,7 @@ const EDGE_OPACITY = 0.8;
  * A soft pistachio wash behind a module, strongest at its top and gone by its bottom, so the module reads as set apart without a
  * hard edge. Its top corners are curved and a fine pistachio edge follows them and runs down the sides, fading out with the wash, so
  * the module is plainly divided from the page above it. It fills its parent and sits under the parent's other children; the parent
- * clips to the same curve (`overflow: 'hidden'` with the top corners at `radius.xl`).
+ * clips to the same curve (`overflow: 'hidden'` with the top corners at `radius.section`).
  */
 export function AccentWash() {
   const { colors } = useTheme();
@@ -27,7 +27,7 @@ export function AccentWash() {
   };
 
   const { width, height } = size;
-  const r = radius.xl;
+  const r = radius.section;
   const half = EDGE / 2;
   const path =
     `M${half} ${height} V${r} A${r - half} ${r - half} 0 0 1 ${r} ${half} ` +

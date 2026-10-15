@@ -14,14 +14,12 @@ export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { CategoryTabs, type CategoryTab, type CategoryTabsProps } from './CategoryTabs';
 export { CategoryTile, type CategoryTileProps } from './CategoryTile';
-export { ComingSoon } from './ComingSoon';
 export { Chip, type ChipProps } from './Chip';
 export { HeaderGradient } from './HeaderGradient';
 export { HomeHeader, type HeroControls, type HomeHeaderProps } from './HomeHeader';
 export { AccentWash } from './AccentWash';
 export { GlassPanel, type GlassPanelProps } from './GlassPanel';
 export { PlumCard } from './PlumCard';
-export { UnderlineTabs, type UnderlineTab } from './UnderlineTabs';
 export { IconTabs, type IconTab, type IconTabsProps } from './IconTabs';
 export { LetteredTitle, type LetteredTitleProps } from './LetteredTitle';
 export { LanguageChip, type LanguageChipProps } from './LanguageChip';
@@ -44,12 +42,6 @@ export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
 export { FlashOnChange, PopOnChange } from './ChangeCue';
 export { Notice, type NoticeProps } from './Notice';
 export { OfferBadge, type OfferBadgeProps } from './OfferBadge';
-export {
-  PromoCarousel,
-  type PromoCarouselProps,
-  type PromoSlide,
-  type PromoTone,
-} from './PromoCarousel';
 export { CartFloat, type CartFloatProps, type CartThumb } from './CartFloat';
 export { DietMark, type DietMarkProps } from './DietMark';
 export { DiscountRibbon, type DiscountRibbonProps } from './DiscountRibbon';
@@ -144,7 +136,6 @@ export {
   type SlotGroupData,
   type SlotPickerProps,
 } from './SlotPicker';
-export { ShopCard, type ShopCardProps } from './ShopCard';
 export { SegmentedTabs, type SegmentedTabsOption, type SegmentedTabsProps } from './SegmentedTabs';
 export { Stepper, type StepperProps } from './Stepper';
 export { Text, type TextColor, type TextProps, type TextVariant } from './Text';

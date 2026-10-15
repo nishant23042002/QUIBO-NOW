@@ -11,6 +11,8 @@ export interface ChipProps {
   /** Without a handler the chip is a plain label. */
   onPress?: () => void;
   icon?: IconName;
+  /** The same light border the cards have, for a row of filters on Home, instead of the stronger control border. */
+  light?: boolean;
 }
 
 const makeStyles = (c: ThemeColors) =>
@@ -27,12 +29,20 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.surface,
     },
     selected: { borderColor: c.action, backgroundColor: c.lilac },
+    light: { borderColor: c.line },
     disabled: { opacity: 0.5 },
     pressed: { opacity: 0.8 },
   });
 
 /** A small, square-cornered button for filters and tabs. It is 36 dp tall and has a 48 dp touch area. */
-export function Chip({ label, selected = false, disabled = false, onPress, icon }: ChipProps) {
+export function Chip({
+  label,
+  selected = false,
+  disabled = false,
+  onPress,
+  icon,
+  light = false,
+}: ChipProps) {
   const styles = useStyles(makeStyles);
   const { colors } = useTheme();
 
@@ -46,6 +56,7 @@ export function Chip({ label, selected = false, disabled = false, onPress, icon 
       hitSlop={6}
       style={({ pressed }) => [
         styles.chip,
+        light && styles.light,
         selected && styles.selected,
         disabled && styles.disabled,
         pressed && styles.pressed,

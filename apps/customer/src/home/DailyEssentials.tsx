@@ -370,6 +370,7 @@ export function DailyEssentials() {
           <Button
             label={all ? t('home.essentials.clearAll') : t('home.essentials.selectAll')}
             variant="secondary"
+            light
             onPress={() => {
               setTicked(all ? new Set() : new Set(selectable.map((item) => item.id)));
             }}

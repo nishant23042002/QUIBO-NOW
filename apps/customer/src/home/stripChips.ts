@@ -1,20 +1,20 @@
-/** The chips of the strip under Home's mosaic, in order (ADR 0055, step 2). */
-export type StripChipId = 'cod' | 'visited' | 'free' | 'upi';
+/** The chips of the strip at the top of Home, in order (ADR 0055, step 2; the offers joined it after step 11). */
+export type StripChipId = 'cod' | 'free' | 'code' | 'quiet';
 
 /**
  * Which chips show. "Pay on delivery" only shows where cash on delivery is allowed (the town's rule, ADR 0019): a promise on the
- * first screen must be one checkout keeps. "Visited shops only" only shows where the town is served by partner shops: a company
- * dark store is not a shop that was visited and listed (ADR 0054). The others are always true of the app: delivery is free from
- * the town's line, and UPI is a payment choice.
+ * first screen must be one checkout keeps. After it come the best offers, at most three: free delivery from the town's line, the
+ * best coupon (when the app has one that takes something off), and quieter delivery windows (when one saves something).
  */
 export function stripChips(rules: {
   codMax: number;
-  store: 'partner' | 'dark';
+  hasCoupon: boolean;
+  hasSaving: boolean;
 }): readonly StripChipId[] {
   return [
     ...(rules.codMax > 0 ? (['cod'] as const) : []),
-    ...(rules.store === 'partner' ? (['visited'] as const) : []),
     'free',
-    'upi',
+    ...(rules.hasCoupon ? (['code'] as const) : []),
+    ...(rules.hasSaving ? (['quiet'] as const) : []),
   ];
 }

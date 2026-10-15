@@ -13,8 +13,6 @@ export const MOMENT_FACTS = [
   { id: 'price', emoji: '\u{1F4B8}' },
 ] as const;
 
-export type MomentFactId = (typeof MOMENT_FACTS)[number]['id'];
-
 /** The fact for a position in the round, wrapping round. */
 export function momentFact(index: number): (typeof MOMENT_FACTS)[number] {
   const size = MOMENT_FACTS.length;

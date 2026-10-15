@@ -29,7 +29,11 @@ export const HEADER_HEIGHT = 56;
  */
 export const BOTTOM_BAR_HEIGHT = 64;
 
-export const radius = { sm: 6, md: 8, lg: 12, xl: 16, full: 9999 } as const;
+/**
+ * Corner radii in dp. `section` is for the top corners of the coloured blocks that divide Home (the Know your shop stage, the
+ * washes, the sheet the page slides up in): rounder than a card's `xl`, so where one block ends and the next begins reads clearly.
+ */
+export const radius = { sm: 6, md: 8, lg: 12, xl: 16, section: 28, full: 9999 } as const;
 
 /**
  * Font sizes in dp. They grow with the phone's text-size setting, and nothing is below 14:

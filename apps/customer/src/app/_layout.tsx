@@ -1,3 +1,4 @@
+import { useFonts } from 'expo-font';
 import { SplashScreen, Stack } from 'expo-router';
 import { useState } from 'react';
 import { NavigationBar } from 'expo-navigation-bar';
@@ -17,7 +18,7 @@ import { LanguageProvider, useLanguage } from '@/i18n/LanguageProvider';
 import { LanguageSheetProvider } from '@/i18n/LanguageSheet';
 import { OrderPlaced } from '@/orders/OrderPlaced';
 import { OrdersProvider, useOrders } from '@/orders/OrdersProvider';
-import { ThemeProvider, useTheme } from '@/theme';
+import { DISPLAY_FONT_FILES, ThemeProvider, useTheme } from '@/theme';
 import { AppHeader, AppSplash } from '@/ui';
 
 // Keep Expo's own splash up until our animated one is on screen, so nothing flashes in between.
@@ -74,7 +75,10 @@ function Gate() {
   const account = useAccount();
   const orders = useOrders();
   const { store } = useConditions();
-  const ready = theme.ready && language.ready && account.loaded;
+  // The display font is part of the first screen: the splash holds until it is loaded (or has failed, and the system font is used).
+  const [fontsLoaded, fontError] = useFonts(DISPLAY_FONT_FILES);
+  const ready =
+    theme.ready && language.ready && account.loaded && (fontsLoaded || fontError !== null);
   // The launch screen names one fact, a different one each day. Not in a town served by one dark store: the facts are about shops.
   const [day] = useState(() => Math.floor(Date.now() / 86_400_000));
   const fact = momentFact(day);

@@ -1,9 +1,8 @@
 import { useRouter } from 'expo-router';
 import { StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { CategoryTileGrid, RowTitle, SeeAllButton, Text, space } from '@/ui';
+import { CategoryTileGrid, RowTitle, SeeAllButton, space } from '@/ui';
 import { categoryRoute } from './categoryLists';
-import { ComingSoonRail } from './ComingSoonRail';
 import { subsEmojis } from './subsEmojis';
 import { useCategoryGroups } from './useCategoryGroups';
 import { useNotify } from './useNotify';
@@ -17,8 +16,9 @@ const styles = StyleSheet.create({
 /**
  * The categories on Home (ADR 0055, step 5), in the order the mock lays them out: each group the town stocks as a title and a grid
  * of tiles, the group's first category wide with pictures of what it holds, the others four across, and the categories that are
- * coming softened beside them with Notify me; then "Coming soon to Roha" with a card for each group that is only coming; then "All
- * categories", which opens the Categories tab. A live tile opens its own screen. A tile that is coming turns Notify me on and off.
+ * coming softened beside them with Notify me; then "All categories", which opens the Categories tab. A live tile opens its own
+ * screen. A tile that is coming turns Notify me on and off. The groups that are only coming are not on Home: the Categories tab
+ * has them.
  */
 export function HomeCategories() {
   const { t } = useLanguage();
@@ -26,7 +26,6 @@ export function HomeCategories() {
   const notify = useNotify();
   const groups = useCategoryGroups();
   const stocked = groups.filter((group) => group.live.length > 0);
-  const coming = groups.filter((group) => group.live.length === 0);
 
   return (
     <View style={styles.page}>
@@ -51,18 +50,6 @@ export function HomeCategories() {
           </View>
         );
       })}
-
-      {coming.length > 0 ? (
-        <View style={styles.section}>
-          <View style={styles.pad}>
-            <RowTitle title={t('home.comingSoon.title')} />
-            <Text variant="small" color="inkMuted">
-              {t('home.comingSoon.sub')}
-            </Text>
-          </View>
-          <ComingSoonRail groups={coming} />
-        </View>
-      ) : null}
 
       <SeeAllButton
         label={t('categoriesTab.all')}

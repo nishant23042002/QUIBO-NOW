@@ -53,21 +53,6 @@
       "staples": "Staples",
       "snacks": "Snacks"
     },
-    "offers": {
-      "label": "Offers",
-      "diwaliTitle": "Diwali essentials",
-      "diwaliBody": "Sweets, dry fruits and diyas",
-      "deliveryTitle": "Free delivery over {amount}",
-      "deliveryBody": "On your first three orders",
-      "milkTitle": "Fresh milk every morning",
-      "milkBody": "Order tonight for the 7–9 AM window",
-      "shopsTitle": "Shop from your own kirana",
-      "shopsBody": "Packed by a shop in your town",
-      "title": "Offers for you",
-      "freeTitle": "Free delivery over {amount}",
-      "freeSub": "On the items in your cart",
-      "codeSub": "Code {code}"
-    },
     "items": {
       "milk": "Toned milk",
       "curd": "Fresh curd",
@@ -230,13 +215,14 @@
       "label": "Payment and delivery",
       "cod": "Pay on delivery",
       "codSub": "Cash or UPI at the door",
-      "visited": "Visited shops only",
-      "visitedSub": "Checked in person",
-      "visitedHint": "Opens how we check a shop",
+      "quiet": "Quieter times",
+      "quietSub": "Save up to {amount}",
+      "quietHint": "Opens the delivery windows",
       "free": "Free delivery",
       "freeSub": "Over {amount}",
-      "upi": "Pay by UPI",
-      "upiSub": "Online, at checkout"
+      "code": "Save up to {amount}",
+      "codeSub": "Code {code}",
+      "offersHint": "Opens your coupons"
     },
     "live": {
       "track": "Track",
@@ -292,48 +278,42 @@
         "shopSub": "Open. Walk in.",
         "open": "OPEN"
       },
-      "compareTitle": "Dark Store vs Connected Store",
-      "more": "View more",
-      "less": "View less",
+      "can": "Can be checked",
+      "cannot": "Cannot be checked",
       "count": "{n} of {total}",
       "darkLabel": "Dark Store",
       "shopLabel": "Connected Store",
       "q": {
         "where": {
-          "title": "Where it is packed",
-          "dark": "A warehouse you cannot enter",
-          "shop": "A shop a few streets away that you can walk into"
+          "title": "Where it is packed"
         },
         "who": {
-          "title": "Who packs it",
-          "dark": "A stranger you will never meet",
-          "shop": "{shop}, by name. In Roha since {year}."
+          "title": "Who packs it"
         },
         "kept": {
-          "title": "How it is kept",
-          "dark": "A photo of the product, not the shelf",
-          "shop": "The shelf itself, open to see any day"
+          "title": "How it is kept"
         },
         "wrong": {
-          "title": "If something is wrong",
-          "dark": "Raise a ticket and wait for a reply",
-          "shop": "Walk in and tell the person who packed it"
+          "title": "If something is wrong"
         },
         "name": {
-          "title": "Name on the bag",
-          "dark": "A company’s",
-          "shop": "{shop}’s, and they know yours"
+          "title": "Name on the bag"
         }
       },
       "scoreCaption": "Things you can check yourself"
     },
     "promise": {
       "title": "The Quibo promise",
-      "visited": "Every shop is visited in person before it is listed",
-      "name": "Your bag carries the shop’s name",
-      "price": "Prices at or below MRP, checked every week",
-      "paused": "A shop that slips is paused, not hidden",
-      "how": "How we check a shop"
+      "visited": "Visited in person",
+      "visitedBody": "Before a shop is listed",
+      "name": "Name on your bag",
+      "nameBody": "You know who packed it",
+      "price": "At or below MRP",
+      "priceBody": "Checked every week",
+      "paused": "Paused if it slips",
+      "pausedBody": "Never hidden",
+      "how": "How we check a shop",
+      "howShort": "How we check"
     },
     "how": {
       "title": "How we check a shop",
@@ -346,10 +326,6 @@
       "fourTitle": "We keep checking",
       "fourBody": "A weekly score covers cleanliness, price and speed. A shop that slips is paused until it is fixed.",
       "note": "This wording is a draft until the first shops are visited."
-    },
-    "comingSoon": {
-      "title": "Coming soon to Roha",
-      "sub": "Tap Notify me and we will tell you when a category arrives"
     },
     "again": {
       "title": "Buy again",
@@ -374,25 +350,13 @@
     },
     "quiet": {
       "title": "Quieter times",
-      "word": "Quieter",
-      "sticker": "cost less",
       "sub": "Pick a delivery window and see the saving before you pay.",
       "pick": "Pick a window",
-      "pickSub": "Today or tomorrow",
       "save": "Save {amount}",
       "rush": "Rush hour"
     },
     "banner": {
       "title": "Monthly ration, one tap"
-    },
-    "request": {
-      "title": "Can’t find something?",
-      "body": "Tell your shops what you need. They will let you know when it is in.",
-      "placeholder": "For example, ragi flour 1 kg",
-      "label": "Item you need",
-      "send": "Ask shops",
-      "noted": "Noted. Your shops will see it.",
-      "another": "Ask for something else"
     },
     "help": {
       "row": "Need help? We are here to help"
@@ -493,10 +457,6 @@
       "chipAll": "All",
       "chipOffers": "Offers",
       "categoryDairy": "Dairy",
-      "shopName": "Sharma Dairy",
-      "shopType": "Milk, curd, eggs",
-      "shopOpenWindow": "Today 4–6 PM",
-      "shopClosed": "Opens 7 AM",
       "itemMilk": "Toned milk",
       "add": "ADD",
       "removeOne": "Remove one",
@@ -550,8 +510,7 @@
     "home": "Home",
     "categories": "Categories",
     "cart": "Cart",
-    "orders": "Orders",
-    "soon": "This screen is built in a later section of the customer app."
+    "orders": "Orders"
   },
   "shop": {
     "hours": "Hours {hours}",

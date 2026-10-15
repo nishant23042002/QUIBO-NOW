@@ -17,10 +17,10 @@ appId: host.exp.exponent
 # A category in the header rail shows its own page, and "All" in the rail brings the usual page back.
 - tapOn: 'Dairy'
 - assertVisible: 'Amul Toned milk.*'
-- assertNotVisible: 'Coming soon to Roha'
+- assertNotVisible: 'Daily essentials'
 - tapOn: 'All'
 - scrollUntilVisible:
-    element: 'Coming soon to Roha'
+    element: 'Daily essentials'
 
 # Daily essentials (ADR 0048): a tab swaps the list, a row ticks, and the bar adds what is ticked.
 - assertVisible: 'Daily essentials'
@@ -38,17 +38,12 @@ appId: host.exp.exponent
 - assertVisible: 'Picked from shops in Roha'
 - assertVisible: 'Amul Toned milk.*'
 - tapOn: 'Back'
-- scrollUntilVisible:
-    element: 'Coming soon to Roha'
-
-# Notify me (ADR 0055): a card on "Coming soon to Roha" turns on and says it will tell the shopper, and turns off again.
-- tapOn: 'Beauty & Care.*'
-- assertVisible: 'We.ll tell you'
-- tapOn: 'Beauty & Care.*'
-- assertNotVisible: 'We.ll tell you'
 
 # All categories is the Categories tab (ADR 0046, ADR 0055): every group, the stocked categories as rows and those coming as tiles
 # with Notify me, and a field to find a category. A tile that is coming turns Notify me on instead of opening a page.
+- scrollUntilVisible:
+    element: 'All categories.*'
+    direction: UP
 - tapOn: 'All categories.*'
 - assertVisible: 'Grocery & Kitchen'
 - assertVisible: 'Find a category'
@@ -56,9 +51,6 @@ appId: host.exp.exponent
     element: 'Beauty, Soon.*'
 - tapOn: 'Beauty, Soon.*'
 - assertVisible: 'Beauty, .*Notify.*'
-- tapOn: 'Home'
-- scrollUntilVisible:
-    element: 'Coming soon to Roha'
 
 # The Categories tab: each category is a row of tiles (its own, then its kinds), and its own tile opens its screen.
 - tapOn: 'Categories'

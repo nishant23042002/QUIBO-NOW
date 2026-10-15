@@ -25,7 +25,6 @@ import {
   Screen,
   SearchBar,
   Sheet,
-  ShopCard,
   space,
   Stepper,
   Text,
@@ -434,27 +433,6 @@ export function ComponentsGallery() {
               label={sample('categoryDairy')}
               emoji={'\u{1F95B}'}
               tint={colors.tintDairy}
-              onPress={noop}
-            />
-          </View>
-        </Demo>
-      </Section>
-
-      <Section name="ShopCard">
-        <Demo name="open, closed">
-          <View style={styles.row}>
-            <ShopCard
-              name={sample('shopName')}
-              type={sample('shopType')}
-              statusLabel={sample('shopOpenWindow')}
-              open
-              onPress={noop}
-            />
-            <ShopCard
-              name={sample('shopName')}
-              type={sample('shopType')}
-              statusLabel={sample('shopClosed')}
-              open={false}
               onPress={noop}
             />
           </View>

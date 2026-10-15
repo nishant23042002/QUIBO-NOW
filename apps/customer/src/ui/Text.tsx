@@ -4,7 +4,7 @@ import {
   type TextStyle,
 } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { useTheme, type ThemeColors } from '@/theme';
+import { DISPLAY_FAMILY, useTheme, type ThemeColors } from '@/theme';
 import { fontSize, leading } from './tokens';
 
 /** What a piece of text is for, which decides its weight: `display` is a heading, `emphasis` a name, label or link, `regular` the rest. */
@@ -14,6 +14,8 @@ interface VariantStyle {
   fontSize: number;
   role: Role;
   leading: keyof typeof leading.latin;
+  /** The display font's weight, for the variants set in it. Hindi and Marathi keep the phone's font. */
+  display?: keyof typeof DISPLAY_FAMILY;
 }
 
 /**
@@ -29,11 +31,11 @@ const WEIGHTS = {
 } as const satisfies Record<string, Record<Role, NonNullable<TextStyle['fontWeight']>>>;
 
 const variants = {
-  title: { fontSize: fontSize['3xl'], role: 'display', leading: 'tight' },
+  title: { fontSize: fontSize['3xl'], role: 'display', leading: 'tight', display: 'bold' },
   /** The one big line of a header: the delivery estimate. Between a title and a heading. */
-  hero: { fontSize: fontSize['2xl'], role: 'display', leading: 'tight' },
-  heading: { fontSize: fontSize.xl, role: 'display', leading: 'tight' },
-  subheading: { fontSize: fontSize.lg, role: 'display', leading: 'tight' },
+  hero: { fontSize: fontSize['2xl'], role: 'display', leading: 'tight', display: 'bold' },
+  heading: { fontSize: fontSize.xl, role: 'display', leading: 'tight', display: 'bold' },
+  subheading: { fontSize: fontSize.lg, role: 'display', leading: 'tight', display: 'bold' },
   lead: { fontSize: fontSize.lg, role: 'regular', leading: 'relaxed' },
   body: { fontSize: fontSize.base, role: 'regular', leading: 'normal' },
   label: { fontSize: fontSize.base, role: 'emphasis', leading: 'normal' },
@@ -86,8 +88,9 @@ export interface TextProps extends Omit<NativeTextProps, 'style'> {
 }
 
 /**
- * The only way text reaches a screen. It uses system fonts, follows the phone's text-size
- * setting up to 200%, and gives Hindi and Marathi the extra line height they need.
+ * The only way text reaches a screen. It uses the phone's own font, apart from the display variants (the estimate, titles and
+ * headings), which are set in Bricolage Grotesque for English. It follows the phone's text-size setting up to 200%, and gives Hindi
+ * and Marathi the extra line height they need.
  */
 export function Text({
   variant = 'body',
@@ -99,7 +102,7 @@ export function Text({
 }: TextProps) {
   const { locale } = useLanguage();
   const { colors } = useTheme();
-  const { fontSize: size, role, leading: spacing } = variants[variant];
+  const { fontSize: size, role, leading: spacing, display } = variants[variant] as VariantStyle;
   const script = locale === 'en' ? 'latin' : 'devanagari';
   const lineHeight = Math.round(size * leading[script][tight ? 'tight' : spacing]);
   const isHeading = variant === 'title' || variant === 'heading';
@@ -112,7 +115,10 @@ export function Text({
       style={{
         color: colors[color],
         fontSize: size,
-        fontWeight: WEIGHTS[script][role],
+        // A custom font is picked by its family, so it gets no `fontWeight` of its own.
+        ...(display !== undefined && script === 'latin'
+          ? { fontFamily: DISPLAY_FAMILY[display] }
+          : { fontWeight: WEIGHTS[script][role] }),
         lineHeight,
         textDecorationLine: strike ? 'line-through' : 'none',
         textAlign: align,

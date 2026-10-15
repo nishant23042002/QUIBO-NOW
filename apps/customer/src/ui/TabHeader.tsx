@@ -25,7 +25,7 @@ const CAP = space[4];
 export interface TabHeaderProps extends HeaderIdentityProps {
   /** The search bar's name for a screen reader. */
   searchLabel: string;
-  /** The search bar's hint: a fixed part ("Search") and example words that type themselves in. */
+  /** The search bar's hint: a fixed part ("Search") and example words that take turns, each sliding up and fading in. */
   searchHint: SearchHint;
   onSearchPress: () => void;
   /** The "Schedule a slot" button inside the search bar, with its words. */
