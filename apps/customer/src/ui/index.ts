@@ -93,6 +93,7 @@ export { BrandFooter } from './BrandFooter';
 export { RowTitle, type RowTitleProps } from './RowTitle';
 export { RowTitleSkeleton } from './RowTitleSkeleton';
 export { SeeAllButtonSkeleton } from './SeeAllButtonSkeleton';
+export { SectionRule } from './SectionRule';
 export { SeeAllButton, type SeeAllButtonProps } from './SeeAllButton';
 export {
   CategoryTileGrid,

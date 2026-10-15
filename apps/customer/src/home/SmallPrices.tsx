@@ -27,8 +27,8 @@ const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     // The block sits on a lilac wash with a curved top and a fine edge: the same treatment as Fresh today's, in its own tint.
     module: {
-      paddingTop: space[5],
-      paddingBottom: space[5],
+      paddingTop: space[6],
+      paddingBottom: space[6],
       gap: space[3],
       borderTopLeftRadius: radius.section,
       borderTopRightRadius: radius.section,

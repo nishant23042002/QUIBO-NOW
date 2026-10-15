@@ -8,6 +8,7 @@ import {
   Icon,
   ProductRail,
   RowTitle,
+  SectionRule,
   SeeAllButton,
   Text,
   radius,
@@ -51,9 +52,12 @@ const LOAD_MS = 200;
 const BANNER_AFTER = 2;
 
 const styles = StyleSheet.create({
-  feed: { gap: space[5], paddingVertical: space[5] },
-  // The category rows, one under another with room between them: no divider line.
-  rails: { gap: space[6], paddingBottom: space[5] },
+  // A category's grid: its title, the grid and the "See all" button the same 12 apart as inside a row on Home.
+  feed: { gap: space[3], paddingVertical: space[6] },
+  // The sections, one under another with room between them. The gap is clearly larger than the 12 inside a section (and the 24
+  // between the groups of one section), so each section reads as one block. A thin rule (`SectionRule`) marks only the
+  // three places where one group of sections ends and another begins and no block of colour already does.
+  rails: { gap: space[8], paddingBottom: space[5] },
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
   // The opening of the page where there is no Know your shop (a dark-store town): Fresh today on a pistachio wash, strongest at the
   // top and gone by the end of the module.
@@ -214,12 +218,16 @@ export const HomeFeed = memo(function HomeFeed({
         <Bestsellers onCategory={onSeeCategory} />
         <ContinueBrowsing />
         <HomeCategories />
+        {/* The aisles end here; the routine (essentials, needs, small prices) begins. */}
+        <SectionRule />
         <DailyEssentials />
         <ShopForNeed />
         <SmallPrices />
         <Trending />
         <BrandStores />
         <Featured onCategory={onSeeAll} />
+        {/* What is on show ends here; the shelves, a row for each category, begin. */}
+        <SectionRule />
         {HOME_RAIL_ORDER.map((key, index) => {
           const row = listing.filter((item) => item.category === key);
           // Cards in a row stay one height: room for the low-stock line only when one of them has it.
@@ -240,6 +248,8 @@ export const HomeFeed = memo(function HomeFeed({
             </Fragment>
           );
         })}
+        {/* The shelves end here; the closing begins. */}
+        <SectionRule />
         {/* Quieter delivery times sit near the end: they are a saving to find once the shopper has what they came for. */}
         <QuieterModule />
         {showKnow ? <QuiboPromise onHow={openHow} /> : null}
