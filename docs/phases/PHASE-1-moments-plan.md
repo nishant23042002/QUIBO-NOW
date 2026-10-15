@@ -135,3 +135,9 @@ each kind), so the Snacks and Staples rows are longer.
   (`chipWidthOf`), so a long chip can be a few dp off.
 - Tests: moment palettes laid over the app roles keep every role and 4.5:1 accent text; `sectionHint` is covered in needs.test.ts.
 - Not in this step: Home tiles and "Picks for your routine" (step 4), accessibility pass and Maestro flow (step 5).
+
+## Step 4: Home uses the new names (built)
+
+- The hero tile and "Picks for your routine" already read the new names from the moments data (steps 1 and 3), in fixed order.
+- The line under "Picks for your routine" no longer says "ready-made baskets", which promised a bundle: it now says to pick your
+  brands for the moments in your day (en, hi, mr; the Hindi and Marathi are drafts for a native speaker).
