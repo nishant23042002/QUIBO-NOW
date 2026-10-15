@@ -24,6 +24,8 @@ export interface CompareSceneLabels {
 }
 
 const HEIGHT = 196;
+/** The scene's height, so the loading skeleton keeps its room. */
+export const COMPARE_SCENE_HEIGHT = HEIGHT;
 const MIN = 0.1;
 const MAX = 0.9;
 /** How far one step of the screen reader's increase and decrease moves the divider. */

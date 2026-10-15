@@ -11,6 +11,7 @@ import {
   RowTitleSkeleton,
   SegmentedTabs,
   Skeleton,
+  SkeletonLine,
   TAP_MIN,
   Text,
   WEIGHT_RULE,
@@ -414,11 +415,33 @@ export function DailyEssentialsSkeleton() {
       <View style={styles.pad}>
         <Skeleton height={TABS_HEIGHT} rounded={radius.md} />
       </View>
-      <View style={[styles.pad, { minHeight: most * rowHeight + (most - 1) * HAIRLINE + 2 }]}>
-        <Skeleton height={shown * rowHeight + (shown - 1) * HAIRLINE + 2} rounded={radius.md} />
-      </View>
+      {/* The card as it will be: a box, a picture, a name over its pack and a price in each row, as tall as the fullest tab. */}
       <View style={styles.pad}>
-        <Skeleton height={TAP_MIN} rounded={radius.md} />
+        <View
+          style={[styles.card, { minHeight: most * rowHeight + (most - 1) * HAIRLINE + 2 }]}
+          aria-hidden
+        >
+          {Array.from({ length: shown }, (_, index) => (
+            <View
+              key={index}
+              style={[styles.row, index > 0 && styles.divided, { height: rowHeight }]}
+            >
+              <Skeleton width={CHECK} height={CHECK} rounded={radius.sm} />
+              <Skeleton width={PICTURE} height={PICTURE} rounded={radius.md} />
+              <View style={styles.words}>
+                <SkeletonLine size="sm" width={index % 2 === 0 ? '66%' : '52%'} />
+                <SkeletonLine size="xs" width="30%" />
+              </View>
+              <Skeleton width={48} height={Math.round(fontSize.sm * 0.8)} />
+            </View>
+          ))}
+        </View>
+      </View>
+      <View style={[styles.pad, styles.footer]}>
+        <Skeleton width={128} height={TAP_MIN} rounded={radius.md} />
+        <View style={styles.main}>
+          <Skeleton height={TAP_MIN} rounded={radius.md} />
+        </View>
       </View>
     </View>
   );
