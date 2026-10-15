@@ -1,6 +1,15 @@
 import { describe, expect, it } from 'vitest';
 import { MAIN_CATEGORIES } from './catalogueTree';
-import { NEEDS, liveNeeds, need, needBlurb, needItems, needKinds, needSections } from './needs';
+import {
+  NEEDS,
+  liveNeeds,
+  need,
+  needBlurb,
+  needItems,
+  needKinds,
+  needSections,
+  sectionHint,
+} from './needs';
 
 /** One item of every kind the catalogue holds. */
 const stocked = MAIN_CATEGORIES.flatMap((main) => main.subs.flatMap((sub) => sub.types)).map(
@@ -119,5 +128,26 @@ describe('the moments as a page is built from them', () => {
       cookToday: 'atta',
       movieNight: 'popcorn',
     });
+  });
+});
+
+describe('the hint under a shelf', () => {
+  it('comes from the first kind on the shelf that has one, in the order the moment lists its kinds', () => {
+    const cook = need('cookToday');
+    expect(cook).toBeDefined();
+    if (cook === undefined) return;
+    const sections = needSections(
+      ['tomato', 'potato', 'brinjal'].map((type) => ({ id: type, type })),
+      cook,
+    );
+    expect(sections).toHaveLength(1);
+    expect(sections[0] && sectionHint(cook, sections[0])).toBe('needs.goes.cookToday.tomato');
+  });
+
+  it('is left out when no kind on the shelf has one', () => {
+    const cook = need('cookToday');
+    if (cook === undefined) return;
+    const sections = needSections([{ id: 'rice', type: 'rice' }], cook);
+    expect(sections[0] && sectionHint(cook, sections[0])).toBeUndefined();
   });
 });

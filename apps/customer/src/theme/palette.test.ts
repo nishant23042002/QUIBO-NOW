@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { momentPalettes, palettes, type MomentId, type Scheme, type ThemeColors } from './palette';
+import {
+  momentColors,
+  momentPalettes,
+  palettes,
+  type MomentId,
+  type Scheme,
+  type ThemeColors,
+} from './palette';
 
 /** Relative luminance of a #rrggbb colour, as WCAG 2.x defines it. */
 function luminance(hex: string): number {
@@ -205,6 +212,36 @@ describe('the moment palettes', () => {
     for (const scheme of SCHEMES) {
       const headers = moments.map((id) => momentPalettes[id][scheme].header);
       expect(new Set(headers).size).toBe(moments.length);
+    }
+  });
+});
+
+describe('a moment laid over the app theme', () => {
+  const moments = Object.keys(momentPalettes) as MomentId[];
+
+  it('keeps every role the app reads, and takes the moment colours for the page, header and cards', () => {
+    for (const id of moments) {
+      for (const scheme of SCHEMES) {
+        const colors = momentColors(palettes[scheme], momentPalettes[id][scheme]);
+        expect(Object.keys(colors).sort()).toEqual(Object.keys(palettes[scheme]).sort());
+        expect(colors.bg).toBe(momentPalettes[id][scheme].bg);
+        expect(colors.headerBg).toBe(momentPalettes[id][scheme].header);
+        expect(colors.surface).toBe(momentPalettes[id][scheme].card);
+        expect(colors.chrome).toBe(palettes[scheme].chrome);
+      }
+    }
+  });
+
+  it('keeps accent text (prices, links) readable at 4.5:1 on the page and on cards', () => {
+    for (const id of moments) {
+      for (const scheme of SCHEMES) {
+        const c = momentColors(palettes[scheme], momentPalettes[id][scheme]);
+        expect(contrast(c.accentInk, c.bg), `${id}.${scheme} on page`).toBeGreaterThanOrEqual(4.5);
+        expect(contrast(c.accentInk, c.surface), `${id}.${scheme} on card`).toBeGreaterThanOrEqual(
+          4.5,
+        );
+        expect(contrast(c.ctl, c.bg), `${id}.${scheme} control edge`).toBeGreaterThanOrEqual(3);
+      }
     }
   });
 });

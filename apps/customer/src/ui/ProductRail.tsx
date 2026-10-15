@@ -3,10 +3,13 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { useStyles, type ThemeColors } from '@/theme';
 import { RowTitle } from './RowTitle';
 import { SeeAllButton } from './SeeAllButton';
+import { Text } from './Text';
 import { space } from './tokens';
 
 export interface ProductRailProps {
   title: string;
+  /** One quiet line under the title, for example what the row goes with. */
+  hint?: string;
   /** The text of the button under the row, for example "See all". Leave it and `onSeeAll` out for a row with nowhere to go. */
   seeAllLabel?: string;
   onSeeAll?: () => void;
@@ -17,6 +20,8 @@ export interface ProductRailProps {
 const makeStyles = (_colors: ThemeColors) =>
   StyleSheet.create({
     rail: { gap: space[3] },
+    heading: { gap: space[1] },
+    hint: { paddingHorizontal: space[4] },
     head: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -30,14 +35,27 @@ const makeStyles = (_colors: ThemeColors) =>
  * A titled row of items with a dotted line from its title to the page's edge and a "See all" button under the row. The title is part
  * of the page and scrolls away with its row, so nothing is left lying over the items.
  */
-export function ProductRail({ title, seeAllLabel, onSeeAll, children }: ProductRailProps) {
+export function ProductRail({ title, hint, seeAllLabel, onSeeAll, children }: ProductRailProps) {
   const styles = useStyles(makeStyles);
 
   return (
     <View style={styles.rail}>
-      <View style={styles.head}>
-        <RowTitle title={title} />
-      </View>
+      {hint !== undefined ? (
+        <View style={styles.heading}>
+          <View style={styles.head}>
+            <RowTitle title={title} />
+          </View>
+          <View style={styles.hint}>
+            <Text variant="small" color="inkMuted">
+              {hint}
+            </Text>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.head}>
+          <RowTitle title={title} />
+        </View>
+      )}
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         <View style={styles.row}>{children}</View>
       </ScrollView>

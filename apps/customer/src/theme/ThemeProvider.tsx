@@ -9,7 +9,14 @@ import {
 } from 'react';
 import { Appearance, useColorScheme } from 'react-native';
 import { parseMode, resolveScheme, type Mode } from './mode';
-import { palettes, type Scheme, type ThemeColors } from './palette';
+import {
+  momentColors,
+  momentPalettes,
+  palettes,
+  type MomentId,
+  type Scheme,
+  type ThemeColors,
+} from './palette';
 import { readSetting, writeSetting } from '@/storage';
 
 const THEME_KEY = 'quibo.theme';
@@ -68,6 +75,25 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     () => ({ mode, scheme, colors: palettes[scheme], ready, setMode: choose }),
     [mode, scheme, ready, choose],
   );
+
+  return <ThemeContext value={value}>{children}</ThemeContext>;
+}
+
+/**
+ * Gives a moment's page (Tea Break, Movie Night ...) its own colours from the header down to the background (the moments plan).
+ * Everything under it reads the same roles through `useTheme`, so cards, chips and skeletons follow without knowing. Movie Night is
+ * dark in both themes, so under it the scheme is dark and the status bar text turns light.
+ */
+export function MomentTheme({ id, children }: { id: MomentId; children: ReactNode }) {
+  const parent = useTheme();
+  const value = useMemo<Theme>(() => {
+    const scheme: Scheme = id === 'movieNight' ? 'dark' : parent.scheme;
+    return {
+      ...parent,
+      scheme,
+      colors: momentColors(palettes[scheme], momentPalettes[id][scheme]),
+    };
+  }, [id, parent]);
 
   return <ThemeContext value={value}>{children}</ThemeContext>;
 }

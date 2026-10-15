@@ -78,7 +78,37 @@ interface Sample {
     | 'biscuitsSunfeast'
     | 'chipsHaldirams'
     | 'chipsBingo'
-    | 'chocolateAmul';
+    | 'chocolateAmul'
+    // New kinds and the brands of the moments' shelves (the moments plan, step 2).
+    | 'rusk'
+    | 'namkeen'
+    | 'bread'
+    | 'pav'
+    | 'dal'
+    | 'masala'
+    | 'cake'
+    | 'sugarTata'
+    | 'sugarMadhur'
+    | 'ruskParle'
+    | 'ruskBakery'
+    | 'namkeenBikaji'
+    | 'namkeenBalaji'
+    | 'breadModern'
+    | 'breadHarvest'
+    | 'pavBritannia'
+    | 'pavModern'
+    | 'eggsEggoz'
+    | 'paneerMotherDairy'
+    | 'dalFortune'
+    | 'dalLoose'
+    | 'oilDhara'
+    | 'masalaEverest'
+    | 'masalaCatch'
+    | 'popcornActII'
+    | 'popcornWeikfield'
+    | 'chipsKurkure'
+    | 'cakeWinkies'
+    | 'cakeMonginis';
   category: ItemCategory;
   /** A stand-in for the photo, from emoji old enough for a low-end Android phone to draw. */
   emoji: string;
@@ -260,6 +290,68 @@ const SAMPLES: readonly Sample[] = [
     mrp: 3500,
   },
   { id: 'chocolate', category: 'snacks', emoji: '\u{1F36B}', amount: 1, unit: 'pack', price: 1000 },
+  {
+    id: 'rusk',
+    quick: true,
+    category: 'snacks',
+    emoji: '\u{1F950}',
+    amount: 200,
+    unit: 'g',
+    price: 3000,
+  },
+  {
+    id: 'namkeen',
+    quick: true,
+    category: 'snacks',
+    emoji: '\u{1F968}',
+    amount: 200,
+    unit: 'g',
+    price: 5500,
+    mrp: 6000,
+  },
+  {
+    id: 'bread',
+    quick: true,
+    category: 'snacks',
+    emoji: '\u{1F35E}',
+    amount: 400,
+    unit: 'g',
+    price: 4000,
+  },
+  {
+    id: 'pav',
+    quick: true,
+    category: 'snacks',
+    emoji: '\u{1F956}',
+    amount: 6,
+    unit: 'pcs',
+    price: 3000,
+  },
+  {
+    id: 'dal',
+    category: 'staples',
+    emoji: '\u{1F372}',
+    amount: 1,
+    unit: 'kg',
+    price: 16000,
+    mrp: 17000,
+  },
+  {
+    id: 'masala',
+    category: 'staples',
+    emoji: '\u{1F336}',
+    amount: 100,
+    unit: 'g',
+    price: 5500,
+  },
+  {
+    id: 'cake',
+    category: 'snacks',
+    emoji: '\u{1F382}',
+    amount: 150,
+    unit: 'g',
+    price: 4500,
+  },
 ];
 
 /**
@@ -427,6 +519,194 @@ const ALTERNATIVE_SAMPLES: readonly Sample[] = [
     unit: 'pack',
     price: 2500,
     mrp: 2800,
+  },
+  {
+    id: 'sugarTata',
+    category: 'staples',
+    emoji: '\u{1F36C}',
+    amount: 1,
+    unit: 'kg',
+    price: 4600,
+    mrp: 4800,
+  },
+  {
+    id: 'sugarMadhur',
+    category: 'staples',
+    emoji: '\u{1F36C}',
+    amount: 1,
+    unit: 'kg',
+    price: 4800,
+  },
+  {
+    id: 'ruskParle',
+    category: 'snacks',
+    emoji: '\u{1F950}',
+    amount: 200,
+    unit: 'g',
+    price: 2800,
+  },
+  {
+    id: 'ruskBakery',
+    category: 'snacks',
+    emoji: '\u{1F950}',
+    amount: 250,
+    unit: 'g',
+    price: 4000,
+    mrp: 4400,
+  },
+  {
+    id: 'namkeenBikaji',
+    category: 'snacks',
+    emoji: '\u{1F968}',
+    amount: 200,
+    unit: 'g',
+    price: 5200,
+  },
+  {
+    id: 'namkeenBalaji',
+    category: 'snacks',
+    emoji: '\u{1F968}',
+    amount: 150,
+    unit: 'g',
+    price: 4000,
+    mrp: 4500,
+  },
+  {
+    id: 'breadModern',
+    category: 'snacks',
+    emoji: '\u{1F35E}',
+    amount: 400,
+    unit: 'g',
+    price: 4200,
+  },
+  {
+    id: 'breadHarvest',
+    category: 'snacks',
+    emoji: '\u{1F35E}',
+    amount: 450,
+    unit: 'g',
+    price: 4500,
+    mrp: 4800,
+  },
+  {
+    id: 'pavBritannia',
+    category: 'snacks',
+    emoji: '\u{1F956}',
+    amount: 6,
+    unit: 'pcs',
+    price: 3200,
+  },
+  {
+    id: 'pavModern',
+    category: 'snacks',
+    emoji: '\u{1F956}',
+    amount: 6,
+    unit: 'pcs',
+    price: 3200,
+  },
+  {
+    id: 'eggsEggoz',
+    nonVeg: true,
+    quick: true,
+    category: 'dairy',
+    emoji: '\u{1F95A}',
+    amount: 6,
+    unit: 'pcs',
+    price: 6200,
+    mrp: 6600,
+  },
+  {
+    id: 'paneerMotherDairy',
+    category: 'dairy',
+    emoji: '\u{1F9C0}',
+    amount: 200,
+    unit: 'g',
+    price: 9200,
+  },
+  {
+    id: 'dalFortune',
+    category: 'staples',
+    emoji: '\u{1F372}',
+    amount: 1,
+    unit: 'kg',
+    price: 14900,
+  },
+  {
+    id: 'dalLoose',
+    category: 'staples',
+    emoji: '\u{1F372}',
+    amount: 1,
+    unit: 'kg',
+    price: 14000,
+  },
+  {
+    id: 'oilDhara',
+    category: 'staples',
+    emoji: '\u{1F33B}',
+    amount: 1,
+    unit: 'l',
+    price: 21000,
+  },
+  {
+    id: 'masalaEverest',
+    category: 'staples',
+    emoji: '\u{1F336}',
+    amount: 100,
+    unit: 'g',
+    price: 5200,
+    mrp: 5500,
+  },
+  {
+    id: 'masalaCatch',
+    category: 'staples',
+    emoji: '\u{1F336}',
+    amount: 100,
+    unit: 'g',
+    price: 5000,
+  },
+  {
+    id: 'popcornActII',
+    quick: true,
+    category: 'snacks',
+    emoji: '\u{1F37F}',
+    amount: 60,
+    unit: 'g',
+    price: 3500,
+  },
+  {
+    id: 'popcornWeikfield',
+    category: 'snacks',
+    emoji: '\u{1F37F}',
+    amount: 70,
+    unit: 'g',
+    price: 4000,
+    mrp: 4400,
+  },
+  {
+    id: 'chipsKurkure',
+    category: 'snacks',
+    emoji: '\u{1F35F}',
+    amount: 1,
+    unit: 'pack',
+    price: 2000,
+  },
+  {
+    id: 'cakeWinkies',
+    category: 'snacks',
+    emoji: '\u{1F382}',
+    amount: 100,
+    unit: 'g',
+    price: 3000,
+  },
+  {
+    id: 'cakeMonginis',
+    stock: 3,
+    category: 'snacks',
+    emoji: '\u{1F382}',
+    amount: 250,
+    unit: 'g',
+    price: 18000,
+    mrp: 19500,
   },
 ];
 

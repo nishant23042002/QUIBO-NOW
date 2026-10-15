@@ -367,3 +367,36 @@ export const momentPalettes: Record<MomentId, Record<Scheme, MomentColors>> = {
     },
   },
 };
+
+/**
+ * The app's colour roles for a moment's page: the moment's colours laid over the base theme, so every screen part (cards, chips,
+ * the stepper, the header, skeletons) reads from the same roles and needs no moment-specific code. Header and band take the moment's
+ * own colours; the cart bar's `chrome`, the picture plates and the status colours stay the app's.
+ */
+export function momentColors(base: ThemeColors, m: MomentColors): ThemeColors {
+  return {
+    ...base,
+    bg: m.bg,
+    surface: m.card,
+    muted: m.band,
+    ink: m.ink,
+    inkMuted: m.inkMuted,
+    line: m.line,
+    ctl: m.inkMuted,
+    headerBg: m.header,
+    headerBgEnd: m.header,
+    onHeader: m.ink,
+    onHeaderMuted: m.inkMuted,
+    headerControl: m.card,
+    onHeaderControl: m.ink,
+    accent: m.accent,
+    onAccent: m.onAccent,
+    accentPressed: m.accent,
+    accentSubtle: m.band,
+    accentInk: m.accent,
+    accentEdge: m.accent,
+    lilac: m.band,
+    action: m.accent,
+    onAction: m.onAccent,
+  };
+}

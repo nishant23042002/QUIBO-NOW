@@ -24,8 +24,11 @@ export interface Need {
   kinds: readonly string[];
   /** A short hint under a kind's shelf, saying what it goes with. A hint, never a bundle: every brand can still be chosen alone. */
   goes: Readonly<Record<string, MessageKey>>;
-  /** A kind the moment wants that the town does not stock yet, named for a quiet "coming soon" row with Notify me. */
-  soon?: MessageKey;
+  /**
+   * A kind the moment wants that the town does not stock yet, named for a quiet "coming soon" row with Notify me. `id` is the
+   * catalogue's coming-soon category it belongs to, so the same Notify me choice is shared with the Categories tab.
+   */
+  soon?: { label: MessageKey; id: string };
 }
 
 /** Made only of kinds the catalogue holds today, so no moment page is empty. */
@@ -93,7 +96,7 @@ export const NEEDS: readonly Need[] = [
       chocolate: 'needs.goes.movieNight.chocolate',
       cake: 'needs.goes.movieNight.cake',
     },
-    soon: 'needs.soon.drinks',
+    soon: { label: 'needs.soon.drinks', id: 'drinks' },
   },
 ];
 
@@ -168,6 +171,19 @@ export function needSections<T extends { type: string }>(
       items: draft.kinds.flatMap((kind) => items.filter((item) => item.type === kind)),
     }))
     .filter((section) => section.items.length > 0);
+}
+
+/**
+ * The hint under a shelf: the first kind of the need (in the need's own order) that the shelf holds and that has a hint. A hint,
+ * never a bundle, so every brand on the shelf can still be picked alone.
+ */
+export function sectionHint<T extends { type: string }>(
+  target: Need,
+  section: NeedSection<T>,
+): MessageKey | undefined {
+  const held = new Set(section.items.map((item) => item.type));
+  const kind = target.kinds.find((candidate) => held.has(candidate) && candidate in target.goes);
+  return kind === undefined ? undefined : target.goes[kind];
 }
 
 /** The names (message keys) of the first few shelves of a need, for the line on its card on Home, whatever is in stock. */

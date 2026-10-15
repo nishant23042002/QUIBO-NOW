@@ -1,6 +1,6 @@
 # Phase 1: Moments plan (four moment pages, shelf by shelf, each in its own colours)
 
-Status: **approved by the owner (2026-10-15) with the recommendations taken; step 1 built, awaiting the phone check.**
+Status: **approved by the owner (2026-10-15) with the recommendations taken; steps 1 and 2 built, awaiting the phone check of step 2.**
 
 Decisions taken: the four names as proposed; dark mode gives the three light moments darker values of the same hues and Movie
 Night stays as it is; Home's tiles keep their fixed order and only take the new names in this phase; the sample brands are chosen
@@ -90,3 +90,48 @@ on the trademark point in ADR 0036 (no logos, a letter mark only).
 - Dark mode behaviour for the moment colours (section 3).
 - Whether Home's tiles follow the clock and the rain (the mosaic board) in this phase, or keep their fixed order and only change names.
 - Brand names for the sample catalogue, or whether I choose well-known Indian brands as samples and you review the list.
+
+## Step 2: the sample catalogue (built)
+
+29 sample items were added so each shelf has two to four brands where a brand exists (loose produce has none). Every brand is a
+well-known Indian brand used as a sample, with a letter mark only (ADR 0036 is unchanged); the list is for the owner's review.
+
+| Kind               | Brands now                                                 |
+| ------------------ | ---------------------------------------------------------- |
+| Milk               | Amul, Gokul, Chitale, Mother Dairy, Warana (already there) |
+| Sugar              | loose, Tata, Madhur                                        |
+| Biscuits           | Parle, Britannia, Sunfeast (already there)                 |
+| Rusk (new kind)    | Britannia, Parle, a local bakery                           |
+| Namkeen (new kind) | Haldiram's, Bikaji, Balaji                                 |
+| Bread (new kind)   | Britannia, Modern, Harvest Gold                            |
+| Pav (new kind)     | a local bakery, Britannia, Modern                          |
+| Eggs               | farm eggs, Eggoz                                           |
+| Paneer             | Amul, Gowardhan, Mother Dairy                              |
+| Atta               | Aashirvaad, Pillsbury, Fortune (already there)             |
+| Rice               | India Gate, Daawat, Kohinoor (already there)               |
+| Dal (new kind)     | Tata, Fortune, loose                                       |
+| Oil                | Fortune, Saffola, Dhara                                    |
+| Masala (new kind)  | MDH, Everest, Catch                                        |
+| Popcorn            | plain, Act II, Weikfield                                   |
+| Chips              | Lay's, Haldiram's, Bingo, Kurkure                          |
+| Chocolate          | Dairy Milk, KitKat, Amul (already there)                   |
+| Cake (new kind)    | Britannia, Winkies, Monginis                               |
+
+Not done in this step: product-page text (description, ingredients, tip) for the seven new kinds, which the product page leaves
+out when it has none; nutrition figures; prices and packs are samples. Home's category rows now also list the new kinds (one item for
+each kind), so the Snacks and Staples rows are longer.
+
+## Step 3: the moment page (built, awaiting the phone check)
+
+- `/need/<moment>` now wears the moment's colours from the header to the background. `MomentTheme` (theme/ThemeProvider.tsx) lays the
+  moment's palette over the app roles with `momentColors`, so cards, chips, the stepper and skeletons follow without knowing about
+  moments. Movie Night is dark in both themes, so under it the scheme is dark and the status bar text turns light. The cart bar keeps
+  the app's own colours.
+- The page: a band with the name, the line, "Picked from shops in Roha" and the moment's picture; a row of chips that jump to the
+  shelves (sticky under the header, shown only with more than one shelf; a chip scrolls, it does not filter); one swipeable shelf for
+  each catalogue sub-category the moment's kinds sit in, every brand on every shelf, with a one-line hint (`needs.goes.*`, never a
+  bundle); a quiet "coming soon" row with Notify me at the end (cold drinks for Movie Night, sharing the Categories tab's choice).
+- The skeleton mirrors the band, the chip row, the shelf titles with their hints and the cards. Chip widths are an estimate
+  (`chipWidthOf`), so a long chip can be a few dp off.
+- Tests: moment palettes laid over the app roles keep every role and 4.5:1 accent text; `sectionHint` is covered in needs.test.ts.
+- Not in this step: Home tiles and "Picks for your routine" (step 4), accessibility pass and Maestro flow (step 5).

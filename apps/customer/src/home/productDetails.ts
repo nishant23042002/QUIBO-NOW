@@ -30,6 +30,13 @@ const SHELF: Readonly<Record<string, { n: number; unit: 'days' | 'months' }>> = 
   chips: { n: 3, unit: 'months' },
   popcorn: { n: 4, unit: 'months' },
   chocolate: { n: 8, unit: 'months' },
+  rusk: { n: 3, unit: 'months' },
+  namkeen: { n: 3, unit: 'months' },
+  bread: { n: 3, unit: 'days' },
+  pav: { n: 2, unit: 'days' },
+  dal: { n: 12, unit: 'months' },
+  masala: { n: 12, unit: 'months' },
+  cake: { n: 15, unit: 'days' },
 };
 
 /** How many days before today each product was packed, until the catalogue supplies it (Phase 1b). Fresh things are packed today. */
@@ -45,6 +52,12 @@ const PACKED_DAYS_AGO: Readonly<Record<string, number>> = {
   chips: 25,
   popcorn: 30,
   chocolate: 60,
+  rusk: 20,
+  namkeen: 20,
+  bread: 1,
+  dal: 30,
+  masala: 40,
+  cake: 5,
 };
 
 /**
