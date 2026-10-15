@@ -31,8 +31,11 @@ const makeStyles = (_colors: ThemeColors) =>
   StyleSheet.create({
     row: { flexDirection: 'row', alignItems: 'flex-start', gap: space[2] },
     text: { flex: 1, minWidth: 0 },
+    // As tall as its text, so it sits closer under the estimate than it did (4 dp, where it was 8); the room below it, before the next
+    // piece of the header, is what it was (8 dp). The touch area is made up to 48 dp with the pressable's hit slop.
     address: {
-      minHeight: space[10],
+      marginTop: space[1],
+      marginBottom: space[2],
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[1],
@@ -91,7 +94,7 @@ export function HeaderIdentity({
             role="button"
             aria-label={`${addressCaption}: ${address}`}
             onPress={onAddressPress}
-            hitSlop={6}
+            hitSlop={{ top: 12, bottom: 12, left: 6, right: 6 }}
             style={({ pressed }) => [styles.address, pressed && styles.pressed]}
           >
             <Icon name="pin" color={colors.onHeader} size={16} />

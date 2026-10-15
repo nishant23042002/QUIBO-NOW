@@ -43,7 +43,7 @@ export interface HomeHeaderProps {
   languageCode: string;
   languageLabel: string;
   onLanguagePress: () => void;
-  /** The "Schedule a slot" button inside the search bar, with its words. */
+  /** The "Schedule slot" button inside the search bar, with its words. */
   scheduleLabel: string;
   onSchedulePress: () => void;
   /** Where the order is going, for example "Roha, Raigad, Maharashtra". */
@@ -73,6 +73,11 @@ export interface HomeHeaderProps {
    * scrolls away with the page. Home puts its "Right now in Roha" mosaic here.
    */
   hero: (controls: HeroControls) => ReactNode;
+  /**
+   * The hero holds little or nothing (a category is chosen, so the mosaic is not there): its padding is cut so the page does not
+   * start under a blank band.
+   */
+  heroSlim?: boolean;
   profileLabel: string;
   onSearchPress: () => void;
   onAddressPress: () => void;
@@ -100,6 +105,8 @@ const makeStyles = (c: ThemeColors) =>
     // The hero is on the page's own colour: the header's lilac has faded into it by the bottom of the tabs, so the header and the
     // first block are one surface with no edge. It scrolls away with the page.
     hero: { backgroundColor: c.bg, paddingTop: space[3], paddingBottom: space[8] },
+    // With no mosaic under it, just enough to hold a notice and the page's overlap.
+    heroSlim: { paddingTop: 0, paddingBottom: space[5] },
     // The page slides up over the hero's lower edge with rounded top corners. It clips what is inside, so a wash that starts at the
     // top follows the curve instead of showing square corners over the hero.
     sheet: {
@@ -146,6 +153,7 @@ export function HomeHeader({
   categoriesLabel,
   onCategoryChange,
   hero,
+  heroSlim = false,
   profileLabel,
   onSearchPress,
   onAddressPress,
@@ -302,7 +310,7 @@ export function HomeHeader({
         }}
       >
         <Animated.View style={{ transform: [{ translateY: push }] }}>
-          <View style={styles.hero}>{hero({ openShops })}</View>
+          <View style={[styles.hero, heroSlim && styles.heroSlim]}>{hero({ openShops })}</View>
           <View style={styles.sheet}>{children}</View>
         </Animated.View>
       </Animated.ScrollView>

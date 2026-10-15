@@ -50,6 +50,8 @@ function ShopsHome() {
   const [picked, setPicked] = useState('all');
   const selected = rail.some((tab) => tab.key === picked) ? picked : 'all';
   const category = selected === 'all' ? undefined : categoryById(selected);
+  // Home's own opening (the offers strip and the mosaic) is for "All" only.
+  const onHome = selected === 'all';
   const cartCount = useCartCount();
   const reportScroll = useChromeReport();
   const insets = useSafeAreaInsets();
@@ -94,28 +96,35 @@ function ShopsHome() {
           }
           setPicked(key);
         }}
+        // The order's own status and the delivery notices follow the shopper onto any category. The offers strip and "Right now in
+        // Roha" are Home's own: they show on "All" and go when a category is chosen.
+        heroSlim={!onHome}
         hero={({ openShops }) => (
           <>
             <LiveOrderCard />
             <OutsideBanner />
             <ClosedBanner />
-            {/* Payment and delivery, at the very top: what a new customer asks first, above what is on today. */}
-            <View style={styles.strip}>
-              <PaymentStrip
-                onQuietPress={() => {
-                  router.push('/schedule');
-                }}
-                onOffersPress={() => {
-                  router.push('/coupons');
-                }}
-              />
-            </View>
-            <HeroMosaic
-              shopNames={shopNames}
-              onCategory={showCategory}
-              onNeed={openNeed}
-              onMeetShops={openShops}
-            />
+            {onHome ? (
+              <>
+                {/* Payment and delivery, at the very top: what a new customer asks first, above what is on today. */}
+                <View style={styles.strip}>
+                  <PaymentStrip
+                    onQuietPress={() => {
+                      router.push('/schedule');
+                    }}
+                    onOffersPress={() => {
+                      router.push('/coupons');
+                    }}
+                  />
+                </View>
+                <HeroMosaic
+                  shopNames={shopNames}
+                  onCategory={showCategory}
+                  onNeed={openNeed}
+                  onMeetShops={openShops}
+                />
+              </>
+            ) : null}
           </>
         )}
         onShopPress={(id) => {

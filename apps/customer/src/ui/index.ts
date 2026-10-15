@@ -17,7 +17,7 @@ export { CategoryTile, type CategoryTileProps } from './CategoryTile';
 export { Chip, type ChipProps } from './Chip';
 export { HeaderGradient } from './HeaderGradient';
 export { HomeHeader, type HeroControls, type HomeHeaderProps } from './HomeHeader';
-export { AccentWash } from './AccentWash';
+export { AccentWash, type WashTone } from './AccentWash';
 export { GlassPanel, type GlassPanelProps } from './GlassPanel';
 export { PlumCard } from './PlumCard';
 export { IconTabs, type IconTab, type IconTabsProps } from './IconTabs';

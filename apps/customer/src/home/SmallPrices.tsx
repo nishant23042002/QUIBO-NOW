@@ -25,7 +25,7 @@ export type PriceFilterKey = (typeof PRICE_FILTERS)[number]['key'];
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    // The block sits on a pistachio wash with a curved top and a fine edge, as Fresh today does.
+    // The block sits on a lilac wash with a curved top and a fine edge: the same treatment as Fresh today's, in its own tint.
     module: {
       paddingTop: space[5],
       paddingBottom: space[5],
@@ -84,7 +84,7 @@ export function SmallPrices() {
 
   return (
     <View style={styles.module} aria-label={t('home.smallPrices.title')}>
-      <AccentWash />
+      <AccentWash tone="lilac" />
       <LetteredTitle
         word={t('home.smallPrices.word')}
         sticker={t('home.smallPrices.sticker')}

@@ -76,7 +76,8 @@ const makeStyles = (c: ThemeColors) =>
     },
     divider: { width: 1, alignSelf: 'stretch', marginVertical: space[2], backgroundColor: c.line },
     slot: {
-      maxWidth: 128,
+      flexShrink: 0,
+      maxWidth: 140,
       minHeight: BAR_HEIGHT,
       flexDirection: 'row',
       alignItems: 'center',
@@ -236,7 +237,7 @@ export function SearchBar({
   const field =
     hint !== undefined ? (
       // With the words changed (the language), the hint is made again, so it starts from the first.
-      <TakingTurnsHint key={hint.words.join(' ')} hint={hint} />
+      <TakingTurnsHint key={hint.words.join('\u0000')} hint={hint} />
     ) : (
       <View style={styles.hint}>
         <Text variant="small" color="inkMuted" numberOfLines={1}>
@@ -266,7 +267,7 @@ export function SearchBar({
         >
           <Icon name="calendar" color={colors.ink} size={20} />
           <View style={styles.slotText}>
-            <Text variant="caption" numberOfLines={2} maxFontSizeMultiplier={1.2}>
+            <Text variant="caption" numberOfLines={1} maxFontSizeMultiplier={1.2}>
               {slot.label}
             </Text>
           </View>

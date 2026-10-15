@@ -1,7 +1,7 @@
 import { useId, useState } from 'react';
 import { StyleSheet, View, type LayoutChangeEvent } from 'react-native';
 import Svg, { Defs, LinearGradient, Path, Rect, Stop } from 'react-native-svg';
-import { useTheme } from '@/theme';
+import { useTheme, type ThemeColors } from '@/theme';
 import { radius } from './tokens';
 
 /** The edge is this thick, and as strong as this at its top, where it meets the page. */
@@ -9,13 +9,28 @@ const EDGE = 1.5;
 const EDGE_OPACITY = 0.8;
 
 /**
- * A soft pistachio wash behind a module, strongest at its top and gone by its bottom, so the module reads as set apart without a
- * hard edge. Its top corners are curved and a fine pistachio edge follows them and runs down the sides, fading out with the wash, so
+ * The tints a wash can take, each a soft fill and a stronger line of the same family for its edge, both from the theme (so they
+ * follow the light and dark themes): pistachio (Fresh today), butter, a lighter yellow (Buy again), and lilac, a faint aubergine
+ * (Small prices). Each module of Home that sits on a wash has its own, so the page is divided by colour and still of one family.
+ */
+export type WashTone = 'pistachio' | 'butter' | 'lilac';
+
+const TONES: Readonly<Record<WashTone, { fill: keyof ThemeColors; edge: keyof ThemeColors }>> = {
+  pistachio: { fill: 'accentSubtle', edge: 'accent' },
+  butter: { fill: 'warningBg', edge: 'tagBg' },
+  lilac: { fill: 'lilac', edge: 'onChromeMuted' },
+};
+
+/**
+ * A soft wash behind a module, strongest at its top and gone by its bottom, so the module reads as set apart without a hard edge.
+ * Its top corners are curved and a fine edge of the same colour follows them and runs down the sides, fading out with the wash, so
  * the module is plainly divided from the page above it. It fills its parent and sits under the parent's other children; the parent
  * clips to the same curve (`overflow: 'hidden'` with the top corners at `radius.section`).
  */
-export function AccentWash() {
+export function AccentWash({ tone = 'pistachio' }: { tone?: WashTone }) {
   const { colors } = useTheme();
+  const fill = colors[TONES[tone].fill];
+  const line = colors[TONES[tone].edge];
   const key = useId().replace(/[^a-zA-Z0-9]/g, '');
   const washId = `accent-wash-${key}`;
   const edgeId = `accent-edge-${key}`;
@@ -38,7 +53,7 @@ export function AccentWash() {
       <Svg width="100%" height="100%" preserveAspectRatio="none">
         <Defs>
           <LinearGradient id={washId} x1="0" y1="0" x2="0" y2="1">
-            <Stop offset="0" stopColor={colors.accentSubtle} />
+            <Stop offset="0" stopColor={fill} />
             <Stop offset="1" stopColor={colors.bg} />
           </LinearGradient>
         </Defs>
@@ -56,9 +71,9 @@ export function AccentWash() {
                 x2="0"
                 y2={height}
               >
-                <Stop offset="0" stopColor={colors.accent} stopOpacity={EDGE_OPACITY} />
-                <Stop offset="0.5" stopColor={colors.accent} stopOpacity={EDGE_OPACITY * 0.35} />
-                <Stop offset="1" stopColor={colors.accent} stopOpacity={0} />
+                <Stop offset="0" stopColor={line} stopOpacity={EDGE_OPACITY} />
+                <Stop offset="0.5" stopColor={line} stopOpacity={EDGE_OPACITY * 0.35} />
+                <Stop offset="1" stopColor={line} stopOpacity={0} />
               </LinearGradient>
             </Defs>
             <Path d={path} fill="none" stroke={`url(#${edgeId})`} strokeWidth={EDGE} />

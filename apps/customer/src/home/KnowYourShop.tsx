@@ -8,19 +8,12 @@ import { CompareScene } from './CompareScene';
 import { KNOW_QUESTIONS, KNOW_SCORE, type KnowQuestionId } from './knowRules';
 
 const EDGE = 3;
-/**
- * The two result columns of the matrix share one block, each taking half of it, so they are always the same width whatever the
- * phone's width or the words in them. The block is half of the card, never narrower than two columns that hold "Connected". The
- * score pills, the store names and the marks all sit in this one block, so every column lines up with the one above it.
- */
-const RESULTS_SHARE = '50%';
-const RESULTS_MIN = 160;
+/** The circle that holds a cross or a tick. */
 const MARK = 28;
-const ICON_BOX = 24;
 /** How long the checks take to open and close. */
 const OPEN_MS = 280;
 
-/** What each check looks like in its row: a picture, so the five can be told apart at a glance. */
+/** What each check looks like: a picture, so the five can be told apart at a glance. */
 const ICON: Readonly<Record<KnowQuestionId, string>> = {
   where: '\u{1F3EA}',
   who: '\u{1F464}',
@@ -44,8 +37,9 @@ const makeStyles = (c: ThemeColors) =>
     kicker: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
     kickerDot: { width: 8, height: 8, borderRadius: radius.full, backgroundColor: c.accent },
     pad: { paddingHorizontal: space[4] },
-    // The card under the scene: always its one head row (the label and the two scores); the five checks open under it.
-    matrix: {
+    // The card under the scene: the two kinds of store side by side with their score (always in view), and, opening under them,
+    // the five checks compared.
+    card: {
       borderRadius: radius.xl,
       borderWidth: 1,
       borderColor: c.line,
@@ -53,48 +47,51 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[3],
       overflow: 'hidden',
     },
-    cols: { flexDirection: 'row', alignItems: 'center', gap: space[2] },
-    headRow: { minHeight: TAP_MIN + space[3], paddingVertical: space[2] },
-    side: { flex: 1, minWidth: 0 },
-    // The block that holds the two result columns, and each column in it: equal halves.
-    results: {
-      width: RESULTS_SHARE,
-      minWidth: RESULTS_MIN,
-      flexShrink: 0,
+    titleRow: {
+      minHeight: TAP_MIN,
       flexDirection: 'row',
-      gap: space[2],
+      alignItems: 'center',
+      gap: space[1],
+      paddingVertical: space[1],
     },
-    result: { flex: 1, flexBasis: 0, minWidth: 0, alignItems: 'center' },
-    headLabel: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: space[1] },
-    score: {
+    title: { flex: 1, minWidth: 0 },
+    // The two stores: equal halves, each one name and one score, the colours of the scene above.
+    stores: { flexDirection: 'row', gap: space[2], paddingBottom: space[3] },
+    store: {
       flex: 1,
       flexBasis: 0,
       minWidth: 0,
-      minHeight: 40,
       alignItems: 'center',
-      justifyContent: 'center',
+      gap: 2,
       borderRadius: radius.lg,
-      // Both pills carry the same stamped edge, so they are the same size; the dark one's edge is its own colour.
+      paddingVertical: space[2],
+      paddingHorizontal: space[2],
+      // Both carry the same stamped edge, so they are the same size; the dark one's edge is its own colour.
       borderBottomWidth: EDGE,
       borderRightWidth: EDGE,
     },
-    scoreDark: { backgroundColor: c.plum, borderColor: c.plum },
-    scoreShop: { backgroundColor: c.accent, borderColor: c.accentEdge },
-    // The five checks, which grow open under the head row.
+    storeDark: { backgroundColor: c.plum, borderColor: c.plum },
+    storeShop: { backgroundColor: c.accent, borderColor: c.accentEdge },
+    // The five comparisons, which grow open under the stores.
     body: { overflow: 'hidden' },
-    bodyInner: { position: 'absolute', left: 0, right: 0, top: 0, paddingBottom: space[2] },
-    names: { paddingBottom: space[1] },
+    bodyInner: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: 0,
+      paddingBottom: space[2],
+    },
+    // One check per row, read from left to right: a cross (a Dark Store), what is checked, a tick (a Connected Store). The cross and
+    // the tick sit at the two outer edges, under the two stores they belong to, in those stores' colours.
     row: {
-      minHeight: 52,
+      minHeight: 48,
       flexDirection: 'row',
       alignItems: 'center',
       gap: space[2],
       borderTopWidth: 1,
       borderTopColor: c.line,
-      paddingVertical: space[1],
     },
-    label: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center', gap: 6 },
-    iconBox: { width: ICON_BOX, alignItems: 'center' },
+    markCell: { width: MARK + space[2], alignItems: 'center' },
     mark: {
       width: MARK,
       height: MARK,
@@ -102,8 +99,18 @@ const makeStyles = (c: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    markNo: { backgroundColor: c.muted },
+    markNo: { backgroundColor: c.plum },
     markYes: { backgroundColor: c.accent },
+    rowLabel: {
+      flex: 1,
+      minWidth: 0,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: space[2],
+      paddingVertical: space[1],
+    },
+    rowText: { flexShrink: 1 },
     pressed: { opacity: 0.85 },
   });
 
@@ -131,26 +138,12 @@ function Backdrop({ solid }: { solid: number }) {
   );
 }
 
-/** A cross (a dark store cannot be checked) or a tick (a connected store can), in a small circle. */
-function Mark({ yes }: { yes: boolean }) {
-  const styles = useStyles(makeStyles);
-  const { colors } = useTheme();
-  return (
-    <View style={[styles.mark, yes ? styles.markYes : styles.markNo]} aria-hidden>
-      <Icon
-        name={yes ? 'check' : 'close'}
-        color={yes ? colors.onAccent : colors.inkMuted}
-        size={16}
-      />
-    </View>
-  );
-}
-
 /**
  * "Know your shop" (ADR 0054, ADR 0055 step 4). One idea: a customer can check a shop and cannot check a dark store. The heading and
- * the scene to drag open it. Under the scene there is one small card: a row that says "Things you can check yourself" with the
- * 0 of 5 against 5 of 5 score, always in view. A tap opens the five checks under it, smoothly: each with its picture, a cross for a
- * Dark Store and a tick for a Connected Store, in two columns that line up with the two scores.
+ * the scene to drag open it. Under the scene there is one small card in two parts. The first says it at a glance: the two kinds of
+ * store side by side, a name and a score each (0 of 5 against 5 of 5), always in view. The second opens with a tap on the title,
+ * smoothly: the five checks as rows, each read left to right as a cross (a Dark Store), what is checked, and a tick (a Connected
+ * Store), the cross and the tick at the two outer edges under the store each belongs to.
  *
  * It names no company and says nothing about anyone's food; it compares only what a customer can check for themselves.
  */
@@ -235,7 +228,7 @@ export function KnowYourShop() {
         </View>
 
         <View style={styles.pad}>
-          <View style={styles.matrix}>
+          <View style={styles.card}>
             <Pressable
               role="button"
               aria-expanded={open}
@@ -243,45 +236,51 @@ export function KnowYourShop() {
               onPress={() => {
                 setOpen((was) => !was);
               }}
-              style={({ pressed }) => [styles.cols, styles.headRow, pressed && styles.pressed]}
+              style={({ pressed }) => [styles.titleRow, pressed && styles.pressed]}
             >
-              <View style={styles.headLabel}>
-                <View style={styles.side}>
-                  <Text variant="strong" tight>
-                    {t('home.know.scoreCaption')}
-                  </Text>
-                </View>
-                <Animated.View
-                  style={{
-                    transform: [
-                      {
-                        rotate: progress.interpolate({
-                          inputRange: [0, 1],
-                          outputRange: ['90deg', '-90deg'],
-                        }),
-                      },
-                    ],
-                  }}
-                  aria-hidden
-                >
-                  <Icon name="chevronRight" color={colors.accentInk} size={18} />
-                </Animated.View>
+              <View style={styles.title}>
+                <Text variant="strong" tight>
+                  {t('home.know.scoreCaption')}
+                </Text>
               </View>
-              <View style={styles.results}>
-                <View style={[styles.score, styles.scoreDark]}>
-                  <Text variant="strong" color="onPlum">
-                    {scoreOf(KNOW_SCORE.darkStore)}
-                  </Text>
-                </View>
-                <View style={[styles.score, styles.scoreShop]}>
-                  <Text variant="strong" color="onAccent">
-                    {scoreOf(KNOW_SCORE.shop)}
-                  </Text>
-                </View>
-              </View>
+              <Animated.View
+                style={{
+                  transform: [
+                    {
+                      rotate: progress.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['90deg', '-90deg'],
+                      }),
+                    },
+                  ],
+                }}
+                aria-hidden
+              >
+                <Icon name="chevronRight" color={colors.accentInk} size={18} />
+              </Animated.View>
             </Pressable>
 
-            {/* The five checks. Measured once, then the height runs between nothing and that, with the opacity. */}
+            {/* The two kinds of store, side by side, each a name and its score. */}
+            <View style={styles.stores}>
+              <View style={[styles.store, styles.storeDark]}>
+                <Text variant="strong" color="onPlum" align="center" numberOfLines={1}>
+                  {t('home.know.darkLabel')}
+                </Text>
+                <Text variant="subheading" color="onPlum" align="center" numberOfLines={1}>
+                  {scoreOf(KNOW_SCORE.darkStore)}
+                </Text>
+              </View>
+              <View style={[styles.store, styles.storeShop]}>
+                <Text variant="strong" color="onAccent" align="center" numberOfLines={1}>
+                  {t('home.know.shopLabel')}
+                </Text>
+                <Text variant="subheading" color="onAccent" align="center" numberOfLines={1}>
+                  {scoreOf(KNOW_SCORE.shop)}
+                </Text>
+              </View>
+            </View>
+
+            {/* The five checks, compared. Measured once, then the height runs between nothing and that, with the opacity. */}
             <Animated.View
               style={[
                 styles.body,
@@ -302,22 +301,6 @@ export function KnowYourShop() {
                   setBodyHeight(event.nativeEvent.layout.height);
                 }}
               >
-                {/* Which column is which, over the marks. */}
-                <View style={[styles.cols, styles.names]}>
-                  <View style={styles.side} />
-                  <View style={styles.results}>
-                    <View style={styles.result}>
-                      <Text variant="strong" align="center" tight>
-                        {t('home.know.darkLabel')}
-                      </Text>
-                    </View>
-                    <View style={styles.result}>
-                      <Text variant="strong" align="center" tight>
-                        {t('home.know.shopLabel')}
-                      </Text>
-                    </View>
-                  </View>
-                </View>
                 {KNOW_QUESTIONS.map((id) => (
                   <View
                     key={id}
@@ -325,28 +308,28 @@ export function KnowYourShop() {
                     accessible
                     aria-label={`${question(id)}. ${t('home.know.darkLabel')}: ${t('home.know.cannot')}. ${t('home.know.shopLabel')}: ${t('home.know.can')}`}
                   >
-                    <View style={styles.label}>
-                      <View style={styles.iconBox}>
-                        <NativeText
-                          allowFontScaling={false}
-                          aria-hidden
-                          style={{ fontSize: 20, lineHeight: 26 }}
-                        >
-                          {ICON[id]}
-                        </NativeText>
+                    <View style={styles.markCell} aria-hidden>
+                      <View style={[styles.mark, styles.markNo]}>
+                        <Icon name="close" color={colors.onPlum} size={16} />
                       </View>
-                      <View style={styles.side}>
-                        <Text variant="strong" tight>
+                    </View>
+                    <View style={styles.rowLabel}>
+                      <NativeText
+                        allowFontScaling={false}
+                        aria-hidden
+                        style={{ fontSize: 18, lineHeight: 24 }}
+                      >
+                        {ICON[id]}
+                      </NativeText>
+                      <View style={styles.rowText}>
+                        <Text variant="strong" tight align="center">
                           {question(id)}
                         </Text>
                       </View>
                     </View>
-                    <View style={styles.results}>
-                      <View style={styles.result}>
-                        <Mark yes={false} />
-                      </View>
-                      <View style={styles.result}>
-                        <Mark yes />
+                    <View style={styles.markCell} aria-hidden>
+                      <View style={[styles.mark, styles.markYes]}>
+                        <Icon name="check" color={colors.onAccent} size={16} />
                       </View>
                     </View>
                   </View>

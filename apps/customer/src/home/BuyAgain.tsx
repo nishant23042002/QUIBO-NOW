@@ -24,7 +24,7 @@ import { ItemTile, RAIL_CARD_WIDTH } from './ItemTile';
 
 const makeStyles = (_c: ThemeColors) =>
   StyleSheet.create({
-    // On a pistachio wash with a curved top and a fine edge, as Fresh today is.
+    // On a butter-yellow wash with a curved top and a fine edge: the same treatment as Fresh today's, in its own tint.
     module: {
       paddingTop: space[5],
       paddingBottom: space[5],
@@ -83,7 +83,7 @@ export function BuyAgain() {
 
   return (
     <View style={styles.module} aria-label={t('home.again.title')}>
-      <AccentWash />
+      <AccentWash tone="butter" />
       <LetteredTitle
         word={t('home.again.word')}
         sticker={t('home.again.sticker')}

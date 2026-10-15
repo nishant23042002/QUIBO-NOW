@@ -28,7 +28,7 @@ export interface TabHeaderProps extends HeaderIdentityProps {
   /** The search bar's hint: a fixed part ("Search") and example words that take turns, each sliding up and fading in. */
   searchHint: SearchHint;
   onSearchPress: () => void;
-  /** The "Schedule a slot" button inside the search bar, with its words. */
+  /** The "Schedule slot" button inside the search bar, with its words. */
   scheduleLabel: string;
   onSchedulePress: () => void;
   /**
