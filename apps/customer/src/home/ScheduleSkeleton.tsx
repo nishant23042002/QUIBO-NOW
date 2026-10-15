@@ -1,7 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
-import { Skeleton, SkeletonLine, SkeletonScope, radius, space } from '@/ui';
+import { Skeleton, SkeletonLine, SkeletonScope, fontSize, radius, space, textLines } from '@/ui';
 
 /** The confirm bar's least height, as in `ScheduleView`. */
 const DOCK = 124;
@@ -82,8 +82,19 @@ export function ScheduleSkeleton({
   fee?: boolean;
   bottom: number;
 }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const styles = useStyles(makeStyles);
+  const { width: screen } = useWindowDimensions();
+  const script = locale === 'en' ? 'latin' : 'devanagari';
+  // Each sentence takes the lines its words will wrap to at this width: the note beside its icon inside its card, the small print
+  // across the dock.
+  const noteLines = textLines(
+    t('cart.quickNote', { from: '10', to: '15' }),
+    screen - space[3] * 2 - 2 - space[4] * 2 - 20 - space[3],
+    fontSize.sm,
+    script,
+  );
+  const cancelLines = textLines(t('cart.cancelNote'), screen - space[4] * 2, fontSize.sm, script);
 
   return (
     <SkeletonScope label={t('common.loading')} style={styles.fill}>
@@ -129,9 +140,13 @@ export function ScheduleSkeleton({
             <Skeleton width={20} height={20} rounded={radius.full} />
             <View style={styles.noteText}>
               <View>
-                <SkeletonLine size="sm" />
-                <SkeletonLine size="sm" width="85%" />
-                <SkeletonLine size="sm" width="40%" />
+                {Array.from({ length: noteLines }, (_, line) => (
+                  <SkeletonLine
+                    key={line}
+                    size="sm"
+                    width={line === noteLines - 1 && noteLines > 1 ? '55%' : '100%'}
+                  />
+                ))}
               </View>
               {fee ? <SkeletonLine size="sm" width="35%" /> : null}
             </View>
@@ -172,8 +187,16 @@ export function ScheduleSkeleton({
         )}
       </View>
       <View style={[styles.dock, { bottom }]}>
-        <SkeletonLine size="sm" width="90%" align="center" />
-        <SkeletonLine size="sm" width="55%" align="center" />
+        <View>
+          {Array.from({ length: cancelLines }, (_, line) => (
+            <SkeletonLine
+              key={line}
+              size="sm"
+              width={line === cancelLines - 1 && cancelLines > 1 ? '55%' : '90%'}
+              align="center"
+            />
+          ))}
+        </View>
         <Skeleton height={48} rounded={radius.md} />
       </View>
     </SkeletonScope>

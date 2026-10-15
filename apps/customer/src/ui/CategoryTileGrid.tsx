@@ -1,7 +1,7 @@
-import { StyleSheet, View, type ImageSourcePropType } from 'react-native';
+import { StyleSheet, View, useWindowDimensions, type ImageSourcePropType } from 'react-native';
 import { CategoryTile } from './CategoryTile';
 import { Skeleton, SkeletonLine } from './Skeleton';
-import { tileNameLines } from './logic/tileNames';
+import { TILE_LETTER_WIDTH, tileNameLines } from './logic/tileNames';
 import { radius, space } from './tokens';
 
 /** One tile of the grid: a picture, its colour, and its name. */
@@ -94,13 +94,17 @@ export function CategoryTileGridSkeleton({
   shift?: number;
   names?: readonly string[];
 }) {
+  const { width: screen } = useWindowDimensions();
+  // A tile's name has the cell's width less the gap, and the letters that fit in it decide where a name breaks.
+  const cell = (screen - 2 * (space[4] - GAP / 2)) / 4 - GAP;
+  const perLine = Math.max(6, Math.floor(cell / TILE_LETTER_WIDTH));
   return (
     <View style={styles.grid}>
       {Array.from({ length: count }, (_, tile) => {
         const known = names?.[tile];
         const widths: readonly `${number}%`[] =
           known !== undefined
-            ? tileNameLines(known).map((share) => `${Math.round(share * 100)}%` as const)
+            ? tileNameLines(known, perLine).map((share) => `${Math.round(share * 100)}%` as const)
             : (NAME_LINES[(tile + shift) % NAME_LINES.length] ?? []);
         return (
           <View key={tile} style={styles.cellSkeleton}>

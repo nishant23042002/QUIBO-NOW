@@ -37,13 +37,14 @@ export function ProductCardSkeleton({
   );
   const bar = Math.round(nameLine * 0.6);
   const script = locale === 'en' ? 'latin' : 'devanagari';
-  // The extra line is set in the caption style (not tight), the price badge has its stamped edge, and the gaps are the text block's.
+  // The extra line is set in the caption style (not tight), a compact card's price badge is two taller than its row (its stamped
+  // edge), and the gaps are the text block's.
   const extra = Math.round((compact ? fontSize.xs : fontSize.sm) * leading[script].normal);
   const made =
     content === undefined
       ? 0
       : priceHeight +
-        2 +
+        (compact ? 2 : 0) +
         nameLine * content.nameLines +
         line +
         (content.extraLine ? extra : 0) +

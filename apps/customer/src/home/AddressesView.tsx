@@ -14,6 +14,8 @@ import {
   SkeletonScope,
   Skeleton,
   StatePanel,
+  StatePanelSkeleton,
+  TAP_MIN,
   Text,
   radius,
   space,
@@ -164,30 +166,50 @@ function AddressCard({
   );
 }
 
-/** Two cards' worth of grey blocks in the shape of the list. */
+/**
+ * Grey blocks in the page's own layout, from the addresses saved: with none, the message the page will say; with some, one card
+ * for each (its name, where it is, a third line when it has landmarks, and Change and Remove under it, indented past the pin) and
+ * the button under the list. The same cards, gaps and lines as the page.
+ */
 function AddressesSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
+  const { addresses } = useAddresses();
+
+  if (addresses.length === 0) {
+    return (
+      <SkeletonScope label={t('common.loading')} style={{ flex: 1, overflow: 'hidden' }}>
+        <StatePanelSkeleton body={t('address.emptyBody')} />
+      </SkeletonScope>
+    );
+  }
+
   return (
     <SkeletonScope label={t('common.loading')} style={{ flex: 1, overflow: 'hidden' }}>
       <View style={styles.content}>
-        {[0, 1].map((index) => (
-          <View key={index} style={styles.card}>
-            <View style={styles.top}>
-              <Skeleton width={PIN} height={PIN} rounded={radius.full} />
-              <View style={styles.text}>
-                <SkeletonLine size="base" width="30%" />
-                <SkeletonLine size="sm" width="75%" />
-                <SkeletonLine size="sm" width="45%" />
+        <View style={styles.list}>
+          {addresses.map((address) => (
+            <View key={address.id} style={styles.card}>
+              <View style={styles.top}>
+                <Skeleton width={PIN} height={PIN} rounded={radius.full} />
+                <View style={styles.text}>
+                  <SkeletonLine size="base" width="30%" />
+                  <SkeletonLine size="sm" width="78%" />
+                  {addressDetail(address) !== '' ? <SkeletonLine size="sm" width="50%" /> : null}
+                </View>
+              </View>
+              <View style={styles.actions}>
+                <View style={styles.link}>
+                  <SkeletonLine size="sm" width={44} />
+                </View>
+                <View style={styles.link}>
+                  <SkeletonLine size="sm" width={56} />
+                </View>
               </View>
             </View>
-            <View style={styles.actions}>
-              <SkeletonLine size="sm" width={48} />
-              <SkeletonLine size="sm" width={56} />
-            </View>
-          </View>
-        ))}
-        <Skeleton height={48} rounded={radius.md} />
+          ))}
+        </View>
+        <Skeleton height={TAP_MIN} rounded={radius.md} />
       </View>
     </SkeletonScope>
   );

@@ -36,13 +36,15 @@ const makeStyles = (c: ThemeColors) =>
 
 /** The code box under each offer: a label's line plus its padding and dashed edge. */
 const CODE_HEIGHT = 37;
+/** How wide the box is for each letter of its code: the spaced capitals and the box's padding. */
+const CODE_LETTER = 14.5;
 
 /**
  * Grey blocks in the shape of the coupons page, built from lines of text the same height as the real ones so that each card is as
  * tall as the one that replaces it: the sample-offers note, the box to type a code, then one card for each coupon on offer (as
  * many as there are, up to what fits the screen).
  */
-export function CouponsSkeleton({ offers }: { offers: number }) {
+export function CouponsSkeleton({ codes }: { codes: readonly string[] }) {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
 
@@ -63,7 +65,7 @@ export function CouponsSkeleton({ offers }: { offers: number }) {
           </View>
           <Skeleton height={48} rounded={radius.md} />
         </View>
-        {Array.from({ length: couponCards(offers) }, (_, index) => (
+        {codes.slice(0, couponCards(codes.length)).map((code, index) => (
           <View key={index} style={[styles.card, styles.offer]}>
             <View style={styles.offerTop}>
               <View style={styles.offerText}>
@@ -73,7 +75,11 @@ export function CouponsSkeleton({ offers }: { offers: number }) {
               </View>
               <Skeleton width={88} height={44} rounded={radius.md} />
             </View>
-            <Skeleton width={104} height={CODE_HEIGHT} rounded={radius.sm} />
+            <Skeleton
+              width={Math.round([...code].length * CODE_LETTER)}
+              height={CODE_HEIGHT}
+              rounded={radius.sm}
+            />
           </View>
         ))}
       </View>

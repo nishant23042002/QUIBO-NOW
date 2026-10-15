@@ -1,4 +1,4 @@
-import { formatRupees } from '@quibo/contracts';
+import { formatRupees, type OrderItem } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
@@ -7,7 +7,7 @@ import { SETTINGS_LOAD_MS, SETTINGS_POLICY } from '@/home/loading';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useOnline } from '@/network';
 import { orderNumber } from '@/orders/ids';
-import { ItemThumb, ThumbRow, quantityLineOf } from '@/orders/ItemThumb';
+import { ItemThumb, ThumbRow, ThumbRowSkeleton, quantityLineOf } from '@/orders/ItemThumb';
 import { useOrders } from '@/orders/OrdersProvider';
 import { lastEventAt } from '@/orders/split';
 import { headlineOf } from '@/orders/tracking';
@@ -21,10 +21,15 @@ import {
   LoadGate,
   Notice,
   OptionGroup,
+  OptionGroupSkeleton,
+  Skeleton,
   SkeletonLine,
   SkeletonScope,
   StatePanel,
+  StatePanelSkeleton,
+  TAP_MIN,
   Text,
+  fontSize,
   radius,
   space,
   useScreenLoad,
@@ -83,19 +88,77 @@ const makeStyles = (c: ThemeColors) =>
     skeleton: { flex: 1, overflow: 'hidden' },
   });
 
-function ReportSkeleton() {
+/**
+ * Grey blocks in the page's own layout, from the orders the phone has: with none, the message the page will say; with some, the
+ * card that asks which order (the one the shopper came from, or the only one, shown with "Change"; otherwise each order), the
+ * group of kinds of problem, the card of things in that order, the note field and the send button. The same cards, rows and gaps
+ * as the page.
+ */
+function ReportSkeleton({ orderId }: { orderId: string | undefined }) {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
+  const { orders } = useOrders();
+
+  if (orders.length === 0) {
+    return (
+      <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
+        <StatePanelSkeleton body={t('help.report.noOrdersBody')} />
+      </SkeletonScope>
+    );
+  }
+
+  const chosenId =
+    orderId !== undefined && orders.some((tracked) => tracked.order.id === orderId)
+      ? orderId
+      : orders.length === 1
+        ? (orders[0]?.order.id ?? null)
+        : null;
+  const chosen = orders.find((tracked) => tracked.order.id === chosenId);
+  const orderLine = (key: string, items: readonly OrderItem[]) => (
+    <View key={key} style={styles.orderRow}>
+      <ThumbRowSkeleton items={items} fit={3} size={32} />
+      <View style={styles.grow}>
+        <SkeletonLine size="base" width="46%" />
+        <SkeletonLine size="xs" width="72%" />
+      </View>
+      <Skeleton width={48} height={Math.round(fontSize.sm * 0.8)} />
+    </View>
+  );
+
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
       <View style={styles.content}>
-        {[0, 1, 2].map((index) => (
-          <View key={index} style={styles.card}>
-            <SkeletonLine size="base" width="40%" />
-            <SkeletonLine size="sm" width="70%" />
-            <SkeletonLine size="sm" width="55%" />
+        <View style={styles.card}>
+          <SkeletonLine size="lg" tight width="44%" />
+          <View style={{ gap: space[2] }}>
+            {chosen !== undefined
+              ? orderLine(chosen.order.id, chosen.order.items)
+              : orders.map((tracked) => orderLine(tracked.order.id, tracked.order.items))}
           </View>
-        ))}
+          {chosen !== undefined ? <SkeletonLine size="sm" width="22%" /> : null}
+        </View>
+        <OptionGroupSkeleton count={PROBLEM_KINDS.length} titleWidth="38%" />
+        {chosen !== undefined ? (
+          <View style={styles.card}>
+            <SkeletonLine size="lg" tight width="40%" />
+            {chosen.order.items.map((item) => (
+              <View key={item.packId} style={styles.itemRow}>
+                <Skeleton width={24} height={24} rounded={radius.sm} />
+                <Skeleton width={44} height={44} rounded={radius.md} />
+                <View style={styles.grow}>
+                  <SkeletonLine size="base" width="62%" />
+                  <SkeletonLine size="xs" width="28%" />
+                </View>
+              </View>
+            ))}
+          </View>
+        ) : null}
+        <View style={{ gap: space[2] }}>
+          <SkeletonLine size="base" width="30%" />
+          <Skeleton height={TAP_MIN} rounded={radius.md} />
+          <SkeletonLine size="sm" width="48%" />
+        </View>
+        <Skeleton height={TAP_MIN} rounded={radius.md} />
       </View>
     </SkeletonScope>
   );
@@ -312,7 +375,7 @@ export function ReportView({ orderId }: { orderId?: string | undefined }) {
     hold: !orders.loaded || !reports.loaded,
   });
   return (
-    <LoadGate load={load} skeleton={<ReportSkeleton />}>
+    <LoadGate load={load} skeleton={<ReportSkeleton orderId={orderId} />}>
       <ReportPage orderId={orderId} />
     </LoadGate>
   );

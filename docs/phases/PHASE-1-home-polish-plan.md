@@ -108,19 +108,19 @@ changes. They stay in this document's history only; nothing is built from them.
 
 ## Skeleton refresh (2026-10-15)
 
-The loading skeleton of Home ("All" chosen) was rebuilt to mirror the page as it is now, and every skeleton in the app got a soft
-shine in place of the old slow fade.
+Every skeleton in the app was brought onto the page it stands in for, and its animation was made light.
 
-- **Mirrors the page.** `home/HomeSkeleton.tsx` follows the real order and structure: Know your shop on its dark stage, Buy again
-  (only for someone who has ordered), Fresh today on its wash with its round tabs, Bestsellers, Continue browsing (only when
-  something was viewed), the category groups, a thin rule, Daily essentials as real rows, Picks for your routine, Small prices on
-  its lilac wash, Trending, Shop by brand with its store card, Featured, a rule, the shelves with the banner after the second,
-  a rule, Quieter times, the promise (not in a dark-store town), the help row and the closing. Gaps are the page's 12, 24 and 32.
-- **Measured.** In the 375 px preview the skeleton and the page are the same height, 7,235 px for the rails, and each section
-  agrees with the real one to within 1 px. A card in a row grows as the real one does (a two-line name, the extra line).
-- **Shine.** `ui/Skeleton.tsx`: one native-driven sweep for the whole group (`SkeletonScope`), a soft white band
-  (`assets/skeleton-shine.png`) moving across each block with a short rest between sweeps. On the dark stage it lifts the stage's
-  own colour. Reduced motion keeps the blocks still. Only blocks 28 dp or taller shine (pictures, tiles, cards, buttons), so a
-  Home skeleton moves about a hundred views, not several hundred.
-- **Not done.** Not measured on a real low-end phone; the shine's cost there is the thing to watch. The other screens' skeletons
-  keep their structure and only gain the shine.
+- **Light animation.** `ui/Skeleton.tsx`: one band of light (`assets/skeleton-shine.png`) sweeps across the whole group, then rests.
+  It is a single native-driven view per screen (`SkeletonScope`); the blocks themselves do nothing, so a page of hundreds costs the
+  same as one. It is white, so it shows over the grey blocks and not over the white page between them. Reduced motion keeps it still.
+- **Same approach everywhere.** A skeleton is drawn from the page's own numbers and from what is known before the data arrives (the
+  cart, the order, the saved addresses, the item lists), in the page's own cards, rows and gaps. Text that wraps is counted with
+  `textLines` (`ui/logic/textLines.ts`) at the width the page gives it, a card row grows as the real card does
+  (`home/cardContent.ts`), and static parts (the footer, the need's band, the category rail and toolbar, the divider) are the real
+  ones. States are drawn too: an empty page is a `StatePanelSkeleton`, a coupon note under the coupon row, a saving line in the bill.
+- **Measured.** In the 375 px preview each skeleton was laid over its page and compared: Home (every section, with Buy again and
+  Continue browsing), Categories, Settings, Help, Report, Addresses, Coupons, Schedule, Cart, Checkout, Orders, Tracking, Need,
+  Category, Shop, Brand and Product agree to within 1 or 2 px. Below the fold some rows of the Product, Cart and Tracking pages are
+  approximate.
+- **Not done.** Not seen on a real phone, and not measured in Hindi or Marathi, where lines wrap at different places (the
+  estimates use a wider letter for Devanagari). A phone check on a low-end device is still to do.

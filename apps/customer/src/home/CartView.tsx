@@ -839,6 +839,17 @@ export function CartView() {
     freshOnOpen: true,
   });
   const { ready } = cart;
+  // The notes under the coupon row: the one applied (two lines when it saves, one when the cart is short of it) and, under that,
+  // a better one on offer; or, with none applied, the best one to suggest, or the one that was just taken off.
+  const { applied, better, best, dropped } = cart.coupon;
+  const couponNotes =
+    applied !== undefined
+      ? [applied.discount > 0 ? 2 : 1, ...(better !== undefined ? [1] : [])]
+      : dropped !== undefined
+        ? [2]
+        : best !== undefined
+          ? [1]
+          : [];
   const known = cartShape({
     lines: cart.items.length,
     saved: cart.saved.items.length,
@@ -846,14 +857,27 @@ export function CartView() {
     coupon: cart.bill.coupon !== undefined,
     tip: cart.bill.tip > 0,
     weighed: cart.hasWeighed,
+    saving: cart.bill.totalSaved > 0,
+    couponNotes,
   });
   const shape = ready ? known : rememberedCartShape();
 
   // What the cart looked like, to draw the next skeleton from.
-  const { empty, lines, saved, trip, billRows, weighed } = known;
+  const { empty, lines, saved, trip, billRows, weighed, saving } = known;
+  const notesKey = couponNotes.join(',');
   useEffect(() => {
-    if (ready) rememberCartShape({ empty, lines, saved, trip, billRows, weighed });
-  }, [ready, empty, lines, saved, trip, billRows, weighed]);
+    if (!ready) return;
+    rememberCartShape({
+      empty,
+      lines,
+      saved,
+      trip,
+      billRows,
+      weighed,
+      saving,
+      couponNotes: notesKey === '' ? [] : notesKey.split(',').map(Number),
+    });
+  }, [ready, empty, lines, saved, trip, billRows, weighed, saving, notesKey]);
 
   return (
     <LoadGate

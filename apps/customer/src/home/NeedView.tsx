@@ -18,6 +18,7 @@ import {
   SkeletonScope,
   StatePanel,
   Text,
+  chipWidthOf,
   radius,
   space,
   useChromeScroll,
@@ -25,6 +26,7 @@ import {
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
+import { rowCardContent } from './cardContent';
 import { tintColor } from './categoryGroups';
 import { needSections, type Need } from './needs';
 import { useDeliveryWhen } from './deliveryInfo';
@@ -32,10 +34,8 @@ import { ItemTile, RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { anyCardNote, useHomeItems } from './items';
 import { CATEGORIES_LOAD_MS, CATEGORIES_POLICY } from './loading';
 
-const CHIP_WIDTH = 88;
 const CHIP_HEIGHT = 36;
-const SKELETON_SHELVES = 2;
-const SKELETON_CARDS = 3;
+const SKELETON_SHELVES = 3;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -58,31 +58,66 @@ const makeStyles = (c: ThemeColors) =>
     empty: { minHeight: 320 },
   });
 
-/** The page's shape in grey: the kind chips, then a few shelves, each a title as long as the real one and a row of cards. */
+/** The need's name on a band of its colour, and the line under it: known before anything loads, so the skeleton shows it as is. */
+function NeedBand({ need }: { need: Need }) {
+  const { t } = useLanguage();
+  const { colors } = useTheme();
+  const styles = useStyles(makeStyles);
+  return (
+    <View style={[styles.band, { backgroundColor: tintColor(colors, need.tint) }]}>
+      <Text variant="title" color="ink" role="heading">
+        {t(need.label)}
+      </Text>
+      <Text color="inkMuted">{t('needs.band')}</Text>
+    </View>
+  );
+}
+
+/**
+ * The page's layout in grey: the band as it is, the chips for the shelves when there is more than one, then the shelves, each
+ * with a title as long as the real one and a row of cards as tall as the real row. The same band, gaps and rows as the page, so
+ * each lands where its real one will.
+ */
 function NeedSkeleton({ need }: { need: Need }) {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
-  const sections = needSections(useHomeItems(), need).slice(0, SKELETON_SHELVES);
+  const { width: screen } = useWindowDimensions();
+  const sections = needSections(useHomeItems(), need);
+  const across = Math.ceil((screen - space[4]) / (RAIL_CARD_WIDTH + space[3]));
 
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
-      <View style={styles.content}>
-        <View style={styles.chips}>
-          {Array.from({ length: Math.max(2, sections.length + 1) }, (_, index) => (
-            <Skeleton key={index} width={CHIP_WIDTH} height={CHIP_HEIGHT} rounded={radius.md} />
-          ))}
-        </View>
+      <NeedBand need={need} />
+      <View style={[styles.content, { paddingTop: space[4] }]}>
+        {sections.length > 1 ? (
+          <View style={styles.chips}>
+            {[t('catalogue.all'), ...sections.map((section) => t(section.label))].map(
+              (chip, index) => (
+                <Skeleton
+                  key={index}
+                  width={chipWidthOf(chip)}
+                  height={CHIP_HEIGHT}
+                  rounded={radius.md}
+                />
+              ),
+            )}
+          </View>
+        ) : null}
         <View style={styles.shelves}>
-          {sections.map((section) => (
+          {sections.slice(0, SKELETON_SHELVES).map((section) => (
             <View key={section.id} style={styles.section}>
               <View style={styles.gutter}>
                 <RowTitleSkeleton title={t(section.label)} />
               </View>
               <View style={styles.row}>
                 {Array.from(
-                  { length: Math.min(SKELETON_CARDS, section.items.length) },
+                  { length: Math.max(1, Math.min(across, section.items.length)) },
                   (_, card) => (
-                    <ProductCardSkeleton key={card} width={RAIL_CARD_WIDTH} />
+                    <ProductCardSkeleton
+                      key={card}
+                      width={RAIL_CARD_WIDTH}
+                      {...rowCardContent(section.items)}
+                    />
                   ),
                 )}
               </View>
@@ -96,7 +131,6 @@ function NeedSkeleton({ need }: { need: Need }) {
 
 function NeedPage({ need }: { need: Need }) {
   const { t } = useLanguage();
-  const { colors } = useTheme();
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
   const chromeScroll = useChromeScroll();
@@ -118,12 +152,7 @@ function NeedPage({ need }: { need: Need }) {
           insets.bottom + BOTTOM_BAR_HEIGHT + space[6] + (cart.count > 0 ? CART_ROOM : 0),
       }}
     >
-      <View style={[styles.band, { backgroundColor: tintColor(colors, need.tint) }]}>
-        <Text variant="title" color="ink" role="heading">
-          {t(need.label)}
-        </Text>
-        <Text color="inkMuted">{t('needs.band')}</Text>
-      </View>
+      <NeedBand need={need} />
       <View style={[styles.content, { paddingTop: space[4] }]}>
         {online ? null : (
           <View style={styles.gutter}>

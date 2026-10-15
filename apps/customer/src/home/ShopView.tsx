@@ -10,7 +10,10 @@ import {
   Icon,
   Notice,
   SectionDivider,
+  ProductCardSkeleton,
   ShopHero,
+  SkeletonLine,
+  SkeletonScope,
   Text,
   radius,
   space,
@@ -19,14 +22,18 @@ import {
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
 import { FREE_DELIVERY_FROM } from './delivery';
-import { HomeSkeleton } from './HomeSkeleton';
+import { rowCardContent } from './cardContent';
 import { activeBrand, brandsOfItems, filterByBrand } from './brandPage';
 import { ItemTile, gridCardWidth } from './ItemTile';
-import { useHomeItems, type ItemCategory } from './items';
+import { anyCardNote, useHomeItems, type ItemCategory } from './items';
 import type { ShopDetails } from './sampleShops';
 
 /** How long the loading skeleton shows when a shop page opens, as real items would take to arrive. */
 const LOAD_MS = 200;
+
+/** How many sections and cards of the page the skeleton draws: a screen and a little over. */
+const SKELETON_SECTIONS = 2;
+const SKELETON_CARDS = 4;
 
 /** The order a shop's categories come in. */
 const ORDER: readonly ItemCategory[] = ['dairy', 'vegetables', 'fruits', 'staples', 'snacks'];
@@ -48,6 +55,8 @@ const makeStyles = (c: ThemeColors) =>
     fill: { height: 4, borderRadius: radius.full, backgroundColor: c.accentEdge },
     section: { gap: space[3] },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: space[3], paddingHorizontal: space[4] },
+    // The skeleton's sections, with the same room between them as the page's.
+    skeletonSections: { gap: space[5] },
     empty: { alignItems: 'center', gap: space[2], paddingVertical: space[8] },
   });
 
@@ -142,7 +151,36 @@ export function ShopView({ shop }: { shop: ShopDetails }) {
           />
         ) : null}
         {!loaded ? (
-          <HomeSkeleton label={t('common.loading')} grid titled />
+          // The sections the page will have, each its title and its cards as tall as the real ones, the same gaps between.
+          <SkeletonScope label={t('common.loading')}>
+            <View style={styles.skeletonSections}>
+              {(sections.length > 0 ? sections : [{ key: 'dairy' as const, items: [] }])
+                .slice(0, SKELETON_SECTIONS)
+                .map((section, index) => (
+                  <View key={section.key} style={styles.section}>
+                    {index > 0 ? <SectionDivider /> : null}
+                    <View style={styles.gutter}>
+                      <SkeletonLine size="lg" tight width={150} />
+                    </View>
+                    <View style={styles.grid}>
+                      {(section.items.length > 0
+                        ? section.items.slice(0, SKELETON_CARDS)
+                        : Array.from({ length: SKELETON_CARDS }, () => undefined)
+                      ).map((item, card) => (
+                        <ProductCardSkeleton
+                          key={item?.id ?? card}
+                          width={width}
+                          reserveNote={anyCardNote(section.items)}
+                          {...(item !== undefined
+                            ? { content: rowCardContent([item]).content }
+                            : {})}
+                        />
+                      ))}
+                    </View>
+                  </View>
+                ))}
+            </View>
+          </SkeletonScope>
         ) : sections.length === 0 ? (
           <View style={[styles.empty, styles.gutter]}>
             <Icon name="store" color={colors.inkMuted} size={40} />

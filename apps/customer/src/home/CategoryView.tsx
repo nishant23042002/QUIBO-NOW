@@ -13,16 +13,12 @@ import {
   Icon,
   Notice,
   ProductCardSkeleton,
-  Skeleton,
-  SkeletonLine,
   SkeletonScope,
-  SUB_RAIL_CIRCLE,
   SUB_RAIL_WIDTH,
   SubCategoryRail,
   Text,
   gridCardWidth,
   mixColor,
-  radius,
   space,
   useChromeScroll,
 } from '@/ui';
@@ -48,6 +44,7 @@ import {
   type ValueFacet,
 } from './facets';
 import { useDeliveryWhen } from './deliveryInfo';
+import { rowCardContent } from './cardContent';
 import { ItemTile } from './ItemTile';
 import { anyCardNote, useHomeItems, type HomeItem } from './items';
 
@@ -56,8 +53,8 @@ const LOAD_MS = 250;
 /** The room at the sides of the grid and between its cards, which is tighter than Home's because the rail takes a share. */
 const GUTTER = space[3];
 const GAP = space[2];
-const SKELETON_CARDS = 4;
-const SKELETON_RAIL = 5;
+/** How many cards of the grid the skeleton draws: enough to fill a screen and a little over. */
+const SKELETON_CARDS = 6;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -67,14 +64,6 @@ const makeStyles = (c: ThemeColors) =>
     gutter: { paddingHorizontal: GUTTER },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP, paddingHorizontal: GUTTER },
     empty: { alignItems: 'center', gap: space[2], paddingVertical: space[8] },
-    toolbarSkeleton: { flexDirection: 'row', gap: space[2], padding: space[3] },
-    railSkeleton: {
-      width: SUB_RAIL_WIDTH,
-      alignItems: 'center',
-      gap: space[4],
-      paddingTop: space[3],
-    },
-    railEntry: { alignItems: 'center', gap: space[2], width: SUB_RAIL_WIDTH - space[2] },
   });
 
 /** The words that name a choice in a value filter: a size as it is written, a brand or kind by name, the rest from the message files. */
@@ -97,21 +86,6 @@ function optionLabel(
     case 'processing':
       return t(`product.attr.${option.id}` as MessageKey);
   }
-}
-
-/** Grey blocks in the shape of the rail: round pictures with their names under them. */
-function RailSkeleton() {
-  const styles = useStyles(makeStyles);
-  return (
-    <View style={styles.railSkeleton}>
-      {Array.from({ length: SKELETON_RAIL }, (_, index) => (
-        <View key={index} style={styles.railEntry}>
-          <Skeleton width={SUB_RAIL_CIRCLE} height={SUB_RAIL_CIRCLE} rounded={radius.full} />
-          <SkeletonLine size="xs" width="80%" align="center" />
-        </View>
-      ))}
-    </View>
-  );
 }
 
 /**
@@ -224,41 +198,27 @@ export function CategoryView({
         }}
       />
       <View style={styles.body}>
-        {loaded ? (
-          <SubCategoryRail
-            label={t('catalogue.rail')}
-            selected={chosen}
-            onSelect={setChosen}
-            items={[
-              { id: null, label: t('catalogue.all'), emoji: main.emoji },
-              ...subs.map((sub) => ({ id: sub.id, label: t(sub.label), emoji: sub.emoji })),
-            ]}
-          />
-        ) : (
-          <SkeletonScope label={t('common.loading')}>
-            <RailSkeleton />
-          </SkeletonScope>
-        )}
+        {/* The rail is the page's own as soon as it opens: what the kinds are is known before the items arrive. */}
+        <SubCategoryRail
+          label={t('catalogue.rail')}
+          selected={chosen}
+          onSelect={setChosen}
+          items={[
+            { id: null, label: t('catalogue.all'), emoji: main.emoji },
+            ...subs.map((sub) => ({ id: sub.id, label: t(sub.label), emoji: sub.emoji })),
+          ]}
+        />
         <View style={[styles.right, { backgroundColor: wash }]}>
-          {loaded ? (
-            <CategoryToolbar
-              items={ofKind}
-              panes={panes}
-              read={read}
-              sort={sort}
-              onSortChange={setSort}
-              filters={applied}
-              onFiltersChange={setFilters}
-            />
-          ) : (
-            <SkeletonScope label={t('common.loading')}>
-              <View style={styles.toolbarSkeleton}>
-                {[92, 84, 64, 72].map((width) => (
-                  <Skeleton key={width} width={width} height={36} rounded={radius.sm} />
-                ))}
-              </View>
-            </SkeletonScope>
-          )}
+          {/* So is the toolbar: its buttons are the category's, whatever the grid under it is doing. */}
+          <CategoryToolbar
+            items={ofKind}
+            panes={panes}
+            read={read}
+            sort={sort}
+            onSortChange={setSort}
+            filters={applied}
+            onFiltersChange={setFilters}
+          />
           <ScrollView
             ref={scroller}
             {...chromeScroll}
@@ -277,8 +237,17 @@ export function CategoryView({
             {!loaded ? (
               <SkeletonScope label={t('common.loading')}>
                 <View style={styles.grid}>
-                  {Array.from({ length: SKELETON_CARDS }, (_, index) => (
-                    <ProductCardSkeleton key={index} width={cardWidth} />
+                  {/* The cards the grid will start with, each as tall as its real one: its name's lines and its extra line. */}
+                  {(shown.length > 0
+                    ? shown.slice(0, SKELETON_CARDS)
+                    : Array.from({ length: SKELETON_CARDS }, () => undefined)
+                  ).map((item, index) => (
+                    <ProductCardSkeleton
+                      key={item?.id ?? index}
+                      width={cardWidth}
+                      reserveNote={note}
+                      {...(item !== undefined ? { content: rowCardContent([item]).content } : {})}
+                    />
                   ))}
                 </View>
               </SkeletonScope>

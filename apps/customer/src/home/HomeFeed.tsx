@@ -150,9 +150,9 @@ export const HomeFeed = memo(function HomeFeed({
         <HomeSkeleton
           label={t('common.loading')}
           grid={grid}
-          titled={category !== undefined}
+          {...(title !== undefined ? { title } : {})}
           seeAll={category !== undefined}
-          cards={matching.length}
+          items={matching}
         />
       </View>
     );

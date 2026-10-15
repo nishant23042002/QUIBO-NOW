@@ -1,6 +1,7 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { Icon } from './Icon';
+import { Skeleton, SkeletonLine } from './Skeleton';
 import { Text } from './Text';
 import { TAP_MIN, radius, space } from './tokens';
 
@@ -41,6 +42,43 @@ const makeStyles = (c: ThemeColors) =>
     pressed: { backgroundColor: c.muted },
     check: { width: 20, height: 20, alignItems: 'center', justifyContent: 'center' },
   });
+
+/**
+ * A group of choices while its page loads: the title's line, then the card with its rows, from the same numbers as the real group
+ * (a row is `TAP_MIN + 4` tall, the rows divided by a hairline), so it is the height of the group that replaces it. Put it inside a
+ * `SkeletonScope`.
+ */
+export function OptionGroupSkeleton({
+  count,
+  titleWidth = '34%',
+}: {
+  /** How many choices the group has. */
+  count: number;
+  titleWidth?: `${number}%`;
+}) {
+  const styles = useStyles(makeStyles);
+
+  return (
+    <View style={styles.group}>
+      <SkeletonLine size="sm" width={titleWidth} />
+      <View style={styles.card}>
+        {Array.from({ length: count }, (_, index) => (
+          <View key={index}>
+            {index > 0 ? <View style={styles.divider} /> : null}
+            <View style={styles.row}>
+              <View style={styles.rowText}>
+                <SkeletonLine size="base" width={index % 2 === 0 ? '40%' : '30%'} />
+              </View>
+              <View style={styles.check}>
+                {index === 0 ? <Skeleton width={18} height={18} rounded={radius.full} /> : null}
+              </View>
+            </View>
+          </View>
+        ))}
+      </View>
+    </View>
+  );
+}
 
 /** A titled list of choices where exactly one is selected, such as language or theme. */
 export function OptionGroup<T extends string>({

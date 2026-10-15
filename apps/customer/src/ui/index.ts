@@ -14,7 +14,7 @@ export { Button, type ButtonProps } from './Button';
 export { Card, type CardProps } from './Card';
 export { CategoryTabs, type CategoryTab, type CategoryTabsProps } from './CategoryTabs';
 export { CategoryTile, type CategoryTileProps } from './CategoryTile';
-export { Chip, type ChipProps } from './Chip';
+export { Chip, chipWidthOf, type ChipProps } from './Chip';
 export { HeaderGradient } from './HeaderGradient';
 export { HomeHeader, type HeroControls, type HomeHeaderProps } from './HomeHeader';
 export { AccentWash, type WashTone } from './AccentWash';
@@ -38,7 +38,12 @@ export {
   stepQuantity,
   type QuantityRule,
 } from './logic/quantity';
-export { OptionGroup, type OptionGroupProps, type Option } from './OptionGroup';
+export {
+  OptionGroup,
+  OptionGroupSkeleton,
+  type OptionGroupProps,
+  type Option,
+} from './OptionGroup';
 export { FlashOnChange, PopOnChange } from './ChangeCue';
 export { Notice, type NoticeProps } from './Notice';
 export { OfferBadge, type OfferBadgeProps } from './OfferBadge';
@@ -61,7 +66,7 @@ export { DetailSection, type DetailSectionProps } from './DetailSection';
 export { TintPill, type TintPillProps } from './TintPill';
 export { BrandChips, type BrandChipsProps } from './BrandChips';
 export { TrustTiles, type TrustTile, type TrustTilesProps } from './TrustTiles';
-export { StatePanel, type StatePanelProps } from './StatePanel';
+export { StatePanel, StatePanelSkeleton, type StatePanelProps } from './StatePanel';
 export { LoadGate, type LoadGateProps } from './LoadGate';
 export { useScreenLoad, type ScreenLoad, type ScreenLoadOptions } from './useScreenLoad';
 export type { LoadPolicy } from './logic/screenLoad';
@@ -149,3 +154,4 @@ export {
   space,
   TAP_MIN,
 } from './tokens';
+export { textLines } from './logic/textLines';

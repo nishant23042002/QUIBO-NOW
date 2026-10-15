@@ -27,6 +27,10 @@ export interface CartShape {
   billRows: number;
   /** The cart holds a loose item, so the bill has the note about weighing. */
   weighed: boolean;
+  /** The cart saves something against the printed prices, so the bill has the line that says how much. */
+  saving: boolean;
+  /** The notes under the coupon row (the coupon applied, a better one on offer): how many lines of text each takes. */
+  couponNotes: readonly number[];
 }
 
 /** The cart's shape from what is in it: its lines, its saved items and its shops. */
@@ -37,6 +41,8 @@ export function cartShape(facts: {
   coupon?: boolean;
   tip?: boolean;
   weighed?: boolean;
+  saving?: boolean;
+  couponNotes?: readonly number[];
 }): CartShape {
   return {
     empty: facts.lines === 0,
@@ -45,6 +51,8 @@ export function cartShape(facts: {
     trip: facts.shops > 1,
     billRows: BILL_ROWS_BASE + (facts.coupon === true ? 1 : 0) + (facts.tip === true ? 1 : 0),
     weighed: facts.weighed === true,
+    saving: facts.saving === true,
+    couponNotes: facts.couponNotes ?? [],
   };
 }
 
@@ -56,6 +64,8 @@ export const FIRST_CART_SHAPE: CartShape = {
   trip: false,
   billRows: BILL_ROWS_BASE,
   weighed: false,
+  saving: false,
+  couponNotes: [],
 };
 
 let remembered: CartShape = FIRST_CART_SHAPE;

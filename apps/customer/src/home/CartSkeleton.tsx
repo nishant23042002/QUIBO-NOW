@@ -1,7 +1,7 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
-import { Skeleton, SkeletonLine, SkeletonScope, radius, space } from '@/ui';
+import { Skeleton, SkeletonLine, SkeletonScope, fontSize, radius, space, textLines } from '@/ui';
 import type { CartShape } from './skeletonShape';
 
 /**
@@ -115,8 +115,22 @@ const BILL_LABELS = [34, 46, 40, 42, 36] as const;
  * bottom menu.
  */
 export function CartSkeleton({ shape, bottom }: { shape: CartShape; bottom: number }) {
-  const { t } = useLanguage();
+  const { t, locale } = useLanguage();
   const styles = useStyles(makeStyles);
+  const { width: screen } = useWindowDimensions();
+  const script = locale === 'en' ? 'latin' : 'devanagari';
+  // The small print takes the lines its words wrap to: inside the bill card (the page's gutters, its border and padding) and, for
+  // the tip, beside the picture.
+  const cardInner = screen - space[3] * 2 - 2 - space[4] * 2;
+  const tipLines = textLines(t('extras.tipBody'), cardInner - 56 - space[3], fontSize.sm, script);
+  const lines = (count: number, last: `${number}%` = '55%') =>
+    Array.from({ length: count }, (_, index) => (
+      <SkeletonLine
+        key={index}
+        size="sm"
+        width={index === count - 1 && count > 1 ? last : '100%'}
+      />
+    ));
 
   if (shape.empty) {
     return (
@@ -139,12 +153,24 @@ export function CartSkeleton({ shape, bottom }: { shape: CartShape; bottom: numb
           <Skeleton height={4} rounded={radius.full} />
           <SkeletonLine size="sm" width="60%" />
         </View>
-        <View style={[styles.card, styles.row]}>
-          <Skeleton width={40} height={40} rounded={radius.md} />
-          <View style={styles.col}>
-            <SkeletonLine size="sm" width="45%" />
-            <SkeletonLine size="sm" width="30%" />
+        <View style={styles.card}>
+          <View style={styles.row}>
+            <Skeleton width={40} height={40} rounded={radius.md} />
+            <View style={styles.col}>
+              <SkeletonLine size="sm" width="45%" />
+              <SkeletonLine size="sm" width="30%" />
+            </View>
           </View>
+          {shape.couponNotes.map((noteLines, index) => (
+            <View key={index} style={[styles.row, styles.divided]}>
+              <View style={styles.col}>
+                {Array.from({ length: noteLines }, (_, line) => (
+                  <SkeletonLine key={line} size="sm" width={line === 0 ? '62%' : '40%'} />
+                ))}
+              </View>
+              <Skeleton width={64} height={40} rounded={radius.md} />
+            </View>
+          ))}
         </View>
         <View style={styles.card}>
           <View style={[styles.row, styles.underlined]}>
@@ -152,7 +178,6 @@ export function CartSkeleton({ shape, bottom }: { shape: CartShape; bottom: numb
             <View style={styles.col}>
               <SkeletonLine size="sm" width="65%" />
               <SkeletonLine size="sm" width="50%" />
-              <SkeletonLine size="sm" width="35%" />
             </View>
             <Skeleton width={104} height={40} rounded={radius.md} />
           </View>
@@ -211,51 +236,13 @@ export function CartSkeleton({ shape, bottom }: { shape: CartShape; bottom: numb
         <View style={styles.forgot}>
           <Skeleton width="55%" height={14} />
         </View>
-        <View style={[styles.card, styles.bill]}>
-          <View style={styles.head}>
-            <Skeleton width={20} height={20} rounded={radius.full} />
-            <View style={styles.col}>
-              <SkeletonLine size="lg" tight width="38%" />
-            </View>
-          </View>
-          <View style={styles.box}>
-            {Array.from({ length: shape.billRows }, (_, index) => (
-              <View key={index} style={styles.billRow}>
-                <View style={styles.col}>
-                  <SkeletonLine
-                    size="base"
-                    width={`${BILL_LABELS[index % BILL_LABELS.length] ?? 40}%`}
-                  />
-                </View>
-                <SkeletonLine size="base" width={48} align="end" />
-              </View>
-            ))}
-            <View style={styles.billTotal}>
-              <SkeletonLine size="xl" tight width={96} />
-              <SkeletonLine size="xl" tight width={72} align="end" />
-            </View>
-          </View>
-          <Skeleton height={40} rounded={radius.md} />
-          {shape.weighed ? (
-            <View>
-              <SkeletonLine size="sm" />
-              <SkeletonLine size="sm" />
-              <SkeletonLine size="sm" width="60%" />
-            </View>
-          ) : null}
-          <View>
-            <SkeletonLine size="sm" />
-            <SkeletonLine size="sm" width="45%" />
-          </View>
-        </View>
+        <BillCardSkeleton rows={shape.billRows} saving={shape.saving} weighed={shape.weighed} />
         <View style={[styles.card, styles.tip]}>
           <Skeleton height={48} rounded={radius.md} />
           <View style={styles.intro}>
             <View style={styles.introText}>
               <SkeletonLine size="base" width="40%" />
-              <SkeletonLine size="sm" />
-              <SkeletonLine size="sm" />
-              <SkeletonLine size="sm" width="60%" />
+              <View>{lines(tipLines)}</View>
             </View>
             <Skeleton width={56} height={56} rounded={radius.lg} />
           </View>
@@ -276,5 +263,68 @@ export function CartSkeleton({ shape, bottom }: { shape: CartShape; bottom: numb
         </View>
       </View>
     </SkeletonScope>
+  );
+}
+
+/**
+ * The bill card, as the cart and the checkout both draw it: its title, a row for each line of the bill and the total, a line for
+ * what the cart saves when it saves something, the weighing note for loose items, and the small print about taxes, which takes the
+ * lines its words wrap to. The same card, rows and gaps as the page, so each lands where its real one will.
+ */
+export function BillCardSkeleton({
+  rows,
+  saving = false,
+  weighed = false,
+}: {
+  /** How many lines the bill has before its total. */
+  rows: number;
+  saving?: boolean;
+  weighed?: boolean;
+}) {
+  const { t, locale } = useLanguage();
+  const styles = useStyles(makeStyles);
+  const { width: screen } = useWindowDimensions();
+  const script = locale === 'en' ? 'latin' : 'devanagari';
+  const inner = screen - space[3] * 2 - 2 - space[4] * 2;
+  const lines = (text: string) => {
+    const count = textLines(text, inner, fontSize.sm, script);
+    return Array.from({ length: count }, (_, index) => (
+      <SkeletonLine
+        key={index}
+        size="sm"
+        width={index === count - 1 && count > 1 ? '55%' : '100%'}
+      />
+    ));
+  };
+
+  return (
+    <View style={[styles.card, styles.bill]}>
+      <View style={styles.head}>
+        <Skeleton width={20} height={20} rounded={radius.full} />
+        <View style={styles.col}>
+          <SkeletonLine size="lg" tight width="38%" />
+        </View>
+      </View>
+      <View style={styles.box}>
+        {Array.from({ length: rows }, (_, index) => (
+          <View key={index} style={styles.billRow}>
+            <View style={styles.col}>
+              <SkeletonLine
+                size="base"
+                width={`${BILL_LABELS[index % BILL_LABELS.length] ?? 40}%`}
+              />
+            </View>
+            <SkeletonLine size="base" width={48} align="end" />
+          </View>
+        ))}
+        <View style={styles.billTotal}>
+          <SkeletonLine size="xl" tight width={96} />
+          <SkeletonLine size="xl" tight width={72} align="end" />
+        </View>
+      </View>
+      {saving ? <Skeleton height={40} rounded={radius.md} /> : null}
+      {weighed ? <View>{lines(t('weights.billNote'))}</View> : null}
+      <View>{lines(t('cart.taxes'))}</View>
+    </View>
   );
 }

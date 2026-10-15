@@ -10,6 +10,8 @@ import {
   Chip,
   Icon,
   Notice,
+  ProductCardSkeleton,
+  SkeletonScope,
   Text,
   radius,
   space,
@@ -18,7 +20,7 @@ import {
 import { itemsOfBrand, kindsOfBrand, shopsOfBrand } from './brandPage';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
-import { HomeSkeleton } from './HomeSkeleton';
+import { rowCardContent } from './cardContent';
 import { ItemTile, gridCardWidth } from './ItemTile';
 import { useHomeItems } from './items';
 
@@ -26,6 +28,8 @@ import { useHomeItems } from './items';
 const LOAD_MS = 200;
 const MARK_WIDTH = 112;
 const MARK_HEIGHT = 80;
+/** How many cards of the grid the skeleton draws: a screen and a little over. */
+const SKELETON_CARDS = 6;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -161,7 +165,21 @@ export function BrandView({ brandId }: { brandId: string }) {
           </ScrollView>
         ) : null}
         {!loaded ? (
-          <HomeSkeleton label={t('common.loading')} grid />
+          // The grid's first cards, each as tall as its real one.
+          <SkeletonScope label={t('common.loading')}>
+            <View style={styles.grid}>
+              {(shown.length > 0
+                ? shown.slice(0, SKELETON_CARDS)
+                : Array.from({ length: SKELETON_CARDS }, () => undefined)
+              ).map((item, index) => (
+                <ProductCardSkeleton
+                  key={item?.id ?? index}
+                  width={width}
+                  {...(item !== undefined ? { content: rowCardContent([item]).content } : {})}
+                />
+              ))}
+            </View>
+          </SkeletonScope>
         ) : shown.length === 0 ? (
           <View style={[styles.empty, styles.gutter]}>
             <Icon name="store" color={colors.inkMuted} size={40} />

@@ -220,7 +220,10 @@ export function CouponsView() {
   const load = useScreenLoad({ loadMs: STEP_LOAD_MS, policy: STEP_POLICY, hold: !ready });
 
   return (
-    <LoadGate load={load} skeleton={<CouponsSkeleton offers={coupon.offers.length} />}>
+    <LoadGate
+      load={load}
+      skeleton={<CouponsSkeleton codes={coupon.offers.map((view) => view.offer.code)} />}
+    >
       <CouponsPage />
     </LoadGate>
   );

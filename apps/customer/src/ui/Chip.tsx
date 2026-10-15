@@ -34,6 +34,14 @@ const makeStyles = (c: ThemeColors) =>
     pressed: { opacity: 0.8 },
   });
 
+/**
+ * About how wide a chip is for its label, in dp: its padding and border, and the letters at the label's size. A skeleton uses it to
+ * draw a row of chips as wide as the real ones, so each lands where its real one will.
+ */
+export function chipWidthOf(label: string): number {
+  return Math.round(27 + [...label].length * 7.4);
+}
+
 /** A small, square-cornered button for filters and tabs. It is 36 dp tall and has a 48 dp touch area. */
 export function Chip({
   label,

@@ -903,10 +903,33 @@ export function ProductView({
               <ProductSkeleton
                 label={t('common.loading')}
                 item={item}
+                chips={details.highlights.slice(0, STRIP_CHIPS)}
                 rails={[
-                  ...(others.length > 0 ? [{ kind: 'cards' as const, seeAll: true }] : []),
-                  ...(similar.length > 0 ? [{ kind: 'cards' as const, seeAll: false }] : []),
-                  ...(brands.length > 1 ? [{ kind: 'brands' as const, seeAll: false }] : []),
+                  ...(others.length > 0
+                    ? [
+                        {
+                          kind: 'cards' as const,
+                          title: t('product.otherBrands', { name: item.name.toLocaleLowerCase() }),
+                          items: others,
+                          seeAll: true,
+                        },
+                      ]
+                    : []),
+                  ...(similar.length > 0
+                    ? [
+                        {
+                          kind: 'cards' as const,
+                          title: t('product.popularIn', {
+                            category: t(`home.categories.${item.category}`),
+                          }),
+                          items: similar,
+                          seeAll: false,
+                        },
+                      ]
+                    : []),
+                  ...(brands.length > 1
+                    ? [{ kind: 'brands' as const, title: t('product.brandsIn') }]
+                    : []),
                 ]}
               />
             </Animated.View>

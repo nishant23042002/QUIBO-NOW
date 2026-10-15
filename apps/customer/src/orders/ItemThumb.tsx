@@ -3,7 +3,7 @@ import { Text as NativeText, StyleSheet, View } from 'react-native';
 import { useTintOf } from '@/home/categories';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useStyles, type ThemeColors } from '@/theme';
-import { Text, formatQuantity, radius, space } from '@/ui';
+import { Skeleton, Text, formatQuantity, radius, space } from '@/ui';
 import { THUMBS_FIT, thumbRow } from './split';
 
 const makeStyles = (c: ThemeColors) =>
@@ -103,6 +103,27 @@ export function ThumbRow({
       ) : null}
     </View>
   );
+}
+
+/**
+ * The place of a `ThumbRow` while its page loads: one block as wide and tall as the row of pictures will be (each picture and its
+ * ring, overlapping the next, and the "+N" tile when there are more). Put it inside a `SkeletonScope`.
+ */
+export function ThumbRowSkeleton({
+  items,
+  fit = THUMBS_FIT,
+  size = 36,
+}: {
+  items: readonly OrderItem[];
+  fit?: number;
+  size?: number;
+}) {
+  const { shown, more } = thumbRow(items, fit);
+  const tiles = shown.length + (more > 0 ? 1 : 0);
+  const overlap = size * 0.28;
+  const width =
+    shown.length * (size + 4) + (more > 0 ? size : 0) - Math.max(0, tiles - 1) * overlap;
+  return <Skeleton width={Math.round(width)} height={size + 4} rounded={radius.md + 2} />;
 }
 
 /** What was bought, in one line: the pack and how many, or how many kilograms for a loose item. */

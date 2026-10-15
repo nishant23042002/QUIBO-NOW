@@ -29,8 +29,8 @@ import { useCategoryBrowse } from './useCategoryBrowse';
 import { useNotify } from './useNotify';
 import { useTabHeaderProps } from './useTabHeader';
 
-/** The field is as tall as the search field of the search screen. */
-const FIELD_HEIGHT = 44;
+/** The field is as tall as the search field of the search screen (44) with the hairline round it. */
+const FIELD_HEIGHT = 46;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -85,6 +85,8 @@ function CategoriesSkeleton() {
             </View>
           </View>
         ))}
+        {/* The closing is the page's own, as it will be. */}
+        <BrandFooter />
       </View>
     </SkeletonScope>
   );

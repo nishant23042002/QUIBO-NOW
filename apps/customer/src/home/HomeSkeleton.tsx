@@ -1,3 +1,4 @@
+import { formatRupees, money } from '@quibo/contracts';
 import { Fragment, type ReactNode } from 'react';
 import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -5,6 +6,7 @@ import { useOrders } from '@/orders/OrdersProvider';
 import { useStyles, type ThemeColors } from '@/theme';
 import {
   AccentWash,
+  BrandFooter,
   BRAND_TILE_HEIGHT,
   BRAND_TILE_WIDTH,
   CategoryTileGridSkeleton,
@@ -16,8 +18,8 @@ import {
   SkeletonLine,
   SkeletonScope,
   TAP_MIN,
+  chipWidthOf,
   fontSize,
-  leading,
   radius,
   space,
 } from '@/ui';
@@ -25,6 +27,7 @@ import { againItems, againPackIds } from './againRules';
 import { bestsellerTiles } from './bestsellerTiles';
 import { brandsOfItems, itemsOfBrand } from './brandPage';
 import { CATEGORIES } from './catalogueTree';
+import { rowCardContent } from './cardContent';
 import { resolveCategories } from './categoryLists';
 import { COMPARE_SCENE_HEIGHT } from './CompareScene';
 import { useConditions } from './conditions';
@@ -41,7 +44,7 @@ import { PriceTileSkeleton } from './PriceTile';
 import { PRICE_FILTERS } from './SmallPrices';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
 import { SHELF_BANNER_HEIGHT } from './ShelfBanner';
-import { TRENDING_TABS, trendingItems } from './trendingRules';
+import { TRENDING_TABS, TRENDING_UNDER, trendingItems } from './trendingRules';
 import { useCategoryGroups } from './useCategoryGroups';
 import { useViewed } from './useViewed';
 import { viewedItems } from './viewed';
@@ -61,12 +64,11 @@ const STORE_HEIGHT = 81;
 const HELP_HEIGHT = 56;
 /** The word of a row title or a name is about this wide per letter, to size a grey bar for it. */
 const LETTER = 6.6;
-/** About how many letters of a product name fit on one line of a rail card. */
-const NAME_FITS = 14;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    feed: { gap: space[5], paddingVertical: space[5] },
+    // A category's grid on Home, as `HomeFeed` lays it out: the title, the grid and "See all", 12 apart and 24 above and below.
+    feed: { gap: space[3], paddingVertical: space[6] },
     // These mirror `HomeFeed`, the sections it stacks and the same 12 and 32 between them, so nothing jumps when the real sections
     // replace the grey ones.
     rails: { gap: space[8], paddingBottom: space[5] },
@@ -90,16 +92,9 @@ const makeStyles = (c: ThemeColors) =>
     washModule: { paddingTop: space[4], gap: space[3] },
     againModule: { paddingTop: space[6], paddingBottom: space[6], gap: space[3] },
     smallModule: { paddingTop: space[6], paddingBottom: space[6], gap: space[3] },
-    // The dark stage of Know your shop and what is on it.
-    night: {
-      backgroundColor: c.night,
-      paddingTop: space[4],
-      paddingBottom: space[6],
-      gap: space[4],
-      borderTopLeftRadius: radius.section,
-      borderTopRightRadius: radius.section,
-      overflow: 'hidden',
-    },
+    // Know your shop's stage: its heading, the scene and the card, laid out as the page lays them out. The page draws them on a
+    // dark stage; the skeleton keeps the same room in the page's grey and stays light.
+    stage: { paddingTop: space[4], paddingBottom: space[6], gap: space[4] },
     knowModule: { paddingBottom: space[4] },
     head: { paddingHorizontal: space[4], gap: space[1] },
     nightCard: {
@@ -216,15 +211,6 @@ const makeStyles = (c: ThemeColors) =>
       padding: space[2],
     },
     promiseWords: { flex: 1, minWidth: 0 },
-    footer: {
-      paddingHorizontal: space[4],
-      paddingTop: space[8],
-      paddingBottom: space[6],
-      gap: space[4],
-    },
-    ghost: { maxWidth: '58%' },
-    route: { flexDirection: 'row', alignItems: 'center', gap: space[3], height: 44 },
-    footerLines: { gap: space[1] },
   });
 
 /** A row that does not scroll while it is only a skeleton. */
@@ -283,21 +269,21 @@ function IconTabsSkeleton() {
 export function HomeSkeleton({
   label,
   grid = false,
-  titled = false,
+  title,
   seeAll = false,
-  cards,
+  items: gridItems,
 }: {
   label: string;
-  /** The two-column grid instead of the sections. */
+  /** The two-column grid of a category chosen on Home, instead of the sections. */
   grid?: boolean;
-  /** With the grid: a section title above it, as a shop page or a category's page has. */
-  titled?: boolean;
+  /** With the grid: the category's title, as its page has above the grid. */
+  title?: string;
   /** With the grid: the "See all" button under it, as a category's page has. */
   seeAll?: boolean;
-  /** With the grid: how many cards the page will have, when that is known. */
-  cards?: number;
+  /** With the grid: the items the page will list, so each card is as tall as its real one and the count is the page's own. */
+  items?: readonly HomeItem[];
 }) {
-  const { t, locale } = useLanguage();
+  const { t } = useLanguage();
   const styles = useStyles(makeStyles);
   const { width: screen } = useWindowDimensions();
   const { store } = useConditions();
@@ -309,25 +295,30 @@ export function HomeSkeleton({
   const featuredHeight = useFeaturedCardHeight();
   const orders = useOrders();
   const viewed = useViewed();
-  const script = locale === 'en' ? 'latin' : 'devanagari';
-  // As tall as the section title it stands in for (the `subheading` text style), so the cards start at the same place.
-  const titleLine = Math.round(fontSize.lg * leading[script].tight);
 
   if (grid) {
     const width = gridCardWidth(screen);
-    const count = cards === undefined ? GRID_CARDS : Math.min(GRID_CARDS_MAX, Math.max(2, cards));
+    const shown = (gridItems ?? []).slice(0, GRID_CARDS_MAX);
+    const note = anyCardNote(gridItems ?? []);
     return (
       <SkeletonScope label={label}>
-        <View style={titled ? { gap: space[3] } : styles.feed}>
-          {titled ? (
-            <View style={[styles.sectionTitle, { height: titleLine }]}>
-              <Skeleton width={150} height={20} />
+        <View style={styles.feed}>
+          {title !== undefined ? (
+            <View style={styles.pad}>
+              <RowTitleSkeleton title={title} />
             </View>
           ) : null}
           <View style={styles.grid}>
-            {Array.from({ length: count }, (_, index) => (
-              <ProductCardSkeleton key={index} width={width} />
-            ))}
+            {(shown.length > 0 ? shown : Array.from({ length: GRID_CARDS }, () => undefined)).map(
+              (item, index) => (
+                <ProductCardSkeleton
+                  key={item?.id ?? index}
+                  width={width}
+                  reserveNote={note}
+                  {...(item !== undefined ? { content: rowCardContent([item]).content } : {})}
+                />
+              ),
+            )}
           </View>
           {seeAll ? <SeeAllButtonSkeleton /> : null}
         </View>
@@ -338,22 +329,8 @@ export function HomeSkeleton({
   const showKnow = knowShown(store);
   // How many cards of a row show before the screen's edge: as many as fill the width, never more than the row has.
   const across = Math.ceil((screen - space[4]) / (RAIL_CARD_WIDTH + space[3]));
-  // What the tallest card of a row holds, as the real cards would make it: a two-line name when one is long, and the extra line.
-  const contentOf = (row: readonly HomeItem[]) => ({
-    nameLines: row.some((item) => [...item.fullName].length > NAME_FITS)
-      ? (2 as const)
-      : (1 as const),
-    extraLine: row.some(
-      (item) => item.stock?.kind !== 'out' && (item.stock?.kind === 'low' || item.quick === true),
-    ),
-  });
   const card = (row: readonly HomeItem[], key: number) => (
-    <ProductCardSkeleton
-      key={key}
-      width={RAIL_CARD_WIDTH}
-      reserveNote={anyCardNote(row)}
-      content={contentOf(row)}
-    />
+    <ProductCardSkeleton key={key} width={RAIL_CARD_WIDTH} {...rowCardContent(row)} />
   );
   const railCards = (row: readonly HomeItem[]) => (
     <StaticRow>
@@ -400,40 +377,38 @@ export function HomeSkeleton({
       ? []
       : itemsOfBrand(homeItems, firstBrand.id).filter((item) => item.stock?.kind !== 'out');
 
-  const night = { tone: 'night' as const };
-
   return (
     <SkeletonScope label={label}>
       {showKnow ? (
         <>
           {/* Know your shop: the dark stage, its heading, the scene and the card with the two kinds of store. */}
           <View style={styles.knowModule}>
-            <View style={styles.night}>
+            <View style={styles.stage}>
               <View style={styles.head}>
-                <SkeletonLine size="xs" width={96} {...night} />
+                <SkeletonLine size="xs" width={96} />
                 <View>
-                  <SkeletonLine size="2xl" tight width="88%" {...night} />
-                  <SkeletonLine size="2xl" tight width="62%" {...night} />
+                  <SkeletonLine size="2xl" tight width="88%" />
+                  <SkeletonLine size="2xl" tight width="62%" />
                 </View>
                 <View>
-                  <SkeletonLine size="sm" width="94%" {...night} />
-                  <SkeletonLine size="sm" width="90%" {...night} />
-                  <SkeletonLine size="sm" width="58%" {...night} />
+                  <SkeletonLine size="sm" width="94%" />
+                  <SkeletonLine size="sm" width="90%" />
+                  <SkeletonLine size="sm" width="58%" />
                 </View>
               </View>
               <View style={styles.pad}>
-                <Skeleton height={COMPARE_SCENE_HEIGHT} rounded={radius.lg} {...night} />
+                <Skeleton height={COMPARE_SCENE_HEIGHT} rounded={radius.lg} />
               </View>
               <View style={styles.nightCard}>
                 <View style={styles.nightTitle}>
-                  <Skeleton width="56%" height={16} {...night} />
+                  <Skeleton width="56%" height={16} />
                 </View>
                 <View style={styles.nightStores}>
                   <View style={styles.store}>
-                    <Skeleton height={70} rounded={radius.lg} {...night} />
+                    <Skeleton height={70} rounded={radius.lg} />
                   </View>
                   <View style={styles.store}>
-                    <Skeleton height={70} rounded={radius.lg} {...night} />
+                    <Skeleton height={70} rounded={radius.lg} />
                   </View>
                 </View>
               </View>
@@ -570,10 +545,10 @@ export function HomeSkeleton({
             ))}
           </View>
           <StaticRow>
-            {PRICE_FILTERS.map((entry, chip) => (
+            {PRICE_FILTERS.map((entry) => (
               <Skeleton
                 key={entry.key}
-                width={chip === 0 ? 48 : 72}
+                width={chipWidthOf(t(entry.label))}
                 height={CHIP_HEIGHT}
                 rounded={radius.md}
               />
@@ -592,10 +567,14 @@ export function HomeSkeleton({
             <RowTitleSkeleton title={t('home.trending.title')} />
           </View>
           <StaticRow>
-            {TRENDING_TABS.map((entry, chip) => (
+            {TRENDING_TABS.map((entry) => (
               <Skeleton
                 key={entry}
-                width={chip === 0 ? 84 : 76}
+                width={chipWidthOf(
+                  entry === 'under'
+                    ? t('home.trending.under', { amount: formatRupees(money(TRENDING_UNDER)) })
+                    : t(`home.trending.${entry}`),
+                )}
                 height={CHIP_HEIGHT}
                 rounded={radius.md}
               />
@@ -732,25 +711,8 @@ export function HomeSkeleton({
           <Skeleton height={HELP_HEIGHT} rounded={radius.lg} />
         </View>
 
-        {/* The closing: the ghosted line, the accent bar, the route and the two lines. */}
-        <View style={styles.footer}>
-          <View style={styles.ghost}>
-            <SkeletonLine size="3xl" tight />
-            <SkeletonLine size="3xl" tight width="70%" />
-          </View>
-          <Skeleton width={40} height={4} rounded={2} />
-          <View style={styles.route}>
-            <Skeleton width={22} height={22} rounded={radius.full} />
-            <View style={{ flex: 1 }}>
-              <Skeleton height={2} rounded={radius.full} />
-            </View>
-            <Skeleton width={22} height={22} rounded={radius.full} />
-          </View>
-          <View style={styles.footerLines}>
-            <SkeletonLine size="sm" width="78%" />
-            <SkeletonLine size="sm" width="64%" />
-          </View>
-        </View>
+        {/* The closing is static, so it is the page's own, as it will be. */}
+        <BrandFooter />
       </View>
     </SkeletonScope>
   );

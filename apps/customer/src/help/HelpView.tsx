@@ -18,6 +18,7 @@ import {
   Skeleton,
   SkeletonLine,
   SkeletonScope,
+  TAP_MIN,
   Text,
   radius,
   space,
@@ -69,36 +70,67 @@ const makeStyles = (c: ThemeColors) =>
     skeleton: { flex: 1, overflow: 'hidden' },
   });
 
+/**
+ * Grey blocks in the page's own layout: the "talk to a person" card with its two buttons, the report entry (whose line under it
+ * takes two lines at phone width), the heading and the six questions, and the reports the shopper has made, if any. The same
+ * cards, rows and gaps as the page, so each lands where its real one will.
+ */
 function HelpSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
+  const { reports } = useReports();
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
       <View style={styles.content}>
         <View style={[styles.card, styles.block]}>
-          <SkeletonLine size="base" width="45%" />
-          <SkeletonLine size="sm" width="55%" />
+          <View>
+            <SkeletonLine size="lg" tight width="48%" />
+            <SkeletonLine size="sm" width="62%" />
+          </View>
           <View style={styles.buttons}>
             <View style={styles.button}>
-              <Skeleton height={48} rounded={radius.md} />
+              <Skeleton height={TAP_MIN} rounded={radius.md} />
             </View>
             <View style={styles.button}>
-              <Skeleton height={48} rounded={radius.md} />
+              <Skeleton height={TAP_MIN} rounded={radius.md} />
             </View>
           </View>
         </View>
         <View style={[styles.card, styles.entry]}>
           <Skeleton width={40} height={40} rounded={radius.md} />
           <View style={styles.grow}>
-            <SkeletonLine size="base" width="70%" />
-            <SkeletonLine size="sm" width="50%" />
+            <SkeletonLine size="base" width="62%" />
+            <SkeletonLine size="sm" width="94%" />
+            <SkeletonLine size="sm" width="58%" />
           </View>
+          <Skeleton width={10} height={16} />
         </View>
-        {[0, 1, 2, 3].map((index) => (
-          <View key={index} style={[styles.card, styles.question]}>
-            <SkeletonLine size="base" width="60%" />
-          </View>
-        ))}
+        <SkeletonLine size="sm" width="40%" />
+        <View style={styles.card}>
+          {FAQ.map((key, index) => (
+            <View key={key} style={index > 0 ? styles.divided : undefined}>
+              <View style={styles.question}>
+                <View style={styles.grow}>
+                  <SkeletonLine size="base" width={index % 2 === 0 ? '72%' : '58%'} />
+                </View>
+                <Skeleton width={20} height={20} rounded={radius.sm} />
+              </View>
+            </View>
+          ))}
+        </View>
+        {reports.length > 0 ? (
+          <>
+            <SkeletonLine size="sm" width="34%" />
+            <View style={styles.card}>
+              {reports.map((report, index) => (
+                <View key={report.id} style={[styles.report, index > 0 && styles.divided]}>
+                  <SkeletonLine size="base" width="52%" />
+                  <SkeletonLine size="sm" width="30%" />
+                </View>
+              ))}
+            </View>
+          </>
+        ) : null}
       </View>
     </SkeletonScope>
   );

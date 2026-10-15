@@ -14,10 +14,12 @@ import {
   Icon,
   LoadGate,
   OptionGroup,
+  OptionGroupSkeleton,
   Screen,
   Skeleton,
   SkeletonLine,
   SkeletonScope,
+  TAP_MIN,
   Text,
   radius,
   space,
@@ -75,51 +77,72 @@ const makeStyles = (c: ThemeColors) =>
       backgroundColor: c.warningBg,
     },
     fill: { flex: 1, overflow: 'hidden' },
-    skeletonColumn: { gap: space[6] },
-    skeletonGroup: { gap: space[2] },
-    skeletonRow: {
-      height: 64,
+    // The testing card's place while it loads: the same box as the card, with a border that does not show.
+    testingSkeleton: {
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
       gap: space[3],
-      paddingHorizontal: space[4],
+      padding: space[4],
+      borderWidth: 1,
+      borderRadius: radius.lg,
+      borderColor: 'transparent',
     },
   });
 
-/** Grey blocks in the shape of the page: the account card, the three shortcuts, language, appearance and, for testers, one card. */
+/**
+ * Grey blocks in the page's own layout: the account card, the three shortcuts (the first has its address under it), language and
+ * appearance as the groups they are, for testers the card, and the version. The same cards, rows and gaps as the page, so each
+ * lands where its real one will.
+ */
 function SettingsSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
-  const row = (key: number, divided: boolean) => (
-    <View key={key} style={[styles.skeletonRow, divided && styles.divided]}>
-      <Skeleton width={24} height={24} rounded={radius.full} />
+  const version = versionOf(Constants.expoConfig?.version);
+  const shortcut = (key: number, withSub: boolean) => (
+    <View key={key} style={[styles.row, key > 0 && styles.divided]}>
+      <Skeleton width={22} height={22} rounded={radius.full} />
       <View style={styles.grow}>
-        <SkeletonLine size="base" width="50%" />
+        <SkeletonLine size="base" width="46%" />
+        {withSub ? <SkeletonLine size="sm" width="72%" /> : null}
       </View>
+      <Skeleton width={10} height={16} />
     </View>
   );
   return (
     <SkeletonScope label={t('common.loading')} style={styles.fill}>
       <Screen>
-        <View style={styles.skeletonColumn}>
-          <View style={[styles.card, styles.account]}>
+        <View style={styles.card}>
+          <View style={styles.account}>
             <Skeleton width={44} height={44} rounded={radius.full} />
             <View style={styles.grow}>
               <SkeletonLine size="base" width="45%" />
               <SkeletonLine size="sm" width="30%" />
             </View>
-            <Skeleton width={112} height={48} rounded={radius.md} />
-          </View>
-          <View style={styles.card}>{[0, 1, 2].map((index) => row(index, index > 0))}</View>
-          {[0, 1].map((group) => (
-            <View key={group} style={styles.skeletonGroup}>
-              <SkeletonLine size="sm" width={`${28 + group * 8}%`} />
-              <View style={styles.card}>{[0, 1, 2].map((index) => row(index, index > 0))}</View>
+            <View style={styles.logout}>
+              <Skeleton height={TAP_MIN} rounded={radius.md} />
             </View>
-          ))}
-          {__DEV__ ? <Skeleton height={64} rounded={radius.lg} /> : null}
+          </View>
         </View>
+        <View style={styles.card}>
+          {[true, false, false].map((sub, index) => shortcut(index, sub))}
+        </View>
+        <OptionGroupSkeleton count={LOCALES.length} titleWidth="26%" />
+        <OptionGroupSkeleton count={MODES.length} titleWidth="32%" />
+        {TestingTools !== null ? (
+          <View style={styles.testingSkeleton}>
+            <Skeleton width={22} height={22} rounded={radius.full} />
+            <View style={styles.grow}>
+              <SkeletonLine size="base" width="42%" />
+              <SkeletonLine size="sm" width="70%" />
+            </View>
+            <Skeleton width={20} height={20} rounded={radius.sm} />
+          </View>
+        ) : null}
+        {version !== null ? (
+          <View style={styles.footer}>
+            <SkeletonLine size="sm" width={140} align="center" />
+          </View>
+        ) : null}
       </Screen>
     </SkeletonScope>
   );

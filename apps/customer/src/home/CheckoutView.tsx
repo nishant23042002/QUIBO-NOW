@@ -557,20 +557,36 @@ function CheckoutPage() {
 
 /** The checkout page as it opens: its skeleton first, then the page fading in over it. Ordering needs a network, so it is not shown without one. */
 export function CheckoutView() {
+  const { t } = useLanguage();
   const cart = useCart();
   const insets = useSafeAreaInsets();
+  const when = useDeliveryWhen();
+  const address = useDeliveryAddress();
+  const rows = useBillRows();
   const load = useScreenLoad({
     loadMs: STEP_LOAD_MS,
     policy: STEP_POLICY,
     hold: !cart.ready,
   });
+  // The shops of the order and what each sells in it, as the page lists them.
+  const darkStore = t('cart.darkStore');
+  const shops = shopLines(cart.items, darkStore).map((shop) => ({
+    name: shop.name,
+    items: cart.items
+      .filter((line) => (line.soldBy ?? darkStore) === shop.name)
+      .map((line) => line.name),
+  }));
 
   return (
     <LoadGate
       load={load}
       skeleton={
         <CheckoutSkeleton
-          shops={Math.max(1, cart.storeCount)}
+          quick={when.quick}
+          address={address}
+          shops={shops}
+          billRows={rows.length}
+          weighed={cart.hasWeighed}
           bottom={insets.bottom + BOTTOM_BAR_HEIGHT}
         />
       }

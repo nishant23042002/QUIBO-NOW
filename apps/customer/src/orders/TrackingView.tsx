@@ -1,7 +1,14 @@
 import { formatRupees, type Order } from '@quibo/contracts';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Linking, Pressable, ScrollView, StyleSheet, View } from 'react-native';
+import {
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+} from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SETTINGS_LOAD_MS, SETTINGS_POLICY } from '@/home/loading';
 import { formatPhone } from '@/home/phone';
@@ -21,8 +28,10 @@ import {
   SkeletonScope,
   StatePanel,
   Text,
+  fontSize,
   radius,
   space,
+  textLines,
   useLargeText,
   useScreenLoad,
   useChromeScroll,
@@ -127,21 +136,51 @@ const makeStyles = (c: ThemeColors) =>
       gap: space[3],
     },
     items: { gap: space[3] },
+    itemRow: { flexDirection: 'row', alignItems: 'center', gap: space[3] },
     fact: { flexDirection: 'row', justifyContent: 'space-between', gap: space[4] },
     factValue: { flex: 1, minWidth: 0, alignItems: 'flex-end' },
     sheetActions: { gap: space[2] },
   });
 
-/** Grey blocks in the shape of the tracking page: the headline, the steps, the shops and the payment. */
-function TrackingSkeleton() {
+/**
+ * The line under the headline: when it will arrive as a range or a window, or how it ended and when. The page draws it and the
+ * skeleton counts its lines, so both read it from here.
+ */
+function useEtaLine(order: Order): string | null {
+  const { t } = useLanguage();
+  const slotText = useSlotText();
+  const time = useTimeLabel();
+  const eta = etaOf(order);
+  const delivered = reachedOn(order, 'delivered');
+  const who = endedBy(order);
+  const endedAt = reachedOn(order, order.status);
+  return eta === null
+    ? who !== null && endedAt !== null
+      ? t(`tracking.endedBy.${who}`, { time: time(endedAt) })
+      : delivered !== null
+        ? t('tracking.deliveredAt', { time: time(delivered) })
+        : null
+    : eta.kind === 'range'
+      ? t('tracking.etaRange', { from: eta.from, to: eta.to })
+      : (() => {
+          const window = slotText.windowLabel(eta.start.getHours());
+          const day = dayRelativeTo(eta.start, new Date());
+          return day === 'other'
+            ? t('tracking.etaOther', { date: slotText.dateLabel(eta.start), window })
+            : t(day === 'today' ? 'tracking.etaToday' : 'tracking.etaTomorrow', { window });
+        })();
+}
+
+/** The page's layout in grey while the order is not known (it is being read back from the phone). */
+function GenericTrackingSkeleton() {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
   return (
     <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
       <View style={styles.content}>
-        <View style={[styles.card, styles.block]}>
-          <SkeletonLine size="lg" width="70%" />
-          <SkeletonLine size="sm" width="90%" />
+        <View style={styles.hero}>
+          <SkeletonLine size="lg" tight width="70%" />
+          <SkeletonLine size="base" width="55%" />
         </View>
         <View style={[styles.card, styles.block]}>
           {[0, 1, 2, 3, 4].map((index) => (
@@ -153,10 +192,191 @@ function TrackingSkeleton() {
             </View>
           ))}
         </View>
+      </View>
+    </SkeletonScope>
+  );
+}
+
+/**
+ * Grey blocks in the page's own layout, from the order it will show: the headline and the line under it (taking the lines it wraps
+ * to), a step for each place the order has been or will be (a second line under the ones with a time), the shops with their Call
+ * buttons, the rider when there is one, a line for each thing, what to pay or what was paid, the buttons, and the details. The
+ * same cards, rows and gaps as the page, so each lands where its real one will.
+ */
+function OrderTrackingSkeleton({ order }: { order: Order }) {
+  const { t, locale } = useLanguage();
+  const styles = useStyles(makeStyles);
+  const { width: screen } = useWindowDimensions();
+  const script = locale === 'en' ? 'latin' : 'devanagari';
+  const etaLine = useEtaLine(order);
+  const steps = timelineOf(order);
+  const parts = shopParts(order);
+  const endNote = endNoteOf(order);
+  const cash = cashToKeep(order);
+  const dateTime = useDateTimeLabel();
+  // The details card's rows, as the page words them.
+  const facts: readonly (readonly [string, string])[] = [
+    [t('tracking.detailNumber'), orderNumber(order.id)],
+    [t('tracking.detailPlaced'), dateTime(new Date(order.placedAt))],
+    [t('tracking.detailAddress'), order.address],
+    [t('tracking.detailShops'), order.shops.map((shop) => shop.name).join(', ')],
+    [
+      t('tracking.detailPayment'),
+      order.payment.method === 'upi'
+        ? t('tracking.detailUpi', { amount: formatRupees(order.total) })
+        : t('tracking.detailCash', { amount: formatRupees(order.total) }),
+    ],
+  ];
+  // Inside a card: the page's gutters, the card's border and its padding.
+  const inner = screen - space[3] * 2 - 2 - space[4] * 2;
+  const lines = (count: number, size: 'sm' | 'base', last: `${number}%` = '55%') =>
+    Array.from({ length: count }, (_, index) => (
+      <SkeletonLine
+        key={index}
+        size={size}
+        width={index === count - 1 && count > 1 ? last : '100%'}
+      />
+    ));
+  const paymentBody =
+    endNote !== null
+      ? endNote.kind === 'refund'
+        ? t('tracking.refundBody', { amount: formatRupees(endNote.amount) })
+        : t('tracking.nothingBody')
+      : cash !== null
+        ? t('tracking.keepCash', { amount: formatRupees(cash) })
+        : order.payment.method === 'upi'
+          ? t('tracking.nothingToPay')
+          : order.payment.status === 'paid'
+            ? t('tracking.cashCollected', { amount: formatRupees(order.total) })
+            : null;
+
+  return (
+    <SkeletonScope label={t('common.loading')} style={styles.skeleton}>
+      <View style={styles.content}>
+        <View style={styles.hero}>
+          <SkeletonLine size="lg" tight width="62%" />
+          {etaLine !== null
+            ? lines(textLines(etaLine, inner, fontSize.base, script), 'base')
+            : null}
+        </View>
+
         <View style={[styles.card, styles.block]}>
-          <SkeletonLine size="base" width="35%" />
-          <SkeletonLine size="base" width="60%" />
-          <SkeletonLine size="base" width="50%" />
+          {steps.map((step, index) => {
+            const last = index === steps.length - 1;
+            const second = step.at !== null || step.state === 'current';
+            return (
+              <View key={step.status} style={styles.step}>
+                <View style={styles.rail}>
+                  <Skeleton width={NODE} height={NODE} rounded={radius.full} />
+                  {last ? null : <View style={styles.line} />}
+                </View>
+                <View style={[styles.stepText, last && styles.stepLast]}>
+                  <SkeletonLine size="base" width="46%" />
+                  {second ? <SkeletonLine size="xs" width="28%" /> : null}
+                </View>
+              </View>
+            );
+          })}
+        </View>
+
+        <View style={[styles.card, styles.block]}>
+          <SkeletonLine size="lg" tight width="44%" />
+          <View>
+            {parts.map((shop) => (
+              <View key={shop.id} style={styles.shop}>
+                <View style={styles.shopName}>
+                  <SkeletonLine size="base" width="52%" />
+                  {endNote === null ? <SkeletonLine size="xs" width="30%" /> : null}
+                </View>
+                {shopsCallable(order) ? (
+                  <Skeleton width={72} height={40} rounded={radius.md} />
+                ) : null}
+              </View>
+            ))}
+          </View>
+          {parts.length > 1
+            ? lines(textLines(t('tracking.oneRider'), inner, fontSize.sm, script), 'sm')
+            : null}
+        </View>
+
+        {riderShown(order) ? (
+          <View style={[styles.card, styles.rider]}>
+            <Skeleton width={40} height={40} rounded={radius.full} />
+            <View style={styles.riderText}>
+              <SkeletonLine size="base" width="50%" />
+              <SkeletonLine size="sm" width="72%" />
+            </View>
+            <Skeleton width={72} height={40} rounded={radius.md} />
+          </View>
+        ) : null}
+
+        <View style={[styles.card, styles.block]}>
+          <View style={styles.cardHead}>
+            <SkeletonLine size="lg" tight width="36%" />
+            <SkeletonLine size="sm" width={64} />
+          </View>
+          <View style={styles.items}>
+            {order.items.map((item) => {
+              const nameLines = Math.min(
+                2,
+                textLines(item.name, inner - 44 - 64 - space[3] * 2, fontSize.base, script),
+              );
+              return (
+                <View key={item.packId} style={styles.itemRow}>
+                  <Skeleton width={44} height={44} rounded={radius.md} />
+                  <View style={styles.grow}>
+                    <View>{lines(nameLines, 'base', '60%')}</View>
+                    <SkeletonLine size="xs" width="32%" />
+                  </View>
+                  <Skeleton width={52} height={Math.round(fontSize.sm * 0.8)} />
+                </View>
+              );
+            })}
+          </View>
+        </View>
+
+        <View style={[styles.card, styles.block]}>
+          <SkeletonLine size="lg" tight width="48%" />
+          {paymentBody !== null
+            ? lines(textLines(paymentBody, inner, fontSize.base, script), 'base')
+            : null}
+        </View>
+
+        {canCancel(order) || endNote !== null ? (
+          <View style={styles.actions}>
+            <Skeleton height={48} rounded={radius.md} />
+          </View>
+        ) : null}
+
+        <View style={[styles.card, styles.block]}>
+          <SkeletonLine size="lg" tight width="40%" />
+          {facts.map(([label, value]) => {
+            // The value takes what the label leaves, and wraps to the lines its words need.
+            const valueLines = textLines(
+              value,
+              inner - [...label].length * 7 - space[4],
+              fontSize.sm,
+              script,
+            );
+            return (
+              <View key={label} style={styles.fact}>
+                <SkeletonLine size="sm" width={[...label].length * 7} />
+                <View style={styles.factValue}>
+                  {Array.from({ length: valueLines }, (_, line) => (
+                    <SkeletonLine
+                      key={line}
+                      size="sm"
+                      width={line === valueLines - 1 && valueLines > 1 ? '50%' : '90%'}
+                      align="end"
+                    />
+                  ))}
+                </View>
+              </View>
+            );
+          })}
+        </View>
+        <View style={styles.actions}>
+          <Skeleton height={48} rounded={radius.md} />
         </View>
       </View>
     </SkeletonScope>
@@ -245,34 +465,13 @@ function TrackingPage({ order }: { order: Order }) {
   const insets = useSafeAreaInsets();
   const online = useOnline();
   const large = useLargeText();
-  const slotText = useSlotText();
-  const time = useTimeLabel();
   const dateTime = useDateTimeLabel();
   const { colors } = useTheme();
 
-  const eta = etaOf(order);
-  const delivered = reachedOn(order, 'delivered');
   const cash = cashToKeep(order);
   const parts = shopParts(order);
   const endNote = endNoteOf(order);
-  const who = endedBy(order);
-  const endedAt = reachedOn(order, order.status);
-  const etaLine =
-    eta === null
-      ? who !== null && endedAt !== null
-        ? t(`tracking.endedBy.${who}`, { time: time(endedAt) })
-        : delivered !== null
-          ? t('tracking.deliveredAt', { time: time(delivered) })
-          : null
-      : eta.kind === 'range'
-        ? t('tracking.etaRange', { from: eta.from, to: eta.to })
-        : (() => {
-            const window = slotText.windowLabel(eta.start.getHours());
-            const day = dayRelativeTo(eta.start, new Date());
-            return day === 'other'
-              ? t('tracking.etaOther', { date: slotText.dateLabel(eta.start), window })
-              : t(day === 'today' ? 'tracking.etaToday' : 'tracking.etaTomorrow', { window });
-          })();
+  const etaLine = useEtaLine(order);
 
   return (
     <ScrollView
@@ -531,7 +730,16 @@ export function TrackingView({ id }: { id: string }) {
   const tracked = find(id);
 
   return (
-    <LoadGate load={load} skeleton={<TrackingSkeleton />}>
+    <LoadGate
+      load={load}
+      skeleton={
+        tracked === undefined ? (
+          <GenericTrackingSkeleton />
+        ) : (
+          <OrderTrackingSkeleton order={tracked.order} />
+        )
+      }
+    >
       {!loaded ? null : tracked === undefined ? (
         <StatePanel
           icon="receipt"
