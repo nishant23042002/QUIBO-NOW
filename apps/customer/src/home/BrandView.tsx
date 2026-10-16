@@ -15,7 +15,8 @@ import {
   Text,
   radius,
   space,
-  useChromeScroll,
+  JumpToTop,
+  useJumpToTop,
 } from '@/ui';
 import { itemsOfBrand, kindsOfBrand, shopsOfBrand } from './brandPage';
 import { CART_ROOM, CartLayer } from './CartLayer';
@@ -59,7 +60,7 @@ const makeStyles = (c: ThemeColors) =>
  */
 export function BrandView({ brandId }: { brandId: string }) {
   const { t } = useLanguage();
-  const chromeScroll = useChromeScroll();
+  const jumper = useJumpToTop();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
@@ -90,7 +91,7 @@ export function BrandView({ brandId }: { brandId: string }) {
   return (
     <View style={styles.page}>
       <ScrollView
-        {...chromeScroll}
+        {...jumper.scrollProps}
         contentContainerStyle={[
           styles.content,
           {
@@ -196,6 +197,7 @@ export function BrandView({ brandId }: { brandId: string }) {
           </View>
         )}
       </ScrollView>
+      <JumpToTop visible={jumper.visible} onPress={jumper.toTop} label={t('common.backToTop')} />
       <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
     </View>
   );

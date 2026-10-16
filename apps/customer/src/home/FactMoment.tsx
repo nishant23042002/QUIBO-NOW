@@ -1,5 +1,5 @@
 import { usePathname } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   Text as NativeText,
@@ -20,6 +20,9 @@ import { useSampleShops } from './sampleShops';
 
 const NATIVE_DRIVER = Platform.OS !== 'web';
 const BADGE = 136;
+/** The card eases in over the incoming screen, and eases out to the finished page. */
+const FADE_IN_MS = 200;
+const FADE_OUT_MS = 320;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
@@ -89,10 +92,12 @@ export function FactMoment() {
   const lastPath = useRef<string | null>(null);
   const round = useRef(0);
   const [shown, setShown] = useState<number | null>(null);
+  const [leaving, setLeaving] = useState(false);
   const [fade] = useState(() => new Animated.Value(0));
 
-  // Each new screen is counted once, and may open a fact.
-  useEffect(() => {
+  // Each new screen is counted once, and may open a fact. This runs before the new screen is first drawn, so the card is in front
+  // of it from the first frame and the shopper never sees its skeleton flash up and then get covered.
+  useLayoutEffect(() => {
     if (lastPath.current === pathname) return;
     lastPath.current = pathname;
     opened.current += 1;
@@ -107,26 +112,42 @@ export function FactMoment() {
     markMoment();
     const index = round.current;
     round.current += 1;
+    fade.stopAnimation();
     fade.setValue(0);
+    setLeaving(false);
     setShown(index);
   }, [pathname, reduceMotion, screenReader, store, fade]);
 
-  // It fades in, and closes by itself after a moment.
+  // It fades in, stays a moment, and fades out by itself: the screen under it has finished loading by then, so the card gives way to
+  // a finished page and not to a skeleton, and never cuts off.
   useEffect(() => {
     if (shown === null) return undefined;
     Animated.timing(fade, {
       toValue: 1,
-      duration: 250,
+      duration: FADE_IN_MS,
       easing: Easing.out(Easing.quad),
       useNativeDriver: NATIVE_DRIVER,
     }).start();
     const timer = setTimeout(() => {
-      setShown(null);
+      setLeaving(true);
     }, FACT_MS);
     return () => {
       clearTimeout(timer);
     };
   }, [shown, fade]);
+
+  // Closing (by itself or with a tap) is a fade, then the card is gone.
+  useEffect(() => {
+    if (!leaving) return;
+    Animated.timing(fade, {
+      toValue: 0,
+      duration: FADE_OUT_MS,
+      easing: Easing.inOut(Easing.quad),
+      useNativeDriver: NATIVE_DRIVER,
+    }).start(({ finished }) => {
+      if (finished) setShown(null);
+    });
+  }, [leaving, fade]);
 
   if (shown === null) return null;
   const fact = momentFact(shown);
@@ -142,7 +163,7 @@ export function FactMoment() {
       <Pressable
         accessible={false}
         onPress={() => {
-          setShown(null);
+          setLeaving(true);
         }}
         style={StyleSheet.absoluteFill}
       />

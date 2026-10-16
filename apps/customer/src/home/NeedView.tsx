@@ -1,5 +1,5 @@
 import { useRouter } from 'expo-router';
-import { useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Text as NativeText,
   ScrollView,
@@ -10,7 +10,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useOnline } from '@/network';
-import { MomentTheme, useStyles, type ThemeColors } from '@/theme';
+import { MomentTheme, useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
   Button,
@@ -26,11 +26,12 @@ import {
   SkeletonScope,
   StatePanel,
   Text,
+  VerticalFade,
   chipWidthOf,
   radius,
   space,
-  useChromeScroll,
-  useReduceMotion,
+  JumpToTop,
+  useJumpToTop,
   useScreenLoad,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
@@ -51,13 +52,27 @@ const SKELETON_SHELVES = 3;
 /** About how wide a character of a hint is, so its skeleton line is as long as the real one. */
 const HINT_LETTER = 7;
 const ART_SIZE = 72;
+/** How tall the strip of header colour above the band is: more than any bounce. */
+const CAP = 600;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     page: { flex: 1, backgroundColor: c.bg },
+    pageFill: { flex: 1 },
+    // Hangs above the top of the band, filling the room a pull past the top (some phones bounce) would show, in the header's own colour,
+    // so header and band stay joined however far the page is pulled.
+    cap: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+      top: -CAP,
+      height: CAP,
+      backgroundColor: c.headerBg,
+    },
     content: { gap: space[5] },
     gutter: { paddingHorizontal: space[4] },
-    // The moment's own colour as a band under the header with a square lower edge: its name large, a line, and a picture.
+    // The moment's own colour under the header: its name large, a line, and a picture. Its colour is a fade (`VerticalFade`) that
+    // starts in the header's colour and ends in the page's, so header, band and page run into one another with no seam.
     band: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -65,7 +80,6 @@ const makeStyles = (c: ThemeColors) =>
       paddingHorizontal: space[4],
       paddingTop: space[4],
       paddingBottom: space[5],
-      backgroundColor: c.lilac,
     },
     bandText: { flex: 1, minWidth: 0, gap: space[1] },
     art: {
@@ -108,8 +122,17 @@ const makeStyles = (c: ThemeColors) =>
 function NeedBand({ need }: { need: Need }) {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
+  const { colors } = useTheme();
   return (
     <View style={styles.band}>
+      <View style={styles.cap} aria-hidden />
+      <VerticalFade
+        stops={[
+          { color: colors.headerBg, at: 0 },
+          { color: colors.lilac, at: 0.5 },
+          { color: colors.bg, at: 1 },
+        ]}
+      />
       <View style={styles.bandText}>
         <Text variant="title" color="ink" role="heading">
           {t(need.label)}
@@ -233,17 +256,19 @@ function SoonRow({ need }: { need: Need }) {
   );
 }
 
-function NeedPage({ need }: { need: Need }) {
+function NeedPage({ need, onScrolled }: { need: Need; onScrolled: (scrolled: boolean) => void }) {
   const { t } = useLanguage();
   const styles = useStyles(makeStyles);
   const insets = useSafeAreaInsets();
-  const chromeScroll = useChromeScroll();
+  const jumper = useJumpToTop();
+  const { scrolled } = jumper;
+  useEffect(() => {
+    onScrolled(scrolled);
+  }, [scrolled, onScrolled]);
   const cart = useCart();
   const online = useOnline();
-  const reduceMotion = useReduceMotion();
   const sections = needSections(useHomeItems(), need);
   const hasChips = sections.length > 1;
-  const scroller = useRef<ScrollView>(null);
   // Where each part sits (a View's `y` is within its parent), so a chip can scroll to its shelf.
   const place = useRef<{ content: number; shelves: number; shelf: Record<string, number> }>({
     content: 0,
@@ -254,97 +279,109 @@ function NeedPage({ need }: { need: Need }) {
   const jump = (id: string) => {
     const at = place.current;
     const y = at.content + at.shelves + (at.shelf[id] ?? 0);
-    scroller.current?.scrollTo({ y: Math.max(0, y - CHIP_BAR_HEIGHT), animated: !reduceMotion });
+    jumper.ref.current?.scrollTo({ y: Math.max(0, y - CHIP_BAR_HEIGHT), animated: true });
   };
 
   return (
-    <ScrollView
-      ref={scroller}
-      {...chromeScroll}
-      showsVerticalScrollIndicator={false}
-      stickyHeaderIndices={hasChips ? [1] : []}
-      contentContainerStyle={{
-        paddingBottom:
-          insets.bottom + BOTTOM_BAR_HEIGHT + space[6] + (cart.count > 0 ? CART_ROOM : 0),
-      }}
-    >
-      <NeedBand need={need} />
-      {hasChips ? (
-        <View style={styles.chipBar}>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.chips}
-            aria-label={t('needs.rail')}
-          >
-            {sections.map((section) => (
-              <Chip
-                key={section.id}
-                label={t(section.label)}
-                ariaLabel={t('needs.jump', { name: t(section.label) })}
-                action
-                onPress={() => {
-                  jump(section.id);
-                }}
-              />
-            ))}
-          </ScrollView>
-        </View>
-      ) : null}
-      <View
-        style={[styles.content, { paddingTop: hasChips ? space[2] : space[4] }]}
-        onLayout={(event) => {
-          place.current.content = event.nativeEvent.layout.y;
+    <View style={styles.pageFill}>
+      <ScrollView
+        {...jumper.scrollProps}
+        showsVerticalScrollIndicator={false}
+        overScrollMode="never"
+        stickyHeaderIndices={hasChips ? [1] : []}
+        contentContainerStyle={{
+          paddingBottom:
+            insets.bottom + BOTTOM_BAR_HEIGHT + space[6] + (cart.count > 0 ? CART_ROOM : 0),
         }}
       >
-        {online ? null : (
-          <View style={styles.gutter}>
-            <Notice tone="warning" icon="wifiOff" message={t('state.offline.banner')} />
-          </View>
-        )}
-        {sections.length === 0 ? (
-          <View style={styles.empty}>
-            <StatePanel icon="search" title={t('needs.empty.title')} body={t('needs.empty.body')} />
-          </View>
-        ) : (
-          <View
-            style={styles.shelves}
-            onLayout={(event) => {
-              place.current.shelves = event.nativeEvent.layout.y;
-            }}
-          >
-            {sections.map((section) => {
-              // Cards in a row stay one height: room for the low-stock line only when one of them has it.
-              const note = anyCardNote(section.items);
-              const hintKey = sectionHint(need, section);
-              return (
-                <View
+        <NeedBand need={need} />
+        {hasChips ? (
+          <View style={styles.chipBar}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              contentContainerStyle={styles.chips}
+              aria-label={t('needs.rail')}
+            >
+              {sections.map((section) => (
+                <Chip
                   key={section.id}
-                  onLayout={(event) => {
-                    place.current.shelf[section.id] = event.nativeEvent.layout.y;
+                  label={t(section.label)}
+                  ariaLabel={t('needs.jump', { name: t(section.label) })}
+                  action
+                  onPress={() => {
+                    jump(section.id);
                   }}
-                >
-                  <ProductRail
-                    title={t(section.label)}
-                    {...(hintKey !== undefined ? { hint: t(hintKey) } : {})}
-                  >
-                    {section.items.map((item) => (
-                      <ItemTile
-                        key={item.id}
-                        item={item}
-                        width={RAIL_CARD_WIDTH}
-                        reserveNote={note}
-                      />
-                    ))}
-                  </ProductRail>
-                </View>
-              );
-            })}
+                />
+              ))}
+            </ScrollView>
           </View>
-        )}
-        <SoonRow need={need} />
-      </View>
-    </ScrollView>
+        ) : null}
+        <View
+          style={[styles.content, { paddingTop: hasChips ? space[2] : space[4] }]}
+          onLayout={(event) => {
+            place.current.content = event.nativeEvent.layout.y;
+          }}
+        >
+          {online ? null : (
+            <View style={styles.gutter}>
+              <Notice tone="warning" icon="wifiOff" message={t('state.offline.banner')} />
+            </View>
+          )}
+          {sections.length === 0 ? (
+            <View style={styles.empty}>
+              <StatePanel
+                icon="search"
+                title={t('needs.empty.title')}
+                body={t('needs.empty.body')}
+              />
+            </View>
+          ) : (
+            <View
+              style={styles.shelves}
+              onLayout={(event) => {
+                place.current.shelves = event.nativeEvent.layout.y;
+              }}
+            >
+              {sections.map((section) => {
+                // Cards in a row stay one height: room for the low-stock line only when one of them has it.
+                const note = anyCardNote(section.items);
+                const hintKey = sectionHint(need, section);
+                return (
+                  <View
+                    key={section.id}
+                    onLayout={(event) => {
+                      place.current.shelf[section.id] = event.nativeEvent.layout.y;
+                    }}
+                  >
+                    <ProductRail
+                      title={t(section.label)}
+                      {...(hintKey !== undefined ? { hint: t(hintKey) } : {})}
+                    >
+                      {section.items.map((item) => (
+                        <ItemTile
+                          key={item.id}
+                          item={item}
+                          width={RAIL_CARD_WIDTH}
+                          reserveNote={note}
+                        />
+                      ))}
+                    </ProductRail>
+                  </View>
+                );
+              })}
+            </View>
+          )}
+          <SoonRow need={need} />
+        </View>
+      </ScrollView>
+      <JumpToTop
+        visible={jumper.visible}
+        onPress={jumper.toTop}
+        label={t('common.backToTop')}
+        top={hasChips ? CHIP_BAR_HEIGHT + space[2] : space[3]}
+      />
+    </View>
   );
 }
 
@@ -355,10 +392,17 @@ function NeedScreen({ need }: { need: Need }) {
   const styles = useStyles(makeStyles);
   const when = useDeliveryWhen();
   const load = useScreenLoad({ loadMs: CATEGORIES_LOAD_MS, policy: CATEGORIES_POLICY });
+  // The moment's picture slides into the header once its page has been scrolled a little.
+  const [scrolled, setScrolledState] = useState(false);
+  const setScrolled = useCallback((next: boolean) => {
+    setScrolledState(next);
+  }, []);
 
   return (
     <View style={styles.page}>
       <CategoryHeader
+        thumb={{ emoji: need.emoji }}
+        thumbShown={scrolled}
         title={t(need.label)}
         subtitle={when.headline}
         backLabel={t('common.back')}
@@ -373,7 +417,7 @@ function NeedScreen({ need }: { need: Need }) {
         }}
       />
       <LoadGate load={load} skeleton={<NeedSkeleton need={need} />}>
-        <NeedPage need={need} />
+        <NeedPage need={need} onScrolled={setScrolled} />
       </LoadGate>
       <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
     </View>

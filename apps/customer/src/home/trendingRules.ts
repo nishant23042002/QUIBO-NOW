@@ -1,3 +1,4 @@
+import { shownPrice } from './entryPrice';
 import { PRICE_TIERS } from './priceTiers';
 
 /**
@@ -16,6 +17,7 @@ export const TRENDING_MOST = 8;
 
 interface TrendingItem {
   price: number;
+  entryPrice?: number | undefined;
   mrp?: number | undefined;
   diet: { kind: 'veg' | 'nonveg' };
   stock?: { kind: 'out' | 'low' } | undefined;
@@ -28,7 +30,7 @@ function suits(item: TrendingItem, tab: TrendingTab): boolean {
     case 'offers':
       return item.mrp !== undefined && item.mrp > item.price;
     case 'under':
-      return item.price <= TRENDING_UNDER;
+      return shownPrice(item) <= TRENDING_UNDER;
     case 'veg':
       return item.diet.kind === 'veg';
   }
@@ -44,4 +46,9 @@ export function trendingItems<T extends TrendingItem>(
   most: number = TRENDING_MOST,
 ): T[] {
   return items.filter((item) => item.stock?.kind !== 'out' && suits(item, tab)).slice(0, most);
+}
+
+/** The items dealt into two rows, one after the other (first, second, first, second ...), so both rows hold about as many. */
+export function inTwoRows<T>(items: readonly T[]): [T[], T[]] {
+  return [items.filter((_, index) => index % 2 === 0), items.filter((_, index) => index % 2 === 1)];
 }

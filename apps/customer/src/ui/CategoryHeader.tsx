@@ -3,6 +3,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, type ThemeColors } from '@/theme';
 import { IconButton } from './IconButton';
 import { HeaderGradient } from './HeaderGradient';
+import { HeaderThumb, type HeaderThumbContent } from './HeaderThumb';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { Text } from './Text';
 import { HEADER_HEIGHT, space } from './tokens';
@@ -16,6 +17,9 @@ export interface CategoryHeaderProps {
   /** Give both to show the search button at the end. A page that has nothing to search leaves them out. */
   searchLabel?: string;
   onSearch?: () => void;
+  /** A small round picture that slides in beside the title once the page is scrolled (`thumbShown`), and folds away at the top. */
+  thumb?: HeaderThumbContent;
+  thumbShown?: boolean;
 }
 
 /** An icon button's circle is 38 dp inside a 48 dp touch area, so the circle sits this far in from the area's edge. */
@@ -27,7 +31,8 @@ const makeStyles = (c: ThemeColors) =>
     bar: { backgroundColor: c.headerBg },
     row: { minHeight: HEADER_HEIGHT, flexDirection: 'row', alignItems: 'center', gap: space[2] },
     back: { marginLeft: -CIRCLE_INSET },
-    title: { flex: 1, minWidth: 0 },
+    title: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center' },
+    words: { flex: 1, minWidth: 0 },
     end: { marginRight: -CIRCLE_INSET },
   });
 
@@ -42,6 +47,8 @@ export function CategoryHeader({
   onBack,
   searchLabel,
   onSearch,
+  thumb,
+  thumbShown = false,
 }: CategoryHeaderProps) {
   const insets = useSafeAreaInsets();
   const styles = useStyles(makeStyles);
@@ -65,14 +72,17 @@ export function CategoryHeader({
           <IconButton icon="back" label={backLabel} onPress={onBack} ground="header" />
         </View>
         <View style={styles.title}>
-          <Text variant="label" color="onHeader" numberOfLines={2} role="heading">
-            {title}
-          </Text>
-          {subtitle !== undefined ? (
-            <Text variant="caption" color="onHeaderMuted" numberOfLines={1}>
-              {subtitle}
+          <HeaderThumb shown={thumbShown} content={thumb} />
+          <View style={styles.words}>
+            <Text variant="label" color="onHeader" numberOfLines={2} role="heading">
+              {title}
             </Text>
-          ) : null}
+            {subtitle !== undefined ? (
+              <Text variant="caption" color="onHeaderMuted" numberOfLines={1}>
+                {subtitle}
+              </Text>
+            ) : null}
+          </View>
         </View>
         {searchLabel !== undefined && onSearch !== undefined ? (
           <View style={styles.end}>

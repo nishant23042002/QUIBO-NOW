@@ -1,3 +1,4 @@
+import { shownPrice } from './entryPrice';
 /**
  * The "Small prices" section of Home: everyday things picked by what they cost. The tiers are data (in paise, as every amount is), so
  * a town can have its own; these are the samples until the API supplies them (Phase 2). Plain code with no React in it, so it can be
@@ -14,6 +15,8 @@ export interface PricedItem {
   id: string;
   /** Integer paise (a Money value is a number). */
   price: number;
+  /** What one press of ADD costs, when that differs from `price` (a loose item priced by the kilogram). */
+  entryPrice?: number;
   /** The broad category the Home rows and the price filter use ("dairy", "snacks"). */
   category?: string;
   stock?: { kind: 'out' | 'low' } | undefined;
@@ -52,12 +55,12 @@ export function pickUnder<T extends PricedItem>(
     .map((item, index) => ({ item, index }))
     .filter(
       ({ item }) =>
-        item.price <= limit &&
-        item.price > above &&
+        shownPrice(item) <= limit &&
+        shownPrice(item) > above &&
         item.stock?.kind !== 'out' &&
         (category === undefined || item.category === category),
     )
-    .sort((a, b) => a.item.price - b.item.price || a.index - b.index)
+    .sort((a, b) => shownPrice(a.item) - shownPrice(b.item) || a.index - b.index)
     .slice(0, most)
     .map(({ item }) => item);
 }

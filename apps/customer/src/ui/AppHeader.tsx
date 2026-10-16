@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useStyles, type ThemeColors } from '@/theme';
 import { HeaderLogo } from './brand/HeaderLogo';
 import { HeaderGradient } from './HeaderGradient';
+import { HeaderThumb, type HeaderThumbContent } from './HeaderThumb';
 import { IconButton } from './IconButton';
 import { ScreenStatusBar, useHeaderStatusBarStyle } from './ScreenStatusBar';
 import { Text } from './Text';
@@ -27,6 +28,9 @@ export interface AppHeaderProps {
    * front ('screen', the usual). A screen outside the tabs, such as Settings, has no use for that and always sets it ('always').
    */
   statusBar?: 'screen' | 'always';
+  /** A small round picture that slides in beside the title once the page is scrolled (`thumbShown`), and folds away at the top. */
+  thumb?: HeaderThumbContent;
+  thumbShown?: boolean;
 }
 
 /** An icon button's circle is 38 dp inside a 48 dp touch area, so the circle sits this far in from the area's edge. */
@@ -42,7 +46,8 @@ const makeStyles = (c: ThemeColors) =>
     back: { marginLeft: -CIRCLE_INSET },
     // With no back button the title starts where the cards' text does.
     titleAlone: { marginLeft: space[1] },
-    title: { flex: 1, minWidth: 0 },
+    title: { flex: 1, minWidth: 0, flexDirection: 'row', alignItems: 'center' },
+    words: { flex: 1, minWidth: 0 },
     end: { marginRight: -CIRCLE_INSET },
     spacer: { flex: 1 },
   });
@@ -62,6 +67,8 @@ export function AppHeader({
   shareLabel,
   onShare,
   statusBar = 'screen',
+  thumb,
+  thumbShown = false,
 }: AppHeaderProps) {
   const insets = useSafeAreaInsets();
   const styles = useStyles(makeStyles);
@@ -92,14 +99,17 @@ export function AppHeader({
         {logoLabel !== undefined ? <HeaderLogo label={logoLabel} /> : null}
         {title !== undefined ? (
           <View style={[styles.title, !back && styles.titleAlone]}>
-            <Text variant="label" color="onHeader" numberOfLines={2} role="heading">
-              {title}
-            </Text>
-            {subtitle !== undefined ? (
-              <Text variant="caption" color="onHeaderMuted" numberOfLines={1}>
-                {subtitle}
+            <HeaderThumb shown={thumbShown} content={thumb} />
+            <View style={styles.words}>
+              <Text variant="label" color="onHeader" numberOfLines={2} role="heading">
+                {title}
               </Text>
-            ) : null}
+              {subtitle !== undefined ? (
+                <Text variant="caption" color="onHeaderMuted" numberOfLines={1}>
+                  {subtitle}
+                </Text>
+              ) : null}
+            </View>
           </View>
         ) : (
           <View style={styles.spacer} />

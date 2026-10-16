@@ -40,7 +40,7 @@ import { HOME_RAIL_ORDER, anyCardNote, useHomeItems, useHomeListing } from './it
 import { RAIL_CARD_WIDTH, gridCardWidth } from './ItemTile';
 import { PRICE_FILTERS } from './SmallPrices';
 import { MOST_SHOWN, PRICE_TIERS, pickUnder, priceBand } from './priceTiers';
-import { TRENDING_TABS, TRENDING_UNDER, trendingItems } from './trendingRules';
+import { TRENDING_TABS, TRENDING_UNDER, inTwoRows, trendingItems } from './trendingRules';
 import { useCategoryGroups } from './useCategoryGroups';
 import { useViewed } from './useViewed';
 import { viewedItems } from './viewed';
@@ -126,8 +126,6 @@ const makeStyles = (c: ThemeColors) =>
     },
     stores: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
     store: { flex: 1 },
-    columns: { flexDirection: 'row', gap: space[3], paddingHorizontal: space[4] },
-    column: { gap: space[3] },
     brandTile: { width: BRAND_TILE_WIDTH, alignItems: 'center', gap: space[2] },
     brandSelected: {
       paddingBottom: space[1],
@@ -541,19 +539,9 @@ export function HomeSkeleton({
               />
             ))}
           </StaticRow>
-          <ScrollView horizontal scrollEnabled={false} showsHorizontalScrollIndicator={false}>
-            <View style={styles.columns}>
-              {Array.from(
-                { length: Math.max(1, Math.min(across, Math.ceil(trending.length / 2))) },
-                (_, column) => (
-                  <View key={column} style={styles.column}>
-                    {card(trending, 0)}
-                    {card(trending, 1)}
-                  </View>
-                ),
-              )}
-            </View>
-          </ScrollView>
+          {inTwoRows(trending).map((row, index) =>
+            row.length === 0 ? null : <Fragment key={index}>{railCards(row)}</Fragment>,
+          )}
           <SeeAllButtonSkeleton />
         </View>
 

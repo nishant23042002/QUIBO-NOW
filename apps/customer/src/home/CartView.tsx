@@ -40,6 +40,7 @@ import {
   useScreenFocused,
   useLargeText,
   useScreenLoad,
+  useScrolledFlag,
 } from '@/ui';
 import { UndoToast } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -266,7 +267,7 @@ const makeStyles = (c: ThemeColors) =>
  * undo note. An empty cart says so and points back to the shops. The cart is kept on the phone, so it works with no
  * connection; only ordering will need one.
  */
-function CartPage() {
+function CartPage({ onScrolled }: { onScrolled: (scrolled: boolean) => void }) {
   const { t } = useLanguage();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
@@ -288,6 +289,12 @@ function CartPage() {
   const [pillWidth, setPillWidth] = useState(0);
   const reduceMotion = useReduceMotion();
   const focused = useScreenFocused();
+  // Tells the header when the page has been scrolled a little, so the first item's picture slides into it.
+  const scrollFlag = useScrolledFlag();
+  const { scrolled } = scrollFlag;
+  useEffect(() => {
+    onScrolled(scrolled);
+  }, [scrolled, onScrolled]);
   const { bill, coupon } = cart;
   const rows = useBillRows();
   const current = cart.delivery.current;
@@ -360,6 +367,8 @@ function CartPage() {
   return (
     <PopoverHost style={styles.page}>
       <ScrollView
+        scrollEventThrottle={16}
+        onScroll={scrollFlag.onScroll}
         contentContainerStyle={[
           styles.content,
           { paddingBottom: room + (keyboard ? 0 : dockHeight) + space[6] },
@@ -827,7 +836,7 @@ function quietCartReturn(): boolean {
   return true;
 }
 
-export function CartView() {
+export function CartView({ onScrolled }: { onScrolled: (scrolled: boolean) => void }) {
   const cart = useCart();
   const insets = useSafeAreaInsets();
   const load = useScreenLoad({
@@ -884,7 +893,7 @@ export function CartView() {
       load={load}
       skeleton={<CartSkeleton shape={shape} bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />}
     >
-      <CartPage />
+      <CartPage onScrolled={onScrolled} />
     </LoadGate>
   );
 }

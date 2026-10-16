@@ -17,6 +17,7 @@ import {
   type FacetReader,
   type SortKey,
 } from './categoryFilters';
+import { shownPrice } from './entryPrice';
 import { PRICE_TIERS } from './priceTiers';
 
 /** One filter of the screen: its name, and for a filter of values the choices with how many items each has. */
@@ -193,7 +194,7 @@ export function CategoryToolbar<T extends Browsable>({
       return PRICE_TIERS.map((tier) =>
         check(
           t('catalogue.filters.under', { amount: amount(tier) }),
-          countWhere((item) => item.price <= tier),
+          countWhere((item) => shownPrice(item) <= tier),
           draft.maxPrice === tier,
           () => {
             setDraft({ ...draft, maxPrice: draft.maxPrice === tier ? null : tier });

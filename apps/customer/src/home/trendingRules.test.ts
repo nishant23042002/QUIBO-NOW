@@ -1,5 +1,11 @@
 import { describe, expect, it } from 'vitest';
-import { TRENDING_MOST, TRENDING_UNDER, TRENDING_TABS, trendingItems } from './trendingRules';
+import {
+  TRENDING_MOST,
+  TRENDING_UNDER,
+  TRENDING_TABS,
+  inTwoRows,
+  trendingItems,
+} from './trendingRules';
 
 const item = (
   id: string,
@@ -49,5 +55,19 @@ describe('trendingItems', () => {
   it('has four tabs, starting with all', () => {
     expect(TRENDING_TABS).toHaveLength(4);
     expect(TRENDING_TABS[0]).toBe('all');
+  });
+});
+
+describe('inTwoRows', () => {
+  it('deals the items one after the other, so each row keeps their order', () => {
+    expect(inTwoRows([1, 2, 3, 4, 5])).toEqual([
+      [1, 3, 5],
+      [2, 4],
+    ]);
+  });
+
+  it('leaves the second row empty for one item, and both empty for none', () => {
+    expect(inTwoRows([1])).toEqual([[1], []]);
+    expect(inTwoRows([])).toEqual([[], []]);
   });
 });

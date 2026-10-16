@@ -16,6 +16,8 @@ export interface SubCategoryRailProps {
   onSelect: (id: string | null) => void;
   /** Names the list for a screen reader, for example "Kinds in this category". */
   label: string;
+  /** The colour of the chosen entry's bar and ring, for a screen with a colour of its own. Defaults to the theme's action colour. */
+  accent?: string;
 }
 
 /** How wide the rail is, shared with the loading skeleton so the page does not shift when it arrives. */
@@ -26,7 +28,8 @@ const CIRCLE = SUB_RAIL_CIRCLE;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    rail: { width: SUB_RAIL_WIDTH, backgroundColor: c.bg },
+    // No colour of its own: it sits on whatever the page under it shows, so the rail and the grid read as one surface.
+    rail: { width: SUB_RAIL_WIDTH },
     list: { paddingVertical: space[2] },
     item: {
       alignItems: 'center',
@@ -64,7 +67,13 @@ const makeStyles = (c: ThemeColors) =>
  * The category screen's left-hand list of kinds: "All", then each sub-category as a round picture with its name under it. It scrolls
  * on its own, beside the products.
  */
-export function SubCategoryRail({ items, selected, onSelect, label }: SubCategoryRailProps) {
+export function SubCategoryRail({
+  items,
+  selected,
+  onSelect,
+  label,
+  accent,
+}: SubCategoryRailProps) {
   const styles = useStyles(makeStyles);
 
   return (
@@ -87,8 +96,17 @@ export function SubCategoryRail({ items, selected, onSelect, label }: SubCategor
               }}
               style={({ pressed }) => [styles.item, pressed && styles.pressed]}
             >
-              {on ? <View style={styles.bar} /> : null}
-              <View style={[styles.circle, on && styles.circleOn]} aria-hidden>
+              {on ? (
+                <View style={[styles.bar, accent !== undefined && { backgroundColor: accent }]} />
+              ) : null}
+              <View
+                style={[
+                  styles.circle,
+                  on && styles.circleOn,
+                  on && accent !== undefined && { borderColor: accent },
+                ]}
+                aria-hidden
+              >
                 <NativeText allowFontScaling={false} style={{ fontSize: 24, lineHeight: 32 }}>
                   {entry.emoji}
                 </NativeText>

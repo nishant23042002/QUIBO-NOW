@@ -13,6 +13,7 @@ import { useStyles, useTheme, type ThemeColors } from '@/theme';
 import { CategoryTabs, type CategoryTab } from './CategoryTabs';
 import { HeaderGradient } from './HeaderGradient';
 import { HeaderIdentity } from './HeaderIdentity';
+import { JumpToTop } from './JumpToTop';
 import { PageFade } from './PageFade';
 import { SearchBar, type SearchHint } from './SearchBar';
 import type { ShopInfoCardProps } from './ShopInfoCard';
@@ -20,6 +21,7 @@ import { ShopsChip } from './ShopsChip';
 import { ScreenStatusBar } from './ScreenStatusBar';
 import { ShopsPanel } from './ShopsPanel';
 import { radius, space } from './tokens';
+import { jumpVisible } from './logic/jumpToTop';
 import { useReduceMotion } from './useReduceMotion';
 
 /**
@@ -86,6 +88,8 @@ export interface HomeHeaderProps {
   bottomSpace?: number;
   /** Told how far the page has scrolled, on every scroll event: the bottom bar hides and shows from it. */
   onScrollY?: (offset: number) => void;
+  /** The words on the "Back to top" pill that shows once the page is scrolled a good way down. */
+  backToTopLabel: string;
   /** The page under the header. It scrolls, and the header folds as it does. */
   children: ReactNode;
 }
@@ -160,6 +164,7 @@ export function HomeHeader({
   onProfilePress,
   bottomSpace = 0,
   onScrollY,
+  backToTopLabel,
   children,
 }: HomeHeaderProps) {
   const insets = useSafeAreaInsets();
@@ -175,6 +180,8 @@ export function HomeHeader({
   const scrollRef = useRef<ScrollView>(null);
   const shownCategory = useRef(selectedCategory);
   const [scrollY] = useState(() => new Animated.Value(0));
+  // Whether the page is far enough down for the "Back to top" pill.
+  const [farDown, setFarDown] = useState(false);
   // How tall the two pieces are, measured, so the page can start below them and the upper part knows how far to travel.
   const [topHeight, setTopHeight] = useState(0);
   const [lowerHeight, setLowerHeight] = useState(0);
@@ -300,6 +307,8 @@ export function HomeHeader({
           useNativeDriver: true,
           listener: (event: NativeSyntheticEvent<NativeScrollEvent>) => {
             onScrollY?.(event.nativeEvent.contentOffset.y);
+            const offset = event.nativeEvent.contentOffset.y;
+            setFarDown((was) => jumpVisible(offset, was));
           },
         })}
         // The page starts below the header as it is when fully open.
@@ -431,6 +440,16 @@ export function HomeHeader({
           </View>
         </Animated.View>
       </Animated.View>
+
+      {/* Under the search bar and tabs, which stay pinned at the top once the page has scrolled. */}
+      <JumpToTop
+        visible={farDown}
+        onPress={() => {
+          scrollRef.current?.scrollTo({ y: 0, animated: !reduceMotion });
+        }}
+        label={backToTopLabel}
+        top={insets.top + lowerHeight + space[2]}
+      />
     </View>
   );
 }

@@ -1,3 +1,4 @@
+import { shownPrice } from './entryPrice';
 /**
  * Sorting and narrowing a category screen's items. Plain functions over the fields an item already has, so they are tested without a
  * screen and will work the same over the API's items.
@@ -30,6 +31,8 @@ export const NO_FILTERS: CategoryFilters = {
 export interface Browsable {
   /** The price of the pack the card shows, in paise. */
   price: number;
+  /** What one press of ADD costs, when that differs from `price` (a loose item priced by the kilogram). */
+  entryPrice?: number | undefined;
   /** What it would have cost; the saving is the difference when it is more than the price. */
   mrp?: number | undefined;
   diet: { kind: 'veg' | 'nonveg' };
@@ -60,7 +63,7 @@ export function applyFilters<T extends Browsable>(
     for (const [facet, picked] of chosen) {
       if (!read(item, facet).some((value) => picked.includes(value))) return false;
     }
-    if (filters.maxPrice !== null && item.price > filters.maxPrice) return false;
+    if (filters.maxPrice !== null && shownPrice(item) > filters.maxPrice) return false;
     if (filters.diet !== null && item.diet.kind !== filters.diet) return false;
     if (filters.offersOnly && !isOnOffer(item)) return false;
     return true;
@@ -76,9 +79,9 @@ export function sortItems<T extends Browsable>(items: readonly T[], key: SortKey
   const compare = (a: T, b: T): number => {
     switch (key) {
       case 'priceLow':
-        return a.price - b.price;
+        return shownPrice(a) - shownPrice(b);
       case 'priceHigh':
-        return b.price - a.price;
+        return shownPrice(b) - shownPrice(a);
       case 'saving':
         return savingOf(b) - savingOf(a);
       case 'relevance':

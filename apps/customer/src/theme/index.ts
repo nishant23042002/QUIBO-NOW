@@ -9,4 +9,4 @@ export {
   type Scheme,
   type ThemeColors,
 } from './palette';
-export { MomentTheme, ThemeProvider, useStyles, useTheme } from './ThemeProvider';
+export { MomentTheme, ThemeProvider, TintTheme, useStyles, useTheme } from './ThemeProvider';

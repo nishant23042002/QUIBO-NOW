@@ -84,15 +84,16 @@ export const ItemTile = memo(function ItemTile({
       name={item.fullName}
       pack={
         compare !== undefined
-          ? `${item.pack} \u00B7 ${compare.label}`
+          ? `${item.entryPack} \u00B7 ${compare.label}`
           : item.sizesLabel === undefined
-            ? item.pack
-            : `${item.pack} \u00B7 ${item.sizesLabel}`
+            ? item.entryPack
+            : `${item.entryPack} \u00B7 ${item.sizesLabel}`
       }
       {...(compare?.better === true ? { packAccent: true } : {})}
-      price={item.price}
-      {...(item.mrp !== undefined ? { mrp: item.mrp } : {})}
-      {...(item.ribbon !== undefined ? { ribbon: item.ribbon } : {})}
+      // The price of what ADD puts in the cart (half a kilogram of a loose item), with the price per kilogram in the pack line.
+      price={item.entryPrice}
+      {...(item.entryMrp !== undefined ? { mrp: item.entryMrp } : {})}
+      {...(item.entryRibbon !== undefined ? { ribbon: item.entryRibbon } : {})}
       {...(item.quick === true ? { quickLabel: when.short } : {})}
       diet={item.diet}
       {...(item.stock !== undefined ? { stock: item.stock } : {})}

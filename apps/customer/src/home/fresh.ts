@@ -1,3 +1,4 @@
+import { shownPrice } from './entryPrice';
 import type { ItemCategory } from './items';
 
 /** The tabs of "Fresh today" (ADR 0055, step 3), in order. */
@@ -32,6 +33,7 @@ interface FreshCandidate {
   type: string;
   category: ItemCategory;
   price: number;
+  entryPrice?: number;
   stock?: { kind: 'out' | 'low' };
 }
 
@@ -45,8 +47,8 @@ export function freshItems<T extends FreshCandidate>(tab: FreshTabId, items: rea
   switch (tab) {
     case 'under':
       picked = available
-        .filter((item) => item.price <= UNDER_LIMIT)
-        .sort((a, b) => a.price - b.price);
+        .filter((item) => shownPrice(item) <= UNDER_LIMIT)
+        .sort((a, b) => shownPrice(a) - shownPrice(b));
       break;
     case 'veg':
       picked = available.filter((item) => item.category === 'vegetables');

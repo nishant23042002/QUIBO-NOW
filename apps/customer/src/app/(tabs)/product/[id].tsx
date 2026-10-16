@@ -4,7 +4,7 @@ import { BackHandler, Platform, StyleSheet, View } from 'react-native';
 import { useHomeItems } from '@/home/items';
 import { ProductView } from '@/home/ProductView';
 import { useLanguage } from '@/i18n/LanguageProvider';
-import { AppHeader, BOTTOM_BAR_HEIGHT, StatePanel } from '@/ui';
+import { AppHeader, BOTTOM_BAR_HEIGHT, StatePanel, useLastParam } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
@@ -19,7 +19,9 @@ const styles = StyleSheet.create({
  * from "More from this shop"), and back steps through them before it leaves the page.
  */
 export default function ProductScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string }>();
+  // Kept while the screen slides away, so going back never flashes the "not found" page.
+  const id = useLastParam(params.id);
   const { t } = useLanguage();
   const router = useRouter();
   const item = useHomeItems().find((candidate) => candidate.id === id);

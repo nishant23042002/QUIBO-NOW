@@ -85,3 +85,15 @@ describe('pickUnder', () => {
     expect(items.map((i) => i.id)).toEqual(before);
   });
 });
+
+describe('pickUnder with a loose item', () => {
+  it('places an item by what one press of ADD costs, not by its price per kilogram', () => {
+    // Tomato: ₹42 a kilogram, ₹21 for the half kilogram ADD puts in.
+    const tomato = { id: 'tomato', price: 4200, entryPrice: 2100 };
+    const atta = item('atta', 3900);
+    expect(pickUnder([tomato, atta], 3000).map((entry) => entry.id)).toEqual(['tomato']);
+    expect(pickUnder([tomato, atta], 5000, { above: 3000 }).map((entry) => entry.id)).toEqual([
+      'atta',
+    ]);
+  });
+});

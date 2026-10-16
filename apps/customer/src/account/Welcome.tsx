@@ -1,3 +1,4 @@
+import { NavigationBar } from 'expo-navigation-bar';
 import { useEffect, useState } from 'react';
 import { Animated, Easing, Platform, StyleSheet, View } from 'react-native';
 import { useLanguage } from '@/i18n/LanguageProvider';
@@ -96,6 +97,8 @@ export function Welcome({ onDone }: { onDone: () => void }) {
       aria-label={t('firstRun.welcome')}
       role="alert"
     >
+      {/* Light navigation buttons on this deep colour; the page's own come back when it fades away. */}
+      <NavigationBar style="light" />
       <Animated.View style={rise}>
         <LogoStacked width={180} ground="chrome" label={t('app.name')} />
       </Animated.View>

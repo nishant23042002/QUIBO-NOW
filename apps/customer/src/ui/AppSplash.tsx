@@ -1,3 +1,4 @@
+import { NavigationBar } from 'expo-navigation-bar';
 import { SplashScreen } from 'expo-router';
 import { useEffect, useState, type ReactNode } from 'react';
 import {
@@ -12,7 +13,7 @@ import {
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { palettes } from '@/theme';
 import { LogoStacked } from './brand/Logo';
-import { SPLASH_FADE_MS, splashMinimumMs, splashPhase } from './logic/splash';
+import { SPLASH_FADE_MS, SPLASH_SETTLE_MS, splashMinimumMs, splashPhase } from './logic/splash';
 import { Text } from './Text';
 import { radius, space } from './tokens';
 
@@ -72,6 +73,9 @@ export function AppSplash({ ready, children, fact }: AppSplashProps) {
   const { t } = useLanguage();
   const [reduceMotion, setReduceMotion] = useState<boolean | null>(null);
   const [minimumElapsed, setMinimumElapsed] = useState(false);
+  // The app is drawn under the splash from the moment it is ready; its first screen shows a skeleton for a short while, which the
+  // splash must not fade onto.
+  const [settled, setSettled] = useState(false);
   const [gone, setGone] = useState(false);
   const [logo] = useState(() => new Animated.Value(0));
   const [tagline] = useState(() => new Animated.Value(0));
@@ -128,7 +132,17 @@ export function AppSplash({ ready, children, fact }: AppSplashProps) {
     }).start();
   }, [reduceMotion, ready, tagline]);
 
-  const phase = splashPhase({ appReady: ready, minimumElapsed });
+  useEffect(() => {
+    if (!ready) return undefined;
+    const timer = setTimeout(() => {
+      setSettled(true);
+    }, SPLASH_SETTLE_MS);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [ready]);
+
+  const phase = splashPhase({ appReady: ready, minimumElapsed, settled });
   useEffect(() => {
     if (phase !== 'leaving' || reduceMotion === null) return;
     Animated.timing(fade, {
@@ -164,6 +178,8 @@ export function AppSplash({ ready, children, fact }: AppSplashProps) {
           style={[StyleSheet.absoluteFill, styles.splash, { opacity: fade }]}
           onLayout={hideNativeSplash}
         >
+          {/* The navigation buttons are light while this deep colour is up, and go back to the page's own when it is gone. */}
+          <NavigationBar style="light" />
           <Animated.View style={logoStyle}>
             <LogoStacked width={220} ground="chrome" label={t('app.name')} />
           </Animated.View>

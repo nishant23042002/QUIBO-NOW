@@ -1,11 +1,11 @@
 import type { MessageKey } from '@quibo/i18n';
 import { useRouter } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useOnline } from '@/network';
-import { useStyles, useTheme, type ThemeColors } from '@/theme';
+import { TintTheme, useStyles, useTheme, type ThemeColors } from '@/theme';
 import {
   BOTTOM_BAR_HEIGHT,
   Button,
@@ -20,7 +20,9 @@ import {
   gridCardWidth,
   mixColor,
   space,
-  useChromeScroll,
+  JumpToTop,
+  VerticalFade,
+  useJumpToTop,
 } from '@/ui';
 import { CART_ROOM, CartLayer } from './CartLayer';
 import { useCart } from './CartProvider';
@@ -55,12 +57,18 @@ const GUTTER = space[3];
 const GAP = space[2];
 /** How many cards of the grid the skeleton draws: enough to fill a screen and a little over. */
 const SKELETON_CARDS = 6;
+/** How far down the header's colour fades into the page. */
+const FADE = 140;
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
     page: { flex: 1, backgroundColor: c.bg },
     body: { flex: 1, flexDirection: 'row' },
+    // No edge between the rail and the grid: they are one surface, and the rail's own pictures say where it ends.
     right: { flex: 1, minWidth: 0 },
+    // Under the rail and the grid, from the header's colour at the top to the page's colour: no seam under the header.
+    fade: { position: 'absolute', top: 0, left: 0, right: 0, height: FADE },
+    scrollArea: { flex: 1 },
     gutter: { paddingHorizontal: GUTTER },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: GAP, paddingHorizontal: GUTTER },
     empty: { alignItems: 'center', gap: space[2], paddingVertical: space[8] },
@@ -93,7 +101,7 @@ function optionLabel(
  * items in a two-column grid on the category's own colour. Choosing a kind in the rail narrows the grid. Every brand of a kind is
  * listed here (Home lists one), because this is where a shopper compares. The cart bar and the bottom bar work as on Home.
  */
-export function CategoryView({
+function CategoryScreen({
   main,
   initialSub,
 }: {
@@ -105,7 +113,8 @@ export function CategoryView({
   const router = useRouter();
   const { colors } = useTheme();
   const styles = useStyles(makeStyles);
-  const chromeScroll = useChromeScroll();
+  const jumper = useJumpToTop();
+  const listTop = jumper.ref;
   const insets = useSafeAreaInsets();
   const { width: screen } = useWindowDimensions();
   const cart = useCart();
@@ -113,7 +122,6 @@ export function CategoryView({
   const when = useDeliveryWhen();
   const items = useHomeItems();
   const [loaded, setLoaded] = useState(false);
-  const scroller = useRef<ScrollView>(null);
 
   const subs = subsWithItems(items, main);
   const startSub = subs.find((sub) => sub.id === initialSub)?.id ?? null;
@@ -168,11 +176,13 @@ export function CategoryView({
 
   // A kind chosen in the rail shows from the top of its list.
   useEffect(() => {
-    scroller.current?.scrollTo({ y: 0, animated: false });
-  }, [chosen, sort, filters]);
+    listTop.current?.scrollTo({ y: 0, animated: false });
+  }, [chosen, sort, filters, listTop]);
 
-  // The right-hand side wears the category's colour, lightened so the pictures (which sit on the full tint) stand out from it.
-  const wash = mixColor(tintColor(colors, main.tint), colors.bg, 0.55);
+  // The header wears the category's colour and fades into the page's under it, so header, rail and grid read as one surface. The
+  // chosen kind's bar and ring take a deeper shade of the same colour.
+  const tint = colors.headerBg;
+  const accent = mixColor(tint, colors.ink, 0.55);
   // The grid fills what the rail leaves, with a gutter on each side and a gap between the two cards.
   const cardWidth = gridCardWidth(screen - SUB_RAIL_WIDTH, {
     columns: 2,
@@ -184,6 +194,9 @@ export function CategoryView({
   return (
     <View style={styles.page}>
       <CategoryHeader
+        // The category's picture is always in the header here, not only once the page is scrolled.
+        thumb={{ emoji: main.emoji }}
+        thumbShown
         title={t(main.label)}
         subtitle={when.headline}
         backLabel={t('common.back')}
@@ -198,8 +211,17 @@ export function CategoryView({
         }}
       />
       <View style={styles.body}>
+        <View style={styles.fade} pointerEvents="none">
+          <VerticalFade
+            stops={[
+              { color: tint, at: 0 },
+              { color: colors.bg, at: 1 },
+            ]}
+          />
+        </View>
         {/* The rail is the page's own as soon as it opens: what the kinds are is known before the items arrive. */}
         <SubCategoryRail
+          accent={accent}
           label={t('catalogue.rail')}
           selected={chosen}
           onSelect={setChosen}
@@ -208,7 +230,7 @@ export function CategoryView({
             ...subs.map((sub) => ({ id: sub.id, label: t(sub.label), emoji: sub.emoji })),
           ]}
         />
-        <View style={[styles.right, { backgroundColor: wash }]}>
+        <View style={styles.right}>
           {/* So is the toolbar: its buttons are the category's, whatever the grid under it is doing. */}
           <CategoryToolbar
             items={ofKind}
@@ -219,76 +241,92 @@ export function CategoryView({
             filters={applied}
             onFiltersChange={setFilters}
           />
-          <ScrollView
-            ref={scroller}
-            {...chromeScroll}
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{
-              paddingTop: space[3],
-              paddingBottom:
-                insets.bottom + BOTTOM_BAR_HEIGHT + space[6] + (cart.count > 0 ? CART_ROOM : 0),
-            }}
-          >
-            {online ? null : (
-              <View style={[styles.gutter, { paddingBottom: space[3] }]}>
-                <Notice tone="warning" icon="wifiOff" message={t('state.offline.banner')} />
-              </View>
-            )}
-            {!loaded ? (
-              <SkeletonScope label={t('common.loading')}>
+          <View style={styles.scrollArea}>
+            <ScrollView
+              {...jumper.scrollProps}
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                paddingTop: space[3],
+                paddingBottom:
+                  insets.bottom + BOTTOM_BAR_HEIGHT + space[6] + (cart.count > 0 ? CART_ROOM : 0),
+              }}
+            >
+              {online ? null : (
+                <View style={[styles.gutter, { paddingBottom: space[3] }]}>
+                  <Notice tone="warning" icon="wifiOff" message={t('state.offline.banner')} />
+                </View>
+              )}
+              {!loaded ? (
+                <SkeletonScope label={t('common.loading')}>
+                  <View style={styles.grid}>
+                    {/* The cards the grid will start with, each as tall as its real one: its name's lines and its extra line. */}
+                    {(shown.length > 0
+                      ? shown.slice(0, SKELETON_CARDS)
+                      : Array.from({ length: SKELETON_CARDS }, () => undefined)
+                    ).map((item, index) => (
+                      <ProductCardSkeleton
+                        key={item?.id ?? index}
+                        width={cardWidth}
+                        reserveNote={note}
+                        {...(item !== undefined ? { content: rowCardContent([item]).content } : {})}
+                      />
+                    ))}
+                  </View>
+                </SkeletonScope>
+              ) : filtered ? (
+                <View style={[styles.empty, styles.gutter]}>
+                  <Icon name="search" color={colors.inkMuted} size={40} />
+                  <Text variant="heading" align="center">
+                    {t('catalogue.filters.noMatch.title')}
+                  </Text>
+                  <Text color="inkMuted" align="center">
+                    {t('catalogue.filters.noMatch.body')}
+                  </Text>
+                  <Button
+                    variant="secondary"
+                    label={t('catalogue.filters.noMatch.clear')}
+                    onPress={() => {
+                      setFilters(NO_FILTERS);
+                    }}
+                  />
+                </View>
+              ) : shown.length === 0 ? (
+                <View style={[styles.empty, styles.gutter]}>
+                  <Icon name="store" color={colors.inkMuted} size={40} />
+                  <Text variant="heading" align="center">
+                    {t('catalogue.empty.title')}
+                  </Text>
+                  <Text color="inkMuted" align="center">
+                    {t('catalogue.empty.body')}
+                  </Text>
+                </View>
+              ) : (
                 <View style={styles.grid}>
-                  {/* The cards the grid will start with, each as tall as its real one: its name's lines and its extra line. */}
-                  {(shown.length > 0
-                    ? shown.slice(0, SKELETON_CARDS)
-                    : Array.from({ length: SKELETON_CARDS }, () => undefined)
-                  ).map((item, index) => (
-                    <ProductCardSkeleton
-                      key={item?.id ?? index}
-                      width={cardWidth}
-                      reserveNote={note}
-                      {...(item !== undefined ? { content: rowCardContent([item]).content } : {})}
-                    />
+                  {shown.map((item) => (
+                    <ItemTile key={item.id} item={item} width={cardWidth} reserveNote={note} />
                   ))}
                 </View>
-              </SkeletonScope>
-            ) : filtered ? (
-              <View style={[styles.empty, styles.gutter]}>
-                <Icon name="search" color={colors.inkMuted} size={40} />
-                <Text variant="heading" align="center">
-                  {t('catalogue.filters.noMatch.title')}
-                </Text>
-                <Text color="inkMuted" align="center">
-                  {t('catalogue.filters.noMatch.body')}
-                </Text>
-                <Button
-                  variant="secondary"
-                  label={t('catalogue.filters.noMatch.clear')}
-                  onPress={() => {
-                    setFilters(NO_FILTERS);
-                  }}
-                />
-              </View>
-            ) : shown.length === 0 ? (
-              <View style={[styles.empty, styles.gutter]}>
-                <Icon name="store" color={colors.inkMuted} size={40} />
-                <Text variant="heading" align="center">
-                  {t('catalogue.empty.title')}
-                </Text>
-                <Text color="inkMuted" align="center">
-                  {t('catalogue.empty.body')}
-                </Text>
-              </View>
-            ) : (
-              <View style={styles.grid}>
-                {shown.map((item) => (
-                  <ItemTile key={item.id} item={item} width={cardWidth} reserveNote={note} />
-                ))}
-              </View>
-            )}
-          </ScrollView>
+              )}
+            </ScrollView>
+            <JumpToTop
+              visible={jumper.visible}
+              onPress={jumper.toTop}
+              label={t('common.backToTop')}
+            />
+          </View>
         </View>
       </View>
       <CartLayer follow bottom={insets.bottom + BOTTOM_BAR_HEIGHT} />
     </View>
+  );
+}
+
+/** The category's own screen, with its header in the category's colour. */
+export function CategoryView({ main, initialSub }: { main: MainCategory; initialSub?: string }) {
+  const { colors } = useTheme();
+  return (
+    <TintTheme tint={tintColor(colors, main.tint)}>
+      <CategoryScreen main={main} {...(initialSub !== undefined ? { initialSub } : {})} />
+    </TintTheme>
   );
 }

@@ -4,7 +4,7 @@ import { useShop } from '@/home/sampleShops';
 import { ShopView } from '@/home/ShopView';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { AppHeader, BOTTOM_BAR_HEIGHT, Button, Icon, Text, space } from '@/ui';
+import { AppHeader, BOTTOM_BAR_HEIGHT, Button, Icon, Text, space, useLastParam } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
@@ -20,7 +20,9 @@ const styles = StyleSheet.create({
 
 /** A shop's page. The shop is picked by the id in the address; an id that matches no shop gets a way back instead. */
 export default function ShopScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string }>();
+  // Kept while the screen slides away, so going back never flashes the "not found" page.
+  const id = useLastParam(params.id);
   const { t } = useLanguage();
   const { colors } = useTheme();
   const router = useRouter();

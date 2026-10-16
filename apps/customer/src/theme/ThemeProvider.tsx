@@ -98,6 +98,20 @@ export function MomentTheme({ id, children }: { id: MomentId; children: ReactNod
   return <ThemeContext value={value}>{children}</ThemeContext>;
 }
 
+/**
+ * Gives a screen's header one colour of its own (a category's tint) and nothing else: the header, the status bar behind it and
+ * whatever reads `headerBg` take `tint`, while text and controls keep the theme's, which already read on every tint.
+ */
+export function TintTheme({ tint, children }: { tint: string; children: ReactNode }) {
+  const parent = useTheme();
+  const value = useMemo<Theme>(
+    () => ({ ...parent, colors: { ...parent.colors, headerBg: tint, headerBgEnd: tint } }),
+    [parent, tint],
+  );
+
+  return <ThemeContext value={value}>{children}</ThemeContext>;
+}
+
 export function useTheme(): Theme {
   const theme = useContext(ThemeContext);
   if (theme === null) throw new Error('useTheme needs a <ThemeProvider> above it.');

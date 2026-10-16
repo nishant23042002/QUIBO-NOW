@@ -4,7 +4,7 @@ import { mainCategory } from '@/home/catalogueTree';
 import { CategoryView } from '@/home/CategoryView';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { AppHeader, BOTTOM_BAR_HEIGHT, Button, Icon, Text, space } from '@/ui';
+import { AppHeader, BOTTOM_BAR_HEIGHT, Button, Icon, Text, space, useLastParam } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
@@ -23,7 +23,10 @@ const styles = StyleSheet.create({
  * no category gets a way back to the Categories tab instead.
  */
 export default function CategoryScreen() {
-  const { id, sub } = useLocalSearchParams<{ id: string; sub?: string }>();
+  const params = useLocalSearchParams<{ id: string; sub?: string }>();
+  const { sub } = params;
+  // Kept while the screen slides away, so going back never flashes the "not found" page.
+  const id = useLastParam(params.id);
   const { t } = useLanguage();
   const { colors } = useTheme();
   const router = useRouter();

@@ -132,6 +132,7 @@ function ShopsHome() {
         }}
         // The bottom bar hides while the page is read and comes back on the way up.
         onScrollY={reportScroll}
+        backToTopLabel={t('common.backToTop')}
         // The floating cart bar covers the bottom of the page when it shows, so the page leaves room for it.
         bottomSpace={BOTTOM_BAR_HEIGHT + (cartCount > 0 ? CART_ROOM : 0)}
       >

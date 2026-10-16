@@ -12,6 +12,7 @@ import {
   type UnitKind,
 } from './packs';
 import { BRAND_MARK, BRAND_OF, OTHER_SHOPS, TYPE_OF, type BrandId } from './brands';
+import { entryShare } from './entryPrice';
 import { oneOfEachKind } from './product';
 
 /**
@@ -829,6 +830,15 @@ export interface HomeItem {
   price: Money;
   mrp?: Money;
   ribbon?: { amount: string; offLabel: string };
+  /**
+   * What one press of ADD puts in the cart, priced: the same as `price`, `mrp`, `ribbon` and `pack` for a piece, and for a loose item
+   * (priced by the kilogram) its half kilogram, so a card never shows more than the first press costs. `pack` of a loose item
+   * names the kilogram price too ("500 g · ₹42/kg").
+   */
+  entryPrice: Money;
+  entryMrp?: Money;
+  entryRibbon?: { amount: string; offLabel: string };
+  entryPack: string;
   quick?: true;
   stock?: { kind: 'out' | 'low'; label: string };
   /** The default pack's price per unit, as on `HomePack`. */
@@ -914,6 +924,17 @@ function buildHomeItems(t: Translate, samples: readonly Sample[]): readonly Home
     const first = packs[defaultPackIndex(packs)] ?? packs[0];
     // Every sample has at least its own pack, so this never happens; it keeps the types honest.
     if (first === undefined) throw new Error(`Item ${sample.id} has no packs`);
+    // What ADD puts in: a piece, or for a loose item half a kilogram of a price per kilogram.
+    const step = first.loose === true ? WEIGHT_RULE.min : 1;
+    const entryPrice = money(entryShare(Number(first.price), step));
+    const entryMrp =
+      first.mrp === undefined ? undefined : money(entryShare(Number(first.mrp), step));
+    const entrySaving =
+      entryMrp !== undefined && entryMrp > entryPrice ? subtract(entryMrp, entryPrice) : undefined;
+    const entryPack =
+      first.loose === true
+        ? `${t('home.units.g', { n: WEIGHT_RULE.min * 1000 })} \u00B7 ${t('weights.cartLine', { price: formatRupees(first.price) })}`
+        : first.label;
     const brandId = BRAND_OF[sample.id];
     const brandName = brandId === undefined ? undefined : t(`brands.${brandId}`);
     const name = t(`home.items.${sample.id}`);
@@ -948,6 +969,12 @@ function buildHomeItems(t: Translate, samples: readonly Sample[]): readonly Home
       price: first.price,
       ...(first.mrp !== undefined ? { mrp: first.mrp } : {}),
       ...(first.ribbon !== undefined ? { ribbon: first.ribbon } : {}),
+      entryPrice,
+      ...(entryMrp !== undefined ? { entryMrp } : {}),
+      ...(entrySaving !== undefined
+        ? { entryRibbon: { amount: formatRupees(entrySaving), offLabel: t('home.rails.off') } }
+        : {}),
+      entryPack,
       ...(first.quick === true ? { quick: true as const } : {}),
       ...(first.stock !== undefined ? { stock: first.stock } : {}),
       ...(first.unit !== undefined ? { unit: first.unit } : {}),

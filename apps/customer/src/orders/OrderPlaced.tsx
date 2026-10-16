@@ -1,3 +1,4 @@
+import { NavigationBar } from 'expo-navigation-bar';
 import { useRouter } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Animated, Easing, Platform, Pressable, StyleSheet, View } from 'react-native';
@@ -132,6 +133,8 @@ export function OrderPlaced({ order, onDone }: { order: Order; onDone: () => voi
       aria-label={`${t('placed.title')}. ${heading}. ${packing}`}
       role="alert"
     >
+      {/* This colour is light in both themes, so the navigation buttons are dark on it. */}
+      <NavigationBar style="dark" />
       {/* A tap anywhere moves on at once. */}
       <Pressable
         accessible={false}

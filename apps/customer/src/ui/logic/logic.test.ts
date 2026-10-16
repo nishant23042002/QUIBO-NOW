@@ -4,7 +4,7 @@ import { gridCardWidth } from './grid';
 import { initialOf } from './initial';
 import { freeDeliveryProgress } from './money';
 import { COUNT_RULE, WEIGHT_RULE, countRule, formatQuantity, stepQuantity } from './quantity';
-import { SPLASH_FADE_MS, splashMinimumMs, splashPhase } from './splash';
+import { SPLASH_FADE_MS, SPLASH_SETTLE_MS, splashMinimumMs, splashPhase } from './splash';
 
 describe('stepQuantity', () => {
   it('adds an item from nothing at the minimum, 1 for a count and 0.5 kg for loose weight', () => {
@@ -95,10 +95,13 @@ describe('initialOf', () => {
 
 describe('splash timing', () => {
   it('holds until the app is ready and the minimum time is up, then leaves', () => {
-    expect(splashPhase({ appReady: false, minimumElapsed: false })).toBe('holding');
-    expect(splashPhase({ appReady: true, minimumElapsed: false })).toBe('holding');
-    expect(splashPhase({ appReady: false, minimumElapsed: true })).toBe('holding');
-    expect(splashPhase({ appReady: true, minimumElapsed: true })).toBe('leaving');
+    expect(splashPhase({ appReady: false, minimumElapsed: false, settled: false })).toBe('holding');
+    expect(splashPhase({ appReady: true, minimumElapsed: false, settled: true })).toBe('holding');
+    expect(splashPhase({ appReady: false, minimumElapsed: true, settled: true })).toBe('holding');
+    // Ready and seen, but the first screen is still drawing its skeleton: keep covering it.
+    expect(splashPhase({ appReady: true, minimumElapsed: true, settled: false })).toBe('holding');
+    expect(splashPhase({ appReady: true, minimumElapsed: true, settled: true })).toBe('leaving');
+    expect(SPLASH_SETTLE_MS).toBeGreaterThanOrEqual(350);
   });
 
   it('is shorter with reduce motion, and long enough to see the logo without it', () => {

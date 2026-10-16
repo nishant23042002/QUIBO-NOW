@@ -4,7 +4,7 @@ import { need as needById } from '@/home/needs';
 import { NeedView } from '@/home/NeedView';
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { useTheme } from '@/theme';
-import { BOTTOM_BAR_HEIGHT, Button, CategoryHeader, Icon, Text, space } from '@/ui';
+import { BOTTOM_BAR_HEIGHT, Button, CategoryHeader, Icon, Text, space, useLastParam } from '@/ui';
 
 const styles = StyleSheet.create({
   page: { flex: 1 },
@@ -20,7 +20,9 @@ const styles = StyleSheet.create({
 
 /** A need's page, picked by the id in the address. An id that matches no need gets a way back to Home instead. */
 export default function NeedScreen() {
-  const { id } = useLocalSearchParams<{ id: string }>();
+  const params = useLocalSearchParams<{ id: string }>();
+  // Kept while the screen slides away, so going back never flashes the "not found" page.
+  const id = useLastParam(params.id);
   const { t } = useLanguage();
   const { colors } = useTheme();
   const router = useRouter();
