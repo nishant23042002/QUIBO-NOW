@@ -97,6 +97,17 @@ export function useHasItems(): boolean {
   return useSyncExternalStore(store.subscribe, store.hasItems);
 }
 
+/**
+ * Whether the cart bar is on screen: it leaves in the frame the last item is taken out (the press says so), but only comes up once
+ * the cart has been worked out and holds the item, so it never slides up showing "0 items, ₹0" and then fills in. Notes that rest
+ * above the bar use this too, so they move with it.
+ */
+export function useCartBarShown(): boolean {
+  const pressed = useHasItems();
+  const settled = useCartCount();
+  return pressed && settled > 0;
+}
+
 /** How many items are in the cart. Only a change to the count redraws the reader. */
 export function useCartCount(): number {
   const store = useStore();

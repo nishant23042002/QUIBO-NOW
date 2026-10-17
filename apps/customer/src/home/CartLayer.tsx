@@ -17,7 +17,7 @@ import {
   useReduceMotion,
   type CartThumb,
 } from '@/ui';
-import { useCart, useHasItems } from './CartProvider';
+import { useCart, useCartBarShown } from './CartProvider';
 import { useTintOf } from './categories';
 
 /** About the height of the docked cart bar: how much room a page keeps under its last row while the bar shows. */
@@ -38,7 +38,7 @@ const MAX_THUMBS = 3;
 function useLiftAboveCart(follow: boolean): Animated.AnimatedNode | undefined {
   const reduceMotion = useReduceMotion();
   const hide = useChromeProgress();
-  const filled = useHasItems();
+  const filled = useCartBarShown();
   const [bar] = useState(() => new Animated.Value(filled ? 1 : 0));
 
   // 0 with an empty cart, 1 with something in it, eased so a note does not jump when the first item comes or the last one goes.
@@ -95,7 +95,7 @@ export function UndoToast({
   const { t } = useLanguage();
   const cart = useCart();
   const shift = useLiftAboveCart(follow);
-  const filled = useHasItems();
+  const filled = useCartBarShown();
   // Every screen that is still mounted has a copy of this note; only the one the navigator says is in front shows it, so a
   // removal is told once. (`useIsFocused` is right from the first draw, including for a tab that was built in the background.)
   const focused = useIsFocused();
@@ -236,7 +236,7 @@ function FreeDeliveryPop({
     };
   }, [visible, reduceMotion, show, burst]);
 
-  const filled = useHasItems();
+  const filled = useCartBarShown();
 
   return (
     <Animated.View
@@ -319,8 +319,8 @@ export function CartLayer({ bottom, follow = false }: { bottom: number; follow?:
   const cart = useCart();
   const tintOf = useTintOf();
   const router = useRouter();
-  // Whether the bar shows follows the press itself, so it comes up in the frame the control changes, not after the cart is worked out.
-  const filled = useHasItems();
+  // The bar comes up once the cart has been worked out and holds the item, never showing "0 items, ₹0" first (see `useCartBarShown`).
+  const filled = useCartBarShown();
 
   const room = cart.lines.length > MAX_THUMBS ? MAX_THUMBS - 1 : cart.lines.length;
   const thumbs: CartThumb[] = cart.lines

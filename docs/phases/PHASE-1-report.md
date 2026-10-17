@@ -103,3 +103,33 @@ loading, empty, error and offline state on each screen.
 - Parked and for later: `docs/phases/PHASE-1-notes.md`.
 - Wording for review: `docs/phases/PHASE-1-language-review.md`, made by `node scripts/language-review.mjs`.
 - Test flows: `apps/customer/.maestro/`.
+
+## 8. Update, 2026-10-17: what changed since this report, and where the gate stands
+
+**Built since (all on branch `phase-1/customer-ui`, plans in `PHASE-1-moments-plan.md`, `PHASE-1-home-cleanup-plan.md`, ADR 0058):**
+
+- Four moment pages (Tea Break, Breakfast Ready, Cook Today, Movie Night), each in its own colours, with jump chips, a shelf for each
+  kind with every brand, and a "coming soon" row with Notify me; a wider sample catalogue to fill them.
+- The Home clean-up: one "Picks for your routine" mosaic, lighter borders, Small prices on the standard card, bigger card names,
+  compact Featured, and Know your shop in one container.
+- Category screens in the category's colour, header pictures that slide in beside the title, a small "Back to top" pill, and two
+  independently scrolling Trending rows.
+- Loose items (tomato, potato) priced by what ADD puts in (half a kilogram), with the per-kilogram price beside it, on cards, in the
+  price rules and in Daily essentials.
+- Calmer transitions: the splash waits for the first screen, the in-between card sits in front from the first frame and fades out,
+  a leaving screen no longer flashes "not found", the splash logo stays put.
+
+**The gate, machine-checked on 2026-10-17:** lint and format pass; typecheck passes (9 of 9 packages); unit tests pass (customer 775,
+contracts 200, i18n 30, config 16, mocks 11); the Android export builds (4.6 MB bundle). No blocker or major defect is open in
+`PHASE-1-defects.md` (M1, the Categories tab, was fixed and is awaiting a phone check).
+
+**The gate, not yet checked, because it needs a phone or people:** the Maestro flows (`category.yaml`, `moment.yaml` and the rest; the
+tool is not installed on this machine), a TalkBack pass, a cold start on a low-end phone, the native-speaker review of the Hindi and
+Marathi (every string added since is a draft), and the people test.
+
+**One limit worth knowing:** the strip behind the phone's navigation buttons cannot take the splash colour in Expo Go, because
+Android draws a contrast scrim there and Expo's navigation-bar library can no longer set the bar's colour from code. The build-time
+setting (`enforceContrast: false`) is already in `app.json`; check it with `npx expo run:android` (a development build).
+
+**Still open, smaller:** tea leaves, besan and cold drinks are not in the sample catalogue; the seven new kinds have no
+product-page text or nutrition; the product page deliberately keeps "price per kg" for loose items.

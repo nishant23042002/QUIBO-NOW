@@ -135,7 +135,9 @@ const EssentialRow = memo(function EssentialRow({
   const { colors } = useTheme();
   const tintOf = useTintOf();
   const inCart = useQuantity(item.defaultPackId);
-  const mrp = item.mrp !== undefined && item.mrp > item.price ? item.mrp : undefined;
+  // The price of what ticking adds (half a kilogram of a loose item), with the price per kilogram in the pack line.
+  const mrp =
+    item.entryMrp !== undefined && item.entryMrp > item.entryPrice ? item.entryMrp : undefined;
   const left = essentialLeft(item);
   const open = () => {
     router.push({ pathname: '/product/[id]', params: { id: item.id } });
@@ -148,8 +150,8 @@ const EssentialRow = memo(function EssentialRow({
           role="button"
           aria-label={[
             item.fullName,
-            item.pack,
-            formatRupees(item.price),
+            item.entryPack,
+            formatRupees(item.entryPrice),
             t('home.essentials.inCart', { count: inCart }),
           ].join('. ')}
           onPress={open}
@@ -181,11 +183,11 @@ const EssentialRow = memo(function EssentialRow({
             </Text>
             <View style={styles.priceInline}>
               <Text variant="strong" tight numberOfLines={1}>
-                {formatRupees(item.price)}
+                {formatRupees(item.entryPrice)}
               </Text>
               <View style={styles.pack}>
                 <Text variant="fine" tight color="inkMuted" numberOfLines={1}>
-                  {`· ${item.pack}`}
+                  {`· ${item.entryPack}`}
                 </Text>
               </View>
             </View>
@@ -202,8 +204,8 @@ const EssentialRow = memo(function EssentialRow({
       aria-checked={ticked}
       aria-label={[
         item.fullName,
-        item.pack,
-        formatRupees(item.price) + (mrp !== undefined ? `, was ${formatRupees(mrp)}` : ''),
+        item.entryPack,
+        formatRupees(item.entryPrice) + (mrp !== undefined ? `, was ${formatRupees(mrp)}` : ''),
         left !== undefined ? item.stock?.label : undefined,
       ]
         .filter((part) => part !== undefined)
@@ -249,7 +251,7 @@ const EssentialRow = memo(function EssentialRow({
         <View style={styles.packLine}>
           <View style={styles.pack}>
             <Text variant="fine" tight color="inkMuted" numberOfLines={1}>
-              {item.pack}
+              {item.entryPack}
             </Text>
           </View>
           {left !== undefined ? (
@@ -261,7 +263,7 @@ const EssentialRow = memo(function EssentialRow({
       </View>
       <View style={styles.price}>
         <Text variant="strong" tight numberOfLines={1}>
-          {formatRupees(item.price)}
+          {formatRupees(item.entryPrice)}
         </Text>
         {mrp !== undefined ? (
           <Text variant="fine" tight color="inkMuted" strike numberOfLines={1}>

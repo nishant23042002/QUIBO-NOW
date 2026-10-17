@@ -34,33 +34,26 @@ export interface AppSplashProps {
 // light header colour (not the live theme) keeps it from flickering when the saved theme loads.
 const SPLASH_BACKGROUND = palettes.light.chrome;
 
-/** The logo's width, and half its height: the words under it start this far below the middle of the screen. */
+/** The logo's width and height. */
 const LOGO_WIDTH = 220;
-const LOGO_HALF_HEIGHT = Math.round((LOGO_WIDTH * SIZE.stacked.height) / SIZE.stacked.width / 2);
+const LOGO_HEIGHT = Math.round((LOGO_WIDTH * SIZE.stacked.height) / SIZE.stacked.width);
 
 // The web preview has no native animation module; phones do, and run the fade on the UI thread.
 const NATIVE_DRIVER = Platform.OS !== 'web';
 
 const styles = StyleSheet.create({
   root: { flex: 1 },
+  // A column of three: an empty top half, the logo, and a bottom half that holds the tagline and the fact pill. The two halves are
+  // equal (flex 1 from nothing), so the logo is always exactly in the middle of the screen, and what sits in the bottom half starts
+  // right under the logo and cannot move it or overlap it, whatever arrives or when.
   splash: {
     backgroundColor: SPLASH_BACKGROUND,
     alignItems: 'center',
-    justifyContent: 'center',
-    padding: space[8],
-  },
-  // The tagline and the fact pill hang under the logo from a fixed place. The logo alone is centred, so it never moves when the
-  // tagline or the pill arrives (centring them all together made the logo climb as each one appeared).
-  below: {
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    top: '50%',
-    marginTop: LOGO_HALF_HEIGHT + space[5],
-    alignItems: 'center',
-    gap: space[5],
     paddingHorizontal: space[8],
   },
+  // Both halves carry the same top padding, so the gap under the logo does not pull it off the middle.
+  half: { flex: 1, paddingTop: space[5] },
+  below: { flex: 1, alignItems: 'center', paddingTop: space[5], gap: space[4] },
   // The fact pill under the tagline: a lighter aubergine, so it reads as a small label on the brand ground.
   fact: {
     flexDirection: 'row',
@@ -196,7 +189,8 @@ export function AppSplash({ ready, children, fact }: AppSplashProps) {
         >
           {/* The navigation buttons are light while this deep colour is up, and go back to the page's own when it is gone. */}
           <NavigationBar style="light" />
-          <Animated.View style={logoStyle}>
+          <View style={styles.half} />
+          <Animated.View style={[{ height: LOGO_HEIGHT }, logoStyle]}>
             <LogoStacked width={LOGO_WIDTH} ground="chrome" label={t('app.name')} />
           </Animated.View>
           <View style={styles.below}>
