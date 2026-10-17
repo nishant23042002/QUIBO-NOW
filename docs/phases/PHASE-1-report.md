@@ -1,6 +1,9 @@
 # Phase 1 report: the customer app on mock data
 
 - **Branch:** `phase-1/customer-ui` (about 200 small commits ahead of `master`), pushed. Not merged, not tagged.
+- **Design: locked on 2026-10-17** (ADR 0059). The customer app's look and layout are frozen for the rest of Phase 1: from here a
+  change is a defect fix (something broken, unreadable, wrong or off the design) and not a new design. New ideas go to
+  `PHASE-1-notes.md` for Phase 2 or later. What is locked is listed in section 8.
 - **Status:** the whole customer app is built and the automated gate was re-run on 2026-10-13 after the category screens, and before
   that on 2026-10-12 after the Home redesign and the speed pass (lint, typecheck, test and build all pass; section 3). **Nothing has run on a phone, with TalkBack, on a throttled network or
   with people.** Those are the open gate items below, and they are yours.
@@ -85,6 +88,9 @@ loading, empty, error and offline state on each screen.
 
 ## 6. What is yours to do, in the order I would do it
 
+The design is locked (section 8), so the checks below are for finding faults, not for choosing looks. A fault found goes in
+`PHASE-1-defects.md` and is fixed to the locked design.
+
 0. **Finish the 1i phone checks** (the list is in `PHASE-1-defects.md`, "Phone checks for 1i"). The Home sections and the product
    cards are done (2026-10-12). Still open: the Categories and Orders headers and tab skeletons, add and stepper taps, the
    free-delivery moment, the stock-limit shake, the floating controls, dark mode and Hindi or Marathi at the largest text.
@@ -133,3 +139,34 @@ setting (`enforceContrast: false`) is already in `app.json`; check it with `npx 
 
 **Still open, smaller:** tea leaves, besan and cold drinks are not in the sample catalogue; the seven new kinds have no
 product-page text or nutrition; the product page deliberately keeps "price per kg" for loose items.
+
+### Design locked, 2026-10-17
+
+The owner locked the customer app's UI and design. This is the freeze, so a later reader knows what was decided and what is still
+allowed to change.
+
+**Locked (the look and the layout):**
+
+- The palette (aubergine and pistachio, light and dark), the lilac header, the type scale (cards' names 18 dp semibold, the rest as in
+  `Text`), the light 1 dp border on cards, tags, options and chips, and the locked price badge on every price.
+- Home, top to bottom: the header and category rail, the payment strip, the single "Picks for your routine" mosaic (Morning milk and the
+  four moments), Know your shop in one container, Fresh today, Bestsellers, the category groups, Daily essentials, Small prices
+  (standard cards), Trending (two rows), Shop by brand, Featured (compact), the shelves, quieter times, the promise and the footer.
+- The four moment pages and their palettes (Tea Break, Breakfast Ready, Cook Today, Movie Night); the category screens in each
+  category's colour with one surface for rail and grid; header pictures beside the title; the small "Back to top" pill.
+- Prices of loose items on cards and in Daily essentials: the price of what ADD puts in, with the per-kilogram price beside it.
+- The splash, welcome, order-placed and in-between screens, their timing, and the rule that none of them shows a skeleton beneath.
+- Skeletons that land where the page does, on every screen, with one light sweep.
+
+**Still allowed to change (not design):**
+
+- Defect fixes to the locked design: anything broken, unreadable, mis-aligned, slow, or that fails a check.
+- Words: the Hindi and Marathi text is a draft until a native speaker has read it (`PHASE-1-language-review.md`), and a corrected
+  string is not a design change.
+- Sample content: more items, brands, descriptions and nutrition for the catalogue (tea leaves, besan, cold drinks; text for the seven
+  new kinds) fills the design and does not alter it.
+- Nothing new is added to a screen. The admin panel and the driver app are other surfaces with their own phases.
+
+**What is left before sign-off is checking, not designing:** the owner's phone check of the locked screens in light, dark and Hindi;
+a development build (`npx expo run:android`) to see the navigation-bar colour; the Maestro flows; a TalkBack pass; a cold start on a
+low-end phone; the language review; the people test. The owner then signs off and `phase-1-complete` is tagged.
