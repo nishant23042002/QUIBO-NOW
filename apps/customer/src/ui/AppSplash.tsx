@@ -13,6 +13,7 @@ import {
 import { useLanguage } from '@/i18n/LanguageProvider';
 import { palettes } from '@/theme';
 import { LogoStacked } from './brand/Logo';
+import { SIZE } from './brand/paths';
 import { SPLASH_FADE_MS, SPLASH_SETTLE_MS, splashMinimumMs, splashPhase } from './logic/splash';
 import { Text } from './Text';
 import { radius, space } from './tokens';
@@ -33,6 +34,10 @@ export interface AppSplashProps {
 // light header colour (not the live theme) keeps it from flickering when the saved theme loads.
 const SPLASH_BACKGROUND = palettes.light.chrome;
 
+/** The logo's width, and half its height: the words under it start this far below the middle of the screen. */
+const LOGO_WIDTH = 220;
+const LOGO_HALF_HEIGHT = Math.round((LOGO_WIDTH * SIZE.stacked.height) / SIZE.stacked.width / 2);
+
 // The web preview has no native animation module; phones do, and run the fade on the UI thread.
 const NATIVE_DRIVER = Platform.OS !== 'web';
 
@@ -42,8 +47,19 @@ const styles = StyleSheet.create({
     backgroundColor: SPLASH_BACKGROUND,
     alignItems: 'center',
     justifyContent: 'center',
-    gap: space[5],
     padding: space[8],
+  },
+  // The tagline and the fact pill hang under the logo from a fixed place. The logo alone is centred, so it never moves when the
+  // tagline or the pill arrives (centring them all together made the logo climb as each one appeared).
+  below: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: '50%',
+    marginTop: LOGO_HALF_HEIGHT + space[5],
+    alignItems: 'center',
+    gap: space[5],
+    paddingHorizontal: space[8],
   },
   // The fact pill under the tagline: a lighter aubergine, so it reads as a small label on the brand ground.
   fact: {
@@ -181,21 +197,23 @@ export function AppSplash({ ready, children, fact }: AppSplashProps) {
           {/* The navigation buttons are light while this deep colour is up, and go back to the page's own when it is gone. */}
           <NavigationBar style="light" />
           <Animated.View style={logoStyle}>
-            <LogoStacked width={220} ground="chrome" label={t('app.name')} />
+            <LogoStacked width={LOGO_WIDTH} ground="chrome" label={t('app.name')} />
           </Animated.View>
-          <Animated.View style={taglineStyle}>
-            {ready ? <Text color="onChromeMuted">{t('app.tagline')}</Text> : null}
-          </Animated.View>
-          {ready && fact !== undefined ? (
-            <Animated.View style={[styles.fact, taglineStyle]}>
-              <NativeText allowFontScaling={false} aria-hidden style={styles.factEmoji}>
-                {fact.emoji}
-              </NativeText>
-              <Text variant="small" color="onChrome">
-                {fact.title}
-              </Text>
+          <View style={styles.below}>
+            <Animated.View style={taglineStyle}>
+              {ready ? <Text color="onChromeMuted">{t('app.tagline')}</Text> : null}
             </Animated.View>
-          ) : null}
+            {ready && fact !== undefined ? (
+              <Animated.View style={[styles.fact, taglineStyle]}>
+                <NativeText allowFontScaling={false} aria-hidden style={styles.factEmoji}>
+                  {fact.emoji}
+                </NativeText>
+                <Text variant="small" color="onChrome">
+                  {fact.title}
+                </Text>
+              </Animated.View>
+            ) : null}
+          </View>
         </Animated.View>
       )}
     </View>

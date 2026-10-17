@@ -7,20 +7,23 @@ import { useDeliveryWhen } from './deliveryInfo';
 
 const makeStyles = (c: ThemeColors) =>
   StyleSheet.create({
-    wrap: { paddingHorizontal: space[4], paddingBottom: space[3] },
+    // Clear of the category tabs above it, and kept short: one line of words and a small button.
+    wrap: { paddingHorizontal: space[4], paddingTop: space[2], paddingBottom: space[2] },
     card: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: space[3],
-      padding: space[3],
-      borderRadius: radius.lg,
+      gap: space[2],
+      paddingVertical: space[2],
+      paddingLeft: space[3],
+      paddingRight: space[2],
+      borderRadius: radius.md,
       backgroundColor: c.tagBg,
     },
     words: { flex: 1, minWidth: 0 },
     action: {
-      minHeight: space[10],
+      minHeight: 36,
       justifyContent: 'center',
-      paddingHorizontal: space[3],
+      paddingHorizontal: space[2] + 2,
       borderRadius: radius.md,
       backgroundColor: c.action,
     },
@@ -47,12 +50,12 @@ export function ClosedBanner() {
   return (
     <View style={styles.wrap}>
       <View style={styles.card} accessible aria-label={`${t('home.closed.title')}. ${body}`}>
-        <Icon name="moon" color={colors.tagFg} size={28} />
+        <Icon name="moon" color={colors.tagFg} size={20} />
         <View style={styles.words}>
-          <Text variant="strong" color="tagFg" numberOfLines={2}>
+          <Text variant="strong" color="tagFg" numberOfLines={1}>
             {t('home.closed.title')}
           </Text>
-          <Text variant="fine" color="tagFg" numberOfLines={3}>
+          <Text variant="fine" color="tagFg" numberOfLines={2}>
             {body}
           </Text>
         </View>
@@ -64,7 +67,7 @@ export function ClosedBanner() {
           }}
           style={({ pressed }) => [styles.action, pressed && styles.pressed]}
         >
-          <Text variant="strong" color="onAction" numberOfLines={2}>
+          <Text variant="caption" color="onAction" numberOfLines={1}>
             {t('home.closed.action')}
           </Text>
         </Pressable>

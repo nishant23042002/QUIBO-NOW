@@ -261,8 +261,8 @@
       "many": "{first} and {count} more"
     },
     "closed": {
-      "title": "Quick delivery is closed for now",
-      "body": "Your order is set for {when}. You can change it any time.",
+      "title": "Quick delivery closed",
+      "body": "Set for {when}.",
       "bodyNone": "Pick a window and we will bring it then.",
       "action": "Pick a window"
     },
