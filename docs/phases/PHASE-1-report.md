@@ -1,6 +1,8 @@
 # Phase 1 report: the customer app on mock data
 
 - **Branch:** `phase-1/customer-ui` (about 200 small commits ahead of `master`), pushed. Not merged, not tagged.
+- **Signed off by the owner on 2026-10-17; tagged `phase-1-complete`.** The checks that need a phone or people were not run before
+  sign-off and are carried forward (see the end of section 8).
 - **Design: locked on 2026-10-17** (ADR 0059). The customer app's look and layout are frozen for the rest of Phase 1: from here a
   change is a defect fix (something broken, unreadable, wrong or off the design) and not a new design. New ideas go to
   `PHASE-1-notes.md` for Phase 2 or later. What is locked is listed in section 8.
@@ -170,3 +172,27 @@ allowed to change.
 **What is left before sign-off is checking, not designing:** the owner's phone check of the locked screens in light, dark and Hindi;
 a development build (`npx expo run:android`) to see the navigation-bar colour; the Maestro flows; a TalkBack pass; a cold start on a
 low-end phone; the language review; the people test. The owner then signs off and `phase-1-complete` is tagged.
+
+### Sign-off, 2026-10-17
+
+The owner signed Phase 1 off, and `phase-1-complete` was tagged on the commit that holds this line.
+
+**Passed before sign-off (machine-checked, 2026-10-17):** lint and format; typecheck (9 of 9 packages); unit tests (customer 775,
+contracts 200, i18n 30, config 16, mocks 11); the Android export. No blocker or major defect open in `PHASE-1-defects.md`.
+
+**Not done before sign-off, carried forward by the owner's decision** (none is a code defect; each needs a phone or people):
+
+- A development build (`npx expo run:android`) to see the navigation-bar colour on the splash, welcome and order-placed screens
+  (Expo Go cannot show it).
+- The Maestro flows (`.maestro/`), once the tool is installed on a phone or emulator.
+- A TalkBack pass; a cold start on a low-end phone with the network throttled.
+- The native-speaker review of the Hindi and Marathi text (`PHASE-1-language-review.md`); every string added since 2026-10-14 is a draft.
+- The people test (5 households and 3 shop owners).
+
+**Left out of Phase 1 by decision:** real product and category photographs. A plan and a trial were started on 2026-10-17 and dropped on
+the owner's instruction; nothing from it is in the repository. Products and categories stay on their emoji, which the design lock
+(ADR 0059) fixed. Photographs need a source with rights (brand pack shots, paid catalogue photography or the shops' own photos) and
+are a later phase.
+
+**Next:** the owner's order of surfaces is the admin panel with the store portal (phases 3 and 4), then the driver app (5 and 6); the
+live customer phase (Phase 2) swaps the mocks for the real API without changing these screens.
